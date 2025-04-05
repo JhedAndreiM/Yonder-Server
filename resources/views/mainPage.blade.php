@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEWEL</title>
+    <title>Document</title>
     @vite('resources/css/mainPage.css')
     @vite('resources/js/mainPage.js')
     <style>
