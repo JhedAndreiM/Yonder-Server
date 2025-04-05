@@ -87,7 +87,21 @@
         </div>
     </div>
     <div class="right">
-        <div class="right-top"></div>
+        <div class="right-top">
+            <div class="right-top-left">
+                <h5>Welcome, Jun! Here are the recommended</h5>
+                <h5>listing for you:</h5>
+            </div>
+            <div class="right-top-right">
+                <h5>Sort by:</h5>
+                <select name="sort-by" id="sort-by">
+                    <option value="volvo">Price: Low to High</option>
+                    <option value="saab">Price: High to Low</option>
+                    <option value="mercedes">Newest First</option>
+                    <option value="audi">Oldest First</option>
+                  </select>
+            </div>
+        </div>
         <div class="right-bottom"></div>
 
     </div>
