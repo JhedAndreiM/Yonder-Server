@@ -22,7 +22,7 @@
 <body>
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <h1 class="webName">UniTrade</h2>
+        <h1 class="webName">Yonder</h2>
         <div class="nav-container">
         <nav>
             <ul class="navLinks">

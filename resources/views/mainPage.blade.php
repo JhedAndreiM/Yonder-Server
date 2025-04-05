@@ -19,7 +19,7 @@
 <body>
 <header>
     <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-    <h1 class="webName">UniTrade</h2>
+    <h1 class="webName">Yonder</h2>
     <div class="nav-search">
         <nav>
             <input type="text" placeholder="CCST ID LACE">
@@ -87,11 +87,13 @@
         </div>
     </div>
     <div class="right">
+
         <div class="right-top">
             <div class="right-top-left">
                 <h5>Welcome, Jun! Here are the recommended</h5>
                 <h5>listing for you:</h5>
             </div>
+
             <div class="right-top-right">
                 <h5>Sort by:</h5>
                 <select name="sort-by" id="sort-by">
@@ -102,6 +104,8 @@
                   </select>
             </div>
         </div>
+
+
         <div class="right-bottom"></div>
 
     </div>
