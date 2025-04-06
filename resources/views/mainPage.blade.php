@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/mainPage.css')
     @vite('resources/js/mainPage.js')
+    <meta name="base-url" content="{{ url('/') }}">
     <style>
         body {
         background-image: url("{{ asset('img/background.svg') }}");
@@ -14,6 +16,7 @@
         background-position: top center;
         }
     </style>
+    
 </head>
 
 <body>
@@ -42,51 +45,51 @@
 
     <div class="two supplierTypes">
         <h3>Supplier Types</h3>
-        <button class="filter-btn" data-filter="verified">Verified suppliers</button>
-        <button class="filter-btn" data-filter="students">Students</button>
+        <button class="filter-btn" data-filter="verified" data-filter-type="condition">Verified suppliers</button>
+        <button class="filter-btn" data-filter="students" data-filter-type="condition">Students</button>
     </div>
 
     <div class="three modeOfTransaction">
         <h3>Mode of Transaction</h3>
-        <button class="filter-btn" data-filter="pickup">Pick up</button>
-        <button class="filter-btn" data-filter="deliver">Deliver</button>
-        <button class="filter-btn" data-filter="meetup">Meet Up</button>
+        <button class="filter-btn" data-filter="pickup" data-filter-type="condition">Pick up</button>
+        <button class="filter-btn" data-filter="deliver" data-filter-type="condition">Deliver</button>
+        <button class="filter-btn" data-filter="meetup" data-filter-type="condition">Meet Up</button>
     </div>
 
     <div class="four condition">
         <h3>Condition</h3>
-        <button class="filter-btn" data-filter="new">New</button>
-        <button class="filter-btn" data-filter="like-new">Like new</button>
-        <button class="filter-btn" data-filter="used">Used (Fair)</button>
+        <button class="filter-btn" data-filter="new" data-filter-type="condition">New</button>
+        <button class="filter-btn" data-filter="like-new" data-filter-type="condition">Like new</button>
+        <button class="filter-btn" data-filter="used" data-filter-type="condition">Used (Fair)</button>
     </div>
 
     <div class="five price">
         <h3>Price</h3>
-        Min: <input type="number" placeholder="100" min="0">
-        Max: <input type="number" placeholder="1000" min="0">
+        Min: <input type="number" placeholder="100" min="0" data-filter-type="condition">
+        Max: <input type="number" placeholder="1000" min="0" data-filter-type="condition">
     </div>
 
     <div class="six colleges">
         <h3>Colleges</h3>
-        <button class="filter-btn" data-filter="ccst">CCST</button>
-        <button class="filter-btn" data-filter="cea">CEA</button>
-        <button class="filter-btn" data-filter="cba">CBA</button>
-        <button class="filter-btn" data-filter="ctech">CTECH</button>
-        <button class="filter-btn" data-filter="cahs">CAHS</button>
-        <button class="filter-btn" data-filter="cas">CAS</button>
+        <button class="filter-btn" data-filter="ccst" data-filter-type="condition">CCST</button>
+        <button class="filter-btn" data-filter="cea" data-filter-type="condition">CEA</button>
+        <button class="filter-btn" data-filter="cba" data-filter-type="condition">CBA</button>
+        <button class="filter-btn" data-filter="ctech" data-filter-type="condition">CTECH</button>
+        <button class="filter-btn" data-filter="cahs" data-filter-type="condition">CAHS</button>
+        <button class="filter-btn" data-filter="cas" data-filter-type="condition">CAS</button>
     </div>
 
     <div class="seven for">
         <h3>For</h3>
-        <button class="filter-btn" data-filter="sale">Sale</button>
-        <button class="filter-btn" data-filter="trade">Trade</button>
+        <button class="filter-btn" data-filter="sale" data-filter-type="condition">Sale</button>
+        <button class="filter-btn" data-filter="trade" data-filter-type="condition">Trade</button>
     </div>
         </div>
         <div class="add-listing">
            <button><h6>want to sell or trade? Add a listing!</h6></button>
         </div>
     </div>
-    <div class="right">
+    <div class="right" id="scroll-container">
 
         <div class="right-top">
             <div class="right-top-left">
@@ -105,10 +108,17 @@
             </div>
         </div>
 
-
-        <div class="right-bottom"></div>
-
+        <div class="right-middle">
+            basta dito yunmg featured
+        </div>
+        <div class="right-bottom">
+            <div class="card-container infinite-scroll" id="product-container">
+                @include('partials.productList', ['products' => $products])
+                
+            </div>
+            
     </div>
 </div>
+
 </body>
 </html>
