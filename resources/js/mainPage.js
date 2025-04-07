@@ -1,4 +1,5 @@
 let activeFilters = [];
+let page=2;
 
 document.querySelectorAll(".filter-btn").forEach(button => {
     button.addEventListener("click", () => {
@@ -8,7 +9,8 @@ document.querySelectorAll(".filter-btn").forEach(button => {
 });
 
 function updateFilters() {
-    let activeFilters = [];
+    activeFilters = [];
+    page = 2
     document.querySelectorAll(".filter-btn.active").forEach(activeBtn => {
         activeFilters.push(activeBtn.dataset.filter);
     });
@@ -17,7 +19,7 @@ function updateFilters() {
 }
 
 function fetchFilteredProducts(filters) {
-    let url='?page=1';
+    let url='?page=${page}';
     if(filters.length>0){
         url += '&filters='+JSON.stringify(filters);
     }
@@ -38,7 +40,7 @@ function fetchFilteredProducts(filters) {
 
 //pang load to ng product pagka scroll
 document.addEventListener('DOMContentLoaded', function () {
-    let page = 2; 
+    page = 2;
     const container = document.getElementById('scroll-container');
     const productContainer = document.getElementById('product-container');
     
@@ -63,10 +65,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
            
             scrollTimeout = setTimeout(async () => {
-                page++; 
                 
                 try {
-                    const response = await fetch(`?page=${page}`, {
+                    const filterParam = activeFilters.length > 0 ? `&filters=${encodeURIComponent(JSON.stringify(activeFilters))}` : '';
+                    const response = await fetch(`?page=${page}${filterParam}`, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                         },
@@ -79,6 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     newCards.forEach(card => productContainer.appendChild(card));
 
                     isLoading = false; 
+                    if (newCards.length > 0) {
+                        newCards.forEach(card => productContainer.appendChild(card));
+                        page++; // ✅ Only increment if cards were found
+                    }
                 } catch (error) {
                     console.error('Error loading more products:', error);
                     isLoading = false; 

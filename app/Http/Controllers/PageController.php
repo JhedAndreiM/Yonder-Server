@@ -20,56 +20,44 @@ class PageController extends Controller
         $query = Product::query();
 
         //supplier type
-        if(in_array('verified',$filters)){
-            $query->where('supplierTypes','verified');
-            
-        }
-        if(in_array('students',$filters)){
-            $query->where('supplierTypes','students');
+        $supplierTypeFilters=['verified', 'students'];
+        $selectedSupplierTypes=array_intersect($filters,$supplierTypeFilters);
+        if(!empty($selectedSupplierTypes)){
+            $query->whereIn('supplier_type',$selectedSupplierTypes);
         }
 
-        //production
-        if(in_array('used',$filters)){
-            $query->where('product_condition','used');
-            
+        //condition
+        $conditionFilters=['used', 'new', 'like-new'];
+        $selectedConditions=array_intersect($filters, $conditionFilters);
+        if(!empty($selectedConditions)){
+            $query->whereIn('product_condition', $selectedConditions);
         }
-        if(in_array('new',$filters)){
-            $query->where('product_condition','new');
-        }
-        if(in_array('like-new',$filters)){
-            $query->where('product_condition','like-new');
-        }
+        
         //mde of transaction
-        if(in_array('pickup',$filters)){
-            $query->where('mode_of_transaction','pickup');
-            
+        $transactionFilters=['pickup', 'deliver', 'meetup'];
+        $selectedTransaction=array_intersect($filters, $transactionFilters);
+        if(!empty($selectedTransaction)){
+            $query->whereIn('mode_of_transaction', $selectedTransaction);
         }
-        if(in_array('deliver',$filters)){
-            $query->where('mode_of_transaction','deliver');
-        }
-        if(in_array('meetup',$filters)){
-            $query->where('mode_of_transaction','meetup');
+        
+         //colleges
+         $collegeFilters = ['ccst', 'cea', 'cba', 'ctech', 'cahs', 'cas'];
+         $selectedColleges = array_intersect($filters, $collegeFilters);
+         
+         if (!empty($selectedColleges)) {
+             $query->whereIn('colleges', $selectedColleges);
+         }
+
+
+        //for
+        $saleTradeFilters = ['sale', 'trade'];
+        $selectedSaleTradeFilter=array_intersect($filters, $saleTradeFilters);
+        if(!empty($selectedSaleTradeFilter)){
+            $query->whereIn('forSaleTrade', $selectedSaleTradeFilter);
         }
 
-         //colleges
-        if(in_array('ccst',$filters)){
-            $query->where('college','ccst');
-        }
-        if(in_array('cea',$filters)){
-            $query->where('college','cea');
-        }
-        if(in_array('cba',$filters)){
-            $query->where('college','cba');
-        }
-        if(in_array('ctech',$filters)){
-            $query->where('college','ctech');
-        }
-        if(in_array('cahs',$filters)){
-            $query->where('college','cahs');
-        }
-        if(in_array('cas',$filters)){
-            $query->where('college','cas');
-        }
+
+
         $products = $query->paginate(8);
         if ($request->ajax()) {
             return view('partials.productList', compact('products'))->render();
