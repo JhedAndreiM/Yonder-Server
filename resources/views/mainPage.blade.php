@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    @vite('resources/css/mainPage.css')
-    @vite('resources/js/mainPage.js')
+    
     <meta name="base-url" content="{{ url('/') }}">
     <style>
         body {
@@ -16,7 +15,8 @@
         background-position: top center;
         }
     </style>
-    
+    @vite('resources/css/mainPage.css')
+    @vite('resources/js/mainPage.js')
 </head>
 
 <body>
@@ -25,8 +25,11 @@
     <h1 class="webName">Yonder</h2>
     <div class="nav-search">
         <nav>
-            <input type="text" placeholder="CCST ID LACE">
-            <button>Search</button>
+            <form>
+                <input id="searchInput"type="text" placeholder="CCST ID LACE" >
+                <button id="btnSub" type="submit">Search</button>
+            </form>
+            
         </nav>
     </div>
     <div class="left-nav">
@@ -65,8 +68,8 @@
 
     <div class="five price">
         <h3>Price</h3>
-        Min: <input type="number" placeholder="100" min="0" data-filter-type="condition">
-        Max: <input type="number" placeholder="1000" min="0" data-filter-type="condition">
+        Min: <input id="min"class="input-min" type="number" placeholder="100" min="0" data-filter-type="condition">
+        Max: <input id="max"class="input-max" type="number" placeholder="1000" min="0" data-filter-type="condition">
     </div>
 
     <div class="six colleges">
@@ -99,11 +102,12 @@
 
             <div class="right-top-right">
                 <h5>Sort by:</h5>
-                <select name="sort-by" id="sort-by">
-                    <option value="volvo">Price: Low to High</option>
-                    <option value="saab">Price: High to Low</option>
-                    <option value="mercedes">Newest First</option>
-                    <option value="audi">Oldest First</option>
+                <select name="sort-by" id="sort-by" >
+                    <option value="">Sort Here</option>
+                    <option value="lowToHigh">Price: Low to High</option>
+                    <option value="highToLow">Price: High to Low</option>
+                    <option value="newFirst">Newest First</option>
+                    <option value="oldFirst">Oldest First</option>
                   </select>
             </div>
         </div>

@@ -12,13 +12,43 @@ class PageController extends Controller
     {
         $page=$request->get('page', 1);
         $filters = $request->get('filters', []);
-        
+        $minPrice = (float) $request->get('price', ['min' => null])['min'];  
+        $maxPrice = (float) $request->get('price', ['max' => null])['max'];
+        $sort = $request->get('sort');
+        $search = request('searching');
+        $search = trim($search, '"');
         if (is_string($filters)) {
             $filters = json_decode($filters, true);
         } 
         $filters = array_map('trim', $filters);
         $query = Product::query();
-
+        // dd($search);
+        //search filter
+        if($search !== ""){
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        //sort filter
+        if($sort !== null){
+            if($sort=="lowToHigh"){
+                $query->orderBy('price', 'asc');
+            }
+            if($sort=="highToLow"){
+                $query->orderBy('price', 'desc');
+            }
+            if($sort=="newFirst"){
+                $query->orderBy('created_at', 'desc');
+            }
+            if($sort=="oldFirst"){
+                $query->orderBy('created_at', 'asc');
+            }
+        }
+        // price filter
+        if ($minPrice !== null) {
+            $query->where('price', '>=', $minPrice);
+        }
+        if ($maxPrice !== 0.0) {
+            $query->where('price', '<=', $maxPrice);
+        }
         //supplier type
         $supplierTypeFilters=['verified', 'students'];
         $selectedSupplierTypes=array_intersect($filters,$supplierTypeFilters);

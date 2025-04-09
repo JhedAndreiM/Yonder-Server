@@ -1,5 +1,8 @@
-@foreach ($products as $product)
-    <div class="card">
+@if($products->isEmpty())
+    <p>No items found</p>
+@else
+    @foreach ($products as $product)
+        <div class="card">
         <div class="image">
             <div class="img-placeholder">
                 <img src="{{ asset('img/profile-placeholder.svg') }}" alt="img">
@@ -7,13 +10,14 @@
         </div>
         <div class="price">P {{ $product->price }}</div>
         <div class="prod-name">{{ $product->name }}</div>
+        <div class="prod-name">{{ $product->created_at }}</div>
         <div class="rating">
             <button>4.7</button>
             <img src="{{ asset('img/heart-icon.svg') }}" alt="">
         </div>
-    </div>
-@endforeach
-
+        </div>
+    @endforeach
+@endif
 <div class="pagination-wrapper" style="display: none;">
     {{ $products->links() }}
 </div>
