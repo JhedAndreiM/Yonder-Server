@@ -295,3 +295,10 @@ form{
     justify-content: space-between;
     align-items: center;
 }
+.no-items-wrapper {
+    position: absolute;
+    left: 55%;
+    height: 300px;
+    font-size: 2rem;
+    color: #666666;
+}
