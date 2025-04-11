@@ -103,7 +103,9 @@ input:focus {
     display: flex;
     justify-content: space-evenly;
 }
-
+.fa-magnifying-glass{
+    display: none;
+}
 /* MAIN */
 .container{
     display: flex;
@@ -111,7 +113,6 @@ input:focus {
     margin-top: 124px;
 }
 .left{
-    border: solid red 1px;
     flex: 1;
     display: flex;
     justify-content: center;
@@ -126,7 +127,6 @@ input:focus {
     align-self: flex-start;
 }
 .right{
-    border: solid red 1px;
     flex: 3;
     width: 100%;
     padding-inline:3% ;
@@ -212,12 +212,10 @@ input[type="number"] {
 }
 .right-top{
     display: flex;
-    border: solid red 1px;
     margin-block: 3% 1%;
     justify-content: space-between;
 }
 .right-top-right{
-    border: solid red 1px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -227,7 +225,6 @@ input[type="number"] {
     padding-right: 1rem;
 }
 .right-top-left{
-    border: solid red 1px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -235,24 +232,21 @@ input[type="number"] {
     font-size: 20px;
 }
 .right-middle{
-    border: solid red 1px;
     width: 100%;
     height: 12.3rem;
     padding-inline:3% ;
     margin-bottom: 1%;
 }
 .right-bottom{
-    border: solid red 1px;
     width: 100%;
     padding-bottom: 3rem;
 }
 .card-container{
-    border: solid red 1px;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, 16.37rem);
     gap: 4rem;
-    
+    justify-content: space-around;
 }
 .card{
     height: 20.25rem;
@@ -261,6 +255,7 @@ input[type="number"] {
     border-radius: 8px;
     display: flex;
     flex-direction: column;
+    background-color: white;
 }
 .image{
     display: flex;
@@ -271,7 +266,6 @@ input[type="number"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: solid red 1px;
     margin-top: 2%;
     width: calc(100% - 5%);
     height: 10.43rem;
@@ -317,6 +311,15 @@ form{
     font-size: 2rem;
     color: #666666;
 }
+/* slideshow for featured :P */
+.right-middle{
+ background-color: white;
+ border: solid 2px black;
+}
+
+
+
+
 @media(max-width:852px)
 {
     html, body {
@@ -360,7 +363,26 @@ form{
         left: 5%;
     }
     .nav-search{
+        background-color: white;
+        display: flex;
+        position: absolute;
+        top:150%;
+        width: 372px;
+        height: 38px;
+    }
+    .nav-search input{
+        width: 100%;
+        height: 90%;
+        font-size: 1rem;
+    }
+    .nav-search button{
         display: none;
+    }
+    .fa-magnifying-glass{
+        display: flex;
+        margin-right: 2%;
+        width: 1.3rem;
+        height: 1.3rem;
     }
     .notificationBtn, .wishlistBtn, .vertical-line{
         display: none;
@@ -379,12 +401,11 @@ form{
         display: none;
     }
     .card-container{
-        border: solid red 1px;
         width: 100%;
         display: grid;
         grid-template-columns: repeat(auto-fit, 11rem);
-        gap: 2.4rem;
-        
+        gap: 2rem;
+        justify-content: space-around;
     }
     .card{
         height: 13.43rem;
@@ -399,7 +420,6 @@ form{
         display: flex;
         align-items: center;
         justify-content: center;
-        border: solid red 1px;
         margin-top: 2%;
         width: calc(100% - 5%);
         height: 6.18rem;

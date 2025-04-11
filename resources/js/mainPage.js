@@ -33,6 +33,12 @@ document.getElementById('btnSub').addEventListener('click', function() {
     searchInput = inputEl && inputEl.value ? inputEl.value.trim() : "";
     fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput);
 });
+document.getElementById('magnifying').addEventListener('click', function() {
+    event.preventDefault();
+    const inputEl = document.getElementById("searchInput");
+    searchInput = inputEl && inputEl.value ? inputEl.value.trim() : "";
+    fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput);
+});
 //select statement filter to
 var selectElement = document.getElementById("sort-by");
 selectElement.addEventListener("change", function() {

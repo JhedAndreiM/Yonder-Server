@@ -29,6 +29,7 @@
             <form>
                 <input id="searchInput"type="text" placeholder="CCST ID LACE" >
                 <button id="btnSub" type="submit">Search</button>
+                <img id="magnifying"class="fa-magnifying-glass" src="{{ asset('img/magnifying-glass-solid.svg') }}" alt="">
             </form>
             
         </nav>
@@ -103,7 +104,7 @@
 
             <div class="right-top-right">
                 <button id="filter-btn" class="filter-icon">
-                    <i class="fas fa-filter"></i>
+                    <img class="fas fa-filter" src="{{ asset('img/Funnel.svg') }}" alt="">
                   </button>
                   <h5 class="sort-label">Sort by:</h5>
                 <div id="sort-dropdown" class="sort-dropdown">
