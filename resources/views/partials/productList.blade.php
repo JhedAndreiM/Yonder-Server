@@ -12,7 +12,6 @@
         </div>
         <div class="price">P {{ $product->price }}</div>
         <div class="prod-name">{{ $product->name }}</div>
-        <div class="prod-name">{{ $product->created_at }}</div>
         <div class="rating">
             <button>4.7</button>
             <img src="{{ asset('img/heart-icon.svg') }}" alt="">

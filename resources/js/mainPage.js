@@ -5,6 +5,27 @@ let activePrice = { min: null, max: null };
 let page=2;
 let minPrice=0;
 let maxPrice=0;
+
+const filterBtn = document.getElementById('filter-btn');
+  const dropdownWrapper = document.getElementById('sort-dropdown');
+
+  filterBtn.addEventListener('click', () => {
+    dropdownWrapper.classList.toggle('show-on-mobile');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (
+      !dropdownWrapper.contains(e.target) &&
+      !filterBtn.contains(e.target)
+    ) {
+      dropdownWrapper.classList.remove('show-on-mobile');
+    }
+  });
+  
+  window.addEventListener('scroll', () => {
+    filterOptions.classList.add('hidden');
+  });
+
 // search filter
 document.getElementById('btnSub').addEventListener('click', function() {
     event.preventDefault();
@@ -117,72 +138,6 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
     })
 }
 
-
-//price filter sa side bar
-// function fetchFilteredProductsPrice(filters, minPrice, maxPrice,selectedValue,searchInput) {
-//     let url = '?page=${page}';
-    
-//     // Include filters in the URL (if any)
-//     if (filters && filters.length > 0) {
-//         url += `&filters=${JSON.stringify(filters)}`;
-//         console.log(url);
-//     }
-//     if (minPrice !== null && maxPrice !== null) {
-//         url += '&price[min]='+minPrice+'&price[max]='+maxPrice;
-//         console.log(url);
-//     }
-//     if  (selectedValue!== null) {
-//         url += '&sort='+selectedValue;
-//         console.log(url);
-//     }
-//     fetch(url, {
-//         headers: {
-//             'X-Requested-With': 'XMLHttpRequest'
-//         }
-//     })
-//     .then(response => response.text()) 
-//     .then(data => {
-//         const productContainer = document.getElementById('product-container');
-//         productContainer.innerHTML = data; 
-//     })
-//     .catch(error => {
-//         console.error('Error fetching filtered products:', error); 
-//     });
-// }
-
-
-// // sort filter
-// function fetchFilteredProductsSort(filters, minPrice, maxPrice,selectedValue,searchInput) {
-//     let url = '?page=${page}';
-//     // Include filters in the URL (if any)
-//     console.log(searchInput);
-//     if (filters && filters.length > 0) {
-//         url += `&filters=${JSON.stringify(filters)}`;
-//         console.log(url);
-//     }
-//     if (minPrice !== null && maxPrice !== null) {
-//         url += '&price[min]='+minPrice+'&price[max]='+maxPrice;
-//         console.log(url);
-//     }
-//     if  (selectedValue!== null) {
-//         url += '&sort='+selectedValue;
-//         console.log(url);
-//     }
-    
-//     fetch(url, {
-//         headers: {
-//             'X-Requested-With': 'XMLHttpRequest'
-//         }
-//     })
-//     .then(response => response.text()) 
-//     .then(data => {
-//         const productContainer = document.getElementById('product-container');
-//         productContainer.innerHTML = data; 
-//     })
-//     .catch(error => {
-//         console.error('Error fetching filtered products:', error); 
-//     });
-// }
 //pang load to ng product pagka scroll
 document.addEventListener('DOMContentLoaded', function () {
     page = 2;
@@ -198,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     container.addEventListener('scroll', () => {
-        
+        dropdownWrapper.classList.remove('show-on-mobile');
         if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5 && !isLoading) {
             
             isLoading = true;

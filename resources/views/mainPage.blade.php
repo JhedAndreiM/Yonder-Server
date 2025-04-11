@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <meta name="base-url" content="{{ url('/') }}">
@@ -33,10 +34,10 @@
         </nav>
     </div>
     <div class="left-nav">
-    <img src="{{ asset('img/heart-icon.svg') }}" alt="">
-    <img src="{{ asset('img/bell-icon.svg') }}" alt="">
+    <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
+    <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
     <div class="vertical-line"></div>
-    <img src="{{ asset('img/profile-placeholder.svg') }}" alt="">
+    <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="">
     </div>
 </header>
 <div class="container">
@@ -101,14 +102,20 @@
             </div>
 
             <div class="right-top-right">
-                <h5>Sort by:</h5>
-                <select name="sort-by" id="sort-by" >
-                    <option value="">Sort Here</option>
-                    <option value="lowToHigh">Price: Low to High</option>
-                    <option value="highToLow">Price: High to Low</option>
-                    <option value="newFirst">Newest First</option>
-                    <option value="oldFirst">Oldest First</option>
-                  </select>
+                <button id="filter-btn" class="filter-icon">
+                    <i class="fas fa-filter"></i>
+                  </button>
+                  <h5 class="sort-label">Sort by:</h5>
+                <div id="sort-dropdown" class="sort-dropdown">
+                    <select name="sort-by" id="sort-by">
+                      <option value="">Sort Here</option>
+                      <option value="lowToHigh">Price: Low to High</option>
+                      <option value="highToLow">Price: High to Low</option>
+                      <option value="newFirst">Newest First</option>
+                      <option value="oldFirst">Oldest First</option>
+                    </select>
+                  </div>
+                
             </div>
         </div>
 
