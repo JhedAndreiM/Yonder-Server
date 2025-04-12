@@ -160,6 +160,7 @@ input:focus {
     background-color: white;
 }
 .add-listing h6{
+    color: black;
     font-size: 1rem;
     text-decoration: underline;
 }

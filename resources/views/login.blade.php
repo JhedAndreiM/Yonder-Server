@@ -43,54 +43,38 @@
         </div>
         
 
-        <form action="">
+        <form action="{{ route('login.submit') }}" method="POST">
+            @csrf
+            <input type="hidden" name="role" value="{{ $role }}">
             <div class="form-firstRow">
-                <div class="fname input-container">
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first-name">
-                </div>
-
-                <div class="lname input-container">
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last-name">
-                </div>
-            </div>
-
-            <div class="form-secondRow">
                 <div class="email input-container">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" 
                         pattern="^[a-zA-Z0-9._%+-]+@bpsu\.edu\.ph$" 
                         required>
                 </div>
-                <div class="input-container">
-                    <label for="OTP">OTP</label>
-                    <div class="otp-row">
-                        <input class="otp"type="text" id="OTP" name="OTP">
-                        <a href="">send code</a>
-                    </div>
                 </div>
-                
-            </div>
-            <div class="form-thirdRow">
-                <div class="input-container">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+
+                <div class="lname input-container">
+                    <div class="password-container">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password">
                 </div>
             </div>
-            <div class="form-fourthRow">
-                <div class="input-container">
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="Password" id="confirm-password" name="confirm-password">
-                </div>
+            @if($errors->any())
+            <div style="color: red; margin-bottom: 10px;">
+                @foreach($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
             </div>
+        @endif
             <div class="btnGroup">
                 <button class="cancel">Cancel</button>
-                <button class="submit">Create Account</button>
+                <button class="submit">Login</button>
             </div>
             
         </form>
-       
+        
     </div>
     <div class="right">
         <img src="{{ asset('img/login-image.svg') }}" alt="">

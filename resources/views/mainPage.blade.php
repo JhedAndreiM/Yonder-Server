@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Yonder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
@@ -35,6 +35,7 @@
         </nav>
     </div>
     <div class="left-nav">
+    <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
     <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
     <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
     <div class="vertical-line"></div>
@@ -54,12 +55,7 @@
         <button class="filter-btn" data-filter="students" data-filter-type="condition">Students</button>
     </div>
 
-    <div class="three modeOfTransaction">
-        <h3>Mode of Transaction</h3>
-        <button class="filter-btn" data-filter="pickup" data-filter-type="condition">Pick up</button>
-        <button class="filter-btn" data-filter="deliver" data-filter-type="condition">Deliver</button>
-        <button class="filter-btn" data-filter="meetup" data-filter-type="condition">Meet Up</button>
-    </div>
+    
 
     <div class="four condition">
         <h3>Condition</h3>
@@ -91,7 +87,7 @@
     </div>
         </div>
         <div class="add-listing">
-           <button><h6>want to sell or trade? Add a listing!</h6></button>
+           <a class="listing_link"href="{{ route('create.listing') }}"><h6>want to sell or trade? Add a listing!</h6></a>
         </div>
     </div>
     <div class="right" id="scroll-container">

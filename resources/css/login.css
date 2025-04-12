@@ -136,15 +136,11 @@ input:focus {
 .form-secondRow a{
     font-size: 14px;
 }
-.form-firstRow,.form-secondRow,.form-thirdRow,.form-fourthRow{
+.form-firstRow,.form-secondRow{
     display: flex;
     width: 100%;
     gap: 10px;
     margin-bottom: 10px;
-}
-.form-thirdRow .input-container,
-.form-fourthRow .input-container {
-    flex: 2; 
 }
 
 .fname{
