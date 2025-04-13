@@ -115,7 +115,6 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
     let url='?page=${page}';
     if (filters && filters.length > 0) {
         url += `&filters=${JSON.stringify(filters)}`;
-        
     }
     if (minPrice !== null && maxPrice !== null) {
         url += '&price[min]='+minPrice+'&price[max]='+maxPrice;

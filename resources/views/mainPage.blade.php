@@ -115,7 +115,7 @@
                 
             </div>
         </div>
-
+        
         <div class="right-middle">
             basta dito yunmg featured
         </div>

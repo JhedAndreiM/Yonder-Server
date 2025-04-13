@@ -247,7 +247,6 @@ input[type="number"] {
     display: grid;
     grid-template-columns: repeat(auto-fit, 16.37rem);
     gap: 4rem;
-    justify-content: space-around;
 }
 .card{
     height: 20.25rem;

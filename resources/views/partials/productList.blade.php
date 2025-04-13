@@ -1,7 +1,9 @@
 @if($products->isEmpty())
 <div class="no-items-wrapper">
     <p>No items found</p>
+    
 </div>
+
 @else
     @foreach ($products as $product)
         <div class="card">

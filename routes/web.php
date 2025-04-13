@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrganizationController;
 
-Route::get('/', function () {
-    return view('landing');
-});
+
+
 Route::get('/login.php', function () {
     return view('login');
     });
@@ -33,3 +33,9 @@ Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name(
 Route::get('/student/create-listing', function () {
     return view('createListing');
 })->name('create.listing');
+
+Route::get('/', function () {
+    return view('landing');
+});
+
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
