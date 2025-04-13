@@ -150,9 +150,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('scroll-container');
     const productContainer = document.getElementById('product-container');
     
-    let isLoading = false; // To track if a request is in progress
-    let scrollTimeout = null; // To store the timeout ID for debouncing
-
+    let isLoading = false; 
+    let scrollTimeout = null; 
     if (!container || !productContainer) {
         console.error('Scroll container or product container not found.');
         return;
