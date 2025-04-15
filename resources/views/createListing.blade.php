@@ -89,7 +89,7 @@
         
                 <div class="image-of-product">
                     <label for="productImage">Upload Image</label>
-                    <input type="file" id="productImage" name="productImage">
+                    <input type="file" id="productImage" name="productImage[]" multiple>
                 </div>
 
                 <h3>Reminder!</h3>

@@ -3,25 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request): RedirectResponse{
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'productPrice' => 'required|numeric',
             'productStocks' => 'required|integer',
             'productDescription' => 'required|string',
-            'productImage' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'productImage.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'filters' => 'nullable|string',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('productImage')) {
-            $imagePath = $request->file('productImage')->store('uploads', 'public');
-        }
+        $imagePaths = [];
+
+foreach($request->file('productImage') as $image){
+    $imageName = time().'_'.$image->getClientOriginalName();
+    $image->move(public_path('images'), $imageName);
+    $imagePaths[] = $imageName;
+}
+        // $imagePath = null;
+        // if ($request->hasFile('productImage')) {
+        //     $imagePath = $request->file('productImage')->store('uploads', 'public');
+        // }
 
         $filters = json_decode($request->input('filters'), true) ?? [];
 
@@ -38,7 +46,7 @@ class ProductController extends Controller
         $product->price = $validated['productPrice'];
         $product->stock = $validated['productStocks'];
         $product->description = $validated['productDescription'];
-        $product->image_path = $imagePath;
+        $product->image_path = implode(',', $imagePaths);
         $product->user_id = Auth::id(); 
 
         
