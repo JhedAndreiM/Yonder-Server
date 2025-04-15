@@ -1,0 +1,109 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.raleway-normal {
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 124px;
+    display: flex;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    justify-content: center;
+    align-items: center;
+    font-family: "Raleway", sans-serif;
+    background-color: white;
+    border-bottom: solid rgb(0, 0, 0) 2px;
+}
+.menu-button{
+    display: none;
+}
+.webName{
+    position: absolute;
+    flex:0.7;
+    font-size: 2rem;
+    left: 5%;
+    color: #AE0505;
+}
+.navContainer{
+    padding-left: 2%;
+    flex:1;
+    display: flex;
+    justify-content: center; 
+}
+.navLinks{
+    list-style: none;
+    z-index: 3;
+}
+.navLinks li{
+    position: relative;
+    display: inline-block;
+    padding: 0rem 1.2rem;
+    font-size: 1.5rem;
+    z-index: 3;
+}
+.container{
+    height: calc(100vh - 124px); 
+    margin-top: 124px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    width: 100vw;
+    flex-direction: column;
+}
+.top{
+    height: 100%;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    flex:1;
+    padding-inline: 6rem;
+    gap: 1rem;
+}
+.top h4{
+    font-size: 28px;
+}
+.top h1{
+    font-size:48px;
+    color: #AE0505;
+}
+.top h5{
+    font-size:24px;
+    font-weight: 100;
+}
+.bottom{
+    width: 100vw;
+    flex:1;
+    display: flex;
+    justify-content: center;
+}
+.bottom a{
+    background-color: white;
+    border: solid black 2px;
+    height: 58px;
+    border-radius: 17px;
+    padding-inline: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration:none;
+    color: black;
+    font-size: 24px;
+    margin: 1rem;
+}

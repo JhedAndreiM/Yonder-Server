@@ -123,13 +123,15 @@ input:focus {
     position: sticky;
     height: 100%;
     align-self: flex-start;
-    border: #AE0505 solid 1px;
 }
 .right{
     flex: 1;
     width: 100%;
     padding-inline:3% ;
-    border: #AE0505 solid 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-5%);
 }
 .left h3{
     font-size: 24px;
@@ -235,4 +237,85 @@ input:focus {
     -webkit-transition: all 0.2s;
     -moz-transition: all 0.2s;
     transition: all 0.2s;
+}
+
+.name-of-product{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.name-of-product input{
+   width: 60%;
+}
+.name-of-product,.price-and-stock label,.description-of-product{
+    font-size: 16px;
+    font-weight: 800;
+}
+textarea{
+    border: solid 1px black;
+}
+.price-and-stock{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+#productPrice,#productName,#productStocks{
+    font-size: 16px;
+    height: 30px;
+    padding: 3px;
+    border-radius: 10px;
+    font-family: "Times New Roman", Times, serif;
+    margin-bottom: 1rem;
+}
+.price{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.stock{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.description-of-product{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5%;
+    gap: 5px;
+}
+.image-of-product{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6%;
+}
+form{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+form h3{
+    color: #AE0505;
+}
+form h5{
+    color: #AE0505;
+    margin-bottom:10%;
+}
+form button{
+    height: 60px;
+    width: 238px;
+    border-radius: 12px;
+}
+.submit{
+    background-color: white;
+    border: solid black 1px;
+}
+.cancel{
+    background-color: #696969;
+    color: white;
+    border: none;
+}
+.button-group{
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
 }

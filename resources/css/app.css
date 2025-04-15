@@ -39,6 +39,7 @@ header {
     font-family: "Raleway", sans-serif;
     background-color: white;
     border-bottom: solid rgb(0, 0, 0) 2px;
+    border: solid black 1px;
 }
 .webName{
     flex:0.7;
@@ -79,6 +80,8 @@ header {
     font-size: 1rem;
     font-weight: 500;
     background-color: white;
+    border: solid 1px black;
+    border-style: solid none solid none;
 }
 .button-group .StartSelling{
     width: 11.67rem;

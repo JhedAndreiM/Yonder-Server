@@ -72,16 +72,19 @@
                 </div>
         
                 <div class="price-and-stock">
-                    <label for="productPrice">Price</label>
-                    <input type="text" id="productPrice" name="productPrice">
-        
+                    <div class="price"><label for="productPrice">Price</label>
+                    <input type="number" id="productPrice" name="productPrice">
+                    </div>
+                    
+                    <div class="stock">
                     <label for="productStocks">Stocks</label>
-                    <input type="text" id="productStocks" name="productStocks">
+                    <input type="number" id="productStocks" name="productStocks">
+                    </div>
                 </div>
         
                 <div class="description-of-product">
                     <label for="productDescription">Description</label>
-                    <input type="text" id="productDescription" name="productDescription">
+                    <textarea id="productDescription" name="productDescription" rows="10" cols="30"></textarea>
                 </div>
         
                 <div class="image-of-product">
@@ -93,8 +96,11 @@
                 <h5>Once your listing is submitted, it will under go for review before it is visible to others.
                      Thank you for understanding!
                 </h5>
-                <button>Cancel</button>
-                <button type="submit">Submit</button>
+                <div class="button-group">
+                <button class="cancel">Cancel</button>
+                <button class="submit"type="submit">Submit</button>
+                </div>
+                
             </form>
         </div>
     </div>

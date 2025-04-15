@@ -36,7 +36,6 @@
         </div>
         <div class="button-group">
             <a href="#"><button class="Login">Login</button></a>
-            <a href="#"><button class="StartSelling">Start Selling</button></a>
         </div>
         
     </header>
