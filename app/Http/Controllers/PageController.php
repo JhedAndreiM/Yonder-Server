@@ -24,8 +24,6 @@ class PageController extends Controller
         $filters = array_map('trim', $filters);
         
         $query = Product::query();
-        // dd($search);
-        //search filter
         if($search !== ""){
             $query->where('name', 'like', '%' . $search . '%');
         }
@@ -102,7 +100,11 @@ class PageController extends Controller
         $saleTradeFilters = ['sale', 'trade'];
         $selectedSaleTradeFilter=array_intersect($filters, $saleTradeFilters);
         if(!empty($selectedSaleTradeFilter)){
-            $query->whereIn('forSaleTrade', $selectedSaleTradeFilter);
+            $query->where(function ($q) use ($selectedSaleTradeFilter) {
+                foreach ($selectedSaleTradeFilter as $saleTrade) {
+                    $q->orWhere('colleges', 'LIKE', "%$saleTrade%");
+                }
+            });
         }
 
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function store(Request $request): RedirectResponse{
+    public function store(Request $request){
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'productPrice' => 'required|numeric',
@@ -56,6 +56,13 @@ foreach($request->file('productImage') as $image){
 
         $product->save();
 
-        return redirect()->route('student.dashboard')->with('success', 'Product listed successfully!');
+        $user = Auth::user();
+        // route to para if studnet or organization nag gawa 
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard')->with('success', 'Product listed successfully!');
+        } 
+        elseif ($user->role === 'organization') {
+        return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');
+        }
     }
 }
