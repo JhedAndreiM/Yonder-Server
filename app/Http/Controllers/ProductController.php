@@ -65,4 +65,13 @@ foreach($request->file('productImage') as $image){
         return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');
         }
     }
+
+    public function show($id)
+    {
+        $products = Product::with('user')->findOrFail($id);
+
+    return view('productDetails', compact('products'));
+    }
+
+
 }

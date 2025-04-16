@@ -39,3 +39,4 @@ Route::get('/', function () {
 });
 
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');

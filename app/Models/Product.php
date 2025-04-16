@@ -19,4 +19,8 @@ class Product extends Model
         'for',
     ];
     
+    public function user()
+    {
+    return $this->belongsTo(User::class);
+    }
 }

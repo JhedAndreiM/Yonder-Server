@@ -18,7 +18,7 @@
             <div class="card-right-stock">
                 <h3 class="product-stock">{{ $product->stock }}</h3></div>
             <div class="card-right-price">
-                <h3 class="product-price">P {{ $product->price }}</h3></div>
+                <h3 class="product-price">P {{ number_format($product->price, 2) }}</h3></div>
             <div class="card-right-two">
                 <a href="" class="card-edit">edit</a>
             </div>

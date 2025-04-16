@@ -37,9 +37,10 @@
 <div class="container">
     <div class="left">
         <div class="form-header">
-        <h4>GET STARTER</h4>
-        <h1>Create new account</h1>
-        <h6>Already have an account? <a href="#">Log in</a></h6>
+        <h4>GET STARTED</h4>
+        <h1>Login to your account</h1>
+        <h6>Log in to access your account, track your orders, and <br>
+            enjoy a personalized experience.</h6>
         </div>
         
 

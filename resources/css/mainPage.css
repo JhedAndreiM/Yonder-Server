@@ -152,6 +152,7 @@ input:focus {
     width: 22rem;
     border-radius: 15px;
 }
+
 .add-listing button{
     border: none;
     border-radius: 15px;
@@ -241,6 +242,14 @@ input[type="number"] {
 .right-bottom{
     width: 100%;
     padding-bottom: 3rem;
+}
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+.card-link .card {
+    cursor: pointer;
 }
 .card-container{
     width: 100%;
