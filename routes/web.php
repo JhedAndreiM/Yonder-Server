@@ -7,46 +7,60 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FeaturedImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrganizationController;
-
-
+use App\Http\Middleware\RoleMiddleware; // Import the middleware class
 
 Route::get('/login.php', function () {
     return view('login');
-    });
-Route::get('/mainPage.php', [PageController::class, 'showMainPage']);
-Route::get('/load-products', [PageController::class, 'loadProducts']);
+});
 
-// role selection to
+
+// Middleware for Student
+Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function () {
+    Route::get('/mainPage.php', [PageController::class, 'showMainPage']);
+    Route::get('/load-products', [PageController::class, 'loadProducts']);
+    Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name('student.dashboard');
+});
+
+// Middleware for Orgs
+Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(function () {
+    Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
+    
+});
+
+// Middleware for Admin
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/admin/approve-product/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
+    Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
+});
+
+// Middleware for Orgs and Studnts
+Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->group(function () {
+    // for creating listing 
+    Route::get('/create-listing', function () {
+        return view('createListing');
+    })->name('create.listing');
+
+    // for products page
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+});
+
+
+
+
+
+// Role selection
 Route::get('/select-role', [AuthController::class, 'selectRole'])->name('select.role');
 
-// login page based sa role nila
+// Login page based on role
 Route::get('/login/{role}', [AuthController::class, 'showLoginForm'])->name('login.form');
 
-// pag veverifyan ng login
+// Login verification
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-
-// dashboard ng mga role
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
-Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name('student.dashboard');
-
-// para sa listing page
-Route::get('/student/create-listing', function () {
-    return view('createListing');
-})->name('create.listing');
 
 Route::get('/', function () {
     return view('landing');
 });
 
-Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
-Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
-
-Route::get('/phpinfo', function () {
-    phpinfo();
-});
-
-//admin route
-Route::post('/admin/approve-product/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');

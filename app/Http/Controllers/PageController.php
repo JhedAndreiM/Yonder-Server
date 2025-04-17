@@ -26,6 +26,10 @@ class PageController extends Controller
         $filters = array_map('trim', $filters);
         
         $query = Product::query();
+
+        // Filter by role 'approved'
+        $query->where('approved', 'yes');
+
         if($search !== ""){
             $query->where('name', 'like', '%' . $search . '%');
         }
@@ -109,30 +113,13 @@ class PageController extends Controller
             });
         }
 
-
-
+        //dd($query);
         $products = $query->paginate(8);
         if ($request->ajax()) {
             return view('partials.productList', compact('products'))->render();
         }
-
         $featuredImages = FeaturedImage::latest()->take(5)->get();
         return view('mainPage', compact('products', 'featuredImages'));
-        // if ($request->ajax()) {
-            
-        //     $page = $request->get('page', 1);
-
-            
-        //     $products = Product::paginate(8, ['*'], 'page', $page);
-
-            
-        //     return view('partials.productList', compact('products'))->render();
-        // }
-
-        
-        // $products = Product::paginate(8);
-
-        // return view('mainPage', compact('products'));
     }
 
     

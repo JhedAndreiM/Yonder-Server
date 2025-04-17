@@ -4,7 +4,7 @@
     </div>
 @else
     @foreach ($products as $product)
-    @if($product->approved==="yes")
+    
     @php
         $images = explode(',', $product->image_path);
         $firstImage = $images[0];
@@ -28,10 +28,9 @@
                 </div>
             </div>
         </a>
-        @endif
+        
     @endforeach
 @endif
-
 <!-- Pagination (remove 'display: none' if you want it visible) -->
 <div class="pagination-wrapper" display: none>
     {{ $products->links() }}
