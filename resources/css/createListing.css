@@ -292,6 +292,13 @@ form{
     width: 90%;
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+.alert{
+    position: absolute;
+    color: #AE0505;
+    bottom: 12%;
+    font-size: 1.5rem;
 }
 form h3{
     color: #AE0505;

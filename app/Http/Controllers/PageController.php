@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\FeaturedImage;
 use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
+   
     public function showMainPage(Request $request)
     {
         $page=$request->get('page', 1);
@@ -113,7 +115,9 @@ class PageController extends Controller
         if ($request->ajax()) {
             return view('partials.productList', compact('products'))->render();
         }
-        return view('mainPage', compact('products'));
+
+        $featuredImages = FeaturedImage::latest()->take(5)->get();
+        return view('mainPage', compact('products', 'featuredImages'));
         // if ($request->ajax()) {
             
         //     $page = $request->get('page', 1);

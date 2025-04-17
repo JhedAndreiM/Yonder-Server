@@ -17,6 +17,7 @@
      @vite('resources/js/createListing.js')
 </head>
 <body>
+    <!-- Ang Controller ng Page na to ay ProductController.php :) -->
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
         <h1 class="webName">Yonder</h2>
@@ -84,7 +85,7 @@
         
                 <div class="description-of-product">
                     <label for="productDescription">Description</label>
-                    <textarea id="productDescription" name="productDescription" rows="10" cols="30"></textarea>
+                    <textarea id="productDescription" name="productDescription" rows="10" cols="30" style="resize: none;"></textarea>
                 </div>
         
                 <div class="image-of-product">
@@ -100,9 +101,15 @@
                 <button class="cancel">Cancel</button>
                 <button class="submit"type="submit">Submit</button>
                 </div>
-                
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        Please fill out all the fields before submitting!
+                    </div>
+                @endif
             </form>
+            
         </div>
+        
     </div>
     
 </body>

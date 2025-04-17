@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FeaturedImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrganizationController;
 
@@ -40,3 +41,12 @@ Route::get('/', function () {
 
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
+
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
+
+//admin route
+Route::post('/admin/approve-product/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');

@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -9,7 +9,8 @@
     font-weight: 400;
     font-style: normal;
 }
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -31,17 +32,17 @@ header {
     background-color: white;
     border-bottom: solid rgb(0, 0, 0) 2px;
 }
-.menu-button{
+.menu-button {
     display: none;
 }
-.webName{
+.webName {
     position: absolute;
-    flex:0.7;
+    flex: 0.7;
     font-size: 2rem;
     left: 5%;
-    color: #AE0505;
+    color: #ae0505;
 }
-.nav-search{
+.nav-search {
     width: 33.5rem;
     display: flex;
     justify-content: center;
@@ -53,7 +54,7 @@ header {
     height: 3.3rem;
     align-items: center;
 }
-nav{
+nav {
     display: flex;
     width: 100%;
 }
@@ -70,26 +71,26 @@ nav{
     border: none;
     font-size: 1.3rem;
     cursor: pointer;
-  }
-nav button{
-    background-color: #0D62FF;
+}
+nav button {
+    background-color: #0d62ff;
     color: white;
     border: none;
     width: 7rem;
     height: 2.5rem;
     border-radius: 20px;
 }
-.nav-search input{
+.nav-search input {
     width: 100%;
     font-size: 1.25rem;
     border: none;
 }
 input:focus {
-    outline: none;  
-    border: none;   
+    outline: none;
+    border: none;
     box-shadow: none;
 }
-.vertical-line{
+.vertical-line {
     border-left: 1px solid grey;
     height: 90px;
     margin-left: -3px;
@@ -104,19 +105,19 @@ input:focus {
 }
 /* end for nav*/
 /* CONTAINER */
-.container{
+.container {
     display: flex;
-    height: calc(100vh - 124px); 
+    height: calc(100vh - 124px);
     margin-top: 124px;
     border: solid red 1px;
 }
 /* left */
-.left{
-    flex:2;
+.left {
+    flex: 2;
     display: flex;
     justify-content: center;
 }
-.left-container{
+.left-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -134,9 +135,9 @@ input:focus {
     width: 700px;
     height: 500px;
 }
-.mySlides{
-    width:700px;
-    height:500px;
+.mySlides {
+    width: 700px;
+    height: 500px;
     object-fit: contain;
     border-radius: 7px;
 }
@@ -162,34 +163,33 @@ input:focus {
 
 .left-btn {
     left: 0px;
-    
 }
 
 .right-btn {
     right: 0px;
 }
 /* right */
-.right{
+.right {
     height: 100%;
-    flex:1;
+    flex: 1;
     display: flex;
     justify-content: flex-start;
     overflow-y: auto;
-    
+
     padding-bottom: 110px;
 }
-.right-container{
+.right-container {
     margin-top: 110px;
     border: solid black 2px;
     width: 500px;
-    min-height:611px;
+    min-height: 611px;
     padding-inline: 2rem;
     height: fit-content;
     border-radius: 11px;
     background-color: white;
 }
-.product-name{
-    color: #AE0505;
+.product-name {
+    color: #ae0505;
     padding-top: 2rem;
     padding-bottom: 1rem;
     font-size: 35px;
@@ -200,61 +200,60 @@ input:focus {
 .product-description,
 .product-condition,
 .product-headerDesc,
-.product-stock{
+.product-stock {
     padding-bottom: 0.5rem;
     font-size: 23px;
 }
-.product-forSaleTrade{
+.product-forSaleTrade {
     padding-bottom: 2rem;
     font-size: 23px;
 }
-.sellerInfo{
+.sellerInfo {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
 }
 
-hr{
+hr {
     display: flex;
     justify-content: center;
-    width:90%;
+    width: 90%;
     margin-left: 5%;
     margin-block: 2rem;
 }
-.profile-name img{
+.profile-name img {
     width: 74px;
     height: 74px;
     border: black solid 1px;
     border-radius: 50px;
 }
-.sellerinfo-top{
+.sellerinfo-top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    color: #AE0505;
+    color: #ae0505;
 }
-.sellerinfo-top a{
+.sellerinfo-top a {
     font-size: 1.25rem;
-    color:blue;
+    color: blue;
 }
-.sellerinfo-middle{
+.sellerinfo-middle {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     padding-block: 1rem;
 }
-.profile-name{
+.profile-name {
     display: flex;
     flex-direction: row;
     align-items: center;
-    
 }
-.profile-name h3{
+.profile-name h3 {
     padding-left: 1rem;
-    font-size: 1.40rem;
+    font-size: 1.4rem;
 }
-.sellerinfo-bottom{
+.sellerinfo-bottom {
     padding-bottom: 2rem;
 }

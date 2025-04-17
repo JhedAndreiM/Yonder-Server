@@ -4,6 +4,7 @@
     </div>
 @else
     @foreach ($products as $product)
+    @if($product->approved==="yes")
     @php
         $images = explode(',', $product->image_path);
         $firstImage = $images[0];
@@ -27,6 +28,7 @@
                 </div>
             </div>
         </a>
+        @endif
     @endforeach
 @endif
 

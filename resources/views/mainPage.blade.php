@@ -15,12 +15,16 @@
         background-repeat: no-repeat;
         background-position: top center;
         }
+        .mySlides {
+            display:none;
+        }
     </style>
     @vite('resources/css/mainPage.css')
     @vite('resources/js/mainPage.js')
 </head>
 
 <body>
+    <!-- Ang Controller ng Page na to ay PageController.php :) -->
 <header>
     <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
     <h1 class="webName">Yonder</h2>
@@ -94,7 +98,7 @@
 
         <div class="right-top">
             <div class="right-top-left">
-                <h5>Welcome, Jun! Here are the recommended</h5>
+                <h5>Welcome, {{ Auth::user()->name }}! Here are the recommended</h5>
                 <h5>listing for you:</h5>
             </div>
 
@@ -117,7 +121,16 @@
         </div>
         
         <div class="right-middle">
-            basta dito yunmg featured
+            
+            <button class="w3-button w3-black left-btn slider-btn" onclick="plusDivs(-1)">&#10094;</button>
+            <button class="w3-button w3-black right-btn slider-btn" onclick="plusDivs(1)">&#10095;</button>
+            <div class="w3-content w3-display-container image-slider-wrapper">
+                @foreach ($featuredImages as $image)
+                <img class="mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%; margin-bottom: 10px;">
+                @endforeach
+                
+            </div>
+            
         </div>
         <div class="right-bottom">
             <div class="card-container infinite-scroll" id="product-container">
@@ -128,6 +141,24 @@
             
     </div>
 </div>
-
+<script>
+    var slideIndex = 1;
+    showDivs(slideIndex);
+    
+    function plusDivs(n) {
+      showDivs(slideIndex += n);
+    }
+    
+    function showDivs(n) {
+      var i;
+      var x = document.getElementsByClassName("mySlides");
+      if (n > x.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = x.length}
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
+      }
+      x[slideIndex-1].style.display = "block";  
+    }
+    </script>
 </body>
 </html>
