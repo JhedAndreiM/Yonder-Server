@@ -272,7 +272,15 @@ input[type="number"] {
     top: 50%;
     transform: translateY(-50%);
 }
-
+/* heart icon*/
+.heart-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px; /* Adjust size */
+    z-index: 2000; 
+}
 .left-btn {
     left: 1%;
 }
@@ -300,6 +308,7 @@ input[type="number"] {
     gap: 4rem;
 }
 .card {
+    position: relative;
     height: 20.25rem;
     width: 16.37rem;
     border: solid black 2px;

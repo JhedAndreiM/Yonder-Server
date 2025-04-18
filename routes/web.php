@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\FeaturedImageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\FeaturedImageController;
 use App\Http\Middleware\RoleMiddleware; // Import the middleware class
 
 Route::get('/login.php', function () {
@@ -19,6 +20,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
     Route::get('/mainPage.php', [PageController::class, 'showMainPage']);
     Route::get('/load-products', [PageController::class, 'loadProducts']);
     Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name('student.dashboard');
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle');
+    Route::get('/mainPage.php', [WishlistController::class, 'showHeart']);
 });
 
 // Middleware for Orgs
@@ -32,6 +35,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/approve-product/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
+    
 });
 
 // Middleware for Orgs and Studnts

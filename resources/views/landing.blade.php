@@ -35,7 +35,9 @@
         </nav>
         </div>
         <div class="button-group">
-            <a href="#"><button class="Login">Login</button></a>
+            <a href="{{ route('select.role') }}">
+                <button class="Login"  style="cursor: pointer;">Login</button>
+            </a>
         </div>
         
     </header>
@@ -159,8 +161,8 @@
         <div class="footerThree">
             <ul class="footerGetStarted">
                 <li><h3>Get Started</h3></li>
-                <li><a href="#">Create an Account</a></li>
                 <li><a href="#">Sign In</a></li>
+                <li class="invisible-item"></li>
                 <li class="invisible-item"></li>
             </ul>
         </div>

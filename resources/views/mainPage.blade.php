@@ -159,6 +159,24 @@
       }
       x[slideIndex-1].style.display = "block";  
     }
+
+    $(document).on('click', '.heart-icon', function() {
+        console.log('clicked');
+        var productId = $(this).data('product-id');
+        var heart = $(this);
+
+        $.ajax({
+            url: "{{ route('wishlist.toggle') }}", 
+            method: 'POST',
+            data: {
+                product_id: productId,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function (response) {
+                location.reload();
+            }
+        });
+    });
     </script>
 </body>
 </html>

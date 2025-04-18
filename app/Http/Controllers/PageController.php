@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use App\Models\FeaturedImage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
@@ -114,12 +116,14 @@ class PageController extends Controller
         }
 
         //dd($query);
+        $wishlist = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
+        $featuredImages = FeaturedImage::latest()->take(5)->get();
         $products = $query->paginate(8);
         if ($request->ajax()) {
-            return view('partials.productList', compact('products'))->render();
+            return view('partials.productList', compact('products','featuredImages','wishlist'))->render();
         }
-        $featuredImages = FeaturedImage::latest()->take(5)->get();
-        return view('mainPage', compact('products', 'featuredImages'));
+        
+        return view('mainPage', compact('products', 'featuredImages','wishlist'));
     }
 
     
