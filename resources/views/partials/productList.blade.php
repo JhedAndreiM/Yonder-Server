@@ -1,3 +1,4 @@
+
 @if($products->isEmpty())
     <div class="no-items-wrapper">
         <p>No items found</p>
@@ -10,7 +11,7 @@
         $firstImage = $images[0];
         
     @endphp
-        
+        <a id="card-link" href="{{ route('product.show', ['id' => $product->product_id]) }}" class="card-link">
             <div class="card">
                 <div class="image">
                     <div class="img-placeholder">
@@ -25,20 +26,15 @@
                 <div class="prod-name">{{ $product->name }}</div>
                 <div class="rating">
                     <button>4.7</button>
-                    <span class="heart-icon" data-product-id="{{ $product->product_id }}">
-                        @if (in_array($product->product_id, $wishlist))
-                            <span class="red">❤️</span>
-                        @else
-                            <span class="gray">🤍</span>
-                        @endif
-                    </span>
+                    <i class="fa-solid fa-heart heart-icon {{ in_array($product->product_id, $wishlist) ? 'red' : 'gray' }}" data-product-id="{{ $product->product_id }}"></i>
+
                 </div>
             </div>
-        
+        </a>
         
     @endforeach
 @endif
-<!-- Pagination (remove 'display: none' if you want it visible) -->
+<!-- Pagination (remove 'display: none' if you want yung page like < page 1 > ganyan visible) -->
 <div class="pagination-wrapper" display: none>
     {{ $products->links() }}
 </div>

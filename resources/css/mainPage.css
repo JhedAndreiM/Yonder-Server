@@ -99,10 +99,67 @@ input:focus {
 }
 .left-nav {
     position: fixed;
-    right: 0;
+    right: 0%;
     width: 25%;
     display: flex;
     justify-content: space-evenly;
+}
+.profile_link{
+    cursor: pointer;
+}
+.sub-menu-wrapper{
+    position: absolute;
+    top: 90%;
+    right: 10%;
+    width: 225px;
+    display: none;
+    transition: 0.5 ease;
+}
+.sub-menu-wrapper.active{
+    display: block;
+    transition: 0.5 ease;
+}
+.sub-menu{
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    margin: 10px;
+    border: solid 2px black;
+    border-radius: 11px;
+}
+
+.sub-menu-link{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color:black;
+    margin: 12px 0;
+}
+.sub-menu-link p{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sub-menu-link i{
+    width: 45px;
+    padding: 10px;
+    background-color: rgb(207, 207, 207);
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+}
+.sub-menu::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    right: 7%;
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 12px solid black; 
 }
 .fa-magnifying-glass {
     display: none;
@@ -252,7 +309,18 @@ input[type="number"] {
     height: 100%;
     object-fit: cover;
 }
+.red {
+    color: #ff0000;
+}
 
+.gray {
+    color: #c2c2c2;
+}
+
+.heart-icon {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
 .slider-btn {
     display: flex;
     justify-content: center;
@@ -264,7 +332,7 @@ input[type="number"] {
     height: 50px;
     width: 50px;
     cursor: pointer;
-    z-index: 1110;
+    z-index: 1;
     border-radius: 50%;
     box-shadow: 0 3px 0px rgba(0, 0, 0, 1);
     border: black 1px solid;

@@ -39,12 +39,30 @@
         </nav>
     </div>
     <div class="left-nav">
-    <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
-    <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-    <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-    <div class="vertical-line"></div>
-    <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="">
+        <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
+        <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
+        <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
+        <div class="vertical-line"></div>
+        <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="" id="nav-profile">
+        <div class="sub-menu-wrapper" id="subMenu">
+            <div class="sub-menu">
+                <a href="" class="sub-menu-link">
+                    <i class="fa-solid fa-user"></i>
+                    <p>Profile</p>
+                </a>
+                <a href="" class="sub-menu-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <p>Settings</p>
+                    
+                </a>
+                <a href="" class="sub-menu-link">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <p>Logout</p>
+                </a>
+            </div>
+        </div>
     </div>
+
 </header>
 <div class="container">
     <div class="left">
@@ -160,11 +178,12 @@
       x[slideIndex-1].style.display = "block";  
     }
 
-    $(document).on('click', '.heart-icon', function() {
-        console.log('clicked');
+    $(document).on('click', '.heart-icon', function(event) {
+        event.preventDefault();     
+        event.stopPropagation();
         var productId = $(this).data('product-id');
         var heart = $(this);
-
+        
         $.ajax({
             url: "{{ route('wishlist.toggle') }}", 
             method: 'POST',
@@ -173,9 +192,27 @@
                 _token: "{{ csrf_token() }}"
             },
             success: function (response) {
-                location.reload();
+                
             }
         });
+    });
+
+
+    $(document).on('click', '.heart-icon', function() {
+        $(this).toggleClass('red gray');
+        document.getElementById("card-link").addEventListener("click", function(event){
+                event.preventDefault()
+        });     
+    });
+
+    let subMenu= document.getElementById("subMenu");
+    // fuction toggleMenu(){
+    //     console.log('clicked');
+    //     subMenu.classList.toggle("open-menu");
+    // }
+    $(document).on('click', '#nav-profile', function() {
+        console.log('clicked1');
+        subMenu.classList.toggle("active");
     });
     </script>
 </body>
