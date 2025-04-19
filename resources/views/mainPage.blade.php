@@ -55,7 +55,7 @@
                     <p>Settings</p>
                     
                 </a>
-                <a href="" class="sub-menu-link">
+                <a href="{{ route('logout') }}" class="sub-menu-link">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <p>Logout</p>
                 </a>

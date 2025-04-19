@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
@@ -10,9 +11,6 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\FeaturedImageController;
 use App\Http\Middleware\RoleMiddleware; // Import the middleware class
 
-Route::get('/login.php', function () {
-    return view('login');
-});
 
 
 // Middleware for Student
@@ -56,6 +54,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
 // Role selection
 Route::get('/select-role', [AuthController::class, 'selectRole'])->name('select.role');
+Route::get('/select-role/Log-in_First!', [AuthController::class, 'selectRole'])->name('login');
 
 // Login page based on role
 Route::get('/login/{role}', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -67,4 +66,8 @@ Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
 
