@@ -223,6 +223,13 @@ input:focus {
     font-size: 1rem;
     text-decoration: underline;
 }
+.messageButton img{
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+}
 h3 {
     font-size: 18px;
     margin-bottom: 5px;

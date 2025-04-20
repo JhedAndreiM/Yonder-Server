@@ -159,6 +159,9 @@
             
     </div>
 </div>
+<div class="messageButton">
+    <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
+</div>
 <script>
     var slideIndex = 1;
     showDivs(slideIndex);

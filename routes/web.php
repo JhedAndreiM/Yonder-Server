@@ -46,6 +46,20 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     // for products page
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+
+    Route::get('/redirect-home', function () {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'student') {
+                return redirect()->route('student.dashboard');
+            } elseif ($user->role === 'organization') {
+                return redirect()->route('organization.dashboard');
+            }
+        }
+    
+        Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+    })->name('custom.home');
 });
 
 
