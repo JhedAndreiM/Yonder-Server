@@ -72,8 +72,13 @@
                 @else
                     <h3 class="product-listing">Listed {{ $roundedValue }} days ago</h3>
                 @endif
-                <h3 class="product-stock">Stock:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ $products->stock }}</h3>
 
+                @php
+                $isPBEN = $products->user_id === 5;
+                @endphp
+                <h3 class="product-stock">Stock:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ $products->stock }}</h3>
+                <button id="addToCartBtn">Add to Cart</button>
+                <button id="buyNowBtn">Buy Now</button>
                 <h1 class="product-name">Details</h1>
                 <h3 class="product-condition">Condition: {{ $products->product_condition }}</h3>
                 <h3 class="product-colleges">Colleges: {{ $products->colleges }}</h3>
@@ -101,6 +106,86 @@
             </div>
         </div>
     </div>
+    <!-- MODAL TO GUYS NG BUY ADD TO CART (WORKING) -->
+    <form action="{{ route('cart.store') }}" method="POST">
+        @csrf
+        <div class="modal hidden" id="cartModal">
+            <div class="modal-blur-background"></div>
+            <div class="modalContent">
+                <span class="close-btn">&times;</span>
+                <span>wtf</span>
+                 <!-- Hidden Items Para Ma-send ko sa backend -->
+                 <input type="hidden" name="product_id" value="{{ $products->product_id }}">
+                 <input type="hidden" name="unit_price" value="{{ $products->price }}">
+                 <input type="number" name="total_price" id="total_price_Order">
+                 <input type="hidden" name="quantity" id="quantity_Order">
+                 <input type="hidden" name="action_type" value="cart">
+                 <input type="hidden" name="voucher" value="20">
+                 <!----------------------------------------->
+                <h2>{{ $products->name}}</h2>
+                <p>Condition: {{$products->product_condition}}</p>
+                <p>Colleges: {{$products->colleges}}</p>
+                <p>For: {{$products->forSaleTrade}}</p>
+                <p>Description: {{$products->description}}</p>
+                <p>Price per unit: ₱<span id="unitPrice">{{ number_format($products->price, 2) }}</span></p>
+                <label>Quantity:</label>
+                <input type="number" id="quantity" value="1" min="1" max="{{ number_format($products->stock, 2) }}">
+    
+                @if($isPBEN)
+                    <label>Apply Voucher</label>
+                    <select id="voucher">
+                        <option value="0">No Voucher</option>
+                        <option value="10">₱10 Off</option>
+                        <option value="20">₱20 Off</option>
+                    </select>
+                    @endif
+    
+                    <p>Total: ₱<span id="totalPrice"></span></p>
+                    <button onclick="submitAction('cart')">Confirm Add to Cart</button>
+            </div>
+        </div>
+    </form>
+    
+
+    <!-- MODAL TO GUYS PERO PANG BUY NOW-->
+    <form action="{{ route('cart.store') }}" method="POST">
+        @csrf
+        <div class="modal hidden" id="buyModal">
+            <div class="modal-blur-background"></div>
+            <div class="modalContent">
+                <span class="close-btn-buy">&times;</span>
+                <!-- Hidden Items Para Ma-send ko sa backend -->
+                <input type="hidden" name="product_id" value="{{ $products->product_id }}">
+                <input type="hidden" name="unit_price" value="{{ $products->price }}">
+                <input type="number" name="total_price" id="total_price_BuyNow">
+                <input type="hidden" name="quantity" id="quantity_BuyNow">
+                <input type="hidden" name="action_type" value="buy_now">
+                <!----------------------------------------->
+                <h2>{{ $products->name}}</h2>
+                <p>Condition: {{$products->product_condition}}</p>
+                <p>Colleges: {{$products->colleges}}</p>
+                <p>For: {{$products->forSaleTrade}}</p>
+                <p>Description: {{$products->description}}</p>
+                <p>Price per unit: ₱<span id="unitPriceBuy">{{ number_format($products->price, 2) }}</span></p>
+                <label>Quantity:</label>
+                <input type="number" id="quantityBuy" value="1" min="1">
+    
+                @if($isPBEN)
+                    <label>Apply Voucher</label>
+                    <select id="voucherBuy">
+                        <option value="0">No Voucher</option>
+                        <option value="10">₱10 Off</option>
+                        <option value="20">₱20 Off</option>
+                    </select>
+                    @endif
+    
+                    <p>Total: ₱<span id="totalPriceBuy"></span></p>
+                    <button type="submit">Confirm Add to Cart</button>
+            </div>
+        </div>
+    
+    </form>
+    
     <script>
         var slideIndex = 1;
         showDivs(slideIndex);

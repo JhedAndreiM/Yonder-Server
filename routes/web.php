@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
@@ -60,6 +61,24 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     
         Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     })->name('custom.home');
+
+
+    //profile redirects
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile.page');
+    
+    Route::get('/my-listings', function () {
+        return view('listings');
+    })->name('listings.page');
+    
+    Route::get('/my-vouchers', function () {
+        return view('vouchers');
+    })->name('vouchers.page');
+    
+
+    // cart
+    Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
 });
 
 
@@ -79,6 +98,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/', function () {
     return view('landing');
 });
+
 
 Route::get('/logout', function () {
     Auth::logout();

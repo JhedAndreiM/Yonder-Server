@@ -46,7 +46,7 @@
             <div class="section-text">
                 <h1>Connecting students <br>through seamless buying, <br>selling, and trading</h1>
                 <h5>Welcome to UniTrade – Your university-exclusive marketplace! Buy, sell, <br>and trade everything you need within your campus community. Safe, <br>easy, and made just for students like you. Start exploring today!</h5>
-                <button>Get Started</button>
+                <a class="getStartedBtn"href="{{ route('select.role') }}">Get Started</a>
             </div>
             <div class="section-img">
                 <img class="header-img"src="{{ asset('img/sectionOne-img.svg') }}" alt="">

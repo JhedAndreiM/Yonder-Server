@@ -74,4 +74,8 @@ foreach($request->file('productImage') as $image){
     }
 
 
+    public function addToCart(){
+        
+    }
+
 }
