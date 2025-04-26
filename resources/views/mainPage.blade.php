@@ -217,6 +217,16 @@
         console.log('clicked1');
         subMenu.classList.toggle("active");
     });
+    // pang ano to para clickable yung image na heart sa nav bar :)
+    document.addEventListener('DOMContentLoaded', function () {
+        const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+
+        wishlistButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                window.location.href = "{{ route('show.wishlist') }}";
+            });
+        });
+    });
     </script>
 </body>
 </html>

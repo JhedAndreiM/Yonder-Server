@@ -48,11 +48,8 @@
                       </label>
                       {{-- Dark/Light Mode  --}}
                       <p class="divider"></p>
-                      <p class="app-modal-header">Dark Mode <span class="
-                        {{ Auth::user()->dark_mode > 0 ? 'fas' : 'far' }} fa-moon dark-mode-switch"
-                         data-mode="{{ Auth::user()->dark_mode > 0 ? 1 : 0 }}"></span></p>
+                    
                       {{-- change messenger color  --}}
-                      <p class="divider"></p>
                       {{-- <p class="app-modal-header">Change {{ config('chatify.name') }} Color</p> --}}
                       <div class="update-messengerColor">
                       @foreach (config('chatify.colors') as $color)

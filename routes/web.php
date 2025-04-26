@@ -21,6 +21,11 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
     Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name('student.dashboard');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle');
     Route::get('/mainPage.php', [WishlistController::class, 'showHeart']);
+    Route::get('/wishlist', function () {
+        return view('wishlist');})->name('wishlist.page');
+
+    Route::get('/wishlist-Show', [WishlistController::class, 'showWishlist'])->name('show.wishlist');
+    
 });
 
 // Middleware for Orgs
@@ -70,15 +75,17 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     
     Route::get('/my-listings', function () {
         return view('listings');
-    })->name('listings.page');
+    })->name('profileListings.page');
     
     Route::get('/my-vouchers', function () {
         return view('vouchers');
     })->name('vouchers.page');
     
-
+    
     // cart
     Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
+    
+   
 });
 
 

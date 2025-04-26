@@ -29,13 +29,13 @@
             <div class="leftPart">
                 <div class="leftPartItems">
                     <div class="profile"></div>
-                    <h3 class="h3">Jun Vincent Guillermo</h3>
+                    <h3 class="h3">{{ Auth::user()->name }}</h3>
                 </div>
                 <hr>
                 <div class="leftPartItems2">
-                    <a href="" class="current">My Account</a>
-                    <a href="listings.html">My Listings</a>
-                    <a href="vouchers.html">My Vouchers</a>
+                    <a href="{{ route('profile.page') }}" class="current">My Account</a>
+                    <a href="{{ route('profileListings.page') }}">My Listings</a>
+                    <a href="{{ route('vouchers.page') }}">My Vouchers</a>
                 </div>
             </div>            
             <div class="rightPart">
