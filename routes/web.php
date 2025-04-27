@@ -105,6 +105,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/', function () {
     return view('landing');
 });
+Route::get('/AddtoCart', function () {
+    return view('addToCart');
+});
 
 
 Route::get('/logout', function () {

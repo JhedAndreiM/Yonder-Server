@@ -133,6 +133,7 @@ h1 {
   scrollbar-width: none;
 }
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -147,15 +148,29 @@ h1 {
   margin-right: 80px;
   margin-bottom: 80px;
 }
-
-.placeholder {
-  width: 315px;
-  height: 190px;
-  background-color: black;
-  margin: 0 auto;
-  margin-bottom: 15px;
+.heart-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px; 
+  z-index: 2000; 
+  padding-left: 0px;
+}
+.red {
+  color: #ff0000;
 }
 
+.gray {
+  color: #c2c2c2;
+}
+.image-placeholder{
+  width: 315px;
+  margin: 0 auto;
+  height: 190px;
+  margin-bottom: 15px;
+  border-radius: 7px;
+}
 .price {
   font-size: 25px;
   font-weight: bold;
@@ -169,8 +184,4 @@ h1 {
 .stocks {
   margin-top: 7px;
   margin-bottom: 10px;
-}
-
-.heart-icon {
-  padding-left: 280px;
 }

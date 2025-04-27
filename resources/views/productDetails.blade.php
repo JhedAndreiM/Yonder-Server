@@ -120,7 +120,7 @@
                  <input type="number" name="total_price" id="total_price_Order">
                  <input type="hidden" name="quantity" id="quantity_Order">
                  <input type="hidden" name="action_type" value="cart">
-                 <input type="hidden" name="voucher" value="20">
+                 <input type="hidden" name="voucher" id="voucherHidden">
                  <!----------------------------------------->
                 <h2>{{ $products->name}}</h2>
                 <p>Condition: {{$products->product_condition}}</p>
@@ -133,10 +133,13 @@
     
                 @if($isPBEN)
                     <label>Apply Voucher</label>
-                    <select id="voucher">
+                    <select id="voucher" name="voucher_id">
                         <option value="0">No Voucher</option>
-                        <option value="10">₱10 Off</option>
-                        <option value="20">₱20 Off</option>
+                        @foreach($availableVouchers as $voucher)
+                            <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
+                                ₱{{ number_format($voucher->amount, 2) }} Off
+                            </option>
+                        @endforeach
                     </select>
                     @endif
     

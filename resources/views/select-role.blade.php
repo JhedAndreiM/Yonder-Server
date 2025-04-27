@@ -1,3 +1,8 @@
+@if (Auth::check())
+    <script>
+        window.location.href = "{{ route('student.dashboard') }}";
+    </script>
+@endif
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -163,6 +163,7 @@
     <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
 </div>
 <script>
+    
     var slideIndex = 1;
     showDivs(slideIndex);
     
@@ -219,6 +220,7 @@
     });
     // pang ano to para clickable yung image na heart sa nav bar :)
     document.addEventListener('DOMContentLoaded', function () {
+        
         const wishlistButtons = document.querySelectorAll('.wishlistBtn');
 
         wishlistButtons.forEach(button => {

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {
@@ -69,13 +70,13 @@ foreach($request->file('productImage') as $image){
     public function show($id)
     {
         $products = Product::with('user')->findOrFail($id);
+        $availableVouchers = Voucher::where('user_id', Auth::id())
+        ->where('status', 'available')
+        ->where('seller_id', $products->user_id) 
+        ->get();
 
-    return view('productDetails', compact('products'));
+    return view('productDetails', compact('products','availableVouchers'));
     }
 
-
-    public function addToCart(){
-        
-    }
 
 }

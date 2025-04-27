@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Product;
+
 class CartController extends Controller
 {
     public function store(Request $request)
@@ -26,7 +28,7 @@ class CartController extends Controller
     //bali eto kukunin niya yung row ng product_id :)
     $product = Product::findOrFail($validated['product_id']);
 
-    DB::table('cart_items')->insert([
+    $cartItemId = DB::table('cart_items')->insert([
         'user_id' => Auth::id(),
         'product_id' => $request['product_id'],
         'seller_id' => $product->user_id,
@@ -37,7 +39,19 @@ class CartController extends Controller
         'created_at' => now(),
         'updated_at' => now(),
     ]);
+    if (!empty($validated['voucher_id'])) {
+        $voucher = Voucher::where('id', $validated['voucher_id'])
+            ->where('user_id', Auth::id())
+            ->where('status', 'available')
+            ->first();
 
+        if ($voucher) {
+            $voucher->update([
+                'status' => 'in_cart',
+                'cart_item_id' => $cartItemId,
+            ]);
+        }
+    }
     return redirect()->back()->with('success', 'Item added!');
 }
 }
