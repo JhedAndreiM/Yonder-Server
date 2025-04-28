@@ -15,7 +15,6 @@ return new class extends Migration
             $table->string('supplier_type')->nullable(); 
             $table->string('mode_of_transaction')->nullable(); 
             $table->string('condition')->nullable();
-            $table->decimal('price', 10, 2)->nullable(); 
             $table->string('college')->nullable(); 
             $table->string('for')->nullable();
         });
