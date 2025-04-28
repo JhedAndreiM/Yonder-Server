@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yonder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <meta name="base-url" content="{{ url('/') }}">
@@ -39,11 +42,12 @@
         </nav>
     </div>
     <div class="left-nav">
-        <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
+        <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
         <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
         <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
         <div class="vertical-line"></div>
-        <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="" id="nav-profile">
+        <div class="profilePlace"><img class="profile_link" src="{{ asset('storage/users-avatar/'. Auth::user()->avatar) }}" alt="" id="nav-profile"></div>
+        
         <div class="sub-menu-wrapper" id="subMenu">
             <div class="sub-menu">
                 <a href="{{ route('profile.page') }}" class="sub-menu-link">
@@ -222,12 +226,19 @@
     document.addEventListener('DOMContentLoaded', function () {
         
         const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-
+        const cartButton = document.querySelectorAll('.cartBtn');
+        // wishlist button
         wishlistButtons.forEach(button => {
             button.addEventListener('click', function () {
                 window.location.href = "{{ route('show.wishlist') }}";
             });
         });
+
+        cartButton.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('show.cart')}}";
+            })
+        })
     });
     </script>
 </body>

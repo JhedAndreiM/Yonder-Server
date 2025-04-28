@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: "Raleway";
 }
 .raleway-normal {
     font-family: "Raleway", sans-serif;
@@ -47,7 +48,9 @@ header {
     display: flex;
     justify-content: center;
     flex-direction: row;
-    border: solid black 2px;
+    border: 1px #1d1d1d;
+    border-style: solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
     padding-right: 0.3rem;
     padding-left: 1rem;
     border-radius: 46px;
@@ -58,6 +61,20 @@ nav {
     display: flex;
     width: 100%;
 }
+.profilePlace{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profile_link{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    border: solid 1px black;
+}
 .mobile-only {
     display: none;
     background: none;
@@ -67,7 +84,8 @@ nav {
 }
 .notificationBtn,
 .wishlistBtn,
-.vertical-line {
+.vertical-line,
+.cartBtn {
     cursor: pointer;
 }
 /* para to sa isang sort (mobile)*/
@@ -198,7 +216,9 @@ input:focus {
 .filter-box {
     height: 42.5rem;
     width: 22rem;
-    border: solid black 2px;
+    border: #1d1d1d;
+    border-style: solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -210,7 +230,9 @@ input:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: solid black 2px;
+    border: #1d1d1d;
+    border-style: solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
     height: 3.2rem;
     width: 22rem;
     border-radius: 15px;
@@ -315,6 +337,10 @@ input[type="number"] {
     margin-bottom: 1%;
     overflow: hidden;
     position: relative;
+    border: #1d1d1d;
+    border-style: solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
+    border-radius: 7px;
 }
 .right-middle img {
     width: 100%;
@@ -391,7 +417,9 @@ input[type="number"] {
     position: relative;
     height: 20.25rem;
     width: 16.37rem;
-    border: solid black 2px;
+    border: #1d1d1d;
+    border-style: solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
     border-radius: 8px;
     display: flex;
     flex-direction: column;

@@ -2,12 +2,17 @@
     $seller = $products->user;
     $joinedYear = \Carbon\Carbon::parse($seller->created_at)->year;
 @endphp
-<!DOCTYPE html>
-<html lang="en">
-<head>
+@extends('Front_layouts.default')
+
+@section('head')
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <title>Document</title>
     <style>
         body {
@@ -22,19 +27,10 @@
     </style>
     @vite('resources/css/productDetails.css')
     @vite('resources/js/productDetails.js')
-</head>
-<body>
-    <header>
-        <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-            <h1 class="webName">Yonder</h2>
-        <div class="left-nav">
-            <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
-            <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-            <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-            <div class="vertical-line"></div>
-            <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="">
-        </div>
-    </header>
+
+@endsection
+
+@section('maincontent')
     <div class="container">
         <div class="left">
             <div class="left-container">
@@ -77,8 +73,8 @@
                 $isPBEN = $products->user_id === 5;
                 @endphp
                 <h3 class="product-stock">Stock:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ $products->stock }}</h3>
-                <button id="addToCartBtn">Add to Cart</button>
-                <button id="buyNowBtn">Buy Now</button>
+                <button class="addToCartBtn"id="addToCartBtn">Add to Cart</button>
+                <button class="addToBuyNowBtn"id="buyNowBtn">Buy Now</button>
                 <h1 class="product-name">Details</h1>
                 <h3 class="product-condition">Condition: {{ $products->product_condition }}</h3>
                 <h3 class="product-colleges">Colleges: {{ $products->colleges }}</h3>
@@ -106,6 +102,8 @@
             </div>
         </div>
     </div>
+
+    <!-- CartController yung Controller page nito :D -->
     <!-- MODAL TO GUYS NG BUY ADD TO CART (WORKING) -->
     <form action="{{ route('cart.store') }}" method="POST">
         @csrf
@@ -113,14 +111,14 @@
             <div class="modal-blur-background"></div>
             <div class="modalContent">
                 <span class="close-btn">&times;</span>
-                <span>wtf</span>
                  <!-- Hidden Items Para Ma-send ko sa backend -->
                  <input type="hidden" name="product_id" value="{{ $products->product_id }}">
                  <input type="hidden" name="unit_price" value="{{ $products->price }}">
-                 <input type="number" name="total_price" id="total_price_Order">
+                 <input type="hidden" name="total_price" id="total_price_Order">
                  <input type="hidden" name="quantity" id="quantity_Order">
                  <input type="hidden" name="action_type" value="cart">
-                 <input type="hidden" name="voucher" id="voucherHidden">
+                 <input type="hidden" name="voucher_id" id="voucherAddToCart">
+                 <input type="hidden" name="voucher_amount" id="voucherAddToCartAmount">
                  <!----------------------------------------->
                 <h2>{{ $products->name}}</h2>
                 <p>Condition: {{$products->product_condition}}</p>
@@ -133,8 +131,8 @@
     
                 @if($isPBEN)
                     <label>Apply Voucher</label>
-                    <select id="voucher" name="voucher_id">
-                        <option value="0">No Voucher</option>
+                    <select id="voucher" name="voucher_id" onchange="myFunction(event)">
+                        <option disabled selected>No Voucher</option>
                         @foreach($availableVouchers as $voucher)
                             <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
                                 ₱{{ number_format($voucher->amount, 2) }} Off
@@ -150,6 +148,7 @@
     </form>
     
 
+    
     <!-- MODAL TO GUYS PERO PANG BUY NOW-->
     <form action="{{ route('cart.store') }}" method="POST">
         @csrf
@@ -160,9 +159,11 @@
                 <!-- Hidden Items Para Ma-send ko sa backend -->
                 <input type="hidden" name="product_id" value="{{ $products->product_id }}">
                 <input type="hidden" name="unit_price" value="{{ $products->price }}">
-                <input type="number" name="total_price" id="total_price_BuyNow">
+                <input type="hidden" name="total_price" id="total_price_BuyNow">
                 <input type="hidden" name="quantity" id="quantity_BuyNow">
                 <input type="hidden" name="action_type" value="buy_now">
+                <input type="hidden" name="voucher_id" id="voucherBuyNow">
+                 <input type="hidden" name="voucher_amount" id="voucherBuyNowAmount">
                 <!----------------------------------------->
                 <h2>{{ $products->name}}</h2>
                 <p>Condition: {{$products->product_condition}}</p>
@@ -175,10 +176,13 @@
     
                 @if($isPBEN)
                     <label>Apply Voucher</label>
-                    <select id="voucherBuy">
-                        <option value="0">No Voucher</option>
-                        <option value="10">₱10 Off</option>
-                        <option value="20">₱20 Off</option>
+                    <select id="voucherBuySelect" name="voucher_id" onchange="myFunctionBuy(event)">
+                        <option disabled selected>No Voucher</option>
+                        @foreach($availableVouchers as $voucher)
+                            <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
+                                ₱{{ number_format($voucher->amount, 2) }} Off
+                            </option>
+                        @endforeach
                     </select>
                     @endif
     
@@ -188,6 +192,24 @@
         </div>
     
     </form>
+    
+
+    <!-- modal to para sa mga pop ups like error and success -->
+    @if(session('Failed'))
+    <div class="modal" id="FailedModal">
+        <div class="modal-blur-background"></div>
+            <div class="modalContentFailed">
+                <div class="failed_modal_top"><i class="fa-regular fa-circle-xmark fa-2xl" style="color: #ffffff;"></i></div>
+                <div class="failed_modal_bottom">
+                    <p class="failed-text"style="color: Red;font-size: 25px;">{{ session('Failed') }}</p>
+                    <span class="close-btn-failed">Continue Shopping</span>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    @endif
     
     <script>
         var slideIndex = 1;
@@ -207,6 +229,21 @@
           }
           x[slideIndex-1].style.display = "block";  
         }
+        function myFunction(e){
+            const selectedVoucherId = e.target.value;
+            document.getElementById("voucherAddToCart").value = selectedVoucherId;
+            console.log('Selected voucher id:', selectedVoucherId);
+        }
+        function myFunctionBuy(e){
+            const selectedVoucherIdBuy = e.target.value;
+            document.getElementById("voucherBuyNow").value = selectedVoucherIdBuy;
+            console.log('Selected voucher id:', selectedVoucherIdBuy);
+        }
+        const closeBtnFailed = document.querySelector(".close-btn-failed");
+        closeBtnFailed.addEventListener("click", () => {
+            console.log('test');
+            FailedModal.classList.add("hidden");
+            window.location.href = "{{ route('custom.home') }}";
+        });
         </script>
-</body>
-</html>
+@endsection

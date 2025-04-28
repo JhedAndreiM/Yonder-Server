@@ -40,13 +40,6 @@
   .menu-button {
     display: none;
   }
-  .webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    color: #ae0505;
-  }
   .nav-search {
     width: 33.5rem;
     display: flex;
@@ -131,6 +124,7 @@
     scroll-behavior: smooth;
     scrollbar-width: none;
     border: solid red 1px;
+    padding-bottom: 3rem;
   }
   .card{
     width: 1000px;

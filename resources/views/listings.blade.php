@@ -1,6 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+@extends('Front_layouts.default')
+
+@section('head')
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
@@ -11,18 +12,10 @@
       rel="stylesheet"
     />
     @vite('resources/css/listings.css')
-  </head>
-  <body>
-    <header>
-        <h1 class="webName">Yonder</h2>
-    <div class="left-nav">
-        <img class="wishlistBtn" src="IMG/cart.svg" alt="">
-        <img class="wishlistBtn" src="img/heart-icon.svg" alt="">
-        <img class="notificationBtn" src="img/bell-icon.svg" alt="">
-        <div class="vertical-line"></div>
-        <img class="profile_link" src="img/profile-placeholder.svg" alt="">
-    </div>
-</header>
+
+@endsection
+
+@section('maincontent')
 <div class="mainContainer">
     <div class="top">
         <h1>Profile</h1>
@@ -30,7 +23,7 @@
     <div class="container">
         <div class="leftPart">
             <div class="leftPartItems">
-                <div class="profile"></div>
+                <div class="profilePlace_profile"><img class="profile_link_profile" src="{{ asset('storage/users-avatar/'. Auth::user()->avatar) }}" alt="" id="nav-profile"></div>
                 <h3 class="h3">{{ Auth::user()->name }}</h3>
             </div>
             <hr>
@@ -116,5 +109,4 @@
             </div>
         </div>
     </div>
-  </body>
-</html>
+@endsection

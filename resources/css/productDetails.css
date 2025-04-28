@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: "Raleway";
 }
 .raleway-normal {
     font-family: "Raleway", sans-serif;
@@ -14,7 +15,7 @@ html {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* Prevent body from scrolling */
+    overflow: hidden; 
 }
 header {
     position: fixed;
@@ -34,13 +35,6 @@ header {
 }
 .menu-button {
     display: none;
-}
-.webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    color: #ae0505;
 }
 .nav-search {
     width: 33.5rem;
@@ -102,6 +96,20 @@ input:focus {
     width: 25%;
     display: flex;
     justify-content: space-evenly;
+}
+.profilePlace{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profile_link{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    border: solid 1px black;
 }
 /* end for nav*/
 /* CONTAINER */
@@ -204,6 +212,9 @@ input:focus {
     padding-bottom: 0.5rem;
     font-size: 23px;
 }
+.product-description{
+    font-weight: 400;
+}
 .product-forSaleTrade {
     padding-bottom: 2rem;
     font-size: 23px;
@@ -257,6 +268,16 @@ hr {
 .sellerinfo-bottom {
     padding-bottom: 2rem;
 }
+.addToCartBtn,
+.addToBuyNowBtn{
+    background-color: white;
+    padding: 1rem;
+    border-style: 1px solid;
+    box-shadow: 0px 2px 0px 0px #1d1d1d;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
 /* For modal :) */
 .modal {
@@ -287,6 +308,43 @@ hr {
     width: 300px;
     max-width: 90%;
 }
+.modalContentFailed{
+    background-color: white;
+    border-radius: 10px;
+    width: 350px;
+    height: 200px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+.failed_modal_top{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.failed_modal_bottom{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+.failed_modal_top{
+    flex:0.5;
+    background: rgb(154,0,0);
+    background: linear-gradient(90deg, rgba(154,0,0,1) 49%, rgba(52,0,0,1) 150%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+.failed_modal_bottom{
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+.fa-2xl {
+    font-size: 2.5em;
+}
 
 .close-btn {
     float: right;
@@ -297,4 +355,17 @@ hr {
     float: right;
     font-size: 24px;
     cursor: pointer;
+}
+.close-btn-failed {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+    background: rgb(154,0,0);
+    border-style: 1px solid;
+    box-shadow: 0px 2px 0px 0px #1d1d1d;
+    border-radius: 5px;
+    padding: 5px;
+    padding-inline: 10px;
+    color: white;
+    font-weight: 500;
 }
