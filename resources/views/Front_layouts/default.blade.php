@@ -284,16 +284,11 @@
     </div>
     <script>
         let subMenu= document.getElementById("subMenu");
-    // fuction toggleMenu(){
-    //console.log('clicked');
-    //     subMenu.classList.toggle("open-menu");
-    // }
     $(document).on('click', '#nav-profile', function() {
         console.log('clicked1');
         subMenu.classList.toggle("active");
     });
-    // pang ano to para clickable yung image na heart sa nav bar :)
-    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
         
         const wishlistButtons = document.querySelectorAll('.wishlistBtn');
         const cartButton = document.querySelectorAll('.cartBtn');

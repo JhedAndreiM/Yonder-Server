@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-image">
             @if($items->image_path)
-                <img class="image-placeholder"src="{{ asset('images/' . $wishlistItem->product->image_path) }}" alt="{{ $wishlistItem->product->name }}">
+                <img class="image-placeholder"src="{{ asset('images/' . $items->image_path) }}" alt="{{ $items->image_path }}">
             @else
                 <img class="image-placeholder"src="{{ asset('img/default-product.png') }}" alt="No image available">
             @endif
