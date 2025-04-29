@@ -86,7 +86,8 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
     // add to cart
     Route::get('/Cart', [CartController::class, 'showCart'])->name('show.cart');
-   
+   // remove from cart
+   Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
 });
 
 

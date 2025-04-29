@@ -124,7 +124,6 @@
                 <p>Condition: {{$products->product_condition}}</p>
                 <p>Colleges: {{$products->colleges}}</p>
                 <p>For: {{$products->forSaleTrade}}</p>
-                <p>Description: {{$products->description}}</p>
                 <p>Price per unit: ₱<span id="unitPrice">{{ number_format($products->price, 2) }}</span></p>
                 <label>Quantity:</label>
                 <input type="number" id="quantity" value="1" min="1" max="{{ number_format($products->stock, 2) }}">
@@ -199,18 +198,41 @@
     <div class="modal" id="FailedModal">
         <div class="modal-blur-background"></div>
             <div class="modalContentFailed">
-                <div class="failed_modal_top"><i class="fa-regular fa-circle-xmark fa-2xl" style="color: #ffffff;"></i></div>
-                <div class="failed_modal_bottom">
-                    <p class="failed-text"style="color: Red;font-size: 25px;">{{ session('Failed') }}</p>
-                    <span class="close-btn-failed">Continue Shopping</span>
+                <div class="top">
+                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
                 </div>
-
+                <div class="middle">
+                    <h1>Oops!</h1>
+                    <h5>It seems that this product is already in your cart. Check out you cart and see the product.</h5>
+                </div>
+                <div class="bottom">
+                    <button onclick="closeFailedModal()">Okay!</button>
+                </div>
+                
                 
             </div>
         </div>
     </div>
     @endif
-    
+
+    @if(session('success'))
+    <div class="modal" id="SuccessModal">
+        <div class="modal-blur-background"></div>
+            <div class="modalContentSuccess">
+                <div class="top-success">
+                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
+                </div>
+                <div class="middle-success">
+                    <h1>Success!</h1>
+                    <h5>Product added to your cart! Check your cart and see the product.</h5>
+                </div>
+                <div class="bottom-success">
+                    <button onclick="closeSuccessModal()">Okay!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     <script>
         var slideIndex = 1;
         showDivs(slideIndex);
@@ -239,11 +261,13 @@
             document.getElementById("voucherBuyNow").value = selectedVoucherIdBuy;
             console.log('Selected voucher id:', selectedVoucherIdBuy);
         }
-        const closeBtnFailed = document.querySelector(".close-btn-failed");
-        closeBtnFailed.addEventListener("click", () => {
-            console.log('test');
-            FailedModal.classList.add("hidden");
-            window.location.href = "{{ route('custom.home') }}";
-        });
+        const failedModal = document.getElementById("FailedModal");
+        function closeFailedModal(){
+            failedModal.classList.add("hidden");
+        }
+        const successModal = document.getElementById("SuccessModal");
+        function closeSuccessModal(){
+            successModal.classList.add("hidden");
+        }
         </script>
 @endsection

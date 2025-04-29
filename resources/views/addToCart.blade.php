@@ -17,5 +17,6 @@
         <div class="container">
           @include('partials.productCart', ['cartItems' => $cartItems])
         </div>
+        
       </div>
 @endsection

@@ -54,7 +54,11 @@ foreach($request->file('productImage') as $image){
         $product->product_condition = implode(',', $selected_condition);
         $product->colleges = implode(',', $selected_colleges);
         $product->forSaleTrade = implode(',', $selected_forSaleTrade);
-
+        if (Auth::id() == 5) {
+            $product->supplier_type = 'verified';
+        } else {
+            $product->supplier_type = 'students';
+        }
         $product->save();
 
         $user = Auth::user();

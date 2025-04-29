@@ -305,47 +305,105 @@ hr {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 733px;
+    height: 377px;
     max-width: 90%;
 }
 .modalContentFailed{
     background-color: white;
     border-radius: 10px;
-    width: 350px;
-    height: 200px;
+    width: 420px;
+    height: 456px;
     max-width: 90%;
     display: flex;
-    flex-direction: column;
-}
-.failed_modal_top{
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-.failed_modal_bottom{
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-.failed_modal_top{
-    flex:0.5;
-    background: rgb(154,0,0);
-    background: linear-gradient(90deg, rgba(154,0,0,1) 49%, rgba(52,0,0,1) 150%);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    
-}
-.failed_modal_bottom{
-    flex:1;
-    display: flex;
     justify-content: center;
-    align-items: center;
     flex-direction: column;
-    gap: 1rem;
+    border: 1px solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
+    border-radius: 10px;
 }
-.fa-2xl {
-    font-size: 2.5em;
+.modalContentSuccess{
+    background-color: white;
+    border-radius: 10px;
+    width: 420px;
+    height: 456px;
+    max-width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 1px solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
+    border-radius: 10px;
 }
 
+.top{
+    flex: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.top-success{
+    flex: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.middle,
+.bottom{
+    gap:1rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.middle-success,
+.bottom-success{
+    gap:1rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.middle h1{
+    color: #E7414A;
+}
+.middle-success h1{
+    color: #44E523;
+}
+.middle h5{
+    width: 80%;
+    font-size: 20px;
+    font-weight: 400;
+}
+.middle-success h5{
+    width: 80%;
+    font-size: 20px;
+    font-weight: 400;
+}
+.bottom button{
+    background-color: white;
+    width: 169px;
+    height: 47px;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 7px;
+    border: solid black 1px;
+    cursor: pointer;
+}
+.bottom-success button{
+    background-color: white;
+    width: 169px;
+    height: 47px;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 7px;
+    border: solid black 1px;
+    cursor: pointer;
+}
 .close-btn {
     float: right;
     font-size: 24px;
@@ -356,16 +414,4 @@ hr {
     font-size: 24px;
     cursor: pointer;
 }
-.close-btn-failed {
-    float: right;
-    font-size: 20px;
-    cursor: pointer;
-    background: rgb(154,0,0);
-    border-style: 1px solid;
-    box-shadow: 0px 2px 0px 0px #1d1d1d;
-    border-radius: 5px;
-    padding: 5px;
-    padding-inline: 10px;
-    color: white;
-    font-weight: 500;
-}
+

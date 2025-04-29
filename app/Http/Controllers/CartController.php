@@ -95,9 +95,17 @@ class CartController extends Controller
             'cart_items.product_id', 
             'product.name as product_name', 
             'product.image_path',
-            'product.description'
+            'product.description',
+            'cart_items.voucher_applied'
         )
         ->get();
         return view('addToCart', compact('cartItems'));
+    }
+
+    public function destroy($id)
+    {
+        $deleted = DB::table('cart_items')->where('id', $id)->delete();
+
+        return redirect()->back()->with('success', 'Item removed from cart.');
     }
 }

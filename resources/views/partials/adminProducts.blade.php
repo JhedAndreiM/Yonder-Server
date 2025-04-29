@@ -10,7 +10,13 @@
     @endphp
     <div>
         <div class="card">
-            <div class="card-left"><img src="{{ asset('images/' . $firstImage) }}" alt="wtf"></div>
+            <div class="card-left">
+                @if($firstImage && file_exists(public_path('images/' . $firstImage)))
+                            <img src="{{ asset('images/' . $firstImage) }}" alt="{{ $product->name }}">
+                        @else
+                            <img src="{{ asset('img/default-product.png') }}" alt="No image available">
+                        @endif
+            </div>
             <div class="card-right">
                 <h1 class="product-name">{{ $product->name }}</h1>
 
