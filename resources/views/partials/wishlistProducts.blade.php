@@ -4,10 +4,16 @@
     </div>
 @else
 @foreach ($wishlistItems as $wishlistItem)
-    
+@php
+$images = explode(',', $wishlistItem->product->image_path);
+$firstImage = $images[0];
+
+@endphp
+        <a id="card-link" href="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}" class="card-link">
         <div class="card">
-            @if($wishlistItem->product->image_path)
-                <img class="image-placeholder"src="{{ asset('images/' . $wishlistItem->product->image_path) }}" alt="{{ $wishlistItem->product->name }}">
+            <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}">
+            @if($firstImage)
+                <img class="image-placeholder"src="{{ asset('images/' . $firstImage) }}" alt="{{ $firstImage }}">
             @else
                 <img class="image-placeholder"src="{{ asset('img/default-product.png') }}" alt="No image available">
             @endif
@@ -17,6 +23,6 @@
             <img class="heart-icon" src="img/heart-icon.png" alt="" />
             <i class="fa-solid fa-heart heart-icon {{ in_array($wishlistItem->product->product_id, $wishlist) ? 'red' : 'gray' }}" data-product-id="{{ $wishlistItem->product->product_id }}"></i>
           </div>
-        
+        </a>
     @endforeach
 @endif

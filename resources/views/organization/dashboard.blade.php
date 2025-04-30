@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+@extends('Front_layouts.org')
+
+@section('head')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -15,18 +15,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <title>Admin Page</title>
     @vite('resources/css/admin-org.css')
-</head>
-<body>
-    <header>
-        <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-            <h1 class="webName">Yonder</h2>
-        <div class="left-nav">
-            <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-            <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-            <div class="vertical-line"></div>
-            <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="">
-        </div>
-    </header>
+@endsection
+@section('maincontent')
     <div class="container">
         <div class="left">
             <div class="left-container">
@@ -62,5 +52,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection

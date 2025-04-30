@@ -1001,6 +1001,8 @@ div.loadingPlaceholder-date {
   overflow: auto;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
 }
 .imageModal-content {
   margin: auto;
@@ -1033,7 +1035,7 @@ div.loadingPlaceholder-date {
 
 .imageModal-close {
   position: absolute;
-  top: 15px;
+  top: 10%;
   right: 35px;
   color: #f1f1f1;
   font-size: 40px;

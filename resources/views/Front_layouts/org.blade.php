@@ -3,24 +3,6 @@
 
 <head>
     <style>
-        body{
-            background-image: url("{{ asset('img/background.svg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: top center;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            /* Prevent body from scrolling */
-            
-        }
 
         header {
             position: fixed;
@@ -263,8 +245,6 @@
         <a href="{{ route('custom.home') }}"><h1 class="webName">Yonder</h2></a>
             </div>
             <div class="left-nav">
-                <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
-                <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
                 <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
                 <div class="vertical-line"></div>
                 <div class="profilePlace"><img class="profile_link"

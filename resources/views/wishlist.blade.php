@@ -39,7 +39,9 @@
       </div>
     </div>
     <script>
+      let isHeartClicked = false;
       $(document).on('click', '.heart-icon', function(event) {
+        isHeartClicked = true;
         console.log('wtf1');
         event.preventDefault();     
         event.stopPropagation();
@@ -58,5 +60,16 @@
             }
         });
     });
+    function hrefClick(cardElement){
+        const input = cardElement.querySelector('#cardLinkFromInput');
+        setTimeout(function() {
+            if (!isHeartClicked) {
+            console.log('clicked');
+            window.location.href = input.value;
+        }
+        }, 100);
+        
+            isHeartClicked = false;
+    }
     </script>
 @endsection

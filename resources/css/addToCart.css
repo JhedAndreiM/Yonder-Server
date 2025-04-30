@@ -3,25 +3,24 @@
     margin: 0;
     padding: 0;
     font-family: "Raleway";
-  }
-  .raleway-normal {
+}
+.raleway-normal {
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-  }
-  body,
-  html {
+}
+body,
+html {
     margin: 0;
     padding: 0;
     height: 100%;
     overflow: hidden;
-    background-image: url("img/background.svg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: top center;
-  }
-  header {
+}
+header {
     position: fixed;
     top: 0;
     left: 0;
@@ -36,11 +35,11 @@
     font-family: "Raleway", sans-serif;
     background-color: white;
     border-bottom: solid rgb(0, 0, 0) 2px;
-  }
-  .menu-button {
+}
+.menu-button {
     display: none;
-  }
-  .nav-search {
+}
+.nav-search {
     width: 33.5rem;
     display: flex;
     justify-content: center;
@@ -51,69 +50,69 @@
     border-radius: 46px;
     height: 3.3rem;
     align-items: center;
-  }
-  nav {
+}
+nav {
     display: flex;
     width: 100%;
-  }
-  .mobile-only {
+}
+.mobile-only {
     display: none;
     background: none;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
-  }
-  .filter-icon {
+}
+.filter-icon {
     display: none;
     background: none;
     border: none;
     font-size: 1.3rem;
     cursor: pointer;
-  }
-  nav button {
+}
+nav button {
     background-color: #0d62ff;
     color: white;
     border: none;
     width: 7rem;
     height: 2.5rem;
     border-radius: 20px;
-  }
-  .nav-search input {
+}
+.nav-search input {
     width: 100%;
     font-size: 1.25rem;
     border: none;
-  }
-  input:focus {
+}
+input:focus {
     outline: none;
     border: none;
     box-shadow: none;
-  }
-  
-  .vertical-line {
+}
+
+.vertical-line {
     border-left: 1px solid grey;
     height: 90px;
     margin-left: -3px;
     top: 0;
-  }
-  .left-nav {
+}
+.left-nav {
     position: fixed;
     right: 0;
     width: 25%;
     display: flex;
     justify-content: space-evenly;
-  }
-  .mainContainer {
+}
+.mainContainer {
     padding-top: 190px;
-  }
-  .top {
+}
+.top {
     padding-left: 5%;
-  }
-  h1 {
+}
+h1 {
     color: #ae0505;
     font-weight: 600;
-  }
-  /* end for nav bar */
-  .container {
+}
+/* end for nav bar */
+.container {
     margin-top: 2%;
     display: flex;
     flex-wrap: wrap;
@@ -121,44 +120,97 @@
     max-height: 75vh;
     overflow-y: auto;
     padding-right: 10px;
-    border: solid red 1px;
     padding-bottom: 3rem;
-  }
-  .card{
+}
+.card {
     width: 1000px;
     height: 198px;
-    border: solid black 1px;
     margin-bottom: 1rem;
     display: flex;
-  }
-  /* Card layout */
-.card-image,
-.card-functions{
-    flex: 1;
-    border: solid red 1px;
+    border: 2px solid;
+    box-shadow: 0px 2px 0px 0px #1d1d1d;
+    border-radius: 10px;
+    background-color: white;
 }
-.card-image{
+/* Card layout */
+.card-image {
+    flex: 1;
+}
+.card-functions {
+    flex: 2;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: end;
+    align-items: end;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+}
+
+.remove-button {
+    color: white;
+    background: rgb(174, 5, 5);
+    background: linear-gradient(
+        180deg,
+        rgba(174, 5, 5, 1) 0%,
+        rgba(72, 2, 2, 1) 100%
+    );
+    font-weight: 700;
+    padding: 1rem;
+    border-style: 1px solid;
+    box-shadow: 0px 2px 0px 0px #1d1d1d;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.buy-button {
+    font-weight: 700;
+    background-color: white;
+    padding: 1rem;
+    border-style: 1px solid;
+    box-shadow: 0px 2px 0px 0px #1d1d1d;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.card-image {
     max-width: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.card-details{
+.card-details {
     padding-left: 1rem;
     gap: 1rem;
-    flex:2;
+    flex: 2;
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
-.image-placeholder{
+.image-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
     width: calc(100% - 5%);
     padding: 1px;
-    border: solid black 1px;
+    border: solid black 2px;
+    border-radius: 5px;
 }
-.card-details h4{
+.card-details h4 {
     font-size: 20px;
+}
+.div-quantity,
+.div-price,
+.div-voucher {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.div-quantity h4,
+.div-price h4,
+.div-voucher h4 {
+    font-size: 1rem;
+}
+.div-quantity p,
+.div-price p,
+.div-voucher p {
+    font-weight: 600;
 }

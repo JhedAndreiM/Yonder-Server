@@ -12,7 +12,8 @@
         
     @endphp
         <a id="card-link" href="{{ route('product.show', ['id' => $product->product_id]) }}" class="card-link">
-            <div class="card">
+            <div class="card" onclick="hrefClick(this)">
+                <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $product->product_id]) }}">
                 <div class="image">
                     <div class="img-placeholder">
                         @if($firstImage && file_exists(public_path('images/' . $firstImage)))
@@ -30,11 +31,13 @@
 
                 </div>
             </div>
+            
         </a>
         
     @endforeach
-@endif
+
 <!-- Pagination (remove 'display: none' if you want yung page like < page 1 > ganyan visible) -->
-<div class="pagination-wrapper" display: none>
+<div class="pagination-wrapper">
     {{ $products->links() }}
 </div>
+@endif

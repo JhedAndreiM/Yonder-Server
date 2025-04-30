@@ -104,8 +104,21 @@ class CartController extends Controller
 
     public function destroy($id)
     {
-        $deleted = DB::table('cart_items')->where('id', $id)->delete();
+        $deleted = DB::table('cart_items')
+        ->where('id', $id)
+        ->delete();
 
         return redirect()->back()->with('success', 'Item removed from cart.');
+    }
+
+    public function update($id){
+        DB::table('cart_items')
+        ->where('id', $id)
+        ->update([
+            'status' => 'pending',
+            'updated_at' => now()
+        ]);
+        
+        return redirect()->back()->with('success', 'Item Bought.');
     }
 }

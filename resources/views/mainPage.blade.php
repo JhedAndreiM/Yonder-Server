@@ -30,7 +30,7 @@
     <!-- Ang Controller ng Page na to ay PageController.php :) -->
 <header>
     <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-    <h1 class="webName">Yonder</h2>
+    <h1 class="webName">Yonder</h1>
     <div class="nav-search">
         <nav>
             <form>
@@ -167,7 +167,7 @@
     <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
 </div>
 <script>
-    
+    let isHeartClicked = false;
     var slideIndex = 1;
     showDivs(slideIndex);
     
@@ -207,9 +207,14 @@
 
 
     $(document).on('click', '.heart-icon', function() {
+        isHeartClicked = true;
+        console.log('isHeartClicked=true');
         $(this).toggleClass('red gray');
         document.getElementById("card-link").addEventListener("click", function(event){
                 event.preventDefault()
+                event.stopPropagation();
+                
+                
         });     
     });
 
@@ -237,9 +242,23 @@
         cartButton.forEach(button=>{
             button.addEventListener('click', function(){
                 window.location.href= "{{route('show.cart')}}";
+                
             })
         })
     });
+    // yung mga next kasi na items di nagana yung a link kaya nilagyan ko ganto
+    // may timeout para mauna mag execute yung heart function :3
+    function hrefClick(cardElement){
+        const input = cardElement.querySelector('#cardLinkFromInput');
+        setTimeout(function() {
+            if (!isHeartClicked) {
+            console.log('clicked');
+            window.location.href = input.value;
+        }
+        }, 100);
+        
+            isHeartClicked = false;
+    }
     </script>
 </body>
 </html>

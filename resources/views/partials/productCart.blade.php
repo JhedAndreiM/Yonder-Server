@@ -19,15 +19,28 @@
         </div>
         <div class="card-details">
             <h2>{{ $items->product_name }}</h1>
-            <h4>Quantity:  </h4>
-            <h4>Total Price: </h4>
+            <div class="div-quantity">
+                <h4>Quantity: </h4>
+                <p>{{ $items->quantity }}</p>
+            </div>
+            <div class="div-price">
+                <h4>Total Price: </h4>
+                <p>P {{ ($items->unit_price*$items->quantity)-$items->voucher_applied }}</p>
+            </div>
             @if($items->voucher_applied==0)
             @else
-            <h4>Voucher Amount: {{ $items->voucher_applied }}</h4>
+            <div class="div-voucher">
+                <h4>Voucher Amount: </h4>
+                <p>P {{ $items->voucher_applied }}</p>
+            </div>
             @endif
         
         </div>
         <div class="card-functions">
+            <form action="{{ route('cart.buy', $items->cart_id) }}" method="POST">
+                @csrf
+                <button type="submit" class="buy-button">Buy Now</button>
+            </form>
             <form action="{{ route('cart.destroy', $items->cart_id) }}" method="POST" onsubmit="return confirm('Remove this item from cart?');">
                 @csrf
                 @method('DELETE')
