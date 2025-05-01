@@ -12,9 +12,14 @@
     <div class="card">
         <div class="card-image">
             @if($items->image_path)
-                <img class="image-placeholder"src="{{ asset('images/' . $firstImage) }}" alt="{{ $items->image_path }}">
+            <div class="image-placeholder">
+                <img src="{{ asset('images/' . $firstImage) }}" alt="{{ $items->image_path }}">
+            </div>
+                
             @else
-                <img class="image-placeholder"src="{{ asset('img/default-product.png') }}" alt="No image available">
+            <div class="image-placeholder">
+                <img src="{{ asset('img/default-product.png') }}" alt="No image available">
+            </div>
             @endif
         </div>
         <div class="card-details">

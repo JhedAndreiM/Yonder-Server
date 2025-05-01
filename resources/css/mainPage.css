@@ -23,7 +23,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    height: 124px;
+    height: 100px;
     display: flex;
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -44,13 +44,13 @@ header {
     color: #ae0505;
 }
 .nav-search {
-    width: 33.5rem;
+    width: 45%;
     display: flex;
     justify-content: center;
     flex-direction: row;
-    border: 1px #1d1d1d;
+    border: 1px #8d8d8d;
     border-style: solid;
-    box-shadow: 0px 4px 0px 0px #1d1d1d;
+    box-shadow: 0px 4px 0px 0px #8d8d8d;
     padding-right: 0.3rem;
     padding-left: 1rem;
     border-radius: 46px;
@@ -84,7 +84,6 @@ nav {
 }
 .notificationBtn,
 .wishlistBtn,
-.vertical-line,
 .cartBtn {
     cursor: pointer;
 }
@@ -97,10 +96,12 @@ nav {
     cursor: pointer;
 }
 nav button {
-    background-color: #0d62ff;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
     border: none;
-    width: 7rem;
+    width: 5rem;
     height: 2.5rem;
     border-radius: 20px;
 }
@@ -116,7 +117,7 @@ input:focus {
 }
 .vertical-line {
     border-left: 1px solid grey;
-    height: 90px;
+    height: 60px;
     margin-left: -3px;
     top: 0;
 }
@@ -190,8 +191,8 @@ input:focus {
 /* MAIN */
 .container {
     display: flex;
-    height: calc(100vh - 124px);
-    margin-top: 124px;
+    height: calc(100vh - 100px);
+    margin-top: 100px;
 }
 .left {
     flex: 1;
@@ -226,7 +227,7 @@ input:focus {
     background-color: white;
 }
 .add-listing {
-    margin-top: 2%;
+    margin-top: 5%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -284,7 +285,7 @@ h3 {
 }
 
 .filter-btn.active {
-    background: blue;
+    background: #0D62FF;
     color: white;
 }
 
@@ -332,9 +333,10 @@ input[type="number"] {
     font-size: 20px;
 }
 .right-middle {
+    
     width: 100%;
     max-height: 12.3rem;
-    margin-bottom: 1%;
+    margin-bottom: 3%;
     overflow: hidden;
     position: relative;
     border: #1d1d1d;

@@ -25,7 +25,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
         return view('wishlist');})->name('wishlist.page');
 
     Route::get('/wishlist-Show', [WishlistController::class, 'showWishlist'])->name('show.wishlist');
-    
+    Route::get('/student/profile', [CartController::class, 'getAllNotCartItems'])->name('student.profile');
 });
 
 // Middleware for Orgs

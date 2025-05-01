@@ -113,14 +113,15 @@ h1 {
 }
 /* end for nav bar */
 .container {
-    margin-top: 2%;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    max-height: 75vh;
+    height: 76vh;
     overflow-y: auto;
-    padding-right: 10px;
-    padding-bottom: 3rem;
+    padding-bottom: 8rem;
+    padding-inline: 15%;
+    position: relative;
 }
 .card {
     width: 1000px;
@@ -191,7 +192,16 @@ h1 {
     justify-content: center;
     width: calc(100% - 5%);
     padding: 1px;
-    border: solid black 2px;
+    border: solid black 1px;
+    border-radius: 5px;
+    object-fit: contain;
+}
+.image-placeholder img {
+    max-width: 100%;
+    max-height: 180px;
+    width: auto;
+    height: auto;
+    object-fit: contain; 
     border-radius: 5px;
 }
 .card-details h4 {
@@ -213,4 +223,96 @@ h1 {
 .div-price p,
 .div-voucher p {
     font-weight: 600;
+}
+.total-bottom{
+    background-color: white;
+    height: 122px;
+    width: 779px;
+    border: solid black 1px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border-radius: 25px 25px 0px 0px;
+}
+@media (max-width: 1024px) {
+    .container {
+        padding-inline: 5%;
+    }
+    .card {
+        flex-direction: column;
+        height: auto;
+        width: 90%;
+        align-items: center;
+        text-align: center;
+    }
+    .card-image {
+        max-width: 100%;
+        padding: 1rem;
+    }
+    .image-placeholder {
+        width: 80%;
+    }
+    .card-details {
+        align-items: center;
+        padding: 1rem 0;
+    }
+    .card-functions {
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 1rem;
+    }
+    .remove-button,
+    .buy-button {
+        width: 80%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-search {
+        width: 90%;
+    }
+    .mainContainer {
+        padding-top: 140px;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+    .card-details h4 {
+        font-size: 1.1rem;
+    }
+    .div-quantity h4,
+    .div-price h4,
+    .div-voucher h4 {
+        font-size: 0.9rem;
+    }
+    .left-nav {
+        margin-right: 3rem;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        padding: 1rem;
+        height: auto;
+    }
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav-search {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .left-nav {
+        gap: 1rem;
+        width: 100%;
+        justify-content: end;
+        position: static;
+        margin-right: 0px;
+    }
 }

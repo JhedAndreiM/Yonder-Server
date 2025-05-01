@@ -18,6 +18,6 @@
         <div class="container">
           @include('partials.productCart', ['cartItems' => $cartItems])
         </div>
-        
+        <div class="total-bottom">sadadsa</div>
       </div>
 @endsection

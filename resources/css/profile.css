@@ -320,3 +320,11 @@ a {
 .itemsContainer::-webkit-scrollbar {
   display: none;
 }
+
+/* button filter */
+
+.btn-filter.active {
+  color: white;
+  background-color: blue;
+  height: 100%;
+}

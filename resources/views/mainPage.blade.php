@@ -34,9 +34,9 @@
     <div class="nav-search">
         <nav>
             <form>
-                <input id="searchInput"type="text" placeholder="CCST ID LACE" >
-                <button id="btnSub" type="submit">Search</button>
-                <img id="magnifying"class="fa-magnifying-glass" src="{{ asset('img/magnifying-glass-solid.svg') }}" alt="">
+                <input id="searchInput"type="text" placeholder="Search" >
+                <button id="btnSub" type="submit"><img src="{{ asset('img/search-icon.svg') }}" alt=""></button>
+                <img id="magnifying"class="fa-magnifying-glass" src="{{ asset('img/search-icon.svg') }}" alt="">
             </form>
             
         </nav>
@@ -50,7 +50,7 @@
         
         <div class="sub-menu-wrapper" id="subMenu">
             <div class="sub-menu">
-                <a href="{{ route('profile.page') }}" class="sub-menu-link">
+                <a href="{{ route('student.profile') }}" class="sub-menu-link">
                     <i class="fa-solid fa-user"></i>
                     <p>Profile</p>
                 </a>
@@ -254,10 +254,12 @@
             if (!isHeartClicked) {
             console.log('clicked');
             window.location.href = input.value;
+            
         }
         }, 100);
         
             isHeartClicked = false;
+            console.log(isHeartClicked);
     }
     </script>
 </body>

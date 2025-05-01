@@ -273,7 +273,7 @@
 
                 <div class="sub-menu-wrapper" id="subMenu">
                     <div class="sub-menu">
-                        <a href="{{ route('profile.page') }}" class="sub-menu-link">
+                        <a href="{{ route('student.profile') }}" class="sub-menu-link">
                             <i class="fa-solid fa-user"></i>
                             <p>Profile</p>
                         </a>
