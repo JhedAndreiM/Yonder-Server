@@ -90,6 +90,9 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
    // update cart from incart to pending
    Route::post('/cart/{id}', [CartController::class, 'update'])->name('cart.buy');
+
+   //profile
+   Route::post('/cart/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
 });
 
 

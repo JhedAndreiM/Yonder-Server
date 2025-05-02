@@ -31,11 +31,11 @@
             </div>
             <div class="rightPart">
                 <div class="categories">
-                    <button class="btn-filter active" data-tab="all">All</button>
-                    <button class="btn-filter" data-tab="pending">Pending</button>
-                    <button class="btn-filter" data-tab="receive">To recieve</button>
-                    <button class="btn-filter" data-tab="cancelled">Cancelled</button>
-                    <button class="btn-filter" data-tab="completed">Completed</button>
+                    <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
+                    <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
+                    <button id="btnReceive" class="btn-filter" data-tab="receive">To recieve</button>
+                    <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
+                    <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
                 </div>
                 <div class="itemsContainer" id="itemsContainer">
 
@@ -50,8 +50,40 @@
             const buttons = document.querySelectorAll('.btn-filter');
             //para pag ka load gana agad all filter
             window.addEventListener('DOMContentLoaded', () => {
-                fetchFilter('all');
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const filters = urlParams.get('filters');
+                const cancelledButton = document.getElementById('btnCancelled');
+                const allButton = document.getElementById('btnAll');
+                const pendingButton = document.getElementById('btnPending');
+                const receiveButton = document.getElementById('btnReceive');
+                const completedButton = document.getElementById('btnCompleted');
+                if (filters) {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    if (filters === 'all') {
+                        allButton.classList.add('active');
+                    }
+                    if (filters === 'pending') {
+                        pendingButton.classList.add('active');
+                    }
+                    if (filters === 'receive') {
+                        receiveButton.classList.add('active');
+                    }
+                    if (filters === 'cancelled') {
+                        cancelledButton.classList.add('active');
+                    }
+                    if (filters === 'completed') {
+                        completedButton.classList.add('active');
+                    }
+
+                    fetchFilter(filters);
+                    // basically remove yung ?filters= sa url para malinis
+                    const url = new URL(window.location);
+                    url.searchParams.delete('filters');
+                    window.history.replaceState({}, '', url);
+                }
             });
+
             buttons.forEach(button => {
                 button.addEventListener('click', () => {
                     // Remove .active from all buttons para isang button lagn active
@@ -61,6 +93,7 @@
                     button.classList.add('active');
 
                     const tab = button.getAttribute('data-tab');
+
                     fetchFilter(tab);
                 });
             });
@@ -71,6 +104,7 @@
                     url += tab;
                 }
                 // kukunin current url tapos dadagdag yung let url tapos send sa sarili so mapunta sa route.
+
                 fetch(url, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'

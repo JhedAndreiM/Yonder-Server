@@ -214,26 +214,31 @@ a {
   justify-content: space-between;
 }
 .itemsBottomLeft {
-  margin-left: -60%;
-  padding-top: 2%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex: 3;
 }
 .itemsBottom {
   margin-top: 1%;
   display: flex;
   justify-content: space-between;
 }
-.placeholder {
+.placeholder-img {
   background-color: aqua;
   width: 120px;
   height: 125px;
   border-radius: 7px;
+  margin-right: 1%;
 }
 .itemsBottomRight {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: end;
   gap: 20%;
+  flex: 1;
+  
 }
 
 button {
@@ -254,7 +259,6 @@ button {
 }
 p {
   font-size: 18px;
-  color: #0d62ff;
 }
 .leftPartItems {
   display: flex;
@@ -301,6 +305,11 @@ a {
   font-size: 18px;
   color: #494949;
 }
+.voucher {
+  font-weight: 400;
+  font-size: 18px;
+  color: #494949;
+}
 .totalPrice {
   font-weight: 500;
   font-size: 23px;
@@ -323,8 +332,19 @@ a {
 
 /* button filter */
 
+.btn-filter{
+  width: 150px;
+  height: 50px;
+  background-color: #ffffff;
+  border: none;
+  box-shadow: none;
+  font-size: 24px;
+  cursor: pointer;
+}
 .btn-filter.active {
-  color: white;
-  background-color: blue;
+  color: #0D62FF;
   height: 100%;
+  font-weight: 500;
+  text-decoration: underline;
+  display: inline-block;
 }

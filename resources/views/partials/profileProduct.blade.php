@@ -10,26 +10,40 @@
     @endphp
         <div class="items">
             <div class="itemsTop">
-                <a href="" class="sellerName">Seller Name</a>
+                <a href="" class="sellerName">{{$cartItems->seller_name}}</a>
                 @if($cartItems->status == 'receive')
                 <p>To Receive</p>
                 @elseif ($cartItems->status == 'pending')
                 <p>Pending</p>
-                @elseif ($cartItems->status == 'Cancelled')
+                @elseif ($cartItems->status == 'cancelled')
                 <p>Cancelled</p>
+                @elseif ($cartItems->status == 'completed')
+                <p>Completed</p>
                 @endif
             </div>
             <div class="itemsBottom">
-                <div class="placeholder">
-                    </div>
+                <div class="placeholder-img">
+                </div>
                 <div class="itemsBottomLeft">
+                    
                     <h2 class="productName">{{$cartItems->product_name}}</h2>
                     <h3 class="amount">Quantity: {{$cartItems->quantity}}</h3>
-                    <h3 class="price">P {{$cartItems->unit_price}}</h3>
+                    <h3 class="price">Price Per Item: P {{$cartItems->unit_price}}</h3>
+                    @if($cartItems->voucher_applied==0)
+                    
+                    @else
+                        <h3 class="voucher">Voucher Applied: P {{$cartItems->voucher_applied}}</h3>
+                    
+                    @endif
                 </div>
                 <div class="itemsBottomRight">
                     <h2 class="totalPrice">Total Amount: P {{ ($cartItems->unit_price*$cartItems->quantity)-$cartItems->voucher_applied }}</h1>
-                        <button>Cancel</button>
+                        <form action="{{route('cart.cancel',$cartItems->cart_id)}}" method="post">
+                            @csrf
+                            <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
+                            <button>Cancel</button>
+                        </form>
+                        
                 </div>
             </div>
         </div>
