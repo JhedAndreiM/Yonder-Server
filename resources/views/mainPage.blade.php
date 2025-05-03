@@ -169,23 +169,42 @@
 <script>
     let isHeartClicked = false;
     var slideIndex = 1;
+    var interval;
     showDivs(slideIndex);
-    
+    autoStart();
+
     function plusDivs(n) {
       showDivs(slideIndex += n);
+      resetInterval();
+      //console.log(slideIndex);
     }
     
     function showDivs(n) {
       var i;
       var x = document.getElementsByClassName("mySlides");
-      if (n > x.length) {slideIndex = 1}
-      if (n < 1) {slideIndex = x.length}
+      if (n > x.length) {
+        slideIndex = 1
+    }
+      if (n < 1) {
+        slideIndex = x.length
+    }
       for (i = 0; i < x.length; i++) {
         x[i].style.display = "none";  
       }
       x[slideIndex-1].style.display = "block";  
     }
-
+    // 5sec every move yung banner
+    function autoStart(){
+        interval = setInterval(function() {
+        plusDivs(1);
+        }, 5000);
+    }
+    
+    function resetInterval(){
+        clearInterval(interval);
+        autoStart();
+    }
+    
     $(document).on('click', '.heart-icon', function(event) {
         event.preventDefault();     
         event.stopPropagation();
@@ -229,7 +248,6 @@
     });
     // pang ano to para clickable yung image na heart sa nav bar :)
     document.addEventListener('DOMContentLoaded', function () {
-        
         const wishlistButtons = document.querySelectorAll('.wishlistBtn');
         const cartButton = document.querySelectorAll('.cartBtn');
         // wishlist button

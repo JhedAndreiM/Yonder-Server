@@ -26,6 +26,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
 
     Route::get('/wishlist-Show', [WishlistController::class, 'showWishlist'])->name('show.wishlist');
     Route::get('/student/profile', [CartController::class, 'getAllNotCartItems'])->name('student.profile');
+    Route::get('/student/Sales', [CartController::class, 'getAllSales'])->name('student.sales');
 });
 
 // Middleware for Orgs
@@ -89,10 +90,11 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    // remove from cart
    Route::delete('/cart/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
    // update cart from incart to pending
-   Route::post('/cart/{id}', [CartController::class, 'update'])->name('cart.buy');
+   Route::post('/cart/{id}/buy', [CartController::class, 'update'])->name('cart.buy');
 
    //profile
-   Route::post('/cart/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
+   Route::post('/cart/{id}/cancel', [CartController::class, 'cancel'])->name('cart.cancel');
+   Route::post('/cart/{id}/cancelSales', [CartController::class, 'cancelSales'])->name('cart.cancelSales');
 });
 
 

@@ -82,6 +82,7 @@ class CartController extends Controller
         $cartItems = DB::table('cart_items')
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->where('cart_items.user_id', $userId)
+            ->where('cart_items.status', '=', 'in_cart')
             ->select(
                 'cart_items.id as cart_id',
                 'cart_items.quantity',
@@ -166,5 +167,51 @@ class CartController extends Controller
         //dd($filters);
         return redirect()->route('student.profile', ['filters' => $filters])
                      ->with('success', 'Item cancelled.');
+    }
+
+
+    public function cancelSales(Request $request, $id){
+        DB::table('cart_items')
+            ->where('id', $id)
+            ->update([
+                'status' => 'cancelled',
+                'updated_at' => now()
+            ]);
+        $filters = $request->input('filterValue');
+        //dd($filters);
+        return redirect()->route('student.sales', ['filters' => $filters])
+                     ->with('success', 'Item cancelled.');
+    }
+    public function getAllSales(Request $request){
+        $userId = Auth::id();
+        $filters = $request->get('filter');
+        $query = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        //->join('users', 'cart_items.seller_id', '=', 'users.id')
+        ->join('users', 'cart_items.user_id', '=', 'users.id')
+        ->where('cart_items.seller_id', '=', $userId)
+        ->select(
+            'cart_items.id as cart_id',
+            'cart_items.quantity',
+            'cart_items.seller_id',
+            'cart_items.status',
+            'cart_items.unit_price',
+            'cart_items.product_id',
+            'product.name as product_name',
+            'product.image_path',
+            'product.description',
+            'cart_items.voucher_applied',
+            'users.name as seller_name'
+        );
+        if ($filters == "all"|| $filters == null) {
+            $query->where('cart_items.status', '!=', 'in_cart');
+        } else {
+            $query->where('cart_items.status', $filters);
+        }
+        $items = $query->get();
+        if ($request->ajax()) {
+            return view('partials.profileProduct', compact('items','filters'))->render();
+        }
+        return view('mysales', compact('items','filters'));
     }
 }

@@ -11,7 +11,6 @@
         $firstImage = $images[0];
         
     @endphp
-        <a id="card-link" href="{{ route('product.show', ['id' => $product->product_id]) }}" class="card-link">
             <div class="card" onclick="hrefClick(this)">
                 <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $product->product_id]) }}">
                 <div class="image">
@@ -32,7 +31,6 @@
                 </div>
             </div>
             
-        </a>
         
     @endforeach
 
