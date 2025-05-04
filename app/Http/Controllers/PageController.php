@@ -110,7 +110,7 @@ class PageController extends Controller
         if(!empty($selectedSaleTradeFilter)){
             $query->where(function ($q) use ($selectedSaleTradeFilter) {
                 foreach ($selectedSaleTradeFilter as $saleTrade) {
-                    $q->orWhere('colleges', 'LIKE', "%$saleTrade%");
+                    $q->orWhere('forSaleTrade', 'LIKE', "%$saleTrade%");
                 }
             });
         }

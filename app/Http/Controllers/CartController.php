@@ -125,11 +125,14 @@ class CartController extends Controller
         $query = DB::table('cart_items')
         ->join('product', 'cart_items.product_id', '=', 'product.product_id')
         ->join('users', 'cart_items.seller_id', '=', 'users.id')
+        ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
         ->where('cart_items.user_id', $userId)
         ->select(
             'cart_items.id as cart_id',
             'cart_items.quantity',
             'cart_items.seller_id',
+            'cart_items.buyer_response',
+            'cart_items.seller_response',
             'cart_items.status',
             'cart_items.unit_price',
             'cart_items.product_id',
@@ -137,7 +140,8 @@ class CartController extends Controller
             'product.image_path',
             'product.description',
             'cart_items.voucher_applied',
-            'users.name as seller_name'
+            'users.name as seller_name',
+            'buyers.id as buyer_id' 
         );
         if ($filters == "all"|| $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
@@ -187,13 +191,15 @@ class CartController extends Controller
         $filters = $request->get('filter');
         $query = DB::table('cart_items')
         ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-        //->join('users', 'cart_items.seller_id', '=', 'users.id')
+        ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
         ->join('users', 'cart_items.user_id', '=', 'users.id')
         ->where('cart_items.seller_id', '=', $userId)
         ->select(
             'cart_items.id as cart_id',
             'cart_items.quantity',
             'cart_items.seller_id',
+            'cart_items.buyer_response',
+            'cart_items.seller_response',
             'cart_items.status',
             'cart_items.unit_price',
             'cart_items.product_id',
@@ -201,7 +207,8 @@ class CartController extends Controller
             'product.image_path',
             'product.description',
             'cart_items.voucher_applied',
-            'users.name as seller_name'
+            'users.name as seller_name',
+            'buyers.id as buyer_id' 
         );
         if ($filters == "all"|| $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
@@ -213,5 +220,68 @@ class CartController extends Controller
             return view('partials.profileProduct', compact('items','filters'))->render();
         }
         return view('mysales', compact('items','filters'));
+    }
+
+    public function confirmStudentSales(Request $request, $id){
+        DB::table('cart_items')
+            ->where('id', $id)
+            ->update([
+                'status' => 'receive',
+                'updated_at' => now()
+            ]);
+        $filters = $request->input('filterValue');
+        return redirect()->route('student.sales', ['filters' => $filters])
+                     ->with('success', 'Item cancelled.');
+    }
+
+    public function orderReceivedDelivered(Request $request, $id)
+    {
+        $role = $request->input('role');
+        if ($role == 'buyer') {
+            DB::table('cart_items')
+                ->where('id', $id)
+                ->update([
+                    'buyer_response' => 'yes',
+                    'updated_at' => now()
+                ]);
+            $filters = $request->input('filterValue');
+
+            $confirm = DB::table('cart_items')
+                ->where('id', $id)
+                ->first();
+            if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
+                DB::table('cart_items')
+                    ->where('id', $id)
+                    ->update([
+                        'status' => 'completed',
+                        'updated_at' => now()
+                    ]);
+            }
+            return redirect()->route('student.profile', ['filters' => $filters])
+                ->with('success', 'Item received.');
+        }
+        if ($role == 'seller') {
+            DB::table('cart_items')
+                ->where('id', $id)
+                ->update([
+                    'seller_response' => 'yes',
+                    'updated_at' => now()
+                ]);
+            $filters = $request->input('filterValue');
+
+            $confirm = DB::table('cart_items')
+                ->where('id', $id)
+                ->first();
+            if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
+                DB::table('cart_items')
+                    ->where('id', $id)
+                    ->update([
+                        'status' => 'completed',
+                        'updated_at' => now()
+                    ]);
+            }
+            return redirect()->route('student.sales', ['filters' => $filters])
+                ->with('success', 'Item delivered.');
+        }
     }
 }

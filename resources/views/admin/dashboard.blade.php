@@ -25,7 +25,7 @@
                 <form action="{{ route('admin.featured.upload') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <label for="image">Upload Featured Image</label><br>
-                    <input type="file" name="image" required><br><br>
+                    <input type="file" name="image" required multiple><br><br>
                     <button type="submit">Upload</button>
                 </form>
                 

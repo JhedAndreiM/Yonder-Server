@@ -387,7 +387,6 @@ input[type="number"] {
     right: 10px;
     cursor: pointer;
     font-size: 24px; /* Adjust size */
-    z-index: 2000; 
 }
 .left-btn {
     left: 1%;

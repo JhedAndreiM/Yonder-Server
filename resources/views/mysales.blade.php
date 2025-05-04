@@ -34,7 +34,7 @@
                 <div class="categories">
                     <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
                     <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
-                    <button id="btnReceive" class="btn-filter" data-tab="receive">To recieve</button>
+                    <button id="btnReceive" class="btn-filter" data-tab="receive">To Deliver</button>
                     <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
                     <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
                 </div>

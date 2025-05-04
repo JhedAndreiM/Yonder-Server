@@ -15,7 +15,11 @@
                 
                 
                 @if($cartItems->status == 'receive')
-                <p>To Receive</p>
+                    @if ($cartItems->seller_id == Auth::id())
+                        <p>To Deliver</p>
+                    @else
+                        <p>To Receive</p>
+                    @endif
                 @elseif ($cartItems->status == 'pending')
                 <p>Pending</p>
                 @elseif ($cartItems->status == 'cancelled')
@@ -54,9 +58,28 @@
                             <!-- MAIN IF STATEMENT FOR RECEIVED-->
                             @if($cartItems->status == 'receive')
                                 @if($cartItems->seller_id != Auth::id())
-                                    <button>Order Received</button>
+                                    @if ($cartItems->buyer_response=='no')
+                                    <form action="{{route('cart.orderReceivedDelivered',$cartItems->cart_id)}}" method="post">
+                                        @csrf
+                                        <input type="hidden" value="buyer" name="role">
+                                        <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
+                                        <button>Order Received</button>
+                                    </form>
+                                    @else
+                                        <button style="background-color:#4CAF50; color:white;">check</button>
+                                    @endif
+                                    
                                 @elseif ($cartItems->seller_id == Auth::id())
+                                @if ($cartItems->seller_response=='no')
+                                <form action="{{route('cart.orderReceivedDelivered',$cartItems->cart_id)}}" method="post">
+                                    @csrf
+                                    <input type="hidden" value="seller" name="role">
+                                    <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
                                     <button>Order Delivered</button>
+                                </form>
+                                @else
+                                    <button style="background-color:#4CAF50; color:white;">check</button>
+                                @endif
                                 @endif
                                 <!-- IF FOR CANCEL BUTTON ( BUYER OR SALES ) -->
                                 @if ($cartItems->seller_id == Auth::id())
@@ -76,11 +99,13 @@
                             @elseif($cartItems->status == 'pending')
                                 <!-- IF FOR CANCEL BUTTON ( BUYER OR SALES ) -->
                                 @if ($cartItems->seller_id == Auth::id())
-                                <form action="{{route('cart.cancelSales',$cartItems->cart_id)}}" method="post">
-                                    @csrf
-                                    <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-                                    <button>Confirm Order</button>
-                                </form>
+                                    @if($cartItems->buyer_id != Auth::id())
+                                    <form action="{{route('cart.confirmSales',$cartItems->cart_id)}}" method="post">
+                                        @csrf
+                                        <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
+                                        <button>Confirm Order</button>
+                                    </form>
+                                    @endif
                                 <form action="{{route('cart.cancelSales',$cartItems->cart_id)}}" method="post">
                                     @csrf
                                     <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
