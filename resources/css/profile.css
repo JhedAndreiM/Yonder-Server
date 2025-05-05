@@ -29,22 +29,6 @@ html {
   background-repeat: no-repeat;
   background-position: top center;
 }
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  height: 124px;
-  display: flex;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  justify-content: center;
-  align-items: center;
-  font-family: "Raleway", sans-serif;
-  background-color: white;
-  border-bottom: solid rgb(0, 0, 0) 2px;
-}
 .menu-button {
   display: none;
 }
@@ -197,7 +181,7 @@ h1 {
   position: sticky;
   top: 0;
   background-color: white;
-  z-index: 2;
+  z-index: 1;
 }
 
 .categories,
@@ -379,4 +363,42 @@ a {
   align-items: center;
   flex-direction: row;
   gap: 1rem;
+}
+
+/* modal */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1001; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Modal Content/Box */
+.modal-wrapper {
+  position: relative;
+  width: 578px;
+  height: 732px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  color: black; /* or white depending on the design */
+  display: flex;
 }
