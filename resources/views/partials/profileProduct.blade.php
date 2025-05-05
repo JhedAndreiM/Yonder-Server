@@ -118,7 +118,14 @@
                                     <button>Cancel</button>
                                 </form>
                                 @endif
-                            <!-- MAIN IF STATEMENT -->   
+                            <!-- MAIN IF STATEMENT -->
+                            @elseif($cartItems->status == 'completed')
+                                @if($cartItems->seller_id == Auth::id())
+                                    <button>Receipt</button>
+                                @else
+                                <button>Rate</button>
+                                <button>Receipt</button>
+                                @endif
                             @endif
                         </div>
                         

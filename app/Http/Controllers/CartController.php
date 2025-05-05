@@ -123,27 +123,27 @@ class CartController extends Controller
         $userId = Auth::id();
         $filters = $request->get('filter');
         $query = DB::table('cart_items')
-        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-        ->join('users', 'cart_items.seller_id', '=', 'users.id')
-        ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
-        ->where('cart_items.user_id', $userId)
-        ->select(
-            'cart_items.id as cart_id',
-            'cart_items.quantity',
-            'cart_items.seller_id',
-            'cart_items.buyer_response',
-            'cart_items.seller_response',
-            'cart_items.status',
-            'cart_items.unit_price',
-            'cart_items.product_id',
-            'product.name as product_name',
-            'product.image_path',
-            'product.description',
-            'cart_items.voucher_applied',
-            'users.name as seller_name',
-            'buyers.id as buyer_id' 
-        );
-        if ($filters == "all"|| $filters == null) {
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->join('users', 'cart_items.seller_id', '=', 'users.id')
+            ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->where('cart_items.user_id', $userId)
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.quantity',
+                'cart_items.seller_id',
+                'cart_items.buyer_response',
+                'cart_items.seller_response',
+                'cart_items.status',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'product.name as product_name',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied',
+                'users.name as seller_name',
+                'buyers.id as buyer_id'
+            );
+        if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
         } else {
             $query->where('cart_items.status', $filters);
@@ -155,12 +155,13 @@ class CartController extends Controller
         // ->where('cart_items.')
         // bali need to if ajax yung tatawag kasi if hindi mo to nilagay, ididsplay niya buong page imbis na cards(nakuha sa query)
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items','filters'))->render();
+            return view('partials.profileProduct', compact('items', 'filters'))->render();
         }
-        return view('profile', compact('items','filters'));
+        return view('profile', compact('items', 'filters'));
     }
 
-    public function cancel(Request $request, $id){
+    public function cancel(Request $request, $id)
+    {
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
@@ -170,11 +171,12 @@ class CartController extends Controller
         $filters = $request->input('filterValue');
         //dd($filters);
         return redirect()->route('student.profile', ['filters' => $filters])
-                     ->with('success', 'Item cancelled.');
+            ->with('success', 'Item cancelled.');
     }
 
 
-    public function cancelSales(Request $request, $id){
+    public function cancelSales(Request $request, $id)
+    {
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
@@ -184,45 +186,47 @@ class CartController extends Controller
         $filters = $request->input('filterValue');
         //dd($filters);
         return redirect()->route('student.sales', ['filters' => $filters])
-                     ->with('success', 'Item cancelled.');
+            ->with('success', 'Item cancelled.');
     }
-    public function getAllSales(Request $request){
+    public function getAllSales(Request $request)
+    {
         $userId = Auth::id();
         $filters = $request->get('filter');
         $query = DB::table('cart_items')
-        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-        ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
-        ->join('users', 'cart_items.user_id', '=', 'users.id')
-        ->where('cart_items.seller_id', '=', $userId)
-        ->select(
-            'cart_items.id as cart_id',
-            'cart_items.quantity',
-            'cart_items.seller_id',
-            'cart_items.buyer_response',
-            'cart_items.seller_response',
-            'cart_items.status',
-            'cart_items.unit_price',
-            'cart_items.product_id',
-            'product.name as product_name',
-            'product.image_path',
-            'product.description',
-            'cart_items.voucher_applied',
-            'users.name as seller_name',
-            'buyers.id as buyer_id' 
-        );
-        if ($filters == "all"|| $filters == null) {
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->join('users', 'cart_items.user_id', '=', 'users.id')
+            ->where('cart_items.seller_id', '=', $userId)
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.quantity',
+                'cart_items.seller_id',
+                'cart_items.buyer_response',
+                'cart_items.seller_response',
+                'cart_items.status',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'product.name as product_name',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied',
+                'users.name as seller_name',
+                'buyers.id as buyer_id'
+            );
+        if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
         } else {
             $query->where('cart_items.status', $filters);
         }
         $items = $query->get();
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items','filters'))->render();
+            return view('partials.profileProduct', compact('items', 'filters'))->render();
         }
-        return view('mysales', compact('items','filters'));
+        return view('mysales', compact('items', 'filters'));
     }
 
-    public function confirmStudentSales(Request $request, $id){
+    public function confirmStudentSales(Request $request, $id)
+    {
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
@@ -231,7 +235,7 @@ class CartController extends Controller
             ]);
         $filters = $request->input('filterValue');
         return redirect()->route('student.sales', ['filters' => $filters])
-                     ->with('success', 'Item cancelled.');
+            ->with('success', 'Item cancelled.');
     }
 
     public function orderReceivedDelivered(Request $request, $id)
@@ -257,6 +261,22 @@ class CartController extends Controller
                         'updated_at' => now()
                     ]);
             }
+
+            $completedCount = DB::table('cart_items')
+                ->where('user_id', $confirm->user_id)
+                ->where('seller_id', 5)
+                ->where('status', 'completed')
+                ->count();
+            if ($completedCount % 5 === 0) {
+                DB::table('vouchers')->insert([
+                    'user_id' => $confirm->user_id,
+                    'seller_id' => 5,
+                    'amount' => 5,
+                    'status' => 'available',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
             return redirect()->route('student.profile', ['filters' => $filters])
                 ->with('success', 'Item received.');
         }
@@ -279,6 +299,22 @@ class CartController extends Controller
                         'status' => 'completed',
                         'updated_at' => now()
                     ]);
+
+                $completedCount = DB::table('cart_items')
+                    ->where('user_id', $confirm->user_id)
+                    ->where('seller_id', 5)
+                    ->where('status', 'completed')
+                    ->count();
+                if ($completedCount % 5 === 0) {
+                    DB::table('vouchers')->insert([
+                        'user_id' => $confirm->user_id,
+                        'seller_id' => 5,
+                        'amount' => 5,
+                        'status' => 'available',
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
             }
             return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item delivered.');
