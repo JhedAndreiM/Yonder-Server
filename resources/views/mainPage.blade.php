@@ -30,7 +30,7 @@
     <!-- Ang Controller ng Page na to ay PageController.php :) -->
 <header>
     <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-    <h1 class="webName">Yonder</h1>
+    <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
     <div class="nav-search">
         <nav>
             <form>

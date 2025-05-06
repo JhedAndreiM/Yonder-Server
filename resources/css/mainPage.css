@@ -41,6 +41,7 @@ header {
     flex: 0.7;
     font-size: 2rem;
     left: 5%;
+    top: 25%;
     color: #ae0505;
 }
 .nav-search {
@@ -521,14 +522,12 @@ form {
         display: none;
     }
     .webName {
-        left: 0%;
+        position: absolute;
         flex: 0.7;
-        width: 100%;
-        font-size: 1rem;
-        display: flex;
-        justify-content: center;
-        padding-left: 0px;
-        padding-right: 0px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
     }
     .menu-button {
         display: flex;
@@ -561,7 +560,8 @@ form {
     }
     .notificationBtn,
     .wishlistBtn,
-    .vertical-line {
+    .vertical-line,
+    .cartBtn {
         display: none;
     }
     .profile_link {

@@ -220,7 +220,7 @@
             flex: 0.7;
             font-size: 2rem;
             left: 5%;
-            top: 35%;
+            top: 30%;
             color: #ae0505;
         }
 
@@ -260,7 +260,7 @@
 <body>
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <a href="{{ route('custom.home') }}"><h1 class="webName">Yonder</h2></a>
+        <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
             </div>
             <div class="left-nav">
                 <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">

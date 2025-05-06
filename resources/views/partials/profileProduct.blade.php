@@ -29,7 +29,7 @@
                 @endif
             </div>
             <div class="itemsBottom">
-                <input type="text" value="{{$cartItems->cart_id}}">
+                <input type="hidden" value="{{$cartItems->cart_id}}">
                 @if($cartItems->image_path)
 
                 <div class="image-placeholder">
@@ -121,10 +121,30 @@
                             <!-- MAIN IF STATEMENT -->
                             @elseif($cartItems->status == 'completed')
                                 @if($cartItems->seller_id == Auth::id())
-                                    <button>Receipt</button>
+                                <button
+                                    class="view-receipt"
+                                    data-bs-toggles="modal"
+                                    data-bs-targets="#myModal"
+                                    data-names="{{ $cartItems->product_name }}"
+                                    data-prices="{{ $cartItems->unit_price }}"
+                                    data-qtys="{{ $cartItems->quantity }}"
+                                    data-vouchers="{{ $cartItems->voucher_applied}}"
+                                    data-id="{{ $cartItems->cart_id}}"
+                                    onclick="openProductModalSeller(this)"
+                                    >Receipt</button>
                                 @else
-                                <button>Rate</button>
-                                <button>Receipt</button>
+                                    <button>Rate</button>
+                                    <button
+                                    class="view-receipt"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#myModal"
+                                    data-name="{{ $cartItems->product_name }}"
+                                    data-price="{{ $cartItems->unit_price }}"
+                                    data-qty="{{ $cartItems->quantity }}"
+                                    data-voucher="{{ $cartItems->voucher_applied}}"
+                                    data-id="{{ $cartItems->cart_id}}"
+                                    onclick="openProductModal(this)"
+                                    >Receipt</button>
                                 @endif
                             @endif
                         </div>

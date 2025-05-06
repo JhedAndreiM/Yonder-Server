@@ -367,29 +367,24 @@ a {
 
 /* modal */
 .modal {
-  position: fixed; /* Stay in place */
-  z-index: 1001; /* Sit on top */
-  left: 0;
+  display: none;
+  position: fixed;
+  z-index: 1001;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4); /* This now covers the whole screen */
 }
 
-
 /* Modal Content/Box */
+
 .modal-wrapper {
-  position: relative;
+  position: absolute;
   width: 578px;
   height: 732px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  top: calc(50% - 366px);  
+  left: calc(50% - 289px);
 }
 
 .modal-content-overlay {
@@ -401,4 +396,86 @@ a {
   padding: 40px;
   color: black; /* or white depending on the design */
   display: flex;
+  flex-direction: column;
+}
+
+.modal-top{
+  flex: 0.2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 1rem;
+}
+.modal-middle{
+  padding-inline: 1rem;
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+}
+.middle-top{
+  flex: 0.4;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.middle-top h3{
+  color:red;
+}
+.middle-bottom{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  color: red;
+}
+.middle-bottom img{
+  height: 134px;
+  width: 134px;
+}
+.modal-bottom{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.bottom-top{
+  flex: 0.2;
+  display: flex;
+  font-weight: 200;
+  align-items: center;
+}
+.bottom-top h1{
+  color: black;
+  font-weight: 500;
+  font-size: 24px;
+}
+.bottom-bottom{
+  flex: 1;
+}
+table{
+  width: 100%;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 17px;
+}
+td.dotted-bottom{
+  border-bottom: 1px dotted black;
+  padding-block : 1rem;
+  padding-inline: 1rem;
+}
+td.center-align{
+  text-align: center;
+}
+.total{
+  padding-block : 1rem;
+  padding-inline: 1rem;
+}
+.downloadBtn
+,.close{
+  cursor: pointer;
 }
