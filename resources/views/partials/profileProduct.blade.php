@@ -29,7 +29,7 @@
                 @endif
             </div>
             <div class="itemsBottom">
-                <input type="hidden" value="{{$cartItems->cart_id}}">
+                <input type="text" value="{{$cartItems->cart_id}}">
                 @if($cartItems->image_path)
 
                 <div class="image-placeholder">
