@@ -26,7 +26,17 @@
             <div class="card-right-price">
                 <h3 class="product-price">P {{ number_format($product->price, 2) }}</h3></div>
             <div class="card-right-two">
-                <a href="" class="card-edit">edit</a>
+                
+                <button class="card-edit" onclick="openModal(this)"
+                class="edit-listing"
+                data-bs-toggle="modal"
+                data-bs-target="#myModal"
+                data-name="{{ $product->name }}"
+                data-price="{{ $product->price }}"
+                data-stock="{{ $product->stock }}"
+                data-id="{{ $product->product_id}}"
+                data-fImage="{{ asset('images/' . $firstImage) }}"
+                >edit</button>
             </div>
         </div>
     </div>

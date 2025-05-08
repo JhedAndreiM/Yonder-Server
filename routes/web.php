@@ -33,7 +33,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
 // Middleware for Orgs
 Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(function () {
     Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
-    
+    Route::post('/products/update', [OrganizationController::class, 'update'])->name('products.update');
+
 });
 
 // Middleware for Admin
@@ -86,6 +87,8 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     
     // cart
     Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
+    //check out all
+    Route::post('/cart/checkout-all', [CartController::class, 'checkoutAll'])->name('cart.checkoutAll');
     // add to cart
     Route::get('/Cart', [CartController::class, 'showCart'])->name('show.cart');
    // remove from cart

@@ -4,34 +4,18 @@
 <head>
     <style>
 
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            height: 124px;
-            display: flex;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            justify-content: center;
-            align-items: center;
-            font-family: "Raleway", sans-serif;
-            background-color: white;
-            border-bottom: solid rgb(0, 0, 0) 2px;
-        }
-
         .menu-button {
             display: none;
         }
 
         .webName {
-            position: absolute;
-            flex: 0.7;
-            font-size: 2rem;
-            left: 5%;
-            color: #ae0505;
-        }
+    position: absolute;
+    flex: 0.7;
+    font-size: 2rem;
+    left: 5%;
+    top: 0%;
+    color: #ae0505;
+}
 
         .nav-search {
             width: 33.5rem;
@@ -229,6 +213,7 @@
             bottom: 10%;
             right: 5%;
         }
+        
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -242,7 +227,7 @@
 <body>
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <a href="{{ route('custom.home') }}"><h1 class="webName">Yonder</h2></a>
+        <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
             </div>
             <div class="left-nav">
                 <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">

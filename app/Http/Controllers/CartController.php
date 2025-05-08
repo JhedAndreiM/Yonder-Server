@@ -73,6 +73,35 @@ class CartController extends Controller
         }
     }
 
+    public function checkoutAll()
+{
+    $userId = Auth::id();
+
+    // Get all 'in_cart' items for this user
+    $cartItems = DB::table('cart_items')
+        ->where('user_id', $userId)
+        ->where('status', 'in_cart')
+        ->get();
+
+    foreach ($cartItems as $item) {
+        // Update the status to 'pending'
+        DB::table('cart_items')
+            ->where('id', $item->id)
+            ->update([
+                'status' => 'pending',
+                'updated_at' => now(),
+            ]);
+
+        // Update voucher status if there's one linked
+        if ($item->voucher_applied && isset($item->voucher_id)) {
+            DB::table('vouchers')->where('id', $item->voucher_id)->update([
+                'status' => 'pending',
+            ]);
+        }
+    }
+
+    return redirect()->back()->with('success', 'All items checked out successfully!');
+}
 
     public function showCart()
     {
@@ -94,7 +123,14 @@ class CartController extends Controller
                 'cart_items.voucher_applied'
             )
             ->get();
-        return view('addToCart', compact('cartItems'));
+
+
+        $totalItems = $cartItems->sum('quantity');
+
+        $totalAmount = $cartItems->reduce(function ($carry, $item) {
+            return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
+        }, 0);
+        return view('addToCart', compact('cartItems', 'totalItems', 'totalAmount'));
     }
 
     public function destroy($id)
