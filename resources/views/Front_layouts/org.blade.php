@@ -3,19 +3,18 @@
 
 <head>
     <style>
-
         .menu-button {
             display: none;
         }
 
         .webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    top: 0%;
-    color: #ae0505;
-}
+            position: absolute;
+            flex: 0.7;
+            font-size: 2rem;
+            left: 5%;
+            top: 0%;
+            color: #ae0505;
+        }
 
         .nav-search {
             width: 33.5rem;
@@ -210,16 +209,55 @@
             width: 70px;
             height: 70px;
             position: absolute;
-            bottom: 10%;
+            bottom: 0%;
+            right: 0%;
+        }
+
+        .addDiv {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            bottom: 0%;
             right: 5%;
         }
-        
+        .bot-ButtonGroup{
+            position: absolute;
+            bottom: 5%;
+            right: 5%;
+            position: relative;
+        }
+        @media (max-width: 1560px) {
+    .addDiv{
+        right: 6%;
+    }
+}
+@media (max-width: 1430px) {
+    .addDiv{
+        right: 7%;
+    }
+}
+@media (max-width: 1030px) {
+    .addDiv{
+        right: 9%;
+    }
+}
+@media (max-width: 720px) {
+    .addDiv{
+        right: 15%;
+    }
+}
+@media (max-width: 520px) {
+    .addDiv{
+        right: 20%;
+    }
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     @yield('head')
 
 </head>
@@ -228,61 +266,69 @@
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
         <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
+        </div>
+        <div class="left-nav">
+            <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
+            <div class="vertical-line"></div>
+            <div class="profilePlace"><img class="profile_link"
+                    src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" id="nav-profile">
             </div>
-            <div class="left-nav">
-                <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-                <div class="vertical-line"></div>
-                <div class="profilePlace"><img class="profile_link"
-                        src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""
-                        id="nav-profile"></div>
 
-                <div class="sub-menu-wrapper" id="subMenu">
-                    <div class="sub-menu">
-                        <a href="{{ route('profile.page') }}" class="sub-menu-link">
-                            <i class="fa-solid fa-user"></i>
-                            <p>Profile</p>
-                        </a>
-                        <a href="" class="sub-menu-link">
-                            <i class="fa-solid fa-gear"></i>
-                            <p>Settings</p>
+            <div class="sub-menu-wrapper" id="subMenu">
+                <div class="sub-menu">
+                    <a href="{{ route('profile.page') }}" class="sub-menu-link">
+                        <i class="fa-solid fa-user"></i>
+                        <p>Profile</p>
+                    </a>
+                    <a href="" class="sub-menu-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <p>Settings</p>
 
-                        </a>
-                        <a href="{{ route('logout') }}" class="sub-menu-link">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            <p>Logout</p>
-                        </a>
-                    </div>
+                    </a>
+                    <a href="{{ route('logout') }}" class="sub-menu-link">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <p>Logout</p>
+                    </a>
                 </div>
             </div>
+        </div>
 
     </header>
     @yield('maincontent')
-    <div class="messageButton">
-        <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
+    <div class="bot-ButtonGroup">
+        <div class="messageButton">
+            <div class="">
+            <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
+        </div>
+    
+        <div class="addDiv"><img class="add-button" src="{{ asset('img/add-button.svg') }}" alt=""></div>
     </div>
+    
+    </div>
+    
     <script>
-        let subMenu= document.getElementById("subMenu");
-    $(document).on('click', '#nav-profile', function() {
-        console.log('clicked1');
-        subMenu.classList.toggle("active");
-    });
-        document.addEventListener('DOMContentLoaded', function () {
-        
-        const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-        const cartButton = document.querySelectorAll('.cartBtn');
-        // wishlist button
-        wishlistButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                window.location.href = "{{ route('show.wishlist') }}";
-            });
+        let subMenu = document.getElementById("subMenu");
+        $(document).on('click', '#nav-profile', function() {
+            console.log('clicked1');
+            subMenu.classList.toggle("active");
         });
+        document.addEventListener('DOMContentLoaded', function() {
 
-        cartButton.forEach(button=>{
-            button.addEventListener('click', function(){
-                window.location.href= "{{route('show.cart')}}";
+            const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+            const cartButton = document.querySelectorAll('.cartBtn');
+            // wishlist button
+            wishlistButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    window.location.href = "{{ route('show.wishlist') }}";
+                });
+            });
+
+            cartButton.forEach(button => {
+                button.addEventListener('click', function() {
+                    window.location.href = "{{ route('show.cart') }}";
+                })
             })
-        })
-    });
+        });
     </script>
 </body>
 

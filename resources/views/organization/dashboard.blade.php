@@ -19,24 +19,31 @@
 @section('maincontent')
     <div class="container">
         <div class="left">
-            <div class="left-container">
-                <div class="left-one">
-                    <h3>PBEN Organization</h3>
+            <div class="left-top">
+                <div class="nav-container-top1">
                 </div>
-                <div class="left-two">
-                    <hr>
+            </div>
+            <div class="left-bottom">
+                <div class="left-container">
+                    <div class="left-one">
+                        <h3>PBEN Organization</h3>
+                    </div>
+                    <div class="left-two">
+                        <hr>
+                    </div>
+                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i>Products</div>
+                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i>Orders</div>
+                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i>Reviews</div>
+                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i>Sales</div>
+                    <div class="left-seven"><i class="fa-solid fa-gear left-icon"></i>Settings</div>
                 </div>
-                <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i>Products</div>
-                <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i>Orders</div>
-                <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i>Reviews</div>
-                <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i>Sales</div>
-                <div class="left-seven"><i class="fa-solid fa-gear left-icon"></i>Settings</div>
+                <div class="add-listing">
+                    <a class="listing_link"href="{{ route('create.listing') }}">
+                        <h3>Add Product</h3>
+                    </a>
+                </div>
             </div>
-            <div class="add-listing">
-                <a class="listing_link"href="{{ route('create.listing') }}">
-                    <h3>Add Product</h3>
-                </a>
-            </div>
+            
         </div>
 
         <div class="right">

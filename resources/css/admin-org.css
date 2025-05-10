@@ -14,6 +14,7 @@ body, html {
     padding: 0;
     height: 100%;
     overflow: hidden;
+    font-family: "Raleway", sans-serif;
 }
 header {
     position: fixed;
@@ -21,7 +22,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1;
-    height: 124px;
+    height: 90px;
     display: flex;
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -29,7 +30,7 @@ header {
     align-items: center;
     font-family: "Raleway", sans-serif;
     background-color: white;
-    border-bottom: solid rgb(0, 0, 0) 2px;
+    border: #656769 solid 1px;
 }
 .menu-button{
     display: none;
@@ -39,7 +40,7 @@ header {
     flex: 0.7;
     font-size: 2rem;
     left: 5%;
-    top: 30%;
+    top: 17%;
     color: #ae0505;
 }
 .nav-search{
@@ -47,7 +48,7 @@ header {
     display: flex;
     justify-content: center;
     flex-direction: row;
-    border: solid black 2px;
+    border: #656769 solid 1px;
     padding-right: 0.3rem;
     padding-left: 1rem;
     border-radius: 46px;
@@ -92,7 +93,7 @@ input:focus {
 }
 .vertical-line{
     border-left: 1px solid grey;
-    height: 90px;
+    height: 70px;
     margin-left: -3px;
     top: 0;
 }
@@ -108,7 +109,7 @@ input:focus {
 .container{
     display: flex;
     height: calc(100vh - 124px); 
-    margin-top: 124px;
+    margin-top: 100px;
 }
 /* left side */
 .left{
@@ -117,9 +118,10 @@ input:focus {
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 1rem;
 }
 .left-container{
-    border: black solid 2px;
+    border: #656769 solid 1px;
     border-radius: 11px;
     height: 27rem;
     width: 25rem;
@@ -127,7 +129,20 @@ input:focus {
     display: flex;
     flex-direction: column;
     margin-left: 6rem;
+    margin-top: 2rem;
 }
+.left-top{
+    flex: 0.1;
+    height: 100px;
+}
+
+.nav-container-top1{
+    margin-bottom: 100px;
+}
+.left-bottom{
+    flex:1;
+}
+
 hr{
     display: flex;
     justify-content: center;
@@ -172,6 +187,7 @@ hr{
     flex-direction: column;
     overflow-y: auto;
     padding-bottom: 5rem;
+    position: relative;
 }
 .right-top{
     flex: 0.1;
@@ -209,7 +225,7 @@ hr{
 .nav-top-three,
 .nav-top-four{
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 400;
 }
 
 
@@ -219,12 +235,15 @@ hr{
     display: flex;
     justify-content: center;
     align-items: center;
-    border: solid black 2px;
+    border: #656769 solid 1px;
     height: 3.2rem;
     width: 25rem;
     border-radius: 15px;
     margin-left: 6rem;
     background-color: white;
+}
+.listing_link{
+    color: black;
 }
 .add-listing h3{
     color: black;
@@ -241,7 +260,7 @@ hr{
 }
 .card{
     display: flex;
-    border: solid black 2px;
+    border: #656769 solid 1px;
     background-color: white;
     width: 1000px;
     height: 200px;
@@ -263,6 +282,11 @@ hr{
 }
 .product-name{
     font-size: 1.25rem;
+    font-weight: 400;
+}
+.product-stock,
+.product-price{
+    font-weight: 400;
 }
 .card-right-two
 ,.card-right-price
@@ -276,7 +300,7 @@ hr{
 .card img{
     height: 180px;
     width: 180px;
-    border: solid black 1px;
+    border: #656769 solid 1px;
     border-radius: 7px;
     object-fit: cover;    
 }
@@ -290,9 +314,10 @@ hr{
     display: flex;
     justify-content: center;
     align-items: center;
-    color: blue;
+    color: #656769;
     border: none;
     text-decoration: underline;
+    font-weight: 400;
 }
 
 /* MODAL */
@@ -430,6 +455,9 @@ label{
     .left-container,.add-listing{
         margin-left: 1rem;
     }
+    .add-listing{
+        display: none;
+    }
 }
 @media (max-width: 1430px) {
     header{
@@ -445,10 +473,20 @@ label{
         margin-left: 0rem;
         height: 15rem;
     }
+    .left-top{
+        display: none;
+    }
+    .add-button{
+        right: 15%;
+    }
 }
 @media (max-width: 1030px) {
     header{
-        height: 110px;
+        height: 90px;
+    }
+    .webName{
+        width: 130px;
+        top: 27%;
     }
     .card{
         width: 700px;
@@ -464,10 +502,32 @@ label{
         border-radius: 7px;
         object-fit: cover;    
     }
+    .modal-content{
+        width: 660px;
+        display: flex;
+    }
+    .modal-right{
+        flex: 0;
+        width: 400px;
+    }
+    .modal-left{
+        flex: 1;
+    }
+    #productStock{
+        width: 100px;
+    }
+    #productPrice{
+        width: 150px;
+    }
+    .default-image{
+        width: 200px;
+        height: 200px;
+        margin-left: 0px;
+    }
 }
 @media (max-width: 720px) {
     header{
-        height: 100px;
+        height: 80px;
     }
     .vertical-line {
         height: 70px;
@@ -493,6 +553,39 @@ label{
         border-radius: 7px;
         object-fit: cover;    
     }
+    .modal-content{
+        width: 460px;
+        display: flex;
+        height: 300px;
+        padding: 5px;
+    }
+    .modal-button {
+        width: 100px;
+        height: 30px;
+    }
+    .image-placeholder{
+        height: 200px;
+    }
+    label{
+        width: 120px;
+        height: 70px;
+        font-size: 16px;
+    }
+    .default-image{
+        width: 150px;
+        height: 150px;
+        margin-left: 0px;
+        margin-left: 20px;
+    }
+    .product-price{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .webName{
+        width: 120px;
+        top: 27%;
+    }
+
 }
 @media (max-width: 520px) {
     header{
@@ -502,9 +595,15 @@ label{
         height: 60px;
     }
     .webName {
-        
-        top: 15%;
-        
+        width: 100px;
+        top: 25%;
+    }
+    .profile_link{
+        width: 50px;
+        height: 50px;
+    }
+    .notificationBtn{
+        width: 20px;
     }
     .left-nav{
         width: 40%;
@@ -516,7 +615,8 @@ label{
         font-size: 14px;
     }
     .card h3{
-        font-size: 14px;
+        font-size: 12px;
+        font-weight: 500;
     }
     .card-edit{
         font-size: 14px
