@@ -148,7 +148,7 @@
             <button class="w3-button w3-black right-btn slider-btn" onclick="plusDivs(1)">&#10095;</button>
             <div class="w3-content w3-display-container image-slider-wrapper">
                 @foreach ($featuredImages as $image)
-                <img class="mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%; margin-bottom: 10px;">
+                <img class="mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%; ">
                 @endforeach
                 
             </div>

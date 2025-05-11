@@ -226,10 +226,22 @@
             right: 5%;
             position: relative;
         }
+        .add-button{
+        display: none;
+        }
+        .listing_links{
+        display: none;
+        }
         @media (max-width: 1560px) {
     .addDiv{
         right: 6%;
     }
+    .add-button{
+    display: flex;
+}
+.listing_links{
+        display: flex;
+        }
 }
 @media (max-width: 1430px) {
     .addDiv{
@@ -301,7 +313,7 @@
             <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
         </div>
     
-        <div class="addDiv"><img class="add-button" src="{{ asset('img/add-button.svg') }}" alt=""></div>
+            <a class="listing_links"href="{{ route('create.listing') }}"><div class="addDiv"><img class="add-button" src="{{ asset('img/add-button.svg') }}" alt=""></div></a>
     </div>
     
     </div>

@@ -34,6 +34,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
 Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(function () {
     Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
     Route::post('/products/update', [OrganizationController::class, 'update'])->name('products.update');
+    //Route::get('/orgReport', function () {return view('organization/orgReport');})->name('org.report');
+    Route::get('/chart', [OrganizationController::class, 'showChart'])->name('org.report');
 
 });
 
