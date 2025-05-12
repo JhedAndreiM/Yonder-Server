@@ -19,7 +19,7 @@
 <body>
 <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <h1 class="webName">Yonder</h2>
+        <a href=""><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
         <div class="nav-container">
         <nav>
             <ul class="navLinks">
@@ -40,9 +40,9 @@
 </div>
 <div class="bottom">
     
-<a href="{{ route('login.form', ['role' => 'admin']) }}">Admin</a>
-<a href="{{ route('login.form', ['role' => 'organization']) }}">Organization</a>
-<a href="{{ route('login.form', ['role' => 'student']) }}">Student</a>
+<a class="adminBtn" href="{{ route('login.form', ['role' => 'admin']) }}">Admin</a>
+<a class="orgBtn" href="{{ route('login.form', ['role' => 'organization']) }}">Organization</a>
+<a class="studentBtn" href="{{ route('login.form', ['role' => 'student']) }}">Student</a>
 </div>
 </div>
 

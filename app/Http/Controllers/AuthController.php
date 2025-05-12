@@ -20,6 +20,11 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
+         $request->validate([
+        'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@bpsu\.edu\.ph$/']
+    ], [
+        'email.regex' => 'Only BPSU email addresses are allowed.'
+    ]);
         $credentials = $request->only('email', 'password');
         $selectedRole = $request->input('role');
 

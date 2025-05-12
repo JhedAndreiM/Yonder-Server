@@ -22,7 +22,7 @@
 <body>
 <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <h1 class="webName">Yonder</h2>
+        <a href=""><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
         <div class="nav-container">
         <nav>
             <ul class="navLinks">
@@ -64,7 +64,7 @@
                 </div>
             </div>
             @if($errors->any())
-            <div style="color: red; margin-bottom: 10px;">
+            <div style="color: red;padding-top:1rem;">
                 @foreach($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach

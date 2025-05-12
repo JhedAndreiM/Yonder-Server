@@ -1,7 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
+@extends('Front_layouts.default')
+@section('head')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -16,21 +14,10 @@
     </style>
     @vite('resources/css/createListing.css')
     @vite('resources/js/createListing.js')
-</head>
+@endsection
 
-<body>
-    <!-- Ang Controller ng Page na to ay ProductController.php :) -->
-    <header>
-        <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <h1 class="webName">Yonder</h2>
-            <div class="left-nav">
-                <img class="wishlistBtn" src="{{ asset('img/cart.svg') }}" alt="">
-                <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-                <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-                <div class="vertical-line"></div>
-                <img class="profile_link" src="{{ asset('img/profile-placeholder.svg') }}" alt="">
-            </div>
-    </header>
+@section('maincontent')
+
     <div class="container">
         <div class="left">
             <div id="hiddenInputs"></div>
@@ -163,6 +150,4 @@
             }
         }
     </script>
-</body>
-
-</html>
+@endsection

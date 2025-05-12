@@ -115,6 +115,86 @@ class OrganizationController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $monthlySalesData[] = $monthlySales->get($i, 0);
         }
-        return view('organization/orgReport', compact('statusCounts', 'monthlySalesData'));
+
+
+        $cartItems = DB::table('cart_items')
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->where('cart_items.seller_id', Auth::id())
+            ->where('cart_items.status', '=', 'completed')
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.quantity',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'product.name as product_name',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied'
+            )
+            ->get();
+            $totalAmount = $cartItems->reduce(function ($carry, $item) {
+            return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
+            }, 0);
+
+        // Get total wishlist items
+        $totalWishlistItems = DB::table('wishlists')
+            ->join('product', 'wishlists.product_id', '=', 'product.product_id')
+            ->where('product.user_id',  Auth::id())
+            ->select('wishlists.*')
+            ->count();
+
+        // Get stocks with less than 10
+        $lowStockProducts = DB::table('product')
+            ->where('user_id', Auth::id())
+            ->where('stock', '<', 10)
+            ->where('approved', 'yes')
+            ->get();
+        $lowStockCount = $lowStockProducts->count();
+
+        // Get top seller products
+        $topSellerProduct = DB::table('cart_items')
+    ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+    ->where('cart_items.seller_id', Auth::id())
+    ->where('cart_items.status', 'completed')
+    ->select(
+        'product.name as product_name',
+        DB::raw('SUM(cart_items.quantity) as total_quantity')
+    )
+    ->groupBy('product.product_id', 'product.name')
+    ->orderByDesc('total_quantity')
+    ->limit(5)
+    ->first();
+
+
+
+    // for recent 
+            $userId = Auth::id();
+        $query = DB::table('cart_items')
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->join('users', 'cart_items.user_id', '=', 'users.id')
+            ->where('cart_items.seller_id', '=', $userId)
+            ->where('cart_items.status', '=', 'completed')
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.quantity',
+                'cart_items.seller_id',
+                'cart_items.buyer_response',
+                'cart_items.seller_response',
+                'cart_items.status',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'cart_items.updated_at',
+                'product.name as product_name',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied',
+                'users.name as seller_name',
+                'buyers.name as buyer_name',
+                'buyers.id as buyer_id'
+            )
+            ->orderBy('cart_items.updated_at', 'desc');
+            $cartData = $query->get();
+        return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'totalWishlistItems', 'lowStockCount', 'topSellerProduct', 'cartData'));
     }
 }

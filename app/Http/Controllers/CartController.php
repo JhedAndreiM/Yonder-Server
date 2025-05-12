@@ -35,6 +35,7 @@ class CartController extends Controller
         $existingCartItem  = DB::table('cart_items')
             ->where('user_id', Auth::id())
             ->where('product_id', $request['product_id'])
+            ->where('status', 'in_cart')
             ->first();
 
         if ($existingCartItem) {
@@ -74,34 +75,34 @@ class CartController extends Controller
     }
 
     public function checkoutAll()
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    // Get all 'in_cart' items for this user
-    $cartItems = DB::table('cart_items')
-        ->where('user_id', $userId)
-        ->where('status', 'in_cart')
-        ->get();
+        // Get all 'in_cart' items for this user
+        $cartItems = DB::table('cart_items')
+            ->where('user_id', $userId)
+            ->where('status', 'in_cart')
+            ->get();
 
-    foreach ($cartItems as $item) {
-        // Update the status to 'pending'
-        DB::table('cart_items')
-            ->where('id', $item->id)
-            ->update([
-                'status' => 'pending',
-                'updated_at' => now(),
-            ]);
+        foreach ($cartItems as $item) {
+            // Update the status to 'pending'
+            DB::table('cart_items')
+                ->where('id', $item->id)
+                ->update([
+                    'status' => 'pending',
+                    'updated_at' => now(),
+                ]);
 
-        // Update voucher status if there's one linked
-        if ($item->voucher_applied && isset($item->voucher_id)) {
-            DB::table('vouchers')->where('id', $item->voucher_id)->update([
-                'status' => 'pending',
-            ]);
+            // Update voucher status if there's one linked
+            if ($item->voucher_applied && isset($item->voucher_id)) {
+                DB::table('vouchers')->where('id', $item->voucher_id)->update([
+                    'status' => 'pending',
+                ]);
+            }
         }
-    }
 
-    return redirect()->back()->with('success', 'All items checked out successfully!');
-}
+        return redirect()->back()->with('success', 'All items checked out successfully!');
+    }
 
     public function showCart()
     {
@@ -296,7 +297,16 @@ class CartController extends Controller
                         'status' => 'completed',
                         'updated_at' => now()
                     ]);
-                    $completedCount = DB::table('cart_items')
+                $product = DB::table('product')->where('product_id', $confirm->product_id)->first();
+                if ($product) {
+                    DB::table('product')
+                        ->where('product_id', $confirm->product_id)
+                        ->update([
+                            'stock' => max(0, $product->stock - $confirm->quantity),
+                            'updated_at' => now()
+                        ]);
+                }
+                $completedCount = DB::table('cart_items')
                     ->where('user_id', $confirm->user_id)
                     ->where('seller_id', 5)
                     ->where('status', 'completed')
@@ -313,7 +323,7 @@ class CartController extends Controller
                 }
             }
 
-           
+
             return redirect()->route('student.profile', ['filters' => $filters])
                 ->with('success', 'Item received.');
         }
@@ -336,7 +346,15 @@ class CartController extends Controller
                         'status' => 'completed',
                         'updated_at' => now()
                     ]);
-
+                $product = DB::table('product')->where('product_id', $confirm->product_id)->first();
+                if ($product) {
+                    DB::table('product')
+                        ->where('product_id', $confirm->product_id)
+                        ->update([
+                            'stock' => max(0, $product->stock - $confirm->quantity),
+                            'updated_at' => now()
+                        ]);
+                }
                 $completedCount = DB::table('cart_items')
                     ->where('user_id', $confirm->user_id)
                     ->where('seller_id', 5)
@@ -353,6 +371,9 @@ class CartController extends Controller
                     ]);
                 }
             }
+
+
+            
             return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item delivered.');
         }

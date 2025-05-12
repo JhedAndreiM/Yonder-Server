@@ -46,7 +46,7 @@
         <div class="section-content">
             <div class="section-text">
                 <h1>Connecting students <br>through seamless buying, <br>selling, and trading</h1>
-                <h5>Welcome to UniTrade – Your university-exclusive marketplace! Buy, sell, <br>and trade everything you need within your campus community. Safe, <br>easy, and made just for students like you. Start exploring today!</h5>
+                <h5>Welcome to Yonder – Your university-exclusive marketplace! Buy, sell, <br>and trade everything you need within your campus community. Safe, <br>easy, and made just for students like you. Start exploring today!</h5>
                 <a class="getStartedBtn"href="{{ route('select.role') }}">Get Started</a>
             </div>
             <div class="section-img">
@@ -56,7 +56,7 @@
     </section>
     <section class="pageTwo">
         <div class="info"><h1 class="pageTwoHeader">Our Services</h1>
-            <p class="pageTwoText">At UniTrade, we offer a seamless platform where students can buy and sell items such as books, gadgets, and more within their 
+            <p class="pageTwoText">At Yonder, we offer a seamless platform where students can buy and sell items such as books, gadgets, and more within their 
             university. Our secure system ensures safe and verified transactions, connecting you with trusted buyers and sellers from your own campus. </p>
         </div>
             <div class="center">
@@ -110,7 +110,7 @@
                         <img src="{{ asset('img/coupons.svg') }}" alt="">
                     </div>
                     <div class="cardFour-middle">
-                        <p>Get the chance to win exclusive prizes from official BPSU shops when you buy through UniTrade!</p>
+                        <p>Get the chance to win exclusive prizes from official BPSU shops when you buy through Yonder!</p>
                     </div>
                     <div class="cardFour-bottom">
                         <img src="{{ asset('img/arrow-white.svg') }}" alt="">
@@ -131,7 +131,7 @@
             <h1>Let's make things happen!</h1>
         </div>
         <div class="pageThree-middle">
-            <p>Get started with UniTrade today and enjoy a hassle-free way to buy, sell, and trade within your campus—saving money, finding great deals, and connecting with fellow students has never been this easy!</p>
+            <p>Get started with Yonder today and enjoy a hassle-free way to buy, sell, and trade within your campus—saving money, finding great deals, and connecting with fellow students has never been this easy!</p>
         </div>
         <div class="pageThree-bottom">
             <h2>Get Started</h2>
@@ -143,7 +143,7 @@
         <div class="footerOne">
             
             <ul class="footerUniTrade">
-                <li><h3>UniTrade</h3></li>
+                <li><h3>Yonder</h3></li>
                 <li><a href="#">About Us</a></li>
                 <li><a href="#">Our Services</a></li>
                 <li><a href="#">Privacy and Policy</a></li>
@@ -169,7 +169,7 @@
         </div>
         <div class="footerFour">
             <img src="{{ asset('img/BPSU-logo.svg') }}" alt="">
-            <h1>UniTrade</h1>
+            <h1>Yonder</h1>
         </div>
     </footer>
 
@@ -177,7 +177,7 @@
         <div class="nav-content">
             <div class="nav-uniTradeTop">
                 <img class="menu-buttonNav" src="{{ asset('img/Menu.svg') }}" alt="">
-                <h1>UniTrade</h1>
+                <h1>Yonder</h1>
             </div>
             <div class="nav-list">
                 <ul class="slide-top">

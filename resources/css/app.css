@@ -22,6 +22,7 @@ html, body {
     margin: 0;
     padding: 0;
     width: 100vw; 
+    scrollbar-width: none;
 }
 /* NAV BAR */
 header {
@@ -30,7 +31,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    height: 80px;
+    height: 100px;
     display: flex;
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -46,8 +47,9 @@ header {
     flex: 0.7;
     font-size: 2rem;
     left: 5%;
-    top: 15%;
+    top: 27%;
     color: #ae0505;
+    width: 100px;
 }
 .menu-button{
     display: none;
@@ -65,11 +67,12 @@ header {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    gap: 2rem;
 }
 .navLinks li {
     position: relative;
     display: inline-block;
-    padding: 0rem 1.2rem;
+    padding: 0rem 2.2rem;
     font-size: 1.5rem;
     z-index: 3;
 }
@@ -106,13 +109,14 @@ header {
     width: 7rem;
     height: 3rem;
     top: 35%;
-    transform: translate(-2px,-20px);
+    transform: translate(12px,-20px);
     border-radius: 30px;
     z-index: 0;
 }
 .navHome{
     color: white;
 }
+
 
 /* SECTIONS AND SHIT */
 section {
@@ -160,6 +164,14 @@ section {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    
+}
+.section-content .section-text a:hover{
+    background: rgb(174,5,5);
+    background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
+    color: white;
+    transform: scale(1.1);
+    transition: ease-in-out 0.2s;
 }
 .section-content .section-text{
     display: flex;
@@ -227,6 +239,13 @@ section {
     background: rgb(174,5,5);
     background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
 
+}
+.card1:hover,
+.card2:hover,
+.card3:hover,
+.card4:hover {
+    transform: scale(1.1);
+    transition: ease-in-out 0.1s;
 }
 .card2 { 
     margin-bottom: 100px; 
@@ -461,6 +480,10 @@ section {
     font-weight: 400;
     font-style: normal;
     background-color: white;
+}
+.pageThree-container:hover {
+    transform: scale(1.1);
+    transition: ease-in-out 0.1s;
 }
 .pageThree-top{
     flex: 1;  

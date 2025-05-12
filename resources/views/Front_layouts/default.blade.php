@@ -28,7 +28,7 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            height: 124px;
+            height: 100px;
             display: flex;
             padding-top: 2rem;
             padding-bottom: 2rem;
@@ -44,12 +44,13 @@
         }
 
         .webName {
-            position: absolute;
-            flex: 0.7;
-            font-size: 2rem;
-            left: 5%;
-            color: #ae0505;
-        }
+    position: absolute;
+    flex: 0.7;
+    font-size: 2rem;
+    left: 5%;
+    top: 27%;
+    color: #ae0505;
+}
 
         .nav-search {
             width: 33.5rem;
