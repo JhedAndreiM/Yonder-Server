@@ -12,7 +12,14 @@
       rel="stylesheet"
     />
     @vite('resources/css/listings.css')
-
+    <style>
+        body {
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
+        }
+    </style>
 @endsection
 
 @section('maincontent')
@@ -30,7 +37,8 @@
             <div class="leftPartItems2">
                 <a href="{{ route('student.profile') }}" >My Purchases</a>
                     <a href="{{ route('profileListings.page') }}" class="current">My Listings</a>
-                    <a href="{{ route('vouchers.page') }}">My Vouchers</a>
+                    <a href="{{ route('show.vouchers') }}">My Vouchers</a>
+                    <a href="{{ route('student.sales') }}">My Sales</a>
             </div>
         </div>
         <div class="rightPart">

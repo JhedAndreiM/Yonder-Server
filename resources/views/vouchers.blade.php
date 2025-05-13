@@ -12,7 +12,14 @@
       rel="stylesheet"
     />
     @vite('resources/css/vouchers.css')
-
+    <style>
+        body {
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
+        }
+    </style>
 @endsection
 
 @section('maincontent')
@@ -31,89 +38,15 @@
             <div class="leftPartItems2">
                 <a href="{{ route('student.profile') }}" >My Purchases</a>
                     <a href="{{ route('profileListings.page') }}">My Listings</a>
-                    <a href="{{ route('vouchers.page') }}" class="current">My Vouchers</a>
+                    <a href="{{ route('show.vouchers') }}" class="current">My Vouchers</a>
+                    <a href="{{ route('student.sales') }}">My Sales</a>
             </div>
         </div>
         <div class="rightPart">
             <h2 class="yourListing">Your Voucher(s):</h2>
             <div class="cardContainer">
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div><div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div><div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div><div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
-                <div class="card">
-                    <div class="voucher">
-                        <div class="placeholder"></div>
-                        <h3 class="voucherValue">PHP 100 OFF</h3>
-                    </div>
-                    <h4 class="voucherDetail">PBEN's voucher that can be used for PHP 100 OFF for single use only.</h4>
-                    <p class="use">Use</p>
-                </div>
+                @include('partials.showVoucher', ['voucher' => $voucher])
+                
             </div>
         </div>
     </div>

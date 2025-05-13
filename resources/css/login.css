@@ -170,10 +170,13 @@ input:focus {
     font-optical-sizing: auto;
     font-weight: normal;
     font-style: normal;
+    cursor: pointer;
 }
 .cancel {
     border: black solid 1px;
     background-color: white;
+    text-decoration: none;
+    color: black;
 }
 .submit {
     border: none;

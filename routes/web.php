@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\FeaturedImageController;
@@ -82,9 +83,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
         return view('listings');
     })->name('profileListings.page');
     
-    Route::get('/my-vouchers', function () {
-        return view('vouchers');
-    })->name('vouchers.page');
+    Route::get('/Vouchers', [VoucherController::class, 'showVoucher'])->name('show.vouchers');
     
     
     // cart

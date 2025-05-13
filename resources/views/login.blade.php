@@ -69,9 +69,9 @@
                     <p>{{ $error }}</p>
                 @endforeach
             </div>
-        @endif
+            @endif
             <div class="btnGroup">
-                <button class="cancel">Cancel</button>
+                <a class="cancel"href="{{  url('/') }}">Cancel</a>
                 <button class="submit">Login</button>
             </div>
             

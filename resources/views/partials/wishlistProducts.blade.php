@@ -11,7 +11,8 @@ $firstImage = $images[0];
 @endphp
         <a id="card-link" href="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}" class="card-link">
         <div class="card">
-            <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}">
+            <div class="card-container">
+                <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}">
             @if($firstImage)
                 <img class="image-placeholder"src="{{ asset('images/' . $firstImage) }}" alt="{{ $firstImage }}">
             @else
@@ -22,7 +23,9 @@ $firstImage = $images[0];
             <h4 class="stocks">Stocks: {{ $wishlistItem->product->stock }}</h4>
             <img class="heart-icon" src="img/heart-icon.png" alt="" />
             <i class="fa-solid fa-heart heart-icon {{ in_array($wishlistItem->product->product_id, $wishlist) ? 'red' : 'gray' }}" data-product-id="{{ $wishlistItem->product->product_id }}"></i>
-          </div>
+            </div>
+            
+        </div>
         </a>
     @endforeach
 @endif

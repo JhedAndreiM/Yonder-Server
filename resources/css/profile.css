@@ -33,11 +33,12 @@ html {
   display: none;
 }
 .webName {
-  position: absolute;
-  flex: 0.7;
-  font-size: 2rem;
-  left: 5%;
-  color: #ae0505;
+    position: absolute;
+    flex: 0.7;
+    font-size: 2rem;
+    left: 5%;
+    top: 25%;
+    color: #ae0505;
 }
 .nav-search {
   width: 33.5rem;
@@ -89,7 +90,7 @@ input:focus {
 }
 .vertical-line {
   border-left: 1px solid grey;
-  height: 90px;
+  height: 60px;
   margin-left: -3px;
   top: 0;
 }
@@ -149,9 +150,7 @@ h1 {
   width: 400px;
   height: 350px;
   background-color: #ffffff;
-  border: #1d1d1d;
-  border-style: solid;
-  box-shadow: 0px 4px 0px 0px #1d1d1d;
+  border: #656769 solid 1px;
   border-radius: 10px;
   padding: 1.5%;
   position: sticky;
@@ -173,8 +172,7 @@ h1 {
   padding: 1rem 3%;
   margin-bottom: 2%;
   background-color: #ffffff;
-  border: #1d1d1d solid;
-  box-shadow: 0px 4px 0px 0px #1d1d1d;
+  border: #656769 solid 1px;
   border-radius: 8px;
   font-size: 25px;
   height: auto;
@@ -195,9 +193,7 @@ a {
   height: auto;
   margin-bottom: 2%;
   background-color: #ffffff;
-  border: #1d1d1d;
-  border-style: solid;
-  box-shadow: 0px 4px 0px 0px #1d1d1d;
+  border: #656769 solid 1px;
   border-radius: 8px;
   padding: 1%;
 }

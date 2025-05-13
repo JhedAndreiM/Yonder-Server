@@ -110,7 +110,6 @@
         <div class="modal hidden" id="cartModal">
             <div class="modal-blur-background"></div>
             <div class="modalContent">
-                <span class="close-btn">&times;</span>
                  <!-- Hidden Items Para Ma-send ko sa backend -->
                  <input type="hidden" name="product_id" value="{{ $products->product_id }}">
                  <input type="hidden" name="unit_price" value="{{ $products->price }}">
@@ -120,15 +119,17 @@
                  <input type="hidden" name="voucher_id" id="voucherAddToCart">
                  <input type="hidden" name="voucher_amount" id="voucherAddToCartAmount">
                  <!----------------------------------------->
+                 <div class="img-placeholder"><img src="{{ asset('img/confirmation-logo.svg') }}" alt="" style="width: 179px;"></div>
                 <h2>{{ $products->name}}</h2>
-                <p>Condition: {{$products->product_condition}}</p>
-                <p>Colleges: {{$products->colleges}}</p>
-                <p>For: {{$products->forSaleTrade}}</p>
                 <p>Price per unit: ₱<span id="unitPrice">{{ number_format($products->price, 2) }}</span></p>
-                <label>Quantity:</label>
+                <div class="quantity-div">
+                    <label>Quantity:</label>
                 <input type="number" id="quantity" value="1" min="1" max="{{ number_format($products->stock, 2) }}">
+                </div>
+                
     
                 @if($isPBEN)
+                    <div class="voucher-div">
                     <label>Apply Voucher</label>
                     <select id="voucher" name="voucher_id" onchange="myFunction(event)">
                         <option disabled selected>No Voucher</option>
@@ -138,10 +139,16 @@
                             </option>
                         @endforeach
                     </select>
+                    </div>
                     @endif
     
                     <p>Total: ₱<span id="totalPrice"></span></p>
-                    <button onclick="submitAction('cart')">Confirm Add to Cart</button>
+                    <div class="btnGroup">
+                        <button onclick="submitAction('cart')">Confirm Add to Cart</button>
+                        <a class="close-btn" href="">Close</a>
+                        
+                    </div>
+                    
             </div>
         </div>
     </form>
@@ -154,7 +161,6 @@
         <div class="modal hidden" id="buyModal">
             <div class="modal-blur-background"></div>
             <div class="modalContent">
-                <span class="close-btn-buy">&times;</span>
                 <!-- Hidden Items Para Ma-send ko sa backend -->
                 <input type="hidden" name="product_id" value="{{ $products->product_id }}">
                 <input type="hidden" name="unit_price" value="{{ $products->price }}">
@@ -164,16 +170,17 @@
                 <input type="hidden" name="voucher_id" id="voucherBuyNow">
                  <input type="hidden" name="voucher_amount" id="voucherBuyNowAmount">
                 <!----------------------------------------->
+                <div class="img-placeholder"><img src="{{ asset('img/confirmation-logo.svg') }}" alt="" style="width: 179px;"></div>
                 <h2>{{ $products->name}}</h2>
-                <p>Condition: {{$products->product_condition}}</p>
-                <p>Colleges: {{$products->colleges}}</p>
-                <p>For: {{$products->forSaleTrade}}</p>
-                <p>Description: {{$products->description}}</p>
                 <p>Price per unit: ₱<span id="unitPriceBuy">{{ number_format($products->price, 2) }}</span></p>
-                <label>Quantity:</label>
-                <input type="number" id="quantityBuy" value="1" min="1">
+                <div class="quantity-div">
+                    <label>Quantity:</label>
+                    <input type="number" id="quantityBuy" value="1" min="1">
+                </div>
+                
     
                 @if($isPBEN)
+                <div class="voucher-div">
                     <label>Apply Voucher</label>
                     <select id="voucherBuySelect" name="voucher_id" onchange="myFunctionBuy(event)">
                         <option disabled selected>No Voucher</option>
@@ -183,10 +190,15 @@
                             </option>
                         @endforeach
                     </select>
+                    </div>
                     @endif
     
                     <p>Total: ₱<span id="totalPriceBuy"></span></p>
-                    <button type="submit">Confirm Add to Cart</button>
+                    <div class="btnGroup">
+                        <button onclick="submitAction('cart')">Confirm Buy Now</button>
+                        <a class="close-btn-buy" href="">Close</a>
+                        
+                    </div>
             </div>
         </div>
     
