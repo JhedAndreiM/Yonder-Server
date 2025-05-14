@@ -108,6 +108,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    // confirm ni buyer yung order
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');
    Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
+   Route::post('/delete', [ProductController::class, 'destroyListing'])->name('delete.listing');
 
    Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
 });

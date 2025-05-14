@@ -87,4 +87,13 @@ foreach($request->file('productImage') as $image){
         $products = Product::where('user_id', Auth::id())->get();
         return view('listings', compact('products'));
     }
+
+    public function destroyListing(Request $request)
+    {
+        $product = Product::findOrFail($request->product_id);
+        $product->delete();
+
+        $products = Product::where('user_id', Auth::id())->get();
+        return redirect()->route('listing.seller')->with('success', 'Product listed successfully!');
+    }
 }

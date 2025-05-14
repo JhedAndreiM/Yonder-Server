@@ -36,7 +36,7 @@
             <hr>
             <div class="leftPartItems2">
                 <a href="{{ route('student.profile') }}" >My Purchases</a>
-                    <a href="{{ route('profileListings.page') }}" class="current">My Listings</a>
+                    <a href="{{ route('listing.seller') }}" class="current">My Listings</a>
                     <a href="{{ route('show.vouchers') }}">My Vouchers</a>
                     <a href="{{ route('student.sales') }}">My Sales</a>
             </div>
@@ -87,6 +87,26 @@
             </div>
         </form>
     </div>
+
+    <div id="confirmModal" class="confirmModal">
+        <div class="confirmModalContent">
+                <form action="{{ route('delete.listing') }}" method="POST">
+                @csrf
+                <input type="hidden" name="product_id" id="productIDDelete" >
+                <div class="closeDiv" onclick="closeConfirmModal()">&times;</div>
+                <div class="confirmModalText">
+                    <h2>Are you sure you want to delete this item?</h2>
+                    <h4>You can't recover this item after deleting</h4>
+                </div>
+                <div class="confirmModalButtons">
+                    <button type="button" class="cancelButton" onclick="closeConfirmModal()">Cancel</button>
+                    <button type="submit" class="confirmButton">Confirm</button>
+                </div>
+            </form>
+            
+            
+        </div>
+    </div>
     <script>
         var modal = document.getElementById("myModal");
 
@@ -111,6 +131,17 @@
             document.getElementById("myModal").style.display = "none";
             document.getElementById("previewContainer").innerHTML = "";
             document.getElementById("imageInput").value = "";
+        }
+
+
+        function openModalRemove(button) {
+            var modal = document.getElementById("confirmModal");
+            modal.style.display = "flex";
+            console.log(button.dataset.id);
+            document.getElementById('productIDDelete').value = button.dataset.id;
+        }
+        function closeConfirmModal(){
+            document.getElementById("confirmModal").style.display = "none";
         }
     </script>
 @endsection

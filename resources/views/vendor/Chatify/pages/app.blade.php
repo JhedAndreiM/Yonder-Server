@@ -62,7 +62,7 @@
     </div>
 
     {{-- ----------------------Messaging side---------------------- --}}
-    <div class="messenger-messagingView" style="height: 100%;">
+    <div class="messenger-messagingView">
         {{-- header title [conversation name] amd buttons --}}
         <div class="m-header m-header-messaging">
             <nav class="chatify-d-flex chatify-justify-content-between chatify-align-items-center">

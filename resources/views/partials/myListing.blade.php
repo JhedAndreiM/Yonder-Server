@@ -24,9 +24,10 @@
             <h4 class="productName">{{$items->name}}</h4>
             <h4 class="stocks">Stocks: <span>{{$items->stock}}</span></h4>
             <div class="click">
-                <p class="remove">Remove</p>
+                <button class="card-delete" onclick="openModalRemove(this)"
+                data-id="{{ $items->product_id}}"
+                >Remove</button>
                 <button class="card-edit" onclick="openModal(this)"
-                class="edit-listing"
                 data-bs-toggle="modal"
                 data-bs-target="#myModal"
                 data-name="{{ $items->name }}"
