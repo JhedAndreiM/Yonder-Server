@@ -95,6 +95,7 @@ class MessagesController extends Controller
      */
     public function send(Request $request)
     {
+        print_r('wtf1');
         // default variables
         $error = (object)[
             'status' => 0,
@@ -147,8 +148,9 @@ class MessagesController extends Controller
                     'message' => Chatify::messageCard($messageData, true)
                 ]);
             }
+            
         }
-
+        dd($messageData->message);
         // send the response
         return Response::json([
             'status' => '200',

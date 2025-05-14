@@ -11,7 +11,8 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\FeaturedImageController;
-use App\Http\Middleware\RoleMiddleware; // Import the middleware class
+use App\Http\Middleware\RoleMiddleware; 
+use App\Http\Controllers\CustomMessageController;
 
 
 
@@ -107,6 +108,8 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    // confirm ni buyer yung order
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');
    Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
+
+   Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
 });
 
 

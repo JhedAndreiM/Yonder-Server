@@ -93,6 +93,7 @@ class MessagesController extends Controller
      */
     public function send(Request $request)
     {
+        print_r('wtf2');
         // default variables
         $error = (object)[
             'status' => 0,
@@ -152,7 +153,7 @@ class MessagesController extends Controller
                 ]);
             }
         }
-
+        dd($messageData->message);
         // send the response
         return Response::json([
             'status' => '200',
