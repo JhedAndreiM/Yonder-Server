@@ -28,7 +28,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
     Route::get('/wishlist-Show', [WishlistController::class, 'showWishlist'])->name('show.wishlist');
     Route::get('/student/profile', [CartController::class, 'getAllNotCartItems'])->name('student.profile');
     Route::get('/student/Sales', [CartController::class, 'getAllSales'])->name('student.sales');
-    
+    Route::post('/products/updateSeller', [CartController::class, 'updateSeller'])->name('products.updateSeller');
 });
 
 // Middleware for Orgs
@@ -106,6 +106,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
    // confirm ni buyer yung order
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');
+   Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
 });
 
 

@@ -26,7 +26,7 @@
                 <hr>
                 <div class="leftPartItems2">
                     <a href="{{ route('student.profile') }}" class="current">My Purchases</a>
-                    <a href="{{ route('profileListings.page') }}">My Listings</a>
+                    <a href="{{ route('listing.seller') }}">My Listings</a>
                     <a href="{{ route('show.vouchers') }}">My Vouchers</a>
                     <a href="{{ route('student.sales') }}">My Sales</a>
                 </div>

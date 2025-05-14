@@ -44,77 +44,73 @@
         <div class="rightPart">
             <h2 class="yourListing">Your Listing(s):</h2>
             <div class="cardContainer">
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="placeholder"></div>
-                    <h3 class="price">PHP 100</h3>
-                    <h4 class="productName">Brand new id lace JPSME (Limited stocks)</h4>
-                    <h4 class="stocks">Stocks: 100</h4>
-                    <div class="click">
-                        <p class="remove">Remove</p>
-                        <p class="edit">Edit</p>
-                    </div>
-                </div>
+                
+                @include('partials.myListing',['products' => $products])
             </div>
         </div>
     </div>
+    <div id="myModal" class="modal">
+        <form method="POST" action="{{ route('products.updateSeller') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="product_id" id="productId">
+
+            <div class="modal-content">
+                <div class="modal-left">
+                    <div class="image-placeholder" id="previewContainer">
+
+                    </div>
+                    
+                </div>
+
+                <div class="modal-right">
+                    <div class="right-modal-top">
+                        <input id="productID" type="hidden" name="product_id" id="">
+                        <h4>Product:</h4>
+                        <input id="productName" name="name" type="text" placeholder="Product Name" readonly>
+                    </div>
+                    <div class="right-modal-middle">
+                        <div class="stockDiv">
+                            <h4>Stocks:</h4>
+                        <input id="productStock" name="stock" type="number" min="1">
+                        </div>
+                        <div class="priceDiv">
+                            <h4>Price:</h4>
+                            <input id="productPrice" name="price" type="text" readonly>
+                        </div>
+                        
+                    </div>
+                    <div class="right-modal-bottom">
+                        <button class="modal-button cancel"type="button" onclick="closeModal()">Cancel</button>
+                        <button class="modal-button submit"type="submit">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        var modal = document.getElementById("myModal");
+
+        function openModal(button) {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "flex";
+            document.getElementById('productName').value = button.dataset.name;
+            document.getElementById('productStock').value = button.dataset.stock;
+            document.getElementById('productPrice').value = button.dataset.price;
+            document.getElementById('productID').value = button.dataset.id;
+            if (button.dataset.fimage) {
+        console.log('went here');
+        const img = document.createElement("img");
+        img.id = "productImage";
+        img.src = `${button.dataset.fimage}`;
+        img.className = "default-image";
+        img.style.objectFit = "cover";
+        previewContainer.appendChild(img);
+    }
+        };
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            document.getElementById("previewContainer").innerHTML = "";
+            document.getElementById("imageInput").value = "";
+        }
+    </script>
 @endsection

@@ -82,5 +82,9 @@ foreach($request->file('productImage') as $image){
     return view('productDetails', compact('products','availableVouchers'));
     }
 
-
+    public function dashboardForUserSeller()
+    {
+        $products = Product::where('user_id', Auth::id())->get();
+        return view('listings', compact('products'));
+    }
 }
