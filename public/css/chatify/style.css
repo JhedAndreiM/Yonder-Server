@@ -87,13 +87,6 @@ header {
 .menu-button {
   display: none;
 }
-.webName {
-  position: absolute;
-  flex: 0.7;
-  font-size: 2rem;
-  left: 5%;
-  color: #ae0505;
-}
 .mobile-only {
   display: none;
   background: none;
@@ -1113,13 +1106,6 @@ div.loadingPlaceholder-date {
   .messenger-messagingView{
     height: 100% !important;
   }
-  .messenger-infoView {
-    position: fixed;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    max-width: 334px;
-  }
   
 header {
   display: none;
@@ -1149,7 +1135,9 @@ header {
 }
 
 @media (max-width: 680px) {
- 
+    header{
+    display: none !important;
+    }
   .messenger-messagingView {
     position: fixed;
     top: 0;

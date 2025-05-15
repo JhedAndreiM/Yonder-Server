@@ -54,9 +54,9 @@
                     <i class="fa-solid fa-user"></i>
                     <p>Profile</p>
                 </a>
-                <a href="" class="sub-menu-link">
+                <a href="{{ route('account.page') }}" class="sub-menu-link">
                     <i class="fa-solid fa-gear"></i>
-                    <p>Settings</p>
+                    <p>Account</p>
                     
                 </a>
                 <a href="{{ route('logout') }}" class="sub-menu-link">

@@ -11,7 +11,7 @@
         <div class="items">
             <div class="itemsTop">
                 
-                <a href="" class="sellerName">{{$cartItems->seller_name}}</a>
+                <a href="/Yonder/Chat/{{ $cartItems->seller_id }}" class="sellerName">{{$cartItems->seller_name}}</a>
                 
                 
                 @if($cartItems->status == 'receive')
@@ -133,7 +133,8 @@
                                     onclick="openProductModalSeller(this)"
                                     >Receipt</button>
                                 @else
-                                    <button>Rate</button>
+                                
+                                    <button class="btn btn-primary rate-btn" data-itemid="{{ $cartItems->product_id}}">Rate</button>
                                     <button
                                     class="view-receipt"
                                     data-bs-toggle="modal"

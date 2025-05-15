@@ -498,6 +498,13 @@ form {
     font-size: 2rem;
     color: #666666;
 }
+.theRating,.theRatings{
+    width: 50px;
+    height: 25px;
+    border-radius: 8px;
+    text-align: center;
+    border: solid black 1px;
+}
 /* slideshow for featured :P */
 .right-middle {
     background-color: white;

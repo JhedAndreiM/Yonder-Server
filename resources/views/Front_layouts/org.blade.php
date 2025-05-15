@@ -288,13 +288,9 @@
 
             <div class="sub-menu-wrapper" id="subMenu">
                 <div class="sub-menu">
-                    <a href="{{ route('profile.page') }}" class="sub-menu-link">
-                        <i class="fa-solid fa-user"></i>
-                        <p>Profile</p>
-                    </a>
-                    <a href="" class="sub-menu-link">
+                    <a href="{{ route('accounts.page') }}" class="sub-menu-link">
                         <i class="fa-solid fa-gear"></i>
-                        <p>Settings</p>
+                        <p>Accounts</p>
 
                     </a>
                     <a href="{{ route('logout') }}" class="sub-menu-link">

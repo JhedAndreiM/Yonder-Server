@@ -411,9 +411,15 @@ function IDinfo(id) {
         fetchMessages(id, true);
         // focus on messaging input
         messageInput.focus();
+        
+        let fullName = data.fetch.name;
+        if (data.fetch.last_name) {
+            fullName += " " + data.fetch.last_name;
+        }
+
         // update info in view
-        $(".messenger-infoView .info-name").text(data.fetch.name);
-        $(".m-header-messaging .user-name").text(data.fetch.name);
+        $(".messenger-infoView .info-name").text(fullName);
+        $(".m-header-messaging .user-name").text(fullName);
         // Star status
         data.favorite > 0
           ? $(".add-to-favorite").addClass("favorite")

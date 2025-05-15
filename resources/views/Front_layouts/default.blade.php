@@ -3,7 +3,7 @@
 
 <head>
     <style>
-        body{
+        body {
             background-image: url("{{ asset('img/background.svg') }}");
             background-size: cover;
             background-repeat: no-repeat;
@@ -13,13 +13,14 @@
             height: 100%;
             overflow: hidden;
         }
+
         html {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
             /* Prevent body from scrolling */
-            
+
         }
 
         header {
@@ -44,13 +45,13 @@
         }
 
         .webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    top: 27%;
-    color: #ae0505;
-}
+            position: absolute;
+            flex: 0.7;
+            font-size: 2rem;
+            left: 5%;
+            top: 27%;
+            color: #ae0505;
+        }
 
         .nav-search {
             width: 33.5rem;
@@ -253,7 +254,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     @yield('head')
 
 </head>
@@ -262,34 +264,34 @@
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
         <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
+        </div>
+        <div class="left-nav">
+            <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
+            <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
+            <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
+            <div class="vertical-line"></div>
+            <div class="profilePlace"><img class="profile_link"
+                    src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" id="nav-profile">
             </div>
-            <div class="left-nav">
-                <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
-                <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-                <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-                <div class="vertical-line"></div>
-                <div class="profilePlace"><img class="profile_link"
-                        src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""
-                        id="nav-profile"></div>
 
-                <div class="sub-menu-wrapper" id="subMenu">
-                    <div class="sub-menu">
-                        <a href="{{ route('student.profile') }}" class="sub-menu-link">
-                            <i class="fa-solid fa-user"></i>
-                            <p>Profile</p>
-                        </a>
-                        <a href="" class="sub-menu-link">
-                            <i class="fa-solid fa-gear"></i>
-                            <p>Settings</p>
+            <div class="sub-menu-wrapper" id="subMenu">
+                <div class="sub-menu">
+                    <a href="{{ route('student.profile') }}" class="sub-menu-link">
+                        <i class="fa-solid fa-user"></i>
+                        <p>Profile</p>
+                    </a>
+                    <a href="{{ route('account.page') }}" class="sub-menu-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <p>Account</p>
 
-                        </a>
-                        <a href="{{ route('logout') }}" class="sub-menu-link">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            <p>Logout</p>
-                        </a>
-                    </div>
+                    </a>
+                    <a href="{{ route('logout') }}" class="sub-menu-link">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <p>Logout</p>
+                    </a>
                 </div>
             </div>
+        </div>
 
     </header>
     @yield('maincontent')
@@ -297,28 +299,28 @@
         <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message-icon-full.svg') }}" alt=""></a>
     </div>
     <script>
-        let subMenu= document.getElementById("subMenu");
-    $(document).on('click', '#nav-profile', function() {
-        console.log('clicked1');
-        subMenu.classList.toggle("active");
-    });
-        document.addEventListener('DOMContentLoaded', function () {
-        
-        const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-        const cartButton = document.querySelectorAll('.cartBtn');
-        // wishlist button
-        wishlistButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                window.location.href = "{{ route('show.wishlist') }}";
-            });
+        let subMenu = document.getElementById("subMenu");
+        $(document).on('click', '#nav-profile', function() {
+            console.log('clicked1');
+            subMenu.classList.toggle("active");
         });
+        document.addEventListener('DOMContentLoaded', function() {
 
-        cartButton.forEach(button=>{
-            button.addEventListener('click', function(){
-                window.location.href= "{{route('show.cart')}}";
+            const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+            const cartButton = document.querySelectorAll('.cartBtn');
+            // wishlist button
+            wishlistButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    window.location.href = "{{ route('show.wishlist') }}";
+                });
+            });
+
+            cartButton.forEach(button => {
+                button.addEventListener('click', function() {
+                    window.location.href = "{{ route('show.cart') }}";
+                })
             })
-        })
-    });
+        });
     </script>
 </body>
 

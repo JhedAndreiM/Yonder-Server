@@ -1,3 +1,4 @@
+
 @extends('Front_layouts.default')
 
 @section('head')
@@ -7,10 +8,18 @@
 
 
     @vite('resources/css/profile.css')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Bootstrap CSS -->
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 @endsection
 
 @section('maincontent')
+
     <div class="mainContainer">
         <div class="top">
             <h1>Profile</h1>
@@ -21,7 +30,7 @@
                     <div class="profilePlace_profile"><img class="profile_link_profile"
                             src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""
                             id="nav-profile"></div>
-                    <h3 class="h3">{{ Auth::user()->name }}</h3>
+                    <h3 class="h3">{{ Auth::user()->name }} {{ Auth::user()->last_name }}</h3>
                 </div>
                 <hr>
                 <div class="leftPartItems2">
@@ -80,7 +89,8 @@
                 <div class="modal-content-overlay">
                     <div class="modal-top">
                         <span class="close"><img src="{{ asset('img/back-button.svg') }}" alt=""></span>
-                        <img class="downloadBtn" src="{{ asset('img/Download-Button.svg') }}" alt="" onclick="screenshot()">
+                        <img class="downloadBtn" src="{{ asset('img/Download-Button.svg') }}" alt=""
+                            onclick="screenshot()">
                     </div>
                     <div class="modal-middle">
                         <div class="middle-top">
@@ -121,7 +131,90 @@
 
             </div>
         </div>
+        <!-- Rating Modal -->
+        <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ratingModalLabel">Submit Your Review</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reviewForm" action="{{ route('review.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="item_id" id="itemId">
+
+                            <div class="rating-stars mb-3">
+                                <div class="stars">
+                                    <i class="fas fa-star" data-rating="1"></i>
+                                    <i class="fas fa-star" data-rating="2"></i>
+                                    <i class="fas fa-star" data-rating="3"></i>
+                                    <i class="fas fa-star" data-rating="4"></i>
+                                    <i class="fas fa-star" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="selectedRating">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comment">Your Comment</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary _close-modal"
+                                    data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary _submit-modal">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (session('error'))
+            <div id="sessionModalFailed" class="sessionModal">
+
+                <!-- Modal content -->
+                <div class="sessionModal-content">
+                    <div class="top-success">
+                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
+                </div>
+                <div class="middle-success">
+                    <h1>Failed!</h1>
+                    <h5>Review Failed! Try again!</h5>
+                </div>
+                <div class="bottom-success">
+                    <button onclick="closeFailedModal()">Okay!</button>
+                </div>
+                </div>
+
+            </div>
+        @elseif (session('success'))
+            <div id="sessionModal" class="sessionModal">
+
+                <!-- Modal content -->
+                <div class="sessionModal-content">
+                    <div class="top-success">
+                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
+                </div>
+                <div class="middle-success">
+                    <h1>Success!</h1>
+                    <h5>Review Successfully Recorded!</h5>
+                </div>
+                <div class="bottom-success">
+                    <button onclick="closeSuccessModal()">Okay!</button>
+                </div>
+                </div>
+
+            </div>
+        @endif
         <script>
+            const successModal = document.getElementById("sessionModal");
+            function closeSuccessModal() {
+            successModal.style.display = "none";
+            }
+            const failedModal = document.getElementById("sessionModalFailed");
+            function closeFailedModal(){
+            failedModal.style.display = "none";
+            }
             const buttons = document.querySelectorAll('.btn-filter');
             //para pag ka load gana agad all filter
             window.addEventListener('DOMContentLoaded', () => {
@@ -159,22 +252,23 @@
                 }
                 //para sa modal
                 console.log('modal');
-            
+
 
 
             });
             // modal opem
             function openProductModal(button) {
-                    var modal = document.getElementById("myModal");
-                    modal.style.display = "block";
-                    document.getElementById('productName').textContent = button.dataset.name;
-                    document.getElementById('productQuantity').textContent = button.dataset.qty;
-                    document.getElementById('productPrice').textContent = button.dataset.price;
-                    document.getElementById('productVoucherPrice').textContent = button.dataset.voucher;
-                    document.getElementById('productID').textContent = button.dataset.id;
-                    document.getElementById('productTotal').textContent = ((button.dataset.price * button.dataset.qty) -button.dataset.voucher);
-                    console.log('wtf');
-                }
+                var modal = document.getElementById("myModal");
+                modal.style.display = "block";
+                document.getElementById('productName').textContent = button.dataset.name;
+                document.getElementById('productQuantity').textContent = button.dataset.qty;
+                document.getElementById('productPrice').textContent = button.dataset.price;
+                document.getElementById('productVoucherPrice').textContent = button.dataset.voucher;
+                document.getElementById('productID').textContent = button.dataset.id;
+                document.getElementById('productTotal').textContent = ((button.dataset.price * button.dataset.qty) - button
+                    .dataset.voucher);
+                console.log('wtf');
+            }
             // modal close
             var span = document.getElementsByClassName("close")[0];
             span.onclick = function() {
@@ -182,11 +276,11 @@
                 modal.style.display = "none";
             }
             // screenshot
-            function screenshot(){
-                const captureElement=document.querySelector(".modal-wrapper");
-                html2canvas(captureElement).then(function(c){
+            function screenshot() {
+                const captureElement = document.querySelector(".modal-wrapper");
+                html2canvas(captureElement).then(function(c) {
                     const url = c.toDataURL();
-                    const linkEl= document.createElement("a");
+                    const linkEl = document.createElement("a");
                     linkEl.setAttribute("href", url);
                     linkEl.setAttribute("download", "receipt.png");
                     linkEl.click();
@@ -230,5 +324,49 @@
                         console.error('Error fetching filtered products:', error);
                     })
             }
+            document.addEventListener('DOMContentLoaded', function() {
+                // Handle Rate button click
+                const rateButtons = document.querySelectorAll('.rate-btn');
+                rateButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        //document.getElementById('itemId').textContent = button.dataset.itemid;
+                        document.getElementById('itemId').value = button.dataset.itemid;
+                        const modal = new bootstrap.Modal(document.getElementById('ratingModal'));
+                        modal.show();
+                    });
+                });
+
+                // Handle star rating
+                const stars = document.querySelectorAll('.rating-stars .stars i');
+                stars.forEach(star => {
+                    star.addEventListener('mouseover', function() {
+                        const rating = this.getAttribute('data-rating');
+                        highlightStars(rating);
+                    });
+
+                    star.addEventListener('click', function() {
+                        const rating = this.getAttribute('data-rating');
+                        document.getElementById('selectedRating').value = rating;
+                        highlightStars(rating);
+                    });
+                });
+
+                const starsContainer = document.querySelector('.rating-stars .stars');
+                starsContainer.addEventListener('mouseout', function() {
+                    const selectedRating = document.getElementById('selectedRating').value;
+                    highlightStars(selectedRating);
+                });
+
+                function highlightStars(rating) {
+                    stars.forEach(star => {
+                        const starRating = star.getAttribute('data-rating');
+                        if (starRating <= rating) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
+                    });
+                }
+            });
         </script>
     @endsection

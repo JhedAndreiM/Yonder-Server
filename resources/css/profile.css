@@ -290,9 +290,9 @@ a {
   margin-right: 3%;
 }
 .h3 {
-  max-width: 150px;
   font-weight: 500;
   margin-left: 6px;
+  display: flex;
 }
 .productName {
   font-weight: 400;
@@ -474,4 +474,104 @@ td.center-align{
 .downloadBtn
 ,.close{
   cursor: pointer;
+}
+/* modal */
+.modal-content{
+  background-color: white;
+  width: 500px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 8px;
+  border: solid black 1px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.modal-body{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.form-group{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-block: 1rem;
+}
+.rating-stars .stars {
+    font-size: 24px;
+    cursor: pointer;
+    padding-block: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.rating-stars .stars i {
+    color: #ddd;
+}
+
+.rating-stars .stars i.active {
+    color: #ffd700;
+}
+textarea {
+  resize: none;
+}
+.modal-footer{
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+._close-modal,._submit-modal{
+  width: 120px;
+  height: 35px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.modal-title{
+  font-size: 1rem;
+}
+.sessionModal {
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  position: fixed; 
+  z-index: 1; 
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+/* Modal Content */
+.sessionModal-content {
+  background-color: white;
+    border-radius: 10px;
+    width: 420px;
+    height: 456px;
+    max-width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    border: 1px solid;
+    box-shadow: 0px 4px 0px 0px #1d1d1d;
+    border-radius: 10px;
+
+}
+.middle-success{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.sessionModal-content h1{
+  color:black;
 }

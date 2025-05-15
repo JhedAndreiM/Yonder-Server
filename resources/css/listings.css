@@ -367,6 +367,9 @@ p {
     box-shadow: 0px 2px 0px 0px #1d1d1d;
     border-radius: 4px;
   }
+  .right-modal-top input{
+    width: 89%;
+  }
   .right-modal-middle{
     display: flex;
     gap: 5px;

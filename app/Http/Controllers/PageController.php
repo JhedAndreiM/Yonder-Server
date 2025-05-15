@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use App\Models\FeaturedImage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -119,6 +120,12 @@ class PageController extends Controller
         $wishlist = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
         $featuredImages = FeaturedImage::latest()->take(5)->get();
         $products = $query->paginate(8);
+        foreach ($products as $product) {
+          $product->average_rating=DB::table('reviews')
+          ->where('product_id', $product->product_id)
+          ->avg('rating');  
+        
+        }
         if ($request->ajax()) {
             return view('partials.productList', compact('products','featuredImages','wishlist'))->render();
         }

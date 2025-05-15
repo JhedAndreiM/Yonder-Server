@@ -25,9 +25,13 @@
                 <div class="price">P {{ number_format($product->price, 2) }}</div>
                 <div class="prod-name">{{ $product->name }}</div>
                 <div class="rating">
-                    <button>4.7</button>
+                    @if($product->average_rating)
+                    <span class="theRating">&#9733; {{number_format($product->average_rating, 1) }}</span>
+                    @else
+                    <span class="theRatings">&#9734; 5.0</span>
+                    @endif
                     <i class="fa-solid fa-heart heart-icon {{ in_array($product->product_id, $wishlist) ? 'red' : 'gray' }}" data-product-id="{{ $product->product_id }}"></i>
-
+                    
                 </div>
             </div>
             

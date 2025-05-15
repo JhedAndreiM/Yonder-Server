@@ -5,14 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PageController;
+use App\Http\Middleware\RoleMiddleware; 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\CropImageController;
 use App\Http\Controllers\OrganizationController;
-use App\Http\Controllers\FeaturedImageController;
-use App\Http\Middleware\RoleMiddleware; 
 use App\Http\Controllers\CustomMessageController;
+use App\Http\Controllers\FeaturedImageController;
 
 
 
@@ -109,6 +111,21 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');
    Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
    Route::post('/delete', [ProductController::class, 'destroyListing'])->name('delete.listing');
+    // para to sa reviews
+    Route::post('/submit-review', [ReviewController::class, 'store'])->name('review.store');
+   // account page
+   Route::get('/accountPage', function () {
+    return view('accountPage');
+    })->name('account.page');
+   Route::get('/accountsPage', function () {
+    return view('organization/accountsPage');
+    })->name('accounts.page');
+
+
+
+    Route::post('/Delete', [CropImageController::class, 'deleteAvatar'])->name('delete.avatar');
+    Route::post('/Update', [CropImageController::class, 'cropImageUploadAjax'])->name('update.avatar');
+    Route::post('/UpdateUserInfo', [CropImageController::class, 'updateUserInfo'])->name('update.userInfo');
 
    Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
 });
