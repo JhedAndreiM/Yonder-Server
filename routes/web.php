@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CropImageController;
+use App\Http\Controllers\UserImportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CustomMessageController;
@@ -54,6 +55,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
+    Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
+    Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');
     
 });
 
