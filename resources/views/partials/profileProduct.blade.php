@@ -10,9 +10,11 @@
     @endphp
         <div class="items">
             <div class="itemsTop">
-                
+                @if(Auth::user()->role==="student")
                 <a href="/Yonder/Chat/{{ $cartItems->seller_id }}" class="sellerName">{{$cartItems->seller_name}}</a>
-                
+                @elseif(Auth::user()->role==="organization")
+                <a href="/Yonder/Chat/{{ $cartItems->buyer_id }}" class="sellerName">{{$cartItems->seller_name}}</a>
+                @endif
                 
                 @if($cartItems->status == 'receive')
                     @if ($cartItems->seller_id == Auth::id())

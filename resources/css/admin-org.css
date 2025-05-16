@@ -172,12 +172,14 @@ hr{
     padding-left: 7%;
     font-size: 1.25rem;
 }
-.left-three,
-.left-four,
-.left-five,
-.left-six,
-.left-seven{
+.left-three a,
+.left-four a,
+.left-five a,
+.left-six a,
+.left-seven a{
     cursor: pointer;
+    color: black;
+    text-decoration: none;
 }
 .left-icon{
     padding-right: 10%;

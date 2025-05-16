@@ -165,7 +165,7 @@
         }
 
         .sub-menu::after {
-            content: "";
+            /*content: "";*/
             position: absolute;
             top: -12px;
             right: 7%;
@@ -232,6 +232,110 @@
         .listing_links{
         display: none;
         }
+        /* notification */
+/* Base styles for notification system */
+.notification-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 150px;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-width: 90vw; 
+    border: solid 1px black;
+    border-radius: 11px;
+}
+
+.notification-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+.closeButton{
+    display: none;
+}
+.notification-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.notification-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    word-wrap: break-word; /* Ensures long text doesn't overflow */
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.notification-message {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.notification-time {
+    color: #999;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Custom scrollbar for webkit browsers */
+.notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+.notification{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 5px;
+    max-height: 200px;
+    overflow: hidden;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+.notification .Message {
+    display: -webkit-box;
+    -webkit-line-clamp: 6; /* Adjust number of visible lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 250px;
+}
+.notification h1{
+    font-size: 1.1rem;
+}
+.time{
+    display: flex;
+    justify-content: flex-end;
+}
         @media (max-width: 1560px) {
     .addDiv{
         right: 6%;
@@ -247,15 +351,47 @@
     .addDiv{
         right: 7%;
     }
+    .notification-dropdown {
+        right: 90px;
+    }
 }
 @media (max-width: 1030px) {
     .addDiv{
         right: 9%;
     }
+    .notification-dropdown {
+       right: 50px;
+    }
 }
 @media (max-width: 720px) {
     .addDiv{
         right: 15%;
+    }
+    .notification-dropdown {
+        right: 50px;
+    }
+    .notification-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 60vh; /* Takes up 60% of viewport height on mobile */
+        border-radius: 15px 15px 11px 11px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+
+    .notification-header {
+        padding: 20px 15px;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 11px;
     }
 }
 @media (max-width: 520px) {
@@ -281,6 +417,38 @@
         </div>
         <div class="left-nav">
             <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
+            <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+        <div class="notification-header">
+        <h3>Notifications</h3>
+        <h3 class="closeButton">X</h3>
+        </div>
+        <div class="notification-list">
+        @if ($notifications->isEmpty())
+            <p>No notifications</p>
+        @else
+            @foreach ($notifications as $notification)
+            <div class="notification">
+            <div class="title">
+            <h1>
+                @if($notification['title']==="Product Approved")
+                <span style="color:Green;">{{ $notification['title'] }}</span>
+                @elseif($notification['title']==="Product Rejected")
+                <span style="color:red;">{{ $notification['title'] }}</span>
+                @else
+                {{ $notification['title'] }}
+                @endif
+            </h1>
+            </div>
+            <div class="Message">{{ $notification['message'] }}</div>
+            <div class="time">{{ $notification['time_ago'] }}</div>
+        </div>
+        @endforeach
+            
+        @endif
+        
+        
+        </div>
+        </div>
             <div class="vertical-line"></div>
             <div class="profilePlace"><img class="profile_link"
                     src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" id="nav-profile">
@@ -337,6 +505,72 @@
                 })
             })
         });
+        // notification 
+    document.addEventListener('DOMContentLoaded', function() {
+    const notificationBtn = document.querySelector('.notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    // Toggle dropdown
+    notificationBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = notificationDropdown.style.display === 'block';
+        notificationDropdown.style.display = isVisible ? 'none' : 'block';
+        
+        // Add class to body to prevent scrolling when dropdown is open on mobile
+        document.body.style.overflow = isVisible ? 'auto' : 'hidden';
+        
+        if (!isVisible) {
+            loadNotifications();
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+            closeDropdown();
+        }
+    });
+
+    // Close dropdown when clicking the close button (mobile)
+    const closeButton = document.querySelector('.closeButton');
+    if (closeButton) {
+        closeButton.addEventListener('click', function(e) {
+                closeDropdown();
+        });
+    }
+
+    // Handle escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function closeDropdown() {
+        notificationDropdown.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Add touch events for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    notificationDropdown.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, false);
+
+    notificationDropdown.addEventListener('touchmove', function(e) {
+        touchEndY = e.touches[0].clientY;
+        const diff = touchStartY - touchEndY;
+        
+        // If swiping down and at the top of the content
+        if (diff < -50 && this.scrollTop === 0) {
+            e.preventDefault();
+            closeDropdown();
+        }
+    }, false);
+
+});
     </script>
 </body>
 

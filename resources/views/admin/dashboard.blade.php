@@ -62,14 +62,12 @@
                 </thead>
                 <tbody>
                     @foreach ($products as $product)
-                    <tr>
+                    <tr id="product-row-{{ $product->product_id }}">
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->description }}</td>
                         <td>
-                            <form method="POST" action="{{ route('admin.approve', $product->product_id) }}">
-                                @csrf
-                                <button type="submit">Approve</button>
-                            </form>
+                            <button type="button" onclick="approveProduct({{ $product->product_id }})">Approve</button>
+                            <button type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
                         </td>
                     </tr>
                     @endforeach
@@ -82,7 +80,20 @@
 
 
 
-
+    <!-- Reject Modal -->
+    <div id="rejectModal" class="rejectModal">
+        <div class="modal-contents">
+            <h3>Reject Product</h3>
+            <form id="rejectForm">
+            @csrf
+            <input type="hidden" name="product_id" id="rejectProductId">
+            <label for="message">Reason:</label><br>
+            <textarea name="message" id="rejectMessage" rows="4" cols="50" required></textarea><br><br>
+            <button type="submit">Send Rejection</button>
+            <button type="button" onclick="hideRejectModal()">Cancel</button>
+        </form>
+        </div>
+    </div>
     <script>
         var slideIndex = 1;
         showDivs(slideIndex);
@@ -101,5 +112,55 @@
           }
           x[slideIndex-1].style.display = "block";  
         }
+
+        function approveProduct(productId) {
+        fetch(`/admin/approve/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`product-row-${productId}`).remove();
+            }
+        });
+    }
+
+    function showRejectModal(productId) {
+        console.log('wtf');
+        document.getElementById('rejectModal').style.display = 'flex';
+        document.getElementById('rejectProductId').value = productId;
+    }
+
+    function hideRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+        document.getElementById('rejectMessage').value = '';
+    }
+
+    document.getElementById('rejectForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const productId = document.getElementById('rejectProductId').value;
+        const message = document.getElementById('rejectMessage').value;
+
+        fetch(`/admin/reject/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`product-row-${productId}`).remove();
+                hideRejectModal();
+            }
+        });
+    });
         </script>
 @endsection

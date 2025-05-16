@@ -222,8 +222,14 @@ class CartController extends Controller
             ]);
         $filters = $request->input('filterValue');
         //dd($filters);
-        return redirect()->route('student.sales', ['filters' => $filters])
+        if (Auth::check() && Auth::user()->role === 'student') {
+             return redirect()->route('student.sales', ['filters' => $filters])
             ->with('success', 'Item cancelled.');
+        }
+        elseif(Auth::check() && Auth::user()->role === 'organization'){
+            return redirect()->route('order.page', ['filters' => $filters])
+            ->with('success', 'Item cancelled.');
+        }
     }
     public function getAllSales(Request $request)
     {
@@ -271,8 +277,14 @@ class CartController extends Controller
                 'updated_at' => now()
             ]);
         $filters = $request->input('filterValue');
-        return redirect()->route('student.sales', ['filters' => $filters])
+        if (Auth::check() && Auth::user()->role === 'student') {
+             return redirect()->route('student.sales', ['filters' => $filters])
             ->with('success', 'Item cancelled.');
+        }
+        elseif(Auth::check() && Auth::user()->role === 'organization'){
+            return redirect()->route('order.page', ['filters' => $filters])
+            ->with('success', 'Item cancelled.');
+        }
     }
 
     public function orderReceivedDelivered(Request $request, $id)

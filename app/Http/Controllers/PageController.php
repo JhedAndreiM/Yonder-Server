@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -126,11 +127,24 @@ class PageController extends Controller
           ->avg('rating');  
         
         }
+        $notifications = DB::table('notifications')
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+        
+            $notifications = $notifications->map(function($notification) {
+            return [
+                'title' => $notification->title,
+                'message' => $notification->message,
+                'time_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
+            ];
+        });
         if ($request->ajax()) {
-            return view('partials.productList', compact('products','featuredImages','wishlist'))->render();
+            return view('partials.productList', compact('products','featuredImages','wishlist', 'notifications'))->render();
         }
         
-        return view('mainPage', compact('products', 'featuredImages','wishlist'));
+        return view('mainPage', compact('products', 'featuredImages','wishlist', 'notifications'));
     }
 
     

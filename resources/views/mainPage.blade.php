@@ -45,6 +45,38 @@
         <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
         <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
         <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
+        <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+        <div class="notification-header">
+        <h3>Notifications</h3>
+        <h3 class="closeButton">X</h3>
+        </div>
+        <div class="notification-list">
+        @if ($notifications->isEmpty())
+            <p>No notifications</p>
+        @else
+            @foreach ($notifications as $notification)
+            <div class="notification">
+            <div class="title">
+            <h1>
+                @if($notification['title']==="Product Approved")
+                <span style="color:Green;">{{ $notification['title'] }}</span>
+                @elseif($notification['title']==="Product Rejected")
+                <span style="color:red;">{{ $notification['title'] }}</span>
+                @else
+                {{ $notification['title'] }}
+                @endif
+            </h1>
+            </div>
+            <div class="Message">{{ $notification['message'] }}</div>
+            <div class="time">{{ $notification['time_ago'] }}</div>
+        </div>
+        @endforeach
+            
+        @endif
+        
+        
+        </div>
+        </div>
         <div class="vertical-line"></div>
         <div class="profilePlace"><img class="profile_link" src="{{ asset('storage/users-avatar/'. Auth::user()->avatar) }}" alt="" id="nav-profile"></div>
         
@@ -279,6 +311,73 @@
             isHeartClicked = false;
             console.log(isHeartClicked);
     }
+
+    // notification 
+    document.addEventListener('DOMContentLoaded', function() {
+    const notificationBtn = document.querySelector('.notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    // Toggle dropdown
+    notificationBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = notificationDropdown.style.display === 'block';
+        notificationDropdown.style.display = isVisible ? 'none' : 'block';
+        
+        // Add class to body to prevent scrolling when dropdown is open on mobile
+        document.body.style.overflow = isVisible ? 'auto' : 'hidden';
+        
+        if (!isVisible) {
+            loadNotifications();
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+            closeDropdown();
+        }
+    });
+
+    // Close dropdown when clicking the close button (mobile)
+    const closeButton = document.querySelector('.closeButton');
+    if (closeButton) {
+        closeButton.addEventListener('click', function(e) {
+                closeDropdown();
+        });
+    }
+
+    // Handle escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+
+    function closeDropdown() {
+        notificationDropdown.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Add touch events for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    notificationDropdown.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, false);
+
+    notificationDropdown.addEventListener('touchmove', function(e) {
+        touchEndY = e.touches[0].clientY;
+        const diff = touchStartY - touchEndY;
+        
+        // If swiping down and at the top of the content
+        if (diff < -50 && this.scrollTop === 0) {
+            e.preventDefault();
+            closeDropdown();
+        }
+    }, false);
+
+});
     </script>
 </body>
 </html>

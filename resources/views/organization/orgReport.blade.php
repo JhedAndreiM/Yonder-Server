@@ -32,12 +32,10 @@
                     <div class="left-two">
                         <hr>
                     </div>
-                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><span
-                            class="currentPage">Products</span></div>
-                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i>Orders</div>
-                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i>Reviews</div>
-                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i>Dashboard</div>
-                    <div class="left-seven"><i class="fa-solid fa-gear left-icon"></i>Settings</div>
+                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><a href="{{ route('organization.dashboard') }}">Products</a></div>
+                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i><a href="{{ route('order.page') }}">Orders</a></div>
+                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i><a href="{{ route('review.page') }}">Reviews</a></div>
+                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><span class="currentPage">Dashboard</span></div>
                 </div>
             </div>
             <div class="container-bottom-right">
@@ -47,6 +45,7 @@
                 </div>
                 <div class="container-bottom-right-bottom">
                     <div class="graph-container">
+                        <div class="graph-container-items">
                         <!-- LEFT SIDE NG GRAPH CONTAINER-->
                         <div class="graph-container-left">
                             <!-- CONTAINER NG 4 na cards -->
@@ -153,6 +152,7 @@
                                 </div>
 
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>

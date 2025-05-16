@@ -1,13 +1,14 @@
-
-@extends('Front_layouts.default')
+@extends('Front_layouts.org')
 
 @section('head')
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-
-
-    @vite('resources/css/profile.css')
+<style>
+        body {
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
+        }
+    </style>
     <!-- Bootstrap CSS -->
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -16,35 +17,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+@vite('resources/css/orderPage.css')
 @endsection
-
 @section('maincontent')
-
-    <div class="mainContainer">
-        <div class="top">
-            <h1>Profile</h1>
-        </div>
-        <div class="container">
-            <div class="leftPart">
-                <div class="leftPartItems">
-                    <div class="profilePlace_profile"><img class="profile_link_profile"
-                            src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""
-                            id="nav-profile"></div>
-                    <h3 class="h3">{{ Auth::user()->name }} {{ Auth::user()->last_name }}</h3>
-                </div>
-                <hr>
-                <div class="leftPartItems2">
-                    <a href="{{ route('student.profile') }}" class="current">My Purchases</a>
-                    <a href="{{ route('listing.seller') }}">My Listings</a>
-                    <a href="{{ route('show.vouchers') }}">My Vouchers</a>
-                    <a href="{{ route('student.sales') }}">My Sales</a>
+<div class="container">
+        <div class="container-top"></div>
+        <div class="container-bottom">
+            <div class="container-bottom-left">
+                <div class="left-container">
+                    <div class="left-one">
+                        <h3>PBEN Organization</h3>
+                    </div>
+                    <div class="left-two">
+                        <hr>
+                    </div>
+                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><a href="{{ route('organization.dashboard') }}">Products</a></div>
+                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i><span class="currentPage">Orders</span></div>
+                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i><a href="{{ route('review.page') }}">Reviews</a></div>
+                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><a href="{{ route('org.report') }}">Dashboard</a></div>
                 </div>
             </div>
             <div class="rightPart">
                 <div class="categories">
                     <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
                     <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
-                    <button id="btnReceive" class="btn-filter" data-tab="receive">To recieve</button>
+                    <button id="btnReceive" class="btn-filter" data-tab="receive">To Pickup</button>
                     <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
                     <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
                 </div>
@@ -202,7 +199,7 @@
 
             </div>
         @endif
-        <script>
+<script>
             const successModal = document.getElementById("sessionModal");
             function closeSuccessModal() {
             successModal.style.display = "none";
@@ -214,7 +211,6 @@
             const buttons = document.querySelectorAll('.btn-filter');
             //para pag ka load gana agad all filter
             window.addEventListener('DOMContentLoaded', () => {
-
                 const urlParams = new URLSearchParams(window.location.search);
                 const filters = urlParams.get('filters');
                 const cancelledButton = document.getElementById('btnCancelled');
@@ -222,22 +218,28 @@
                 const pendingButton = document.getElementById('btnPending');
                 const receiveButton = document.getElementById('btnReceive');
                 const completedButton = document.getElementById('btnCompleted');
-                if (filters) {
+                if (true) {
                     buttons.forEach(btn => btn.classList.remove('active'));
+                    filter="cancelled"
                     if (filters === 'all') {
                         allButton.classList.add('active');
+                        console.log('all');
                     }
                     if (filters === 'pending') {
                         pendingButton.classList.add('active');
+                        console.log('pending');
                     }
                     if (filters === 'receive') {
                         receiveButton.classList.add('active');
+                        console.log('receive');
                     }
                     if (filters === 'cancelled') {
                         cancelledButton.classList.add('active');
+                        console.log('cancelled');
                     }
                     if (filters === 'completed') {
                         completedButton.classList.add('active');
+                        console.log('completed');
                     }
 
                     fetchFilter(filters);
@@ -253,16 +255,16 @@
 
             });
             // modal opem
-            function openProductModal(button) {
+            function openProductModalSeller(button) {
                 var modal = document.getElementById("myModal");
                 modal.style.display = "block";
-                document.getElementById('productName').textContent = button.dataset.name;
-                document.getElementById('productQuantity').textContent = button.dataset.qty;
-                document.getElementById('productPrice').textContent = button.dataset.price;
-                document.getElementById('productVoucherPrice').textContent = button.dataset.voucher;
+                document.getElementById('productName').textContent = button.dataset.names;
+                document.getElementById('productQuantity').textContent = button.dataset.qtys;
+                document.getElementById('productPrice').textContent = button.dataset.prices;
+                document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
                 document.getElementById('productID').textContent = button.dataset.id;
-                document.getElementById('productTotal').textContent = ((button.dataset.price * button.dataset.qty) - button
-                    .dataset.voucher);
+                document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
+                    .dataset.vouchers);
                 console.log('wtf');
             }
             // modal close
@@ -364,4 +366,4 @@
                 }
             });
         </script>
-    @endsection
+@endsection

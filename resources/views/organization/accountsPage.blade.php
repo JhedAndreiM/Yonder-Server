@@ -7,7 +7,14 @@
     <title>Account</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    
+    <style>
+        body {
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
+        }
+    </style>
     @vite('resources/css/accountPage.css')
 @endsection
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CropImageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CustomMessageController;
 use App\Http\Controllers\FeaturedImageController;
@@ -39,6 +40,10 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
     Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
     Route::post('/products/update', [OrganizationController::class, 'update'])->name('products.update');
     //Route::get('/orgReport', function () {return view('organization/orgReport');})->name('org.report');
+    // Route::get('/orgPage', function () {return view('organization/orderPage');})->name('order.page');
+    //Route::get('/Reviews', function () {return view('organization/reviews');})->name('reivew.page');
+    Route::get('/Reviews', [OrganizationController::class, 'reviews'])->name('review.page');
+    Route::get('/Orders', [OrganizationController::class, 'orggetAllNotCartItems'])->name('order.page');
     Route::get('/chart', [OrganizationController::class, 'showChart'])->name('org.report');
 
 });
@@ -46,7 +51,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
 // Middleware for Admin
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::post('/admin/approve-product/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
+    Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
+    Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     
 });
@@ -126,6 +132,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     Route::post('/Delete', [CropImageController::class, 'deleteAvatar'])->name('delete.avatar');
     Route::post('/Update', [CropImageController::class, 'cropImageUploadAjax'])->name('update.avatar');
     Route::post('/UpdateUserInfo', [CropImageController::class, 'updateUserInfo'])->name('update.userInfo');
+
 
    Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
 });

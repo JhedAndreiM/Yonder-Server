@@ -1,0 +1,261 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.raleway-normal {
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: "Raleway", sans-serif;
+}
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    height: 90px;
+    display: flex;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    justify-content: center;
+    align-items: center;
+    font-family: "Raleway", sans-serif;
+    background-color: white;
+    border: #656769 solid 1px;
+}
+.webName {
+    position: absolute;
+    flex: 0.7;
+    font-size: 2rem;
+    left: 5%;
+    top: 17%;
+    color: #ae0505;
+}
+nav{
+    display: flex;
+    width: 100%;
+}
+.mobile-only {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.filter-icon {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+nav button{
+    background-color: #0D62FF;
+    color: white;
+    border: none;
+    width: 7rem;
+    height: 2.5rem;
+    border-radius: 20px;
+}
+.nav-search input{
+    width: 100%;
+    font-size: 1.25rem;
+    border: none;
+}
+input:focus {
+    outline: none;  
+    border: none;   
+    box-shadow: none;
+}
+.vertical-line{
+    border-left: 1px solid grey;
+    height: 70px;
+    margin-left: -3px;
+    top: 0;
+}
+.left-nav {
+    position: fixed;
+    right: 0;
+    width: 25%;
+    display: flex;
+    justify-content: space-evenly;
+}
+/* container */
+.container{
+    display: flex;
+    padding-top: 100px;
+    flex-direction: column;
+}
+.listing_links{
+    display: none;
+}
+.container-top{
+    height: 100px;
+}
+.container-bottom{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+/* bottom left side */
+
+.left-container{
+    border: #656769 solid 1px;
+    border-radius: 11px;
+    height: 27rem;
+    width: 25rem;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    margin-left: 6rem;
+    margin-top: 2rem;
+}
+.left-top{
+    flex: 0.1;
+    height: 100px;
+}
+
+.nav-container-top1{
+    margin-bottom: 100px;
+}
+.left-bottom{
+    flex:1;
+}
+
+hr{
+    display: flex;
+    justify-content: center;
+    width:90%;
+    margin-left: 5%;
+}
+.left-one,
+.left-two,
+.left-three,
+.left-four,
+.left-five,
+.left-six,
+.left-seven{
+    flex: 1;
+}
+.left-two{
+    flex: 0.1;
+}
+.left-one,
+.left-three,
+.left-four,
+.left-five,
+.left-six,
+.left-seven{
+    display: flex;
+    align-items: center;
+    padding-left: 7%;
+    font-size: 1.25rem;
+}
+.left-three a,
+.left-four a,
+.left-five a,
+.left-six a,
+.left-seven a{
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+}
+.left-three,
+.left-four,
+.left-five,
+.left-six,
+.left-seven{
+    cursor: pointer;
+}
+.left-icon{
+    padding-right: 10%;
+}
+.currentPage{
+    text-decoration: underline;
+    color: blue;
+}
+.container-bottom-left{
+}
+.container-bottom-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 78vh;
+    overflow: auto;
+}
+/* ========= CARD  ============ */
+.card{
+    display: flex;
+    flex-direction: row;
+    width: 700px;
+    height: 200px;
+    background-color: white;
+    border-radius: 11px;
+    margin-top: 2rem;
+    
+}
+.left{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 5px;
+    
+}
+.img-placeholder{
+    border-radius: 7px;
+}
+.img-placeholder img{
+    border: solid 1px black;
+    height: 190px;
+    width: 190px;
+    object-fit: contain;
+    border-radius: 7px;
+}
+.right{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+.header{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+.image-placeholder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header img{
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+}
+.user-contents{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    padding-inline: 1rem;
+}
+.star{
+    font-size: 24px;
+}
+.message p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
