@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    
     public function store(Request $request)
     {
         try {
@@ -318,15 +320,16 @@ class CartController extends Controller
                             'updated_at' => now()
                         ]);
                 }
+                $pbenUser = User::getPBENUser();
                 $completedCount = DB::table('cart_items')
                     ->where('user_id', $confirm->user_id)
-                    ->where('seller_id', 5)
+                    ->where('seller_id', $pbenUser->id)
                     ->where('status', 'completed')
                     ->count();
                 if ($completedCount % 5 === 0) {
                     DB::table('vouchers')->insert([
                         'user_id' => $confirm->user_id,
-                        'seller_id' => 5,
+                        'seller_id' => $pbenUser->id,
                         'amount' => 5,
                         'status' => 'available',
                         'created_at' => now(),
@@ -367,15 +370,16 @@ class CartController extends Controller
                             'updated_at' => now()
                         ]);
                 }
+                $pbenUser = User::getPBENUser();
                 $completedCount = DB::table('cart_items')
                     ->where('user_id', $confirm->user_id)
-                    ->where('seller_id', 5)
+                    ->where('seller_id', $pbenUser->id)
                     ->where('status', 'completed')
                     ->count();
                 if ($completedCount % 5 === 0) {
                     DB::table('vouchers')->insert([
                         'user_id' => $confirm->user_id,
-                        'seller_id' => 5,
+                        'seller_id' => $pbenUser->id,
                         'amount' => 5,
                         'status' => 'available',
                         'created_at' => now(),

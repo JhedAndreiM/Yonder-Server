@@ -136,8 +136,13 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     Route::post('/Update', [CropImageController::class, 'cropImageUploadAjax'])->name('update.avatar');
     Route::post('/UpdateUserInfo', [CropImageController::class, 'updateUserInfo'])->name('update.userInfo');
 
+    // update user passwrod
+    Route::post('/update-password', [UserImportController::class, 'updatePassword'])->name('profile.update-password');
 
    Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
+
+   
+
 });
 
 

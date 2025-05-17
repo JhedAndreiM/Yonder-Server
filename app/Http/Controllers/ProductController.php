@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 
@@ -54,8 +56,8 @@ foreach($request->file('productImage') as $image){
         $product->product_condition = implode(',', $selected_condition);
         $product->colleges = implode(',', $selected_colleges);
         $product->forSaleTrade = implode(',', $selected_forSaleTrade);
-        if (Auth::id() == 5) {
-            $product->supplier_type = 'verified';
+        if (Auth::check() && Auth::user()->email === 'pben@bpsu.edu.ph') {
+        $product->supplier_type = 'verified';
         } else {
             $product->supplier_type = 'students';
         }
@@ -79,7 +81,32 @@ foreach($request->file('productImage') as $image){
         ->where('seller_id', $products->user_id) 
         ->get();
 
-    return view('productDetails', compact('products','availableVouchers'));
+        $reviews = DB::table('reviews')
+    ->join('users', 'reviews.user_id', '=', 'users.id')
+    ->join('product', 'reviews.product_id', '=', 'product.product_id')
+    ->where('product.product_id', $id)
+    ->select(
+        'users.name',
+        'users.last_name',
+        'product.image_path',
+        'users.avatar',
+        'reviews.rating',
+        'reviews.comment',
+        'reviews.created_at'
+    )
+    ->orderBy('reviews.created_at', 'desc')
+    ->get()
+    ->map(function ($review) {
+        // Get first image
+        $images = explode(',', $review->image_path);
+        $review->first_image = $images[0];
+
+        // Format the date
+        $review->formatted_date = Carbon::parse($review->created_at)->format('F j, Y');
+
+        return $review;
+    });
+    return view('productDetails', compact('products','availableVouchers', 'reviews'));
     }
 
     public function dashboardForUserSeller()

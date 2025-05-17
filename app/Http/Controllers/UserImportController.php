@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -23,35 +25,29 @@ class UserImportController extends Controller
         ]);
 
         try {
-            // 2. Load the Excel file
             $file = $request->file('excel_file');
             $spreadsheet = IOFactory::load($file->getPathname());
             
-            // 3. Get the first worksheet
             $worksheet = $spreadsheet->getActiveSheet();
             
-            // 4. Get all rows as an array
             $rows = $worksheet->toArray();
             
-            // 5. Remove the header row
             $headers = array_shift($rows);
             
-            // 6. Process each row
             foreach ($rows as $row) {
-                // Create password from birthday (assuming birthday is in column 7)
-                $birthday = $row[6]; // Adjust index based on your Excel column
+                $birthday = $row[6]; 
                 $password = date('m-d-y', strtotime($birthday));
                 
                 // Create new user
                 User::create([
-                    'name' => $row[0],          // First column
-                    'middle_name' => $row[1],    // Second column
-                    'last_name' => $row[2],      // Third column
-                    'gender' => $row[3],         // Fourth column
-                    'email' => $row[4],          // Fifth column
-                    'phone_number' => $row[5],   // Sixth column
+                    'name' => $row[0],         
+                    'middle_name' => $row[1],   
+                    'last_name' => $row[2],     
+                    'gender' => $row[3],        
+                    'email' => $row[4],          
+                    'phone_number' => $row[5],  
                     'password' => Hash::make($password),
-                    'role' => 'student',         // Default role
+                    'role' => 'student',         
                     'active_status' => 0,
                     'messenger_color' => '#2180f3',
                     'dark_mode' => 0,
@@ -63,5 +59,20 @@ class UserImportController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // Find the user and update the password
+        DB::table('users')
+        ->where('id', Auth::id())
+        ->update(['password' => Hash::make($request->password)]);
+
+        return back()->with('success', 'Password updated successfully!')->with('active_tab', 'account');
+
     }
 }

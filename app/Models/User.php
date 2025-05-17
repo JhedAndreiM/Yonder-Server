@@ -53,4 +53,8 @@ class User extends Authenticatable
 {
     return "{$this->first_name} {$this->last_name}";
 }
+public static function getPBENUser()
+{
+    return self::where('email', 'pben@bpsu.edu.ph')->first();
+}
 }

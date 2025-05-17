@@ -18,7 +18,13 @@
         <h1 style="color:#ae0505;">My Account</h1>
     </div>
     <div class="bottom">
-        <div class="image-placeholder">
+        <div class="bottom-container">
+        <div class="tab-buttons">
+            <button id="tabBtnPersonal" class="active-tab">Personal Info</button>
+            <button id="tabBtnAccountInfo" class="inactive-tab">Account Info</button>
+        </div>
+        <div id="personalInfo" class="personalInfo active-tab-content">
+             <div class="image-placeholder">
             <img src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="">
         </div>
         @if (session('message'))
@@ -86,7 +92,45 @@
         </div>
         
         </form>
-    </div>
+        </div>
+        <div id="tab-other" class="tab-content personalInfo">
+            <div class="personalInfoContainer">
+            <form action="{{ route('profile.update-password') }}" method="POST">
+                @csrf
+                <div class="acountInfos">
+                    <div class="div-email">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email" value="{{ Auth::user()->email }}" placeholder="Email" readonly>
+                    </div>
+                    <div class="div-password">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" value="" placeholder="Password">
+                    </div>
+                    <div class="div-confirmpassword">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" name="password_confirmation" id="confirm-password" value="" placeholder="Confirm Password">
+                    </div>
+                    @if ($errors->any())
+                        <div class="alert alert-danger" style="color: red;">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="button-group button-info">
+                        <button type="submit">Submit</button>
+                    </div>
+                </div>
+             </form>
+            </div>
+             
+         </div>
+        </div>
+        
+        </div>
+       
 </div>
 <!-- Modal for Cropper -->
 <div id="cropperModal" class="modal" style="display: none;">
@@ -185,6 +229,29 @@
         cancelImageButton.style.display = 'none';
         deleteImageButton.style.display = 'block';
     })
+});
+
+// tabs
+document.getElementById("tabBtnPersonal").addEventListener("click", function() {
+    document.getElementById("personalInfo").classList.add("active-tab-content");
+    document.getElementById("tab-other").classList.remove("active-tab-content");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnAccountInfo").classList.remove("active-tab");
+    document.getElementById("tabBtnAccountInfo").classList.add("inactive-tab");
+    document.getElementById("tabBtnPersonal").classList.remove("inactive-tab");
+    document.getElementById("inactive-tab").classList.add("active-tab-content");
+});
+
+document.getElementById("tabBtnAccountInfo").addEventListener("click", function() {
+    document.getElementById("tab-other").classList.add("active-tab-content");
+    document.getElementById("personalInfo").classList.remove("active-tab-content");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnPersonal").classList.add("inactive-tab");
+    document.getElementById("tabBtnAccountInfo").classList.remove("inactive-tab");
+    
+    
 });
 
 

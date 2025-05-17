@@ -30,7 +30,6 @@ class FeaturedImageController extends Controller
         }
     }
 
-    // Step 2: Save the new image
     if ($request->hasFile('image')) {
         
         $image = $request->file('image');

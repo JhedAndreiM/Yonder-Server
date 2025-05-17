@@ -62,7 +62,7 @@ header {
     border: solid red 1px;
 }
 .top{
-    flex: 0.2;
+    flex: 0.1;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -76,6 +76,7 @@ header {
     flex-direction: row;
     width: 100%;
     flex-direction: column;
+    align-items: center;
 }
 .image-placeholder{
     height: 180px;
@@ -236,4 +237,96 @@ header {
     background: rgb(174,5,5);
     background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
     color: white;
+}
+/* TABS */
+.tab-buttons {
+    display: flex;
+    margin-top: 2rem;
+}
+.tab-buttons button {
+    background-color: white;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    height: 50px;
+}
+#tabBtnPersonal,
+#tabBtnAccountInfo{
+    padding-inline: 1rem;
+    border-top: 2px solid black;
+    border-inline: 2px solid black;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+}
+.personalInfo{
+    border: solid black 2px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    width: 1100px;
+    padding-top: 1rem;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.tab-buttons .inactive-tab {
+    background-color: gray;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content .active-tab-content {
+    display: block;
+}
+#personalInfo,
+#tab-other {
+    display: none;
+}
+
+.active-tab-content {
+    display: block !important;
+}
+.personalInfoContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.acountInfos{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.div-email input,
+.div-password input ,
+.div-confirmpassword input{
+    height: 46px;
+    width: 400px;
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 7px;
+}
+.div-email label,
+.div-password label ,
+.div-confirmpassword label{
+    font-size: 20px;
+}
+.div-email,
+.div-password,
+.div-confirmpassword {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem; 
+    width: 100%;
+    gap: 0.5rem;
 }
