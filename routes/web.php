@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PageController;
 use App\Http\Middleware\RoleMiddleware; 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
@@ -34,6 +35,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
     Route::get('/student/profile', [CartController::class, 'getAllNotCartItems'])->name('student.profile');
     Route::get('/student/Sales', [CartController::class, 'getAllSales'])->name('student.sales');
     Route::post('/products/updateSeller', [CartController::class, 'updateSeller'])->name('products.updateSeller');
+    Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
+    Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+
 });
 
 // Middleware for Orgs
@@ -57,10 +61,29 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
     Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');
-    
+    Route::post('/admin/change-role', [AdminController::class, 'changeUserRole'])->name('admin.changeRole');
+    Route::delete('/admin/reports/{id}/allow', [AdminController::class, 'allowReport']);
+    Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct']);
 });
 
 // Middleware for Orgs and Studnts
+Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin'])->group(function () {
+    Route::get('/redirect-home', function () {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'student') {
+                return redirect()->route('student.dashboard');
+            } elseif ($user->role === 'organization') {
+                return redirect()->route('organization.dashboard');
+            }
+            elseif($user->role === 'admin'){
+                return redirect()->route('admin.dashboard');
+            }
+        }
+    
+        Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+    })->name('custom.home');
+ });
 Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->group(function () {
     // for creating listing 
     Route::get('/create-listing', function () {
@@ -72,18 +95,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 
-    Route::get('/redirect-home', function () {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->role === 'student') {
-                return redirect()->route('student.dashboard');
-            } elseif ($user->role === 'organization') {
-                return redirect()->route('organization.dashboard');
-            }
-        }
-    
-        Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-    })->name('custom.home');
+   
 
 
     //profile redirects
@@ -144,7 +156,11 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    
 
 });
-
+Route::middleware(['auth', RoleMiddleware::class .':admin,organization'])->group(function () {
+    Route::get('/accountsPage', function () {
+    return view('admin/accountsPage');
+    })->name('accounts.page');
+});
 
 
 

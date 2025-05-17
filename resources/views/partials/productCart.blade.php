@@ -9,7 +9,7 @@
         $firstImage = $images[0];
         
     @endphp
-    <div class="card">
+    <div class="card cart-item" data-id="{{ $items->cart_id }}" data-stock="{{ $items->product_stock }}">
         <div class="card-image">
             @if($items->image_path)
             <div class="image-placeholder">
@@ -25,8 +25,11 @@
         <div class="card-details">
             <h2>{{ $items->product_name }}</h1>
             <div class="div-quantity">
-                <h4>Quantity: </h4>
-                <p>{{ $items->quantity }}</p>
+                <div class="quantity-controls">
+    <button type="button" class="decrease">−</button>
+    <input type="number" class="quantity" value="{{ $items->quantity }}" min="1" max="{{ $items->product_stock }}">
+    <button type="button" class="increase">+</button>
+</div>
             </div>
             <div class="div-price">
                 <h4>Total Price: </h4>

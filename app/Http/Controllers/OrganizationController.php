@@ -215,6 +215,7 @@ class OrganizationController extends Controller
                 'cart_items.status',
                 'cart_items.unit_price',
                 'cart_items.product_id',
+                'cart_items.updated_at',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
@@ -227,7 +228,11 @@ class OrganizationController extends Controller
         } else {
             $query->where('cart_items.status', $filters);
         }
+        
         $items = $query->get();
+        foreach ($items as $item) {
+        $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
+        }
         if ($request->ajax()) {
             return view('partials.profileProduct', compact('items', 'filters'))->render();
         }

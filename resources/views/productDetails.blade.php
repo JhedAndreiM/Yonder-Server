@@ -32,6 +32,7 @@
 
 @section('maincontent')
     <div class="container">
+        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
         <div class="left">
             <div class="left-container">
                 @php
@@ -110,6 +111,9 @@
 
                         <div class="sellerinfo-bottom">
                             <h5>Joined Younder in {{ $joinedYear }}</h5>
+                        </div>
+                        <div class="report-listing">
+                            <button id="reportTriggerBtn" class="reportTriggerBtn" onclick="reportTriggerBtn()">Report This Product</button>
                         </div>
                     </div>
                     
@@ -306,6 +310,22 @@
         </div>
         </div>
     @endif
+    <!-- MODAL FOR REPORTS -->
+    <div id="myModalReport" class="modalReport">
+        <div class="modal-contentReport">
+            <h3>Report This Product</h3>
+        <form action="{{ route('reports.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+            <input type="hidden" name="report_id" value="{{ $products->product_id }}" >
+            <textarea name="message" placeholder="Write your report message here..." rows="5" required></textarea>
+            <div class="report-buttons">
+                <button type="submit" class="submitReportBtn">Submit Report</button>
+                <button type="button" class="cancelReportBtn" onclick="closeReportModal()">Cancel</button>
+            </div>
+        </form>
+        </div>
+    </div>
     <script>
         var slideIndex = 1;
         showDivs(slideIndex);
@@ -371,5 +391,17 @@
         document.getElementById('goToSellerChat').addEventListener('click', function () {
         window.location.href = "{{ url('/Yonder/Chat/' . $seller->id) }}";
         });
+
+        // for report modal 
+        var modal = document.getElementById("myModalReport");
+        var btn = document.getElementById("reportTriggerBtn");
+        var span = document.getElementsByClassName("cancelReportBtn")[0];
+        function reportTriggerBtn() {
+            document.getElementById('myModalReport').style.display = 'flex';
+        }
+        function closeReportModal() {
+            document.getElementById('myModalReport').style.display = 'none';
+        }
+
     </script>
 @endsection

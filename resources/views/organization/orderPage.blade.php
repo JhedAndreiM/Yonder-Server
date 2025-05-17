@@ -1,6 +1,7 @@
 @extends('Front_layouts.org')
 
 @section('head')
+<title>Order</title>
 <style>
         body {
         background-image: url("{{ asset('img/background.svg') }}");
@@ -88,7 +89,7 @@
                     <div class="modal-middle">
                         <div class="middle-top">
                             <h3>Order ID # <span id="productID"></span></h3>
-                            <h6>May 05, 2025</h6>
+                            <h6><span id="receiptDate"></span></h6>
                         </div>
                         <div class="middle-bottom">
                             <h2>Here's your receipt</h2>
@@ -263,6 +264,7 @@
                 document.getElementById('productPrice').textContent = button.dataset.prices;
                 document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
                 document.getElementById('productID').textContent = button.dataset.id;
+                document.getElementById('receiptDate').textContent = button.dataset.date;
                 document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
                     .dataset.vouchers);
                 console.log('wtf');

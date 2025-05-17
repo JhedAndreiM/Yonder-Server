@@ -17,6 +17,7 @@
 @endsection
 
 @section('maincontent')
+<div class="container">
     <div class="upload-container">
         <!-- Featured Image Upload Section -->
         <div class="upload-section">
@@ -51,6 +52,7 @@
         <!-- Excel Upload Section -->
         <div class="upload-section">
             <h2>Upload User Data (Excel)</h2>
+            
             @if (session('excel_success'))
                 <div class="alert alert-success">
                     {{ session('excel_success') }}
@@ -75,10 +77,6 @@
         <div class="approval-product">
             <div class="section-two">
                 <h2>Unapproved Products</h2>
-
-                @if (session('success'))
-                    <p style="color: green;">{{ session('success') }}</p>
-                @endif
 
                 <table>
                     <thead>
@@ -130,11 +128,109 @@
 
             </div>
         </div>
+
+        <!-- USER ROLE MANAGEMENT -->
+        <div class="user-role-management">
+    <h2>User Role Management</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Current Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($users as $user)
+                <tr id="user-row-{{ $user->id }}">
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->role }}</td>
+                    <td>
+                        @if ($user->role !== 'organization')
+                            <form action="{{ route('admin.changeRole') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                <input type="hidden" name="role" value="organization">
+                                <button type="submit">Make Organization</button>
+                            </form>
+                        @else
+                            <span>Already Organization</span>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+<!-- REPORTS -->
+<div class="report-show">
+    <div class="section-two">
+        <h2>Reported Products</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Product Name</th>
+                    <th>Reported By</th>
+                    <th>View Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($reports as $report)
+                    <tr class="perRow" id="report-row-{{ $report->report_id }}">
+                        <td>{{ $report->report_id }}</td>
+                        <td>{{ $report->product_name }}</td>
+                        <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View Details</a>
+                            <button onclick="allowReport({{ $report->report_id }})">Allow</button>
+                            <button onclick="deleteProduct({{ $report->report_id_item }}, {{ $report->report_id }})">Delete</button>
+                            <input type="text" value="{{ $report->report_id_item }},{{ $report->report_id }}">
+                        </td>
+                    </tr>
+
+                    <!-- Modal -->
+                    <div id="modal-{{ $report->report_id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
+                        <h2>{{ $report->product_name }}</h2>
+                        <p>{{ $report->description }}</p>
+                        <div style="
+                            max-height: 200px;
+                            overflow-y: auto;
+                            word-wrap: break-word;
+                            white-space: pre-wrap;
+                            border: 1px solid #ccc;
+                            border-radius: 8px;">
+                            {{ $report->message }}
+                        </div>
+                        <div class="image-gallery">
+                            @php
+                                $images = explode(',', $report->image_path);
+                            @endphp
+                            @foreach ($images as $img)
+                                <img src="{{ asset('images/' . trim($img)) }}" alt="Product Image">
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </tbody>
+        </table>
     </div>
+</div>
+    </div>
+
+
     <!-- Reject Modal -->
     <div id="rejectModal" class="rejectModal">
         <div class="modal-contents">
             <h3>Reject Product</h3>
+            
             <form id="rejectForm">
                 @csrf
                 <input type="hidden" name="product_id" id="rejectProductId">
@@ -145,6 +241,7 @@
             </form>
         </div>
     </div>
+</div>
     <script>
         function openModal(productId) {
             document.getElementById('modal-' + productId).style.display = "flex";
@@ -215,5 +312,63 @@
                     }
                 });
         });
+
+        // reports
+        function openModal(id) {
+        document.getElementById('modal-' + id).style.display = 'block';
+    }
+
+    function closeModal(id) {
+        document.getElementById('modal-' + id).style.display = 'none';
+    }
+
+    // Close modal on outside click (optional)
+    window.onclick = function(event) {
+        document.querySelectorAll('.modal').forEach(function(modal) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    // ajax to para i allow saka delete product
+    function allowReport(reportId) {
+        if (!confirm('Are you sure you want to allow this product and remove the report?')) return;
+
+        $.ajax({
+            url: '/admin/reports/' + reportId + '/allow',
+            type: 'DELETE',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function () {
+                $('#report-row-' + reportId).remove();
+                alert('Report removed.');
+            },
+            error: function () {
+                alert('Something went wrong while removing the report.');
+            }
+        });
+    }
+
+    function deleteProduct(productId, reportId) {
+        console.log('went here');
+        if (!confirm('Are you sure you want to delete this product? This cannot be undone.')) return;
+
+        $.ajax({
+            url: '/admin/products/' + productId,
+            type: 'DELETE',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function () {
+                $('#report-row-' + reportId).remove();
+                alert('Product deleted.');
+            },
+            error: function () {
+                alert('Something went wrong while deleting the product.');
+            }
+        });
+    }
     </script>
 @endsection

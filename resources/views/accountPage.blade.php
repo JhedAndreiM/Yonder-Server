@@ -13,7 +13,6 @@
 
 @section('maincontent')
 <div class="container">
-    
     <div class="top">
         <h1 style="color:#ae0505;">My Account</h1>
     </div>
@@ -131,7 +130,7 @@
         
         </div>
        
-</div>
+    </div>
 <!-- Modal for Cropper -->
 <div id="cropperModal" class="modal" style="display: none;">
     <div class="modal-content">

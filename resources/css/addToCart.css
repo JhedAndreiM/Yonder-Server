@@ -269,6 +269,21 @@ h1 {
     background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
     color: white;
 }
+.goBack{
+    position: absolute;
+    left: 5%;
+    top: 13%;
+    color: black;
+    text-decoration: none;
+}
+.goBack a{
+    color: black;
+    text-decoration: none;
+}
+.goBack span{
+    text-decoration: underline;
+    cursor: pointer;
+}
 @media (max-width: 1024px) {
     .container {
         padding-inline: 5%;

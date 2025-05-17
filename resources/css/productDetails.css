@@ -170,7 +170,7 @@ input:focus {
     height: 50px;
     width: 50px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 1;
     border-radius: 50%;
     box-shadow: 0 3px 0px rgba(0, 0, 0, 1);
     border: black 1px solid;
@@ -561,4 +561,107 @@ hr {
     text-align: center;
     font-size: 20px;
     padding: 1rem;
+}
+
+/* Report */
+.reportTriggerBtn{
+    background-color: red;
+    color:white;
+    font-size: 1rem;
+    border: solid black 1px;
+    padding: 0.5rem;
+    border-radius: 7px;
+    font-weight: 600;
+    cursor: pointer;
+}
+/* REPORT MODAL */
+.modalReport{
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-contentReport {
+    background-color: white;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-contentReport h3 {
+    color: #ae0505;
+    font-size: 20px;
+    margin-bottom: 0.5rem;
+}
+
+.modal-contentReport textarea {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: none;
+}
+
+.report-buttons {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+}
+
+.submitReportBtn {
+    background-color: #ae0505;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cancelReportBtn {
+    background-color: #888;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.closeReport {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.goBack{
+    position: absolute;
+    left: 5%;
+    top: 15%;
+    color: black;
+    text-decoration: none;
+}
+.goBack a{
+    color: black;
+    text-decoration: none;
+}
+.goBack span{
+    text-decoration: underline;
+    cursor: pointer;
 }

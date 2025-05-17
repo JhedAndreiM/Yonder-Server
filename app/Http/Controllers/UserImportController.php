@@ -35,18 +35,17 @@ class UserImportController extends Controller
             $headers = array_shift($rows);
             
             foreach ($rows as $row) {
-                $birthday = $row[6]; 
-                $password = date('m-d-y', strtotime($birthday));
+                
                 
                 // Create new user
                 User::create([
-                    'name' => $row[0],         
-                    'middle_name' => $row[1],   
-                    'last_name' => $row[2],     
-                    'gender' => $row[3],        
-                    'email' => $row[4],          
-                    'phone_number' => $row[5],  
-                    'password' => Hash::make($password),
+                    'name' => $row[1],         
+                    'middle_name' => $row[2],   
+                    'last_name' => $row[3],     
+                    'gender' => $row[4],        
+                    'email' => $row[5],          
+                    'phone_number' => $row[6],  
+                    'password' => Hash::make($row[0]),
                     'role' => 'student',         
                     'active_status' => 0,
                     'messenger_color' => '#2180f3',
@@ -54,7 +53,7 @@ class UserImportController extends Controller
                 ]);
             }
 
-            return back()->with('success', 'Users imported successfully!');
+            return back()->with('excel_success', 'Users imported successfully!');
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
@@ -72,7 +71,7 @@ class UserImportController extends Controller
         ->where('id', Auth::id())
         ->update(['password' => Hash::make($request->password)]);
 
-        return back()->with('success', 'Password updated successfully!')->with('active_tab', 'account');
+        return back()->with('successfull', 'Password updated successfully!')->with('active_tab', 'account');
 
     }
 }

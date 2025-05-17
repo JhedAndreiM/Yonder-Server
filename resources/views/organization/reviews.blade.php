@@ -49,7 +49,19 @@
                                     <h3>{{$review->name}} {{$review->last_name}}</h3>
                                     <p>{{ $review->formatted_date }}</p>
                                 </div>
-                                <div class="star" style="color:gold;">&starf;&starf;&starf;&starf;&starf;</div>
+                                <div class="star" style="color:gold;">
+                                    @if($review->rating == 1)
+                                        &starf;&#9734;&#9734;&#9734;&#9734;
+                                    @elseif($review->rating == 2)
+                                        &starf;&starf;&#9734;&#9734;&#9734;
+                                    @elseif($review->rating == 3)
+                                        &starf;&starf;&starf;&#9734;&#9734;
+                                    @elseif($review->rating == 4)
+                                        &starf;&starf;&starf;&starf;&#9734;
+                                    @elseif($review->rating == 5)
+                                        &starf;&starf;&starf;&starf;&starf;
+                                    @endif
+                                </div>
                                 </div>
                             </div>
                             <div class="message">

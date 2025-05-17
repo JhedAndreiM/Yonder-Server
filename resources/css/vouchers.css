@@ -301,3 +301,18 @@ p {
   margin-left: auto;
   margin-right: auto;
 }
+.goBack{
+    position: absolute;
+    left: 5%;
+    top: 13%;
+    color: black;
+    text-decoration: none;
+}
+.goBack a{
+    color: black;
+    text-decoration: none;
+}
+.goBack span{
+    text-decoration: underline;
+    cursor: pointer;
+}

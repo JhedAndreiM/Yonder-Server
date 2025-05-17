@@ -68,7 +68,7 @@
                                         <button>Order Received</button>
                                     </form>
                                     @else
-                                        <button style="background-color:#4CAF50; color:white;">check</button>
+                                        <button style="background-color:#4CAF50; color:white;">checked</button>
                                     @endif
                                     
                                 @elseif ($cartItems->seller_id == Auth::id())
@@ -80,7 +80,7 @@
                                     <button>Order Delivered</button>
                                 </form>
                                 @else
-                                    <button style="background-color:#4CAF50; color:white;">check</button>
+                                    <button style="background-color:#4CAF50; color:white;">checked</button>
                                 @endif
                                 @endif
                                 <!-- IF FOR CANCEL BUTTON ( BUYER OR SALES ) -->
@@ -125,13 +125,14 @@
                                 @if($cartItems->seller_id == Auth::id())
                                 <button
                                     class="view-receipt"
-                                    data-bs-toggles="modal"
-                                    data-bs-targets="#myModal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#myModal"
                                     data-names="{{ $cartItems->product_name }}"
                                     data-prices="{{ $cartItems->unit_price }}"
                                     data-qtys="{{ $cartItems->quantity }}"
-                                    data-vouchers="{{ $cartItems->voucher_applied}}"
-                                    data-id="{{ $cartItems->cart_id}}"
+                                    data-vouchers="{{ $cartItems->voucher_applied }}"
+                                    data-id="{{ $cartItems->cart_id }}"
+                                    data-date="{{ $cartItems->formatted_updated_at ?? $cartItems->updated_at}}"
                                     onclick="openProductModalSeller(this)"
                                     >Receipt</button>
                                 @else
@@ -144,8 +145,9 @@
                                     data-name="{{ $cartItems->product_name }}"
                                     data-price="{{ $cartItems->unit_price }}"
                                     data-qty="{{ $cartItems->quantity }}"
-                                    data-voucher="{{ $cartItems->voucher_applied}}"
-                                    data-id="{{ $cartItems->cart_id}}"
+                                    data-voucher="{{ $cartItems->voucher_applied }}"
+                                    data-id="{{ $cartItems->cart_id }}"
+                                    data-date="{{ $cartItems->formatted_updated_at }}"
                                     onclick="openProductModal(this)"
                                     >Receipt</button>
                                 @endif

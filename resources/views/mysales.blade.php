@@ -11,6 +11,7 @@
 
 @section('maincontent')
     <div class="mainContainer">
+        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
         <div class="top">
             <h1>Profile</h1>
         </div>
@@ -84,7 +85,7 @@
                     <div class="modal-middle">
                         <div class="middle-top">
                             <h3>Order ID # <span id="productID"></span></h3>
-                            <h6>May 05, 2025</h6>
+                            <h6><span id="productDate"></span></h6>
                         </div>
                         <div class="middle-bottom">
                             <h2>Here's your receipt</h2>
@@ -168,9 +169,11 @@
                 document.getElementById('productPrice').textContent = button.dataset.prices;
                 document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
                 document.getElementById('productID').textContent = button.dataset.id;
+                document.getElementById('productDate').textContent = button.dataset.date;
                 document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
                     .dataset.vouchers);
                 console.log('wtf');
+                console.log(button.dataset.id);
             }
             // modal close
             var span = document.getElementsByClassName("close")[0];

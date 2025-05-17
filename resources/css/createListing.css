@@ -21,7 +21,6 @@ header {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
     display: flex;
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -339,11 +338,18 @@ form button{
 .submit{
     background-color: white;
     border: solid black 1px;
+    cursor: pointer;
 }
 .cancel{
     background-color: #696969;
     color: white;
     border: none;
+    width: 238px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    text-decoration: none;
 }
 .button-group{
     display: flex;
@@ -403,4 +409,106 @@ figcaption{
     text-align: center;
     font-size: 13px;
     margin-top: 0.5vmin;
+}
+/* Tab container */
+.listing-tabs-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 1);
+    height: 350px;
+    position: relative;
+}
+
+/*MODAL */
+.modalPolicy{
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  padding-top: 100px; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4);
+  z-index: 1 !important;
+  justify-content: center;
+  align-items: center;
+}
+/* Tab buttons */
+.tab-buttons {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.tab-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    color: black;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-btn.active-tab {
+    color: #ae0505;
+    border-bottom: 3px solid #ae0505;
+}
+
+/* Content area */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active-tab-content {
+    display: block;
+}
+
+.tab-content h3 {
+    color: #ae0505;
+    margin-bottom: 0.5rem;
+}
+
+.tab-content ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    font-size: 18px;
+}
+.btnCloseGroup{
+    text-align: right; 
+    margin-top: 20px; 
+    height: 100%;
+    padding-top: 2rem;
+}
+.closeBtns{
+    padding: 0.5rem 1rem;
+    background: #ae0505; 
+    color: white; 
+    border: none; 
+    border-radius: 5px;
+}
+.divProductPolicy{
+    width: 528px;
+}
+.productPostingPolicy{
+    height: 60px;
+    border: 1px solid #696969;
+    padding: 5px 30px;
+    background-color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
 }

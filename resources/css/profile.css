@@ -575,3 +575,18 @@ textarea {
 .sessionModal-content h1{
   color:black;
 }
+.goBack{
+    position: absolute;
+    left: 5%;
+    top: 13%;
+    color: black;
+    text-decoration: none;
+}
+.goBack a{
+    color: black;
+    text-decoration: none;
+}
+.goBack span{
+    text-decoration: underline;
+    cursor: pointer;
+}

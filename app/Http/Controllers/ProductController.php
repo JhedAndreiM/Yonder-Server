@@ -23,12 +23,16 @@ class ProductController extends Controller
         ]);
 
         $imagePaths = [];
-
-foreach($request->file('productImage') as $image){
-    $imageName = time().'_'.$image->getClientOriginalName();
-    $image->move(public_path('images'), $imageName);
-    $imagePaths[] = $imageName;
-}
+        try {
+            foreach($request->file('productImage') as $image){
+            $imageName = time().'_'.$image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $imagePaths[] = $imageName;
+        }
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['productImage' => 'Attach Image!']);
+        }
+        
         // $imagePath = null;
         // if ($request->hasFile('productImage')) {
         //     $imagePath = $request->file('productImage')->store('uploads', 'public');

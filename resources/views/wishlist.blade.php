@@ -35,6 +35,7 @@
         <h1>Wishlist</h1>
       </div>
       <div class="container">
+        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
         @include('partials.wishlistProducts', ['wishlistItems' => $wishlistItems])
       </div>
     </div>
