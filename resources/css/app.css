@@ -116,6 +116,18 @@ header {
 .navHome{
     color: white;
 }
+.navHome a{
+    color: white;
+    text-decoration: none;
+}
+.navAbout a{
+  text-decoration: none;
+  color: black;
+}
+.navFAQ a{
+  text-decoration: none;
+  color: black;
+}
 
 
 /* SECTIONS AND SHIT */

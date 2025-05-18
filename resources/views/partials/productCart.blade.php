@@ -27,7 +27,7 @@
             <div class="div-quantity">
                 <div class="quantity-controls">
     <button type="button" class="decrease">−</button>
-    <input type="number" class="quantity" value="{{ $items->quantity }}" min="1" max="{{ $items->product_stock }}">
+    <input type="number" class="quantity" value="{{ $items->quantity }}" min="1" max="{{ $items->product_stock }}" readonly>
     <button type="button" class="increase">+</button>
 </div>
             </div>

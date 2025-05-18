@@ -11,7 +11,7 @@
 
 @section('maincontent')
     <div class="mainContainer">
-        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
+        <h1 class="goBack"><a href="{{ route('custom.home') }}"><img src="{{ asset('img/back-button.svg') }}" alt=""></a></h1>
         <div class="top">
             <h1>Profile</h1>
         </div>

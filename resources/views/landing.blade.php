@@ -23,14 +23,14 @@
 <body>
     <header>
         <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <a href=""><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
+        <a href="/"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
         <div class="nav-container">
         <nav>
             <ul class="navLinks">
             <div class="ovalHover"></div>
-                <li class="navHome"><a href="#"></a>Home</li>
-                <li><a href="#"></a>About</li>
-                <li><a href="#"></a>FAQs</li>
+                <li class="navHome"><a href="/">Home</a></li>
+                <li class="navAbout"><a href="{{ route('about.us') }}">About</a></li>
+                <li class="navFAQ"><a href="{{ route('FAQs') }}">FAQ</a></li>
                 
             </ul>
         </nav>
@@ -144,7 +144,7 @@
             
             <ul class="footerUniTrade">
                 <li><h3>Yonder</h3></li>
-                <li><a href="#">About Us</a></li>
+                <li><a href="{{ route('about.us') }}">About Us</a></li>
                 <li><a href="#">Our Services</a></li>
                 <li><a href="#">Privacy and Policy</a></li>
             </ul>
@@ -154,7 +154,7 @@
             
             <ul class="footerGetHelp">
                 <li><h3>Get Help</h3></li>
-                <li><a href="#">FAQ</a></li>
+                <li><a href="{{ route('FAQs') }}">FAQ</a></li>
                 <li><a href="#">Contact Us</a></li>
                 <li><a href="#">Send us an email</a></li>
             </ul>
@@ -162,7 +162,7 @@
         <div class="footerThree">
             <ul class="footerGetStarted">
                 <li><h3>Get Started</h3></li>
-                <li><a href="#">Sign In</a></li>
+                <li><a href="{{ route('select.role') }}">Sign In</a></li>
                 <li class="invisible-item"></li>
                 <li class="invisible-item"></li>
             </ul>

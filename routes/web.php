@@ -180,6 +180,12 @@ Route::get('/', function () {
 });
 
 
+Route::get('/AboutUs', function () {
+    return view('AboutUs');
+})->name('about.us');
+Route::get('/FAQ', function () {
+    return view('FAQs');
+})->name('FAQs');
 
 Route::get('/logout', function () {
     Auth::logout();

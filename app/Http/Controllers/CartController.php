@@ -111,8 +111,7 @@ class CartController extends Controller
     public function showCart()
     {
         $userId = Auth::id();
-        // bali combine lang to ng 2 table (product and cart_item).
-        // kunin nila yung same na product_id from cart_item and product_id from product
+        
         $cartItems = DB::table('cart_items')
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->where('cart_items.user_id', $userId)
@@ -137,6 +136,8 @@ class CartController extends Controller
         $totalAmount = $cartItems->reduce(function ($carry, $item) {
             return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
         }, 0);
+        //dd($totalItems);
+        //dd($totalAmount);
         return view('addToCart', compact('cartItems', 'totalItems', 'totalAmount'));
     }
 
@@ -563,10 +564,37 @@ class CartController extends Controller
             ->where('user_id', Auth::id())
             ->sum(DB::raw('(unit_price * quantity) - voucher_applied'));
 
+        $userId = Auth::id();
+        
+        $cartItems = DB::table('cart_items')
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->where('cart_items.user_id', $userId)
+            ->where('cart_items.status', '=', 'in_cart')
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.updated_at',
+                'cart_items.quantity',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'product.name as product_name',
+                'product.stock as product_stock',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied'
+            )
+            ->get();
+
+                
+        $totalItems = $cartItems->sum('quantity');
+
+        $totalAmount = $cartItems->reduce(function ($carry, $item) {
+            return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
+        }, 0);
         return response()->json([
             'success' => true,
+            'totalQuantity' => $totalItems,
             'newTotal' => number_format($newItemTotal, 2),
-            'cartTotal' => number_format($cartTotal, 2),
+            'cartTotal' => number_format($totalAmount, 2),
             'quantity' => $newQty
         ]);
 

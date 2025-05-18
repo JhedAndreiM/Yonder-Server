@@ -32,7 +32,7 @@
 
 @section('maincontent')
     <div class="container">
-        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
+        <h1 class="goBack"><a href="{{ route('custom.home') }}"><img src="{{ asset('img/back-button.svg') }}" alt=""></a></h1>
         <div class="left">
             <div class="left-container">
                 @php
@@ -303,7 +303,7 @@
                 </div>
                 <div class="middle-success">
                     <h1>Success!</h1>
-                    <h5>Product added to your cart! Check your cart and see the product.</h5>
+                    <h5>Product added to your cart!</h5>
                 </div>
                 <div class="bottom-success">
                     <button onclick="closeSuccessModal()">Okay!</button>

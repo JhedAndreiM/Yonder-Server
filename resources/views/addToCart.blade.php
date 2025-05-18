@@ -12,7 +12,7 @@
 
 @section('maincontent')
       <div class="mainContainer">
-        <h1 class="goBack"><a href="{{ route('custom.home') }}">&#x226A; <span>Go Back</span></a></h1>
+        <h1 class="goBack"><a href="{{ route('custom.home') }}"><img src="{{ asset('img/back-button.svg') }}" alt=""></a></h1>
         <div class="top">
           <h1>My Cart</h1>
         </div>
@@ -22,7 +22,7 @@
         <div class="total-bottom">
           <div class="bottom-container"style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <p style="font-weight: bold;">Items: {{ $totalItems }}</p>
+                <p class="totalPerItems" style="font-weight: bold;">Items: {{ $totalItems }}</p>
                 <p style="font-weight: bold;">Total: P {{ number_format($totalAmount, 2) }}</p>
             </div>
             <form action="{{ route('cart.checkoutAll') }}" method="POST">
@@ -88,6 +88,9 @@
             const priceElement = cartItem.querySelector('.div-price p');
             priceElement.textContent = `P ${data.newTotal}`;
 
+
+            const totalElementPerItem = document.querySelector('.bottom-container p:first-child');
+            totalElementPerItem.textContent = `Total: P ${data.totalQuantity}`;
             // Update the total at the bottom
             const totalElement = document.querySelector('.bottom-container p:last-child');
             totalElement.textContent = `Total: P ${data.cartTotal}`;

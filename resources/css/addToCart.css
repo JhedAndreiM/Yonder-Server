@@ -271,7 +271,7 @@ h1 {
 }
 .goBack{
     position: absolute;
-    left: 5%;
+    left: 2%;
     top: 13%;
     color: black;
     text-decoration: none;
@@ -283,6 +283,21 @@ h1 {
 .goBack span{
     text-decoration: underline;
     cursor: pointer;
+}
+.decrease,.increase{
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: white;
+    border-radius: 5px;
+    border: solid black 1px;
+}
+.quantity{
+    font-size: 1rem;
+    height: 30px;
+    border-radius: 5px;
+    border: solid black 1px;
 }
 @media (max-width: 1024px) {
     .container {

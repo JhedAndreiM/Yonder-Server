@@ -57,7 +57,6 @@
                                             <h1>PHP </h1>
                                             <pre>{{ print_r($totalAmount, true) }}</pre>
                                         </div>
-                                        <div class="firstCard-bottom">View Report <span class="arrow">&rarr;</span></div>
                                     </div>
                                     <div class="cards-totalSales thirdCard">
                                         <div class="firstCard-top">Wishlist Count</div>
@@ -66,7 +65,6 @@
                                                 <pre>{{ print_r($totalWishlistItems, true) }}</pre>
                                             </h1>
                                         </div>
-                                        <div class="firstCard-bottom">View Report <span class="arrow">&rarr;</span></div>
                                     </div>
                                 </div>
                                 <div class="minicards-bottom">
@@ -83,7 +81,6 @@
                                         </pre>
                                             </h1>
                                         </div>
-                                        <div class="firstCard-bottom">View Report <span class="arrow">&rarr;</span></div>
                                     </div>
                                     <div class="cards-totalSales fourthCard">
                                         <div class="firstCard-top">Low Stock</div>
@@ -92,7 +89,6 @@
                                                 <pre>{{ print_r($lowStockCount, true) }}</pre>
                                             </h1>
                                         </div>
-                                        <div class="firstCard-bottom">View Report <span class="arrow">&rarr;</span></div>
 
                                     </div>
                                 </div>
@@ -112,7 +108,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($cartData->take(3) as $item)
+                                                @foreach ($cartData->take(5) as $item)
                                                 <tr>
                                                     <td>{{ $item->buyer_name }}</td>
                                                     <td>#{{ $item->buyer_id }}</td>
@@ -125,10 +121,6 @@
                                         </table>
                                     </div>
 
-                                    <div class="recents-footer">
-                                        <span>View report</span>
-                                        <span class="arrow">&rarr;</span>
-                                    </div>
                                 </div>
                             </div>
                         </div>

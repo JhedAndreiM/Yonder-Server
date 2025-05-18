@@ -46,7 +46,6 @@ class OrganizationController extends Controller
                 }
             }
 
-            // Step 2: Save new images
             $filenames = [];
             $counter = 0;
             foreach ($request->file('images') as $image) {
@@ -57,7 +56,6 @@ class OrganizationController extends Controller
                 $counter++;
             }
 
-            // Step 3: Update product record
             $product->image_path = implode(',', $filenames);
         }
 

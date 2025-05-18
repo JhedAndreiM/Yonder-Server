@@ -1,0 +1,237 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Raleway";
+}
+.raleway-normal {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+body,
+html {
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-image: url("img/background.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 80px;
+    display: flex;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    justify-content: center;
+    align-items: center;
+    font-family: "Raleway", sans-serif;
+    background-color: white;
+    border-bottom: solid rgb(0, 0, 0) 2px;
+    border: solid black 1px;
+}
+.webName {
+    position: absolute;
+    flex: 0.7;
+    font-size: 2rem;
+    left: 5%;
+    top: 27%;
+    color: #ae0505;
+    width: 100px;
+}
+.menu-button{
+    display: none;
+}
+.navContainer{
+    padding-left: 2%;
+    flex:1;
+    display: flex;
+    justify-content: center; 
+}
+.navLinks {
+    list-style: none;
+    z-index: 3;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 2rem;
+}
+.navLinks li {
+    position: relative;
+    display: inline-block;
+    padding: 0rem 2.2rem;
+    font-size: 1.5rem;
+    z-index: 3;
+}
+.button-group{
+    flex:1;
+    display: flex;
+    justify-content: flex-end;
+}
+.button-group button{
+    height: 80px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: white;
+    border: solid 1px black;
+    border-style: solid none solid none;
+}
+.button-group .StartSelling{
+    width: 11.67rem;
+    margin-left: -1px;
+}
+.button-group .Login{
+    width: 9.25rem;
+}
+.Login:hover{
+    width: 9.25rem;
+    background-color: gray;
+    color: white;
+    transition: ease-in 0.1s;
+}
+.ovalHover {
+    background-color: #ae0505;
+    position: absolute;
+    width: 7rem;
+    height: 3rem;
+    top: 35%;
+    transform: translate(155px,-20px);
+    border-radius: 30px;
+    z-index: 0;
+}
+.navHome a{
+    color: black;
+    text-decoration: none;
+}
+.navAbout a{
+  text-decoration: none;
+  color: white;
+}
+.navFAQ a{
+  text-decoration: none;
+  color: black;
+}
+
+/* end navbar */
+
+.top {
+  position: relative;
+  width: 100%;
+}
+.gradient {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 50px;
+}
+h2 {
+  position: absolute;
+  top: 250px;
+  left: 39%;
+  color: white;
+  z-index: 2;
+  font-size: 100px;
+}
+
+/* container */
+
+.container {
+  margin-top: 20px;
+  display: flex;
+  padding: 40px;
+  gap: 20px;
+}
+
+.secondContainer {
+  display: flex;
+  padding: 40px;
+  gap: 20px;
+}
+
+/**/
+
+h3 {
+  font-size: 40px;
+}
+
+h5 {
+  font-size: 22px;
+  font-weight: 500;
+  color: #1d1d1d;
+  text-align: justify;
+}
+
+p {
+  text-align: center;
+  font-style: italic;
+}
+
+.img {
+  margin-left: 15%;
+}
+
+.portImg {
+  margin-right: 15%;
+}
+
+.leftContent {
+  margin-left: 15%;
+}
+
+.contents {
+  align-items: center;
+  margin-right: 15%;
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.contents h5 {
+  margin-top: 10px;
+}
+
+.contents p {
+  margin-top: 40px;
+}
+
+.secondContainer h3 {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.team {
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.solo {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.end {
+  text-align: center;
+  padding: 40px;
+  margin: 0 15% 0 15%;
+}
+
+img {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}

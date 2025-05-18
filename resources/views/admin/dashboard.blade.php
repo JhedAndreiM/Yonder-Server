@@ -32,7 +32,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="image">Select Images</label>
-                    <input type="file" name="image" id="image" required multiple accept="image/*">
+                    <input type="file" name="image[]" id="image" required multiple accept="image/*">
                 </div>
                 <button type="submit" class="btn">Upload Images</button>
             </form>
