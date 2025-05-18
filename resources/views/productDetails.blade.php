@@ -85,6 +85,8 @@
                             {{ $products->stock }}</span></h3>
                     @if( $products->forSaleTrade==='trade' )
                     <button class="addToCartBtn"id="goToSellerChat">Message Seller</button>
+                    @elseif($products->user_id=== Auth::id())
+                    <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn"id="goToSellerListing">Edit Listing</button></a>
                     @else
                     <button class="addToCartBtn"id="addToCartBtn">Add to Cart</button>
                     <button class="addToBuyNowBtn"id="buyNowBtn">Buy Now</button>
@@ -391,6 +393,8 @@
         document.getElementById('goToSellerChat').addEventListener('click', function () {
         window.location.href = "{{ url('/Yonder/Chat/' . $seller->id) }}";
         });
+
+        
 
         // for report modal 
         var modal = document.getElementById("myModalReport");
