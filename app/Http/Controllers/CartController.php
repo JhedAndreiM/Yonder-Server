@@ -84,10 +84,16 @@ class CartController extends Controller
                         'status' => 'pending',
                         'cart_item_id' => $cartId,
                     ]);
-
+                    
                 }
             }
-            return redirect()->back()->with('success', 'Item added to Cart!');
+            
+            if ($status === 'in_cart') {
+                return redirect()->back()->with('success', 'Item added to Cart!');
+            }
+            elseif($status === 'pending'){
+                return redirect()->back()->with('success', 'Product bought successfully!');
+            }
         }
     }
 

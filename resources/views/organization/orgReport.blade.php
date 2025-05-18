@@ -69,7 +69,7 @@
                                 </div>
                                 <div class="minicards-bottom">
                                     <div class="cards-totalSales secondCard">
-                                        <div class="firstCard-top">Top Seller</div>
+                                        <div class="firstCard-top">Top Selling Product</div>
                                         <div class="firstCard-middle">
                                             <h1>
                                                 <pre> 
@@ -83,7 +83,7 @@
                                         </div>
                                     </div>
                                     <div class="cards-totalSales fourthCard">
-                                        <div class="firstCard-top">Low Stock</div>
+                                        <div class="firstCard-top">Low in Stock</div>
                                         <div class="firstCard-middle">
                                             <h1>
                                                 <pre>{{ print_r($lowStockCount, true) }}</pre>

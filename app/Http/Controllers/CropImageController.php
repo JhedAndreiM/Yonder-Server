@@ -56,12 +56,20 @@ class CropImageController extends Controller
             'avatar' => 'avatar.png',
             'updated_at' => now(),
             ]);  
+            if(Auth::user()->role==='student'){
+            return redirect()->route('account.page')
+            ->with('success', 'Avatar Deleted!');
+            }
+            elseif(Auth::user()->role==='organization'){
+            return redirect()->route('accounts.page')
+            ->with('success', 'Avatar Deleted!');
+        }
         } catch (\Exception $e) {
             if(Auth::user()->role==='student'){
             return redirect()->route('account.page')
             ->with('message', 'Error Deleting Avatar!');
-        }
-        elseif(Auth::user()->role==='organization'){
+            }
+            elseif(Auth::user()->role==='organization'){
             return redirect()->route('accounts.page')
             ->with('message', 'Error Deleting Avatar!');
         }

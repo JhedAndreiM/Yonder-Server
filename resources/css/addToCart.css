@@ -298,6 +298,7 @@ h1 {
     height: 30px;
     border-radius: 5px;
     border: solid black 1px;
+    text-align: center;
 }
 @media (max-width: 1024px) {
     .container {

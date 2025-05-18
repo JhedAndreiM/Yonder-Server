@@ -81,15 +81,28 @@
                         $pbenUser = \App\Models\User::where('email', 'pben@bpsu.edu.ph')->first();
                         $isPBEN = $pbenUser && $products->user_id === $pbenUser->id;
                     @endphp
+                    @if($products->stock!=0)
                     <h3 class="product-stock">Stock:<span class="lowFontWeight">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             {{ $products->stock }}</span></h3>
-                    @if( $products->forSaleTrade==='trade' )
-                    <button class="addToCartBtn"id="goToSellerChat">Message Seller</button>
-                    @elseif($products->user_id=== Auth::id())
-                    <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn"id="goToSellerListing">Edit Listing</button></a>
                     @else
-                    <button class="addToCartBtn"id="addToCartBtn">Add to Cart</button>
-                    <button class="addToBuyNowBtn"id="buyNowBtn">Buy Now</button>
+                    <h3 class="product-stock" style="color:red;">Out of Stock</span></h3>
+                    @endif
+                    @if($products->stock != 0)
+                        @if( $products->forSaleTrade==='trade' )
+                        <button class="addToCartBtn"id="goToSellerChat">Message Seller</button>
+                        @elseif($products->user_id=== Auth::id())
+                        <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn"id="goToSellerListing">Edit Listing</button></a>
+                        @else
+                        <button class="addToCartBtn"id="addToCartBtn">Add to Cart</button>
+                        <button class="addToBuyNowBtn"id="buyNowBtn">Buy Now</button>
+                        @endif
+                    @else
+                        @if( $products->forSaleTrade==='trade' )
+                        <button class="addToCartBtn" disabled>Message Seller</button>
+                        @else
+                        <button class="addToCartBtn" disabled>Add to Cart</button>
+                        <button class="addToBuyNowBtn" disabled>Buy Now</button>
+                        @endif
                     @endif
                     <h1 class="product-name">Details</h1>
                     <h3 class="product-condition">Condition: <span

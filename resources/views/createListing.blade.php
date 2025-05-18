@@ -36,11 +36,11 @@
 
                 <div class="four condition">
                     <h3>What is the condition of the item?</h3>
-                    <button class="filter-btn" name="product_condition[]"data-filter="new"
+                    <button type="button" class="filter-btn" name="product_condition[]"data-filter="new"
                         data-filter-type="product_condition">New</button>
-                    <button class="filter-btn" name="product_condition[]"data-filter="like-new"
+                    <button type="button" class="filter-btn" name="product_condition[]"data-filter="like-new"
                         data-filter-type="product_condition">Like new</button>
-                    <button class="filter-btn" name="product_condition[]"data-filter="used"
+                    <button type="button" class="filter-btn" name="product_condition[]"data-filter="used"
                         data-filter-type="product_condition">Used (Fair)</button>
                 </div>
 
@@ -216,5 +216,15 @@
         function openModal() {
             document.getElementById("modalPolicy").style.display = "flex";
         }
+        document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(".condition .filter-btn");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", function () {
+                buttons.forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+    });
     </script>
 @endsection

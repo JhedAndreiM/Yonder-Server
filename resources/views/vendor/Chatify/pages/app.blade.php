@@ -321,8 +321,7 @@
         <a href="{{ route('custom.home') }}"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
             </div>
             <div class="left-nav">
-                <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
-                <div class="vertical-line"></div>
+                
                 <div class="profilePlace"><img class="profile_link"
                         src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""
                         id="nav-profile"></div>

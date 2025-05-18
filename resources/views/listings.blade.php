@@ -76,7 +76,7 @@
                         </div>
                         <div class="priceDiv">
                             <h4>Price:</h4>
-                            <input id="productPrice" name="price" type="text" readonly>
+                            <input id="productPrice" name="price" type="text" >
                         </div>
                         
                     </div>

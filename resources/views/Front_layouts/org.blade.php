@@ -59,7 +59,6 @@
             font-size: 1.2rem;
             cursor: pointer;
         }
-
         .notificationBtn,
         .wishlistBtn,
         .vertical-line,

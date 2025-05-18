@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const voucherSelect = document.getElementById("voucher");
     const voucherBuySelect = document.getElementById("voucherBuySelect");
 
+    
 
     addToCartBtn.addEventListener("click", () => {
         cartModal.classList.remove("hidden");
@@ -90,6 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
         inputAddtoCart.addEventListener('keydown', function(e) {
         e.preventDefault(); 
     });
+    
 });
 
 
