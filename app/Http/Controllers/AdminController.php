@@ -62,6 +62,14 @@ class AdminController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('sms_notifLogs')->insert([
+        'from_id' => Auth::id(), // assuming the admin or approver is the current user
+        'to_id' => $user,
+        'message' => 'Your product "' . $product->name . '" has been approved and is now visible to other students.',
+        'created_at' => now(),
+        'updated_at' => now(),
+        ]);
+
         return redirect()->back()->with('success', 'Product approved!');
     }
     public function reject(Request $request, $id)

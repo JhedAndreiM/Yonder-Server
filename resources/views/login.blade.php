@@ -9,6 +9,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
     </style>
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite('resources/css/login.css')
     <style>
         body {
@@ -53,14 +54,15 @@
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" 
                         pattern="^[a-zA-Z0-9._%+-]+@bpsu\.edu\.ph$" 
-                        required>
+                        required autocomplete="off">
                 </div>
                 </div>
 
                 <div class="lname input-container">
                     <div class="password-container">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password">
+                        <input type="password" id="password" name="password" autocomplete="off">
+                        <i class="fa-solid fa-eye" id="showPassword"></i>
                 </div>
             </div>
             @if($errors->any())
@@ -71,7 +73,7 @@
             </div>
             @endif
             <div class="btnGroup">
-                <a class="cancel"href="{{  url('/') }}">Cancel</a>
+                <a class="cancel"href="{{ route('select.role') }}">Cancel</a>
                 <button class="submit">Login</button>
             </div>
             
@@ -82,5 +84,16 @@
         <img src="{{ asset('img/login-image.svg') }}" alt="">
     </div>
 </div>
+<script>
+    const showPassword = document.querySelector("#showPassword");
+    const passwordField = document.querySelector("#password");
+
+    showPassword.addEventListener("click", function(){
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+        const type=passwordField.getAttribute("type")=== "password"?"text":"password";
+        passwordField.setAttribute("type",type);
+    });
+</script>
 </body>
 </html>

@@ -183,3 +183,20 @@ input:focus {
     background-color: #0d62ff;
     color: white;
 }
+.password-container{
+    position: relative;
+}
+.fa-eye{
+    position: absolute;
+    top: 30%;
+    right: 4%;
+    font-size: 24px;
+    cursor: pointer;
+}
+.fa-eye-slash{
+    position: absolute;
+    top: 30%;
+    right: 4%;
+    font-size: 24px;
+    cursor: pointer;
+}

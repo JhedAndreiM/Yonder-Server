@@ -45,6 +45,7 @@ class CartController extends Controller
         if ($existingCartItem) {
             return redirect()->back()->with('Failed', 'Item already in Cart!');
         } else {
+            $status = $request['action_type'] === 'buy_now' ? 'pending' : 'in_cart';
             // insert sa cart_items
             $cartId = DB::table('cart_items')->insertGetId([
                 'user_id' => Auth::id(),
@@ -53,11 +54,22 @@ class CartController extends Controller
                 'quantity' => $request['quantity'],
                 'unit_price' => $request['unit_price'],
                 'voucher_applied' => $request['voucher_amount'] ?? 0,
-                'status' => $request['action_type'] === 'buy_now' ? 'pending' : 'in_cart',
+                'status' => $status,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            if ($status === 'pending') {
+                $buyer = Auth::user();
+                $seller = DB::table('users')->where('id', $product->user_id)->first();
 
+                DB::table('sms_notifLogs')->insert([
+                    'from_id' => $buyer->id,
+                    'to_id' => $seller->id,
+                    'message' => "User {$buyer->name} placed a Buy Now order for your product '{$product->name}'.",
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
             $voucher_id = $request['voucher_id'];
             $voucher = DB::table('vouchers')->where('id', $voucher_id)->first();
@@ -72,9 +84,10 @@ class CartController extends Controller
                         'status' => 'pending',
                         'cart_item_id' => $cartId,
                     ]);
+
                 }
             }
-            return redirect()->back()->with('success', 'Item added!');
+            return redirect()->back()->with('success', 'Item added to Cart!');
         }
     }
 
@@ -152,13 +165,23 @@ class CartController extends Controller
 
     public function update($id)
     {
+        $cartItem = DB::table('cart_items')->where('id', $id)->first();
+        $product = DB::table('product')->where('product_id', $cartItem->product_id)->first();
+    $buyer = Auth::user(); // the one placing the order
+    $seller = DB::table('users')->where('id', $cartItem->seller_id)->first();
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
                 'status' => 'pending',
                 'updated_at' => now()
             ]);
-
+        DB::table('sms_notifLogs')->insert([
+        'from_id' => $buyer->id,
+        'to_id' => $seller->id,
+        'message' => "User {$buyer->name} placed a Buy Now order for your product '{$product->name}'.",
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
         return redirect()->back()->with('success', 'Item Bought.');
     }
 
@@ -557,7 +580,7 @@ class CartController extends Controller
             ]);
 
         // Calculate new totals
-        $newItemTotal = ($cartItem->unit_price * $newQty) - $cartItem->voucher_applied;
+        $newItemTotal = ($product->price * $newQty) - $cartItem->voucher_applied;
 
         // Get updated cart total
         $cartTotal = DB::table('cart_items')

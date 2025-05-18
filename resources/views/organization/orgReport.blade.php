@@ -108,11 +108,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($cartData->take(5) as $item)
+                                                @foreach ($cartData as $item)
                                                 <tr>
                                                     <td>{{ $item->buyer_name }}</td>
                                                     <td>#{{ $item->buyer_id }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('F j, Y \a\t g:i A') }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Manila')->format('F j, Y \a\t g:i A') }}</td>
                                                     <td>PHP {{ $item->unit_price * $item->quantity }}</td>
                                                 </tr>
                                                 @endforeach

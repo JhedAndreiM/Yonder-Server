@@ -176,7 +176,7 @@
                 </div>
                 <div class="middle-success">
                     <h1>Failed!</h1>
-                    <h5>Review Failed! Try again!</h5>
+                    <h5>{{ session('error')}}</h5>
                 </div>
                 <div class="bottom-success">
                     <button onclick="closeFailedModal()">Okay!</button>

@@ -28,12 +28,25 @@ class OrganizationController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             dd($e->errors());
         }
+
+
         $product = Product::find($request->product_id);
+
+        $oldPrice = $product->price;
+        $newPrice = $request->price;
+        $priceChanged = $oldPrice != $newPrice;
+
         $product->name = $request->name;
         $product->price = $request->price;
         $product->stock = $request->stock;
         $product->save();
 
+        if ($priceChanged) {
+            DB::table('cart_items')
+            ->where('product_id', $product->product_id)
+            ->where('status', 'in_cart')
+            ->update(['unit_price' => $newPrice]);
+        }
         if ($request->hasFile('images')) {
             // Step 1: Delete old images
             if ($product->image_path) {
@@ -193,7 +206,7 @@ class OrganizationController extends Controller
             )
             ->orderBy('cart_items.updated_at', 'desc');
             $cartData = $query->get();
-        return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'totalWishlistItems', 'lowStockCount', 'topSellerProduct', 'cartData'));
+            return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'totalWishlistItems', 'lowStockCount', 'topSellerProduct', 'cartData'));
     }
 
     public function orggetAllNotCartItems(Request $request){

@@ -24,9 +24,9 @@
         <nav>
             <ul class="navLinks">
             <div class="ovalHover"></div>
-                <li class="navHome"><a href="#"></a>Home</li>
-                <li><a href="#"></a>About</li>
-                <li><a href="#"></a>FAQs</li>
+                <li class="navHome"><a href="/">Home</a></li>
+                <li class="navAbout"><a href="{{ route('about.us') }}">About</a></li>
+                <li class="navFAQ"><a href="{{ route('FAQs') }}">FAQ</a></li>
                 
             </ul>
         </nav>

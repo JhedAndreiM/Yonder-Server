@@ -52,23 +52,27 @@ header {
     flex-direction: row;
     border: 1px #8d8d8d;
     border-style: solid;
-    box-shadow: 0px 4px 0px 0px #8d8d8d;
     padding-right: 0.3rem;
     padding-left: 1rem;
     border-radius: 46px;
     height: 3.3rem;
     align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.nav-search:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 nav {
     display: flex;
     width: 100%;
 }
-.profilePlace{
+.profilePlace {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.profile_link{
+.profile_link {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -130,10 +134,10 @@ input:focus {
     display: flex;
     justify-content: space-evenly;
 }
-.profile_link{
+.profile_link {
     cursor: pointer;
 }
-.sub-menu-wrapper{
+.sub-menu-wrapper {
     position: absolute;
     top: 90%;
     right: 10%;
@@ -141,11 +145,11 @@ input:focus {
     display: none;
     transition: 0.5 ease;
 }
-.sub-menu-wrapper.active{
+.sub-menu-wrapper.active {
     display: block;
     transition: 0.5 ease;
 }
-.sub-menu{
+.sub-menu {
     position: relative;
     background-color: white;
     padding: 20px;
@@ -154,20 +158,20 @@ input:focus {
     border-radius: 11px;
 }
 
-.sub-menu-link{
+.sub-menu-link {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color:black;
+    color: black;
     margin: 12px 0;
 }
-.sub-menu-link p{
+.sub-menu-link p {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.sub-menu-link i{
+.sub-menu-link i {
     width: 45px;
     padding: 10px;
     background-color: rgb(207, 207, 207);
@@ -185,7 +189,7 @@ input:focus {
     height: 0;
     border-left: 9px solid transparent;
     border-right: 9px solid transparent;
-    border-bottom: 12px solid black; 
+    border-bottom: 12px solid black;
 }
 .fa-magnifying-glass {
     display: none;
@@ -220,31 +224,31 @@ input:focus {
 .filter-box {
     height: 42.5rem;
     width: 22rem;
-    border: #656769 solid 1px;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
     padding-inline: 1rem;
     background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 .add-listing {
     margin-top: 5%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: #656769 solid 1px;
     height: 3.2rem;
     width: 22rem;
     border-radius: 15px;
     background-color: white;
     color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
-.add-listing:hover{
-    background: rgb(174,5,5);
-    background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
-    transform: scale(1.1);
-    transition: ease-in-out 0.2s;
+.add-listing:hover {
+    background-color: #ae0505;
     color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 .add-listing:hover h6,
 .add-listing:hover a {
@@ -261,9 +265,10 @@ input:focus {
 .add-listing h6 {
     color: black;
     font-size: 1rem;
-    text-decoration: underline;
+    text-decoration: none;
+    font-weight: 500;
 }
-.messageButton img{
+.messageButton img {
     width: 70px;
     height: 70px;
     position: absolute;
@@ -296,10 +301,15 @@ h3 {
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.filter-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .filter-btn.active {
-    background: #0D62FF;
+    background: #0d62ff;
     color: white;
 }
 
@@ -327,7 +337,7 @@ input[type="number"] {
 }
 .right-top {
     display: flex;
-    margin-block: 3% 1%;
+    margin-block: 6% 1%;
     justify-content: space-between;
 }
 .right-top-right {
@@ -347,7 +357,6 @@ input[type="number"] {
     font-size: 20px;
 }
 .right-middle {
-    
     width: 100%;
     max-height: 12.3rem;
     margin-bottom: 5%;
@@ -406,7 +415,6 @@ input[type="number"] {
 
 .right-btn {
     right: 1%;
-    
 }
 
 .right-bottom {
@@ -425,18 +433,24 @@ input[type="number"] {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, 16.37rem);
-    gap: 6rem;
+    gap: 5rem;
+    margin-left: 4rem;
 }
 .card {
     position: relative;
     height: 20.25rem;
     width: 16.37rem;
-    border: #656769 solid 1px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
     background-color: white;
     cursor: pointer;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 .image {
     display: flex;
@@ -498,7 +512,8 @@ form {
     font-size: 2rem;
     color: #666666;
 }
-.theRating,.theRatings{
+.theRating,
+.theRatings {
     width: 50px;
     height: 25px;
     border-radius: 8px;
@@ -510,10 +525,10 @@ form {
     background-color: white;
     object-fit: cover;
 }
-.right-middle img{
+.right-middle img {
     object-fit: cover;
 }
-.mySlides{
+.mySlides {
     margin-bottom: 0px;
     padding-bottom: 0px;
 }
@@ -529,9 +544,9 @@ form {
     width: 300px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    max-width: 90vw; 
+    max-width: 90vw;
     border: solid 1px black;
     border-radius: 11px;
 }
@@ -542,7 +557,7 @@ form {
     display: flex;
     justify-content: space-between;
 }
-.closeButton{
+.closeButton {
     display: none;
 }
 .notification-header h3 {
@@ -598,7 +613,7 @@ form {
     background: #888;
     border-radius: 3px;
 }
-.notification{
+.notification {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -617,10 +632,10 @@ form {
     text-overflow: ellipsis;
     max-height: 250px;
 }
-.notification h1{
+.notification h1 {
     font-size: 1.1rem;
 }
-.time{
+.time {
     display: flex;
     justify-content: flex-end;
 }
@@ -826,7 +841,7 @@ form {
         max-width: 100%;
         height: 60vh; /* Takes up 60% of viewport height on mobile */
         border-radius: 15px 15px 11px 11px;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .notification-header {
@@ -842,13 +857,13 @@ form {
     }
 
     /* Add close button for mobile */
-    .closeButton{
-    display: flex;
-}
+    .closeButton {
+        display: flex;
+    }
 
     .notification-list {
-        max-height: calc(60vh - 60px); 
-        padding-bottom: env(safe-area-inset-bottom); 
+        max-height: calc(60vh - 60px);
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
     .notification-item {

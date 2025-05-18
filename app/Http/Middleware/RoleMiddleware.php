@@ -17,7 +17,8 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, ...$roles)
     {
         if (!Auth::check() || !in_array(Auth::user()->role, $roles)) {
-            abort(403, 'Access denied');
+            //abort(403, 'Access denied');
+            return response()->view('errors.403', [], 403);
         }
 
         $response = $next($request);

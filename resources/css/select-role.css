@@ -118,3 +118,15 @@ header {
     transform: scale(1.1);
     transition: ease-in-out 0.2s;
 }
+.navHome a{
+    color: black;
+    text-decoration: none;
+}
+.navAbout a{
+  text-decoration: none;
+  color: black;
+}
+.navFAQ a{
+  text-decoration: none;
+  color: black;
+}

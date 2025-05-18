@@ -303,7 +303,7 @@
                 </div>
                 <div class="middle-success">
                     <h1>Success!</h1>
-                    <h5>Product added to your cart!</h5>
+                    <h5>{{ session('success') }}</h5>
                 </div>
                 <div class="bottom-success">
                     <button onclick="closeSuccessModal()">Okay!</button>
