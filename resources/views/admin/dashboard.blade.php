@@ -106,6 +106,7 @@
                                 <div class="modal-content">
                                     <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
                                     <h2>{{ $product->name }}</h2>
+                                    <h2>P {{ $product->price }}</h2>
                                     <p>{{ $product->description }}</p>
 
                                     <div class="image-gallery">

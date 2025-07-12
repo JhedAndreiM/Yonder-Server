@@ -64,6 +64,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/change-role', [AdminController::class, 'changeUserRole'])->name('admin.changeRole');
     Route::delete('/admin/reports/{id}/allow', [AdminController::class, 'allowReport']);
     Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct']);
+    
 });
 
 // Middleware for Orgs and Studnts
@@ -80,9 +81,14 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin']
                 return redirect()->route('admin.dashboard');
             }
         }
-    
+        
         Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     })->name('custom.home');
+
+    
+   Route::get('/accountsPage', function () {
+    return view('admin/accountsPage');
+    })->name('accounts.pages');
  });
 Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->group(function () {
     // for creating listing 
@@ -144,14 +150,14 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
 
 
-    Route::post('/Delete', [CropImageController::class, 'deleteAvatar'])->name('delete.avatar');
+     Route::post('/Delete', [CropImageController::class, 'deleteAvatar'])->name('delete.avatar');
     Route::post('/Update', [CropImageController::class, 'cropImageUploadAjax'])->name('update.avatar');
     Route::post('/UpdateUserInfo', [CropImageController::class, 'updateUserInfo'])->name('update.userInfo');
 
     // update user passwrod
     Route::post('/update-password', [UserImportController::class, 'updatePassword'])->name('profile.update-password');
 
-   Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
+    Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
 
    
 
@@ -179,6 +185,7 @@ Route::get('/', function () {
     return view('landing');
 });
 
+    
 
 Route::get('/AboutUs', function () {
     return view('AboutUs');
@@ -186,7 +193,6 @@ Route::get('/AboutUs', function () {
 Route::get('/FAQ', function () {
     return view('FAQs');
 })->name('FAQs');
-
 Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');

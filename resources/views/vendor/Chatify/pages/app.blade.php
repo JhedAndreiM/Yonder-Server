@@ -9,7 +9,6 @@
                 
                 <img class="cartBtn" src="{{ asset('img/cart.svg') }}" alt="">
                 <img class="wishlistBtn" src="{{ asset('img/heart-icon.svg') }}" alt="">
-                <img class="notificationBtn" src="{{ asset('img/bell-icon.svg') }}" alt="">
                 <div class="vertical-line"></div>
                 <div class="profilePlace"><img class="profile_link"
                         src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt=""

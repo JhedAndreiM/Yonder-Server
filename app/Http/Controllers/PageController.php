@@ -96,7 +96,7 @@ class PageController extends Controller
          //colleges
          $collegeFilters = ['ccst', 'cea', 'cba', 'ctech', 'cahs', 'cas'];
          $selectedColleges = array_intersect($filters, $collegeFilters);
-         
+         //dd($selectedColleges);
          if (!empty($selectedColleges)) {
             $query->where(function ($q) use ($selectedColleges) {
                 foreach ($selectedColleges as $college) {
@@ -120,7 +120,7 @@ class PageController extends Controller
         //dd($query);
         $wishlist = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
         $featuredImages = FeaturedImage::latest()->take(5)->get();
-        $products = $query->paginate(8);
+        $products = $query->get();
         foreach ($products as $product) {
           $product->average_rating=DB::table('reviews')
           ->where('product_id', $product->product_id)

@@ -64,6 +64,10 @@ class CropImageController extends Controller
             return redirect()->route('accounts.page')
             ->with('success', 'Avatar Deleted!');
         }
+        elseif(Auth::user()->role==='admin'){
+            return redirect()->route('accounts.pages')
+            ->with('success', 'Avatar Deleted!');
+        }
         } catch (\Exception $e) {
             if(Auth::user()->role==='student'){
             return redirect()->route('account.page')
@@ -73,6 +77,7 @@ class CropImageController extends Controller
             return redirect()->route('accounts.page')
             ->with('message', 'Error Deleting Avatar!');
         }
+        
             
         }
     }

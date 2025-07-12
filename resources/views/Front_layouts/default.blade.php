@@ -102,6 +102,16 @@
         .vertical-line,
         .cartBtn {
             cursor: pointer;
+            
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .notificationBtn:hover,
+        .wishlistBtn:hover,
+        .vertical-line:hover,
+        .cartBtn:hover {
+            cursor: pointer;
+            
+    transform: translateY(-5px);
         }
 
         /* para to sa isang sort (mobile)*/

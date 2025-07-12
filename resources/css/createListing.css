@@ -1,4 +1,4 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -10,7 +10,8 @@
     font-weight: 400;
     font-style: normal;
 }
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -30,7 +31,7 @@ header {
     background-color: white;
     border-bottom: solid rgb(0, 0, 0) 2px;
 }
-.menu-button{
+.menu-button {
     display: none;
 }
 .webName {
@@ -41,7 +42,7 @@ header {
     top: 25%;
     color: #ae0505;
 }
-.nav-search{
+.nav-search {
     width: 33.5rem;
     display: flex;
     justify-content: center;
@@ -53,7 +54,7 @@ header {
     height: 3.3rem;
     align-items: center;
 }
-nav{
+nav {
     display: flex;
     width: 100%;
 }
@@ -71,26 +72,26 @@ nav{
     border: none;
     font-size: 1.3rem;
     cursor: pointer;
-  }
-nav button{
-    background-color: #0D62FF;
+}
+nav button {
+    background-color: #0d62ff;
     color: white;
     border: none;
     width: 7rem;
     height: 2.5rem;
     border-radius: 20px;
 }
-.nav-search input{
+.nav-search input {
     width: 100%;
     font-size: 1.25rem;
     border: none;
 }
 input:focus {
-    outline: none;  
-    border: none;   
+    outline: none;
+    border: none;
     box-shadow: none;
 }
-.vertical-line{
+.vertical-line {
     border-left: 1px solid grey;
     height: 60px;
     margin-left: -3px;
@@ -105,12 +106,12 @@ input:focus {
 }
 
 /* Main Page*/
-.container{
+.container {
     display: flex;
-    height: calc(100vh - 124px); 
+    height: calc(100vh - 124px);
     margin-top: 124px;
 }
-.left{
+.left {
     flex: 1;
     display: flex;
     align-items: center;
@@ -124,39 +125,38 @@ input:focus {
     align-self: flex-start;
     padding-top: 57px;
 }
-.right{
+.right {
     flex: 1;
     width: 100%;
     height: auto;
-    padding-inline:3% ;
+    padding-inline: 3%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow-y: auto;
     flex-direction: column;
     overflow: hidden;
-    
 }
-.top{
-    flex:0.1;
+.top {
+    flex: 0.1;
 }
-.bottom{
-    flex:2;
+.bottom {
+    flex: 2;
     overflow-y: auto;
     padding: 1rem;
     padding-bottom: 1.5rem;
     scrollbar-width: none;
 }
-.left h3{
+.left h3 {
     font-size: 24px;
 }
-.left h6{
+.left h6 {
     font-size: 14px;
 }
-.title{
-    color: #AE0505;
+.title {
+    color: #ae0505;
 }
-.filter-box{
+.filter-box {
     height: 35rem;
     width: 35rem;
     padding-inline: 1rem;
@@ -182,7 +182,7 @@ input:focus {
     font-style: normal;
 }
 .filter-btn.active {
-    background:blue;
+    background: blue;
     color: white;
 }
 
@@ -192,8 +192,6 @@ input:focus {
     font-size: 14px;
     color: #494949;
     position: relative;
-    
-
 }
 .Neon * {
     -webkit-box-sizing: border-box;
@@ -206,9 +204,9 @@ input:focus {
     margin: 0 auto 25px auto;
     padding: 25px;
     color: #8d9499;
-    color: #97A1A8;
+    color: #97a1a8;
     background: #fff;
-    border: 2px dashed #C8CBCE;
+    border: 2px dashed #c8cbce;
     text-align: center;
     -webkit-transition: box-shadow 0.3s, border-color 0.3s;
     -moz-transition: box-shadow 0.3s, border-color 0.3s;
@@ -229,8 +227,8 @@ input:focus {
     font-size: 12px;
 }
 .Neon-input-choose-btn.blue {
-    color: #008BFF;
-    border: 1px solid #008BFF;
+    color: #008bff;
+    border: 1px solid #008bff;
 }
 .Neon-input-choose-btn {
     display: inline-block;
@@ -247,13 +245,13 @@ input:focus {
     border: 1px solid #c6c6c6;
     vertical-align: middle;
     background-color: #fff;
-    box-shadow: 0px 1px 5px rgba(0,0,0,0.05);
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.05);
     -webkit-transition: all 0.2s;
     -moz-transition: all 0.2s;
     transition: all 0.2s;
 }
 
-.name-of-product{
+.name-of-product {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -261,27 +259,29 @@ input:focus {
 .name-of-product,
 .productPrice,
 .productStocks,
-.description-of-product
-{
-font-size: 18px;
+.description-of-product {
+    font-size: 18px;
 }
-.name-of-product input{
-   width: 60%;
-   
+.name-of-product input {
+    width: 60%;
 }
-.name-of-product,.price-and-stock label,.description-of-product{
+.name-of-product,
+.price-and-stock label,
+.description-of-product {
     font-size: 16px;
     font-weight: 800;
 }
-textarea{
+textarea {
     border: solid 1px #696969;
 }
-.price-and-stock{
+.price-and-stock {
     display: flex;
     flex-direction: row;
     gap: 5px;
 }
-#productPrice,#productName,#productStocks{
+#productPrice,
+#productName,
+#productStocks {
     font-size: 16px;
     height: 50px;
     padding: 3px;
@@ -290,57 +290,57 @@ textarea{
     margin-bottom: 1rem;
     border: solid 1px #696969;
 }
-.price{
+.price {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.stock{
+.stock {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.description-of-product{
+.description-of-product {
     display: flex;
     flex-direction: column;
     margin-bottom: 5%;
     gap: 5px;
 }
-.image-of-product{
+.image-of-product {
     display: flex;
     flex-direction: column;
     margin-bottom: 3%;
 }
-form{
+form {
     width: 90%;
     display: flex;
     flex-direction: column;
     position: relative;
 }
-.alert{
+.alert {
     position: absolute;
-    color: #AE0505;
+    color: #ae0505;
     bottom: 12%;
     font-size: 1.5rem;
 }
-form h3{
-    color: #AE0505;
+form h3 {
+    color: #ae0505;
 }
-form h5{
-    color: #AE0505;
-    margin-bottom:10%;
+form h5 {
+    color: #ae0505;
+    margin-bottom: 10%;
 }
-form button{
+form button {
     height: 60px;
     width: 238px;
     border-radius: 12px;
 }
-.submit{
+.submit {
     background-color: white;
     border: solid black 1px;
     cursor: pointer;
 }
-.cancel{
+.cancel {
     background-color: #696969;
     color: white;
     border: none;
@@ -351,29 +351,30 @@ form button{
     border-radius: 12px;
     text-decoration: none;
 }
-.button-group{
+.button-group {
     display: flex;
     justify-content: end;
     gap: 1rem;
 }
 
 /* PARA TO SA LUMALABAS NA IMAGE PREVIEW */
-.image-container{
+.image-container {
     background-color: #ffffff;
     width: 100%;
     min-width: 450px;
     padding: 50px 20px;
     border-radius: 7px;
-    box-shadow: 0 20px 35px rgba(0,0,0,0.05);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.05);
     text-align: center;
+    overflow: hidden;
 }
 .image-container h1 {
     margin-bottom: 20px;
 }
-input[type="file"]{
+input[type="file"] {
     display: none;
 }
-.image-container label{
+.image-container label {
     display: block;
     position: relative;
     background-color: #025bee;
@@ -386,11 +387,11 @@ input[type="file"]{
     border-radius: 5px;
     cursor: pointer;
 }
-.container p{
+.container p {
     text-align: center;
     margin: 20px 0 30px 0;
 }
-#images{
+#images {
     width: 90%;
     position: relative;
     margin: auto;
@@ -399,13 +400,13 @@ input[type="file"]{
     gap: 20px;
     flex-wrap: wrap;
 }
-figure{
+figure {
     width: 150px;
 }
-.image-container img{
+.image-container img {
     width: 150px;
 }
-figcaption{
+figcaption {
     text-align: center;
     font-size: 13px;
     margin-top: 0.5vmin;
@@ -425,21 +426,21 @@ figcaption{
 }
 
 /*MODAL */
-.modalPolicy{
-  display: none; 
-  position: fixed; 
-  z-index: 1; 
-  padding-top: 100px; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgb(0,0,0); 
-  background-color: rgba(0,0,0,0.4);
-  z-index: 1 !important;
-  justify-content: center;
-  align-items: center;
+.modalPolicy {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1 !important;
+    justify-content: center;
+    align-items: center;
 }
 /* Tab buttons */
 .tab-buttons {
@@ -487,23 +488,23 @@ figcaption{
     padding-left: 1.5rem;
     font-size: 18px;
 }
-.btnCloseGroup{
-    text-align: right; 
-    margin-top: 20px; 
+.btnCloseGroup {
+    text-align: right;
+    margin-top: 20px;
     height: 100%;
     padding-top: 2rem;
 }
-.closeBtns{
+.closeBtns {
     padding: 0.5rem 1rem;
-    background: #ae0505; 
-    color: white; 
-    border: none; 
+    background: #ae0505;
+    color: white;
+    border: none;
     border-radius: 5px;
 }
-.divProductPolicy{
+.divProductPolicy {
     width: 528px;
 }
-.productPostingPolicy{
+.productPostingPolicy {
     height: 60px;
     border: 1px solid #696969;
     padding: 5px 30px;

@@ -158,6 +158,25 @@ input:focus {
     justify-content: space-between;
     font-family: "Raleway", sans-serif;
 }
+.submit {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.submit:hover {
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.cancel {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.cancel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
 .cancel,
 .submit {
     display: flex;
@@ -183,17 +202,17 @@ input:focus {
     background-color: #0d62ff;
     color: white;
 }
-.password-container{
+.password-container {
     position: relative;
 }
-.fa-eye{
+.fa-eye {
     position: absolute;
     top: 30%;
     right: 4%;
     font-size: 24px;
     cursor: pointer;
 }
-.fa-eye-slash{
+.fa-eye-slash {
     position: absolute;
     top: 30%;
     right: 4%;

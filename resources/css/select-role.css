@@ -111,22 +111,27 @@ header {
 }
 .adminBtn:hover,
 .orgBtn:hover,
-.studentBtn:hover{
-    background: rgb(174,5,5);
-    background: linear-gradient(180deg, rgba(174,5,5,1) 0%, rgba(72,2,2,1) 100%);
+.studentBtn:hover {
+    background-color: #ae0505;
     color: white;
-    transform: scale(1.1);
-    transition: ease-in-out 0.2s;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-.navHome a{
+.adminBtn,
+.orgBtn,
+.studentBtn {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+.navHome a {
     color: black;
     text-decoration: none;
 }
-.navAbout a{
-  text-decoration: none;
-  color: black;
+.navAbout a {
+    text-decoration: none;
+    color: black;
 }
-.navFAQ a{
-  text-decoration: none;
-  color: black;
+.navFAQ a {
+    text-decoration: none;
+    color: black;
 }
