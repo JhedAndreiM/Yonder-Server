@@ -18,22 +18,52 @@ class PageController extends Controller
     {
         $page=$request->get('page', 1);
         $filters = $request->get('filters', []);
+        $topFilter = $request->query('topFilter');
+        if ($topFilter) {
+        session(['topFilter' => $topFilter]); 
+        } else {
+            $topFilter = session('topFilter', 'featured'); 
+        }
+        if (
+        ($topFilter === 'marketplace' && !\App\Models\disableButtons::getValue('show_marketplace')) ||
+        ($topFilter === 'student-org' && !\App\Models\disableButtons::getValue('show_student_org'))
+        ) {
+            session()->forget('topFilter');
+            $topFilter = 'featured';
+            session(['topFilter' => $topFilter]);
+        }
         $minPrice = (float) $request->get('price', ['min' => null])['min'];  
         $maxPrice = (float) $request->get('price', ['max' => null])['max'];
         $sort = $request->get('sort');
         $search = request('searching');
         $search = trim($search, '"');
-        
         if (is_string($filters)) {
             $filters = json_decode($filters, true);
         } 
         $filters = array_map('trim', $filters);
-        
+        if ($topFilter) {
+            session(['topFilter' => $topFilter]); 
+        } else {
+            $topFilter = session('topFilter', 'featured'); 
+        }
         $query = Product::query();
 
         // Filter by role 'approved'
         $query->where('approved', 'yes');
-
+        if ($topFilter) {
+            if($topFilter==="featured"){
+                $query->where('supplier_type', 'verified');
+            }
+            if($topFilter==="student-org"){
+                $query->where('supplier_type', 'student-org');
+            }
+            if($topFilter==="marketplace"){
+                $query->where('supplier_type', 'marketplace');
+            }
+        }
+        else{
+            $query->where('supplier_type', 'verified');
+        }
         if($search !== ""){
             $query->where('name', 'like', '%' . $search . '%');
         }

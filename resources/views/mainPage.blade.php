@@ -100,11 +100,33 @@
       </div>
       <div class="content">
         <div class="textContent">
-          <div class="left">
-            <h3 class="current">Featured Items</h3>
-            <h3 class="notCurrent">Student Organization</h3>
-            <h3 class="notCurrent">Marketplace</h3>
-          </div>
+          @php
+              $activeTopFilter = request('topFilter') ?? session('topFilter') ?? 'featured';
+          @endphp
+
+      <div class="left">
+          <button 
+              class="mainFilterButtons {{ $activeTopFilter === 'featured' ? 'current' : 'notCurrent' }}" 
+              data-category="featured">
+              Featured Items
+          </button>
+
+          @if (\App\Models\disableButtons::getValue('show_student_org'))
+              <button 
+                  class="mainFilterButtons {{ $activeTopFilter === 'student-org' ? 'current' : 'notCurrent' }}" 
+                  data-category="student-org">
+                  Student Organization
+              </button>
+          @endif
+
+          @if (\App\Models\disableButtons::getValue('show_marketplace'))
+              <button 
+                  class="mainFilterButtons {{ $activeTopFilter === 'marketplace' ? 'current' : 'notCurrent' }}" 
+                  data-category="marketplace">
+                  Marketplace
+              </button>
+          @endif
+      </div>
           <div class="right">
             <div id="sort-dropdown" class="sort-dropdown">
                     <select name="sort-by" id="sort-by">

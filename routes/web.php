@@ -58,6 +58,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
+    Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
     Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');

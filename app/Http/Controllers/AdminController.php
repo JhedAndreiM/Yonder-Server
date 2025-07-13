@@ -122,4 +122,29 @@ public function deleteProduct($id)
 
     return response()->json(['success' => true]);
 }
+
+
+public function updateDisabledButton(Request $request)
+{
+    if (DB::table('disable_buttons')->where('key', 'show_student_org')->exists()) {
+        DB::table('disable_buttons')
+            ->where('key', 'show_student_org')
+            ->update(['value' => $request->has('show_student_org')]);
+    } else {
+        DB::table('disable_buttons')
+            ->insert(['key' => 'show_student_org', 'value' => $request->has('show_student_org')]);
+    }
+
+    // Marketplace toggle
+    if (DB::table('disable_buttons')->where('key', 'show_marketplace')->exists()) {
+        DB::table('disable_buttons')
+            ->where('key', 'show_marketplace')
+            ->update(['value' => $request->has('show_marketplace')]);
+    } else {
+        DB::table('disable_buttons')
+            ->insert(['key' => 'show_marketplace', 'value' => $request->has('show_marketplace')]);
+    }
+    session()->forget('topFilter');
+    return redirect()->back()->with('success', 'Button visibility settings updated!');
+}
 }

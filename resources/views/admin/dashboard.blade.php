@@ -243,6 +243,21 @@
         </div>
     </div>
 </div>
+
+
+<form method="POST" action="{{ route('admin.disableButtons') }}">
+    @csrf
+    <label>
+        <input type="checkbox" name="show_student_org" {{ \App\Models\disableButtons::getValue('show_student_org') ? 'checked' : '' }}>
+        Show Student Organization
+    </label>
+    <label>
+        <input type="checkbox" name="show_marketplace" {{ \App\Models\disableButtons::getValue('show_marketplace') ? 'checked' : '' }}>
+        Show Marketplace
+    </label>
+    <button type="submit">Save Settings</button>
+</form>
+
     <script>
         function openModal(productId) {
             document.getElementById('modal-' + productId).style.display = "flex";

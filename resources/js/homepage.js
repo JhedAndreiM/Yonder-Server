@@ -6,15 +6,20 @@ let page=2;
 let minPrice=0;
 let maxPrice=0;
 let debounceTimer;
+let topFilter;
 
+// button filter to taas ( featured, student org, marketplace )
+
+
+
+// search filter
 document.getElementById('searchInput').addEventListener('input', function() {
-    clearTimeout(debounceTimer); // Clear the last timer
+    clearTimeout(debounceTimer);
 
     const searchInput = this.value.trim();
 
     debounceTimer = setTimeout(() => {
         if (searchInput === "") {
-            // Optionally fetch all products or clear results
             fetchFilteredProducts([], null, null, null, null); 
         } else {
             fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput);
@@ -35,7 +40,9 @@ selectElement.addEventListener("change", function() {
     updateSortFilter();
 });
 function updateSortFilter() {
-    fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput);
+    const topFilterBtn = document.querySelector(".mainFilterButtons.current");
+    const topFilter = topFilterBtn ? topFilterBtn.dataset.category : null;
+    fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput,topFilter);
 }
 // button filter to sa kanan <- 'yung mga colleges etc
 document.querySelectorAll(".filter-btn").forEach(button => {
@@ -49,15 +56,14 @@ document.querySelectorAll(".filter-btn").forEach(button => {
 document.querySelectorAll(".input-min").forEach(input => {
     input.addEventListener("input", () => {
         updatePriceFilter(); 
-        document.getElementById("sort-by").value = "";
     });
 });
 document.querySelectorAll(".input-max").forEach(input => {
     input.addEventListener("input", () => {
         updatePriceFilter(); 
-        document.getElementById("sort-by").value = "";
     });
 });
+
 
 function updatePriceFilter() {
     const minInput = document.querySelector(".input-min");
@@ -81,10 +87,12 @@ function updateFilters() {
     document.querySelectorAll(".filter-btn.active").forEach(activeBtn => {
         activeFilters.push(activeBtn.dataset.filter);
     });
-    fetchFilteredProducts(activeFilters,activePrice.min, activePrice.max,selectedValue,searchInput);
+    const topFilterBtn = document.querySelector(".mainFilterButtons.current");
+    const topFilter = topFilterBtn ? topFilterBtn.dataset.category : null;
+    fetchFilteredProducts(activeFilters, activePrice.min, activePrice.max, selectedValue, searchInput, topFilter);
 }
 
-function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchInput) {
+function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchInput,topFilter) {
     let url='?page=${page}';
     if (filters && filters.length > 0) {
         url += `&filters=${JSON.stringify(filters)}`;
@@ -99,6 +107,9 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
 
     if (searchInput !== undefined && searchInput !== null && searchInput !== '') {
         url += `&searching=${encodeURIComponent(searchInput)}`;
+    }
+    if(topFilter){
+        url += `&topFilter=${encodeURIComponent(topFilter)}`;
     }
     console.log(url);
     fetch(url,{
@@ -121,7 +132,40 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
     const profileBtn = document.querySelector(".profileBtn");
     const profileDropdown = document.getElementById("profileDropdown");
     const closeNotif = document.querySelector(".closeButton");
-    
+    let category = 'featured';
+
+    document.querySelectorAll(".mainFilterButtons").forEach(button => {
+    button.addEventListener("click", () => {
+        // Remove 'current' from all filter buttons
+        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
+            btn.classList.remove("current");
+        });
+        let url='?page=${page}';
+        button.classList.add("current");
+
+        category = button.dataset.category;
+        console.log('Clicked category:', category);
+        updateFilters();
+        //
+        // const selectedCategory= category;
+        // url += `&topFilter=${encodeURIComponent(selectedCategory)}`;
+        // console.log(url);
+        // fetch(url,{
+        // headers:{
+        //     'X-Requested-With':'XMLHttpRequest'
+        // }
+        // })
+        // .then(response => response.text())
+        // .then(data => {
+        //     const productContainer=document.getElementById('product-container');
+        //     productContainer.innerHTML = data;
+        // })
+        // .catch(error=>{
+        //     console.error('Error fetching filtered products:', error);
+        // })
+        //
+    });
+});
     notifBtn.addEventListener("click", function () {
       notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
       profileDropdown.style.display = "none"; 
