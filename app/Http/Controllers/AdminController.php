@@ -10,6 +10,8 @@ use App\Models\FeaturedImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\CheapGlobalSmsService;
+use Illuminate\Support\Facades\Log;
+use App\Models\Tag;
 
 class AdminController extends Controller
 {
@@ -49,11 +51,21 @@ class AdminController extends Controller
     }
 
     
-    public function approveProduct($id)
+    public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
         $product->approved = 'yes';
         $product->save();
+
+        $tags = Tag::whereHas('products', function ($query) {
+            $query->where('approved', 'yes');
+        })->get();
+        
+        foreach ($product->tags as $tag) {
+            $tag->increment('usage_count');
+        }
+        Log::info('Parsed tags:', $tags->toArray());
+        return response()->json(['message' => 'Tags received and product approved']);
         $user = $product->user_id;
         DB::table('notifications')->insert([
             'user_id' => $user,
@@ -62,8 +74,9 @@ class AdminController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
         DB::table('sms_notifLogs')->insert([
-        'from_id' => Auth::id(), // assuming the admin or approver is the current user
+        'from_id' => Auth::id(), 
         'to_id' => $user,
         'message' => 'Your product "' . $product->name . '" has been approved and is now visible to other students.',
         'created_at' => now(),
@@ -72,6 +85,9 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Product approved!');
     }
+
+
+
     public function reject(Request $request, $id)
     {
     $product = Product::findOrFail($id);

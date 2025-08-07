@@ -1,3 +1,6 @@
+@php
+  $activeTopFilter = request('topFilter') ?? session('topFilter') ?? 'featured';
+@endphp
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homepage</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,6 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
     />
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/homepage.css')
     @vite('resources/js/homepage.js')
   </head>
@@ -59,15 +64,15 @@
       </div>
     </div>
   </div>
-        <img class="hover" src="{{ asset('img/wishlist.png') }}" alt="" />
-        <img class="hover" src="{{ asset('img/cart.png') }}" alt="" />
+        <img class="hover wishlistBtn" src="{{ asset('img/wishlist.png') }}" alt=""/>
+        <img class="hover cartBtn" src="{{ asset('img/cart.png') }}" alt="" />
           <div class="dropdown-container">
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="">My Profile</a></li>
+        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
         <li><a href=" ">Wishlist</a></li>
-        <li><a href="">Logout</a></li>
+        <li><a href="{{ route('logout') }}">Logout</a></li>
       </ul>
     </div>
   </div>
@@ -76,8 +81,8 @@
 
     <!-- nav bar -->
     <div class="floating">
-      <img src="{{ asset('img/add(2).svg') }}" alt="" />
-      <img src="{{ asset('img/message.png') }}" alt="" />
+      <a class="listing_link"href="{{ route('create.listing') }}"><img src="{{ asset('img/add(2).svg') }}" alt="" /></a>
+      <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message.png') }}" alt="" /></a>
     </div>
 
     <div class="container">
@@ -88,21 +93,26 @@
           <input id="min"class="input-min priceInput" type="number" placeholder="Min" min="0" data-filter-type="condition">
           <input id="max"class="input-max priceInput" type="number" placeholder="Max" min="0" data-filter-type="condition">
         </div>
+        @if($activeTopFilter==='featured' || $activeTopFilter==='marketplace')
         <h3>Colleges</h3>
         <div class="filterBtn">
-          <button class="filter-btn" data-filter="ccst" data-filter-type="condition">CCST</button>
-          <button class="filter-btn" data-filter="cea" data-filter-type="condition">CEA</button>
-          <button class="filter-btn" data-filter="cba" data-filter-type="condition">CBA</button>
-          <button class="filter-btn" data-filter="ctech" data-filter-type="condition">CTECH</button>
-          <button class="filter-btn" data-filter="cahs" data-filter-type="condition">CAHS</button>
-          <button class="filter-btn" data-filter="cas" data-filter-type="condition">CAS</button>
+          @foreach($colleges as $college)
+            <button class="filter-btn" data-filter="{{ strtolower($college->code) }}"  data-filter-type="condition">{{ $college->code }}</button>
+          @endforeach
         </div>
+        @endif
+        @if($activeTopFilter==='student-org')
+        <h3>Student Organization</h3>
+        <div class="filterBtn">
+          @foreach($student_orgs as $student_org)
+            <button class="filter-btn" data-filter="{{ strtolower($student_org->id) }}"  data-filter-type="condition">{{ $student_org->code }}</button>
+          @endforeach
+        </div>
+        @endif
       </div>
       <div class="content">
         <div class="textContent">
-          @php
-              $activeTopFilter = request('topFilter') ?? session('topFilter') ?? 'featured';
-          @endphp
+          
 
       <div class="left">
           <button 
@@ -150,5 +160,81 @@
         </div>
       </div>
     </div>
+    <script>
+      
+    
+    let isHeartClicked = false;
+    function hrefClick(cardElement){
+        const input = cardElement.querySelector('#cardLinkFromInput');
+        setTimeout(function() {
+            if (!isHeartClicked) {
+            console.log('clicked');
+            window.location.href = input.value;
+            
+        }
+        }, 100);
+        
+            isHeartClicked = false;
+            console.log(isHeartClicked);
+    }
+    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+    const cartButton = document.querySelectorAll('.cartBtn');
+        // wishlist button
+        wishlistButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                window.location.href = "{{ route('show.wishlist') }}";
+            });
+        });
+         // cart button
+        cartButton.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('show.cart')}}";
+                
+            })
+        });
+
+        document.querySelectorAll('.mainFilterButtons').forEach(button => {
+        button.addEventListener('click', () => {
+            setTimeout(() => {
+                window.location.reload();
+            }, 0.1); 
+        });
+    });
+    
+    document.querySelectorAll('.wishlist-icon').forEach(function (icon) {
+    icon.addEventListener('click', function (event) {
+      event.stopPropagation(); 
+      isHeartClicked = true;
+
+      const currentSrc = icon.getAttribute('src');
+      const grayHeart = "{{ asset('img/wishlist.png') }}";
+      const redHeart = "{{ asset('img/wishlist-red.png') }}";
+
+      icon.setAttribute(
+        'src',
+        currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
+      );
+
+      event.preventDefault();     
+        event.stopPropagation();
+        console.log("clicked");
+        var productId = $(this).data('product-id');
+        var heart = $(this);
+        
+        $.ajax({
+            url: "{{ route('wishlist.toggle') }}", 
+            method: 'POST',
+            data: {
+                product_id: productId,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function (response) {
+                console.log("worked");
+            }
+        });
+    });
+  });
+
+    </script>
   </body>
 </html>

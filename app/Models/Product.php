@@ -18,10 +18,25 @@ class Product extends Model
         'college',
         'for',
     ];
-    
+    protected $casts = [
+    'variants' => 'array',  
+    ];
     public function user()
     {
     return $this->belongsTo(User::class);
     }
+    public function tags()
+    {
+    return $this->belongsToMany(Tag::class, 'product_tag', 'product_id', 'tag_id');
+    }
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class); 
+    }
+    public function colleges()
+    {
+        return $this->belongsToMany(College::class, 'college_product');
+    }
     
+
 }

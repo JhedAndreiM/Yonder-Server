@@ -9,65 +9,162 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use App\Models\ProductImage;
+use App\Models\Tag;
+use App\Models\College;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function store(Request $request){
+    // public function store(Request $request){
+    //     $validated = $request->validate([
+    //         'productName' => 'required|string|max:255',
+    //         'productPrice' => 'required|numeric',
+    //         'productStocks' => 'required|integer',
+    //         'productDescription' => 'required|string',
+    //         'productImage.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    //         'filters' => 'nullable|string',
+    //     ]);
+
+    //     $imagePaths = [];
+    //     try {
+    //         foreach($request->file('productImage') as $image){
+    //         $imageName = time().'_'.$image->getClientOriginalName();
+    //         $image->move(public_path('images'), $imageName);
+    //         $imagePaths[] = $imageName;
+    //     }
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->withErrors(['productImage' => 'Attach Image!']);
+    //     }
+        
+    //     // $imagePath = null;
+    //     // if ($request->hasFile('productImage')) {
+    //     //     $imagePath = $request->file('productImage')->store('uploads', 'public');
+    //     // }
+
+    //     $filters = json_decode($request->input('filters'), true) ?? [];
+
+    //     $product_condition = ['used', 'new', 'like-new'];
+    //     $colleges = ['ccst', 'cea', 'cba', 'ctech', 'cahs', 'cas'];
+    //     $forSaleTrade = ['sale', 'trade'];
+
+    //     $selected_condition = array_values(array_intersect($filters, $product_condition));
+    //     $selected_colleges = array_values(array_intersect($filters, $colleges));
+    //     $selected_forSaleTrade = array_values(array_intersect($filters, $forSaleTrade));
+
+    //     $product = new Product();
+    //     $product->name = $validated['productName'];
+    //     $product->price = $validated['productPrice'];
+    //     $product->stock = $validated['productStocks'];
+    //     $product->description = $validated['productDescription'];
+    //     $product->image_path = implode(',', $imagePaths);
+    //     $product->user_id = Auth::id(); 
+
+        
+    //     $product->product_condition = implode(',', $selected_condition);
+    //     $product->colleges = implode(',', $selected_colleges);
+    //     $product->forSaleTrade = implode(',', $selected_forSaleTrade);
+    //     if (Auth::check() && Auth::user()->email === 'pben@bpsu.edu.ph') {
+    //     $product->supplier_type = 'verified';
+    //     } else {
+    //         $product->supplier_type = 'students';
+    //     }
+    //     $product->save();
+
+    //     $user = Auth::user();
+    //     // route to para if studnet or organization nag gawa 
+    //     if ($user->role === 'student') {
+    //         return redirect()->route('student.dashboard')->with('success', 'Product listed successfully!');
+    //     } 
+    //     elseif ($user->role === 'organization') {
+    //     return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');
+    //     }
+    // }
+public function store(Request $request)
+{
+      //dd($request->all(), $request->file('images'));
         $validated = $request->validate([
-            'productName' => 'required|string|max:255',
-            'productPrice' => 'required|numeric',
-            'productStocks' => 'required|integer',
-            'productDescription' => 'required|string',
-            'productImage.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'filters' => 'nullable|string',
+            'name'=> 'required|string|max:50',
+            'price'=> 'required|numeric|min:0',
+            'stock'=> 'required|integer|min:0',
+            'description'=> 'required|string',
+            'supplier_type'=> 'required|in:pben,student-org,marketplace',
+            'organization_id'=> 'required_if:supplier_type,student_org|exists:student_orgs,id',
+            'variants_json'=> 'nullable|string',
+            'colleges_json'=> 'nullable|string',
+            'tags_json'=> 'nullable|string',
+            'images'=> 'required|array|min:1',
+            'images.*'=> 'image|mimes:jpeg,png,webp',
         ]);
 
+    $variantsData = null;
+    if (!empty($validated['variants_json'])) {
+        $variantsData = json_decode($validated['variants_json'], true);
+    }
+
+    // implode 'yung colleges based sa comma
+    $colleges = $validated['colleges_json'] ?? '[]';
+    $collegesArray = json_decode($colleges, true); 
+    $collegesString = is_array($collegesArray) ? implode(',', $collegesArray) : '';
+
+   // adding of info :P
+    $product = new Product();
+    $product->supplier_type = $validated['supplier_type'];
+    $product->name = $validated['name'];
+    $product->description = $validated['description'];
+    $product->variants = $variantsData;
+    $product->stock = $validated['stock'];
+    $product->price = $validated['price'];
+    $product->colleges = $collegesString;
+    $product->approved = "not";
+    $product->organization_id = $validated['organization_id'] ?? null;
+    $product->user_id = Auth::id(); 
+    $product->save();
+
+   // adding of image in product_image
+   if ($request->hasFile('images')) {
         $imagePaths = [];
         try {
-            foreach($request->file('productImage') as $image){
+            foreach($request->file('images') as $image){
             $imageName = time().'_'.$image->getClientOriginalName();
             $image->move(public_path('images'), $imageName);
-            $imagePaths[] = $imageName;
+            DB::table('product_images')->insert([
+                'product_id' => $product->product_id,
+                'image_path' =>  $imageName,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['productImage' => 'Attach Image!']);
         }
-        
-        // $imagePath = null;
-        // if ($request->hasFile('productImage')) {
-        //     $imagePath = $request->file('productImage')->store('uploads', 'public');
-        // }
+    }
 
-        $filters = json_decode($request->input('filters'), true) ?? [];
+    if (!empty($validated['tags_json'])) {
+    $tags = json_decode($validated['tags_json'], true); 
+    $tagIds = [];
 
-        $product_condition = ['used', 'new', 'like-new'];
-        $colleges = ['ccst', 'cea', 'cba', 'ctech', 'cahs', 'cas'];
-        $forSaleTrade = ['sale', 'trade'];
+    foreach ($tags as $tagItem) {
+    $tagName = is_array($tagItem) ? ($tagItem['name'] ?? '') : $tagItem;
+    $tagName = strtolower(trim($tagName));
 
-        $selected_condition = array_values(array_intersect($filters, $product_condition));
-        $selected_colleges = array_values(array_intersect($filters, $colleges));
-        $selected_forSaleTrade = array_values(array_intersect($filters, $forSaleTrade));
+    if ($tagName === '') continue;
 
-        $product = new Product();
-        $product->name = $validated['productName'];
-        $product->price = $validated['productPrice'];
-        $product->stock = $validated['productStocks'];
-        $product->description = $validated['productDescription'];
-        $product->image_path = implode(',', $imagePaths);
-        $product->user_id = Auth::id(); 
+    $tag = Tag::firstOrCreate(
+        ['name' => $tagName],
+        [
+            'usage_count' => 0,
+            'is_admin' => Auth::user()->role === 'admin',
+        ]
+    );
 
-        
-        $product->product_condition = implode(',', $selected_condition);
-        $product->colleges = implode(',', $selected_colleges);
-        $product->forSaleTrade = implode(',', $selected_forSaleTrade);
-        if (Auth::check() && Auth::user()->email === 'pben@bpsu.edu.ph') {
-        $product->supplier_type = 'verified';
-        } else {
-            $product->supplier_type = 'students';
-        }
-        $product->save();
+    $tagIds[] = $tag->id;
+    //$tag->increment('usage_count');
+    }
 
-        $user = Auth::user();
+    $product->tags()->syncWithoutDetaching($tagIds);
+    }
+     $user = Auth::user();
         // route to para if studnet or organization nag gawa 
         if ($user->role === 'student') {
             return redirect()->route('student.dashboard')->with('success', 'Product listed successfully!');
@@ -77,6 +174,7 @@ class ProductController extends Controller
         }
     }
 
+     
     public function show($id)
     {
         $products = Product::with('user')->findOrFail($id);

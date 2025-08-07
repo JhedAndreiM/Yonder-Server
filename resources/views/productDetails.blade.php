@@ -1,65 +1,174 @@
 @php
     $seller = $products->user;
     $joinedYear = \Carbon\Carbon::parse($seller->created_at)->year;
+    $role = $seller->role;
 @endphp
-@extends('Front_layouts.default')
-
-@section('head')
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <title>Document</title>
-    <style>
-        body {
-            background-image: url("{{ asset('img/background.svg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: top center;
-        }
-
-        .mySlides {
-            display: none;
-        }
-    </style>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
     @vite('resources/css/productDetails.css')
     @vite('resources/js/productDetails.js')
-@endsection
+  </head>
+  <body>
+    <!-- nav bar -->
+    <div class="navBar">
+      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
 
-@section('maincontent')
-    <div class="container">
-        <h1 class="goBack"><a href="{{ route('custom.home') }}"><img src="{{ asset('img/back-button.svg') }}" alt=""></a></h1>
-        <div class="left">
-            <div class="left-container">
-                @php
-                    $images = explode(',', $products->image_path);
-
-                @endphp
-                <div class="w3-content w3-display-container image-slider-wrapper">
-                    @foreach ($images as $image)
-                        <img class="mySlides" src="{{ asset('images/' . $image) }}">
-                    @endforeach
-
-                    <div class="slider-btn left-btn" onclick="plusDivs(-1)">&#10094;</div>
-                    <button class="slider-btn right-btn" onclick="plusDivs(1)">&#10095;</button>
-                </div>
+      <div class="navBarRight">
+        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+        <div class="dropdown-container">
+    <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
+    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+      </div>
+      <div class="notification-list">
+        @if ($notifications->isEmpty())
+          <p style="padding-left:10px;">No notifications</p>
+        @else
+          @foreach ($notifications as $notification)
+            <div class="notification">
+              <div class="title">
+                <h1>
+                  @if($notification['title'] === "Product Approved")
+                    <span style="color:Green;">{{ $notification['title'] }}</span>
+                  @elseif($notification['title'] === "Product Rejected")
+                    <span style="color:red;">{{ $notification['title'] }}</span>
+                  @else
+                    {{ $notification['title'] }}
+                  @endif
+                </h1>
+              </div>
+              <div class="Message">{{ $notification['message'] }}</div>
+              <div class="time">{{ $notification['time_ago'] }}</div>
             </div>
-        </div>
-        <div class="right">
-            <div class="right-container">
-                <div class="tab-buttons">
-                    <button id="tabBtnDetails" class="active-tab">Details</button>
-                    <button id="tabBtnOther">Reviews</button>
-                </div>
+          @endforeach
+        @endif
+      </div>
+    </div>
+  </div>
+        <img class="hover wishlistBtn" src="{{ asset('img/wishlist.png') }}" alt=""/>
+        <img class="hover cartBtn" src="{{ asset('img/cart.png') }}" alt="" />
+          <div class="dropdown-container">
+    <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
+    <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+      <ul>
+        <li><a href="">My Profile</a></li>
+        <li><a href=" ">Wishlist</a></li>
+        <li><a href="{{ route('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+      </div>
+    </div>
 
-                <div id="tab-details" class="tab-content active-tab-content">
-                    <h1 class="product-name">{{ $products->name }}</h1>
-                    <h3 class="product-price">Price:<span class="lowFontWeight">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P
-                            {{ number_format($products->price, 2) }}</span></h3>
+    <!-- nav bar -->
+
+    <div class="floating">
+      <img src="imgs/message.png" alt="" />
+    </div>
+
+    <div class="container">
+      <div class="productPictures">
+        <div class="sliderWrapper">
+         @php
+            $images = \Illuminate\Support\Facades\DB::table('product_images')
+                        ->where('product_id', $products->product_id)
+                        ->get();
+        @endphp
+        @if ($images->count() > 1)
+        <button class="prevBtn" onclick="prevImage()">❮</button>
+        @endif
+
+        <div class="sliderImages">
+            @foreach ($images as $index => $img)
+                <img src="{{ asset('images/' . $img->image_path) }}" 
+                     class="sliderImage {{ $index === 0 ? 'active' : '' }}"
+                     alt="Product Image">
+            @endforeach
+        </div>
+        @if ($images->count() > 1)
+        <button class="nextBtn" onclick="nextImage()">❯</button>
+        @endif
+    </div>
+      </div>
+      <div class="productDetails">
+        <h2>{{ $products->name }}</h2>
+        <div class="detailsTop">
+          <div class="detailsLeft">
+            <div class="priceAndReviews">
+              <p class="price">P{{ number_format($products->price, 2) }}</p>
+              <img src="{{ asset('img/rating.svg') }}" alt="" />
+              <p class="ratings">
+                @if(isset($globalRatings[$products->product_id]))
+                {{ number_format($globalRatings[$products->product_id]->avg_rating, 1) }}
+              @else
+                  0
+              @endif
+              </p>
+              <a href="#" class="seeReviews">(see reviews)</a>
+
+              <!-- Popup -->
+              <div class="popup" id="popup">
+                <div class="popup-content">
+                  <div class="popup-header">
+                    <h3>Reviews</h3>
+                    <span class="close-btn">×</span>
+                  </div>
+
+                  <div class="reviews-container">
+                    <!-- Review Item -->
+                    
+                  @forelse($reviews as $review)
+                      <div class="review">
+                      <img
+                        src="{{asset('storage/users-avatar/'. $review->avatar)}}"
+                        alt="Profile"
+                        class="profile-img"
+                      />
+                      <div class="review-details">
+                        <div class="review-header">
+                          <p class="name">{{$review->name}} {{$review->last_name}}</p>
+                          <p class="date">{{ $review->formatted_date }}</p>
+                        </div>
+                        <p class="review-text">
+                          {{ $review->comment }}
+                        </p>
+                        <span class="see-more">See more</span>
+                      </div>
+                      <div class="review-rating">
+                        @if($review->rating == 1)
+                                        ⭐
+                                    @elseif($review->rating == 2)
+                                        ⭐⭐
+                                    @elseif($review->rating == 3)
+                                        ⭐⭐⭐
+                                    @elseif($review->rating == 4)
+                                        ⭐⭐⭐⭐
+                                    @elseif($review->rating == 5)
+                                        ⭐⭐⭐⭐⭐
+                                    @endif
+                      </div>
+                    </div>
+                  @empty
+                  <p class="NoRating">No Rating Available!</p>
+                  @endforelse
+
+                  </div>
+                </div>
+              </div>
+            </div>
                     @php
                         use Carbon\Carbon;
                         $created = Carbon::parse($products->created_at);
@@ -68,357 +177,199 @@
                     @endphp
 
                     @if ($roundedValue > 7)
-                        <h3 class="product-listing">Listed more than 7 days ago</h3>
+                        <p class="dateListed">Listed more than 7 days ago</p>
                     @elseif($roundedValue === 0)
-                        <h3 class="product-listing">Listed today</h3>
+                        <p class="dateListed">Listed today</p>
                     @elseif($roundedValue === 1)
-                        <h3 class="product-listing">Listed 1 day ago</h3>
+                        <p class="dateListed">Listed 1 day ago</p>
                     @else
-                        <h3 class="product-listing">Listed {{ $roundedValue }} days ago</h3>
+                        <p class="dateListed">Listed {{ $roundedValue }} days ago</p>
                     @endif
 
                     @php
                         $pbenUser = \App\Models\User::where('email', 'pben@bpsu.edu.ph')->first();
                         $isPBEN = $pbenUser && $products->user_id === $pbenUser->id;
                     @endphp
-                    @if($products->stock!=0)
-                    <h3 class="product-stock">Stock:<span class="lowFontWeight">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            {{ $products->stock }}</span></h3>
-                    @else
-                    <h3 class="product-stock" style="color:red;">Out of Stock</span></h3>
-                    @endif
-                    @if($products->stock != 0)
-                        @if( $products->forSaleTrade==='trade' )
-                        <button class="addToCartBtn"id="goToSellerChat">Message Seller</button>
-                        @elseif($products->user_id=== Auth::id())
-                        <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn"id="goToSellerListing">Edit Listing</button></a>
-                        @else
-                        <button class="addToCartBtn"id="addToCartBtn">Add to Cart</button>
-                        <button class="addToBuyNowBtn"id="buyNowBtn">Buy Now</button>
-                        @endif
-                    @else
-                        @if( $products->forSaleTrade==='trade' )
-                        <button class="addToCartBtn" disabled>Message Seller</button>
-                        @else
-                        <button class="addToCartBtn" disabled>Add to Cart</button>
-                        <button class="addToBuyNowBtn" disabled>Buy Now</button>
-                        @endif
-                    @endif
-                    <h1 class="product-name">Details</h1>
-                    <h3 class="product-condition">Condition: <span
-                            class="lowFontWeight">{{ $products->product_condition }}</span></h3>
-                    <h3 class="product-colleges">Colleges: <span class="lowFontWeight">{{ $products->colleges }}</span></h3>
-                    <h3 class="product-forSaleTrade">For: <span class="lowFontWeight">{{ $products->forSaleTrade }}</span>
-                    </h3>
-                    <h2 class="product-headerDesc">Description: </h2>
-                    <h3 class="product-description">{{ $products->description }}</h3>
-                    <div class="sellerInfo">
-                        <hr>
-                        <div class="sellerinfo-top">
-                            <h2>Seller Information</h2>
-                        </div>
-                        <div class="sellerinfo-middle">
-                            <div class="profile-name">
-                                <img src="{{asset('storage/users-avatar/'. $seller->avatar)}}" alt="profile">
-                                <h3>{{ $seller->name }}</h3>
-                            </div>
-                        </div>
-
-                        <div class="sellerinfo-bottom">
-                            <h5>Joined Younder in {{ $joinedYear }}</h5>
-                        </div>
-                        <div class="report-listing">
-                            <button id="reportTriggerBtn" class="reportTriggerBtn" onclick="reportTriggerBtn()">Report This Product</button>
-                        </div>
-                    </div>
-                    
-                </div>
-                        <div id="tab-other" class="tab-content">
-                            @forelse($reviews as $review)
-                            <div class="card">
-                                <div class="right-card">
-                                <div class="header">
-                                <div class="image-placeholder">
-                                    <img src="{{asset('storage/users-avatar/'. $review->avatar)}}" alt="">
-                                </div>
-                                
-                                <div class="user-contents">
-                                    <div class="header-name">
-                                    <h3>{{$review->name}} {{$review->last_name}}</h3>
-                                    <p>{{ $review->formatted_date }}</p>
-                                </div>
-                                <div class="star" style="color:gold;">
-                                    @if($review->rating == 1)
-                                        &starf;&#9734;&#9734;&#9734;&#9734;
-                                    @elseif($review->rating == 2)
-                                        &starf;&starf;&#9734;&#9734;&#9734;
-                                    @elseif($review->rating == 3)
-                                        &starf;&starf;&starf;&#9734;&#9734;
-                                    @elseif($review->rating == 4)
-                                        &starf;&starf;&starf;&starf;&#9734;
-                                    @elseif($review->rating == 5)
-                                        &starf;&starf;&starf;&starf;&starf;
-                                    @endif
-                                </div>
-                                </div>
-                                </div>
-                                <div class="message">
-                                <p>{{ $review->comment }}</p>
-                                </div>
-                        
-                            </div>
-                            
-                        </div>
-                        @empty
-                        <p class="NoRating">No Rating Available!</p>
-                        @endforelse
-                            
-                        
-                    </div>
-                <!-- END HERE -->
+            <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
+          </div>
+          <div class="detailsRight">
+            <h3 class="qty">Quantity</h3>
+            <div class="qtyButtons">
+              <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
+              <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
+              <img src="{{ asset('img/plus.svg') }}" alt="" id="qtyPlus"/>
             </div>
-        </div>
-    </div>
-
-    <!-- CartController yung Controller page nito :D -->
-    <!-- MODAL TO GUYS NG BUY ADD TO CART (WORKING) -->
-    <form action="{{ route('cart.store') }}" method="POST">
-        @csrf
-        <div class="modal hidden" id="cartModal">
-            <div class="modal-blur-background"></div>
-            <div class="modalContent">
-                <!-- Hidden Items Para Ma-send ko sa backend -->
-                <input type="hidden" name="product_id" value="{{ $products->product_id }}">
-                <input type="hidden" name="unit_price" value="{{ $products->price }}">
-                <input type="hidden" name="total_price" id="total_price_Order">
-                <input type="hidden" name="quantity" id="quantity_Order">
-                <input type="hidden" name="action_type" value="cart">
-                <input type="hidden" name="voucher_id" id="voucherAddToCart">
-                <input type="hidden" name="voucher_amount" id="voucherAddToCartAmount">
-                <!----------------------------------------->
-                <div class="img-placeholder"><img src="{{ asset('img/confirmation-logo.svg') }}" alt=""
-                        style="width: 179px;"></div>
-                <h2>{{ $products->name }}</h2>
-                <p>Price per unit: ₱<span id="unitPrice">{{ number_format($products->price, 2) }}</span></p>
-                <div class="quantity-div">
-                    <label>Quantity:</label>
-                    <input type="number" id="quantity" value="1" min="1"
-                        max="{{ number_format($products->stock, 2) }}">
-                </div>
-
-
-                @if ($isPBEN)
-                    <div class="voucher-div">
-                        <label>Apply Voucher</label>
-                        <select id="voucher" name="voucher_id" onchange="myFunction(event)">
-                            <option disabled selected>No Voucher</option>
-                            @foreach ($availableVouchers as $voucher)
-                                <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
-                                    ₱{{ number_format($voucher->amount, 2) }} Off
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
-
-                <p>Total: ₱<span id="totalPrice"></span></p>
-                <div class="btnGroup">
-                    <button onclick="submitAction('cart')">Confirm Add to Cart</button>
-                    <a class="close-btn" href="">Close</a>
-
-                </div>
-
+            <div class="buttonCartAndBuy">
+              <button class="addToCart" id="addToCart">Add to cart</button>
+              <button class="buy" id="buyNow">Buy Now</button>
             </div>
-        </div>
-    </form>
-
-
-
-    <!-- MODAL TO GUYS PERO PANG BUY NOW-->
-    <form action="{{ route('cart.store') }}" method="POST">
-        @csrf
-        <div class="modal hidden" id="buyModal">
-            <div class="modal-blur-background"></div>
-            <div class="modalContent">
-                <!-- Hidden Items Para Ma-send ko sa backend -->
-                <input type="hidden" name="product_id" value="{{ $products->product_id }}">
-                <input type="hidden" name="unit_price" value="{{ $products->price }}">
-                <input type="hidden" name="total_price" id="total_price_BuyNow">
-                <input type="hidden" name="quantity" id="quantity_BuyNow">
-                <input type="hidden" name="action_type" value="buy_now">
-                <input type="hidden" name="voucher_id" id="voucherBuyNow">
-                <input type="hidden" name="voucher_amount" id="voucherBuyNowAmount">
-                <!----------------------------------------->
-                <div class="img-placeholder"><img src="{{ asset('img/confirmation-logo.svg') }}" alt=""
-                        style="width: 179px;"></div>
-                <h2>{{ $products->name }}</h2>
-                <p>Price per unit: ₱<span id="unitPriceBuy">{{ number_format($products->price, 2) }}</span></p>
-                <div class="quantity-div">
-                    <label>Quantity:</label>
-                    <input type="number" id="quantityBuy" value="1" min="1">
-                </div>
-
-
-                @if ($isPBEN)
-                    <div class="voucher-div">
-                        <label>Apply Voucher</label>
-                        <select id="voucherBuySelect" name="voucher_id" onchange="myFunctionBuy(event)">
-                            <option disabled selected>No Voucher</option>
-                            @foreach ($availableVouchers as $voucher)
-                                <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
-                                    ₱{{ number_format($voucher->amount, 2) }} Off
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
-
-                <p>Total: ₱<span id="totalPriceBuy"></span></p>
-                <div class="btnGroup">
-                    <button onclick="submitAction('cart')">Confirm Buy Now</button>
-                    <a class="close-btn-buy" href="">Close</a>
-
-                </div>
-            </div>
+          </div>
         </div>
 
-    </form>
-
-
-    <!-- modal to para sa mga pop ups like error and success -->
-    @if (session('Failed'))
-        <div class="modal" id="FailedModal">
-            <div class="modal-blur-background"></div>
-            <div class="modalContentFailed">
-                <div class="top">
-                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle">
-                    <h1>Oops!</h1>
-                    <h5>It seems that this product is already in your cart. Check out you cart and see the product.</h5>
-                </div>
-                <div class="bottom">
-                    <button onclick="closeFailedModal()">Okay!</button>
-                </div>
-
-
-            </div>
+        <div class="paymentMethod">
+          {{ session('error')}}
+          <h3>Payment Method</h3>
+          <select id="payment" name="payment">
+            <option value="onlinePayment">Online Payment</option>
+            <option value="cashPayment">Cash Payment</option>
+          </select>
         </div>
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="modal" id="SuccessModal">
-            <div class="modal-blur-background"></div>
-            <div class="modalContentSuccess">
-                <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Success!</h1>
-                    <h5>{{ session('success') }}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button onclick="closeSuccessModal()">Okay!</button>
-                </div>
-            </div>
-        </div>
-        </div>
-    @endif
-    <!-- MODAL FOR REPORTS -->
-    <div id="myModalReport" class="modalReport">
-        <div class="modal-contentReport">
-            <h3>Report This Product</h3>
-        <form action="{{ route('reports.store') }}" method="POST">
-            @csrf
-            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-            <input type="hidden" name="report_id" value="{{ $products->product_id }}" >
-            <textarea name="message" placeholder="Write your report message here..." rows="5" required></textarea>
-            <div class="report-buttons">
-                <button type="submit" class="submitReportBtn">Submit Report</button>
-                <button type="button" class="cancelReportBtn" onclick="closeReportModal()">Cancel</button>
-            </div>
-        </form>
-        </div>
-    </div>
-    <script>
-        var slideIndex = 1;
-        showDivs(slideIndex);
-
-        function plusDivs(n) {
-            showDivs(slideIndex += n);
-        }
-
-        function showDivs(n) {
-            var i;
-            var x = document.getElementsByClassName("mySlides");
-            if (n > x.length) {
-                slideIndex = 1
-            }
-            if (n < 1) {
-                slideIndex = x.length
-            }
-            for (i = 0; i < x.length; i++) {
-                x[i].style.display = "none";
-            }
-            x[slideIndex - 1].style.display = "block";
-        }
-
-        function myFunction(e) {
-            const selectedVoucherId = e.target.value;
-            document.getElementById("voucherAddToCart").value = selectedVoucherId;
-            console.log('Selected voucher id:', selectedVoucherId);
-        }
-
-        function myFunctionBuy(e) {
-            const selectedVoucherIdBuy = e.target.value;
-            document.getElementById("voucherBuyNow").value = selectedVoucherIdBuy;
-            console.log('Selected voucher id:', selectedVoucherIdBuy);
-        }
-        const failedModal = document.getElementById("FailedModal");
-
-        function closeFailedModal() {
-            failedModal.classList.add("hidden");
-        }
-        const successModal = document.getElementById("SuccessModal");
-
-        function closeSuccessModal() {
-            successModal.classList.add("hidden");
-        }
-        // tabs
-        document.getElementById("tabBtnDetails").addEventListener("click", function() {
-            document.getElementById("tab-details").classList.add("active-tab-content");
-            document.getElementById("tab-other").classList.remove("active-tab-content");
-
-            this.classList.add("active-tab");
-            document.getElementById("tabBtnOther").classList.remove("active-tab");
-        });
-
-        document.getElementById("tabBtnOther").addEventListener("click", function() {
-            document.getElementById("tab-other").classList.add("active-tab-content");
-            document.getElementById("tab-details").classList.remove("active-tab-content");
-
-            this.classList.add("active-tab");
-            document.getElementById("tabBtnDetails").classList.remove("active-tab");
-        });
-
-        // link to papunta sa chat ni seller
-        document.getElementById('goToSellerChat').addEventListener('click', function () {
-        window.location.href = "{{ url('/Yonder/Chat/' . $seller->id) }}";
-        });
-
         
+        @php
+            $variants = $products->variants;
+            $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
+        @endphp
+        
+        @if ($hasVariants)
+            <div class="variations">
+                <h3>Variations ({{ $variants['name'] ?? 'Options' }})</h3>
+                <div class="variationsAndStocks">
+                    <div class="varationsGroup">
+                        @foreach ($variants['options'] as $index => $option)
+                            <button class="variationsButton {{ $index === 0 ? 'active' : '' }}" 
+                                    data-index="{{ $index }}"
+                                    data-stock="{{ $variants['optionStocks'][$index] ?? 0 }}">
+                                {{ $option }}
+                            </button>
+                        @endforeach
+                    </div>
+                    <div class="varationsStocks">
+                        <p>Stocks: <span id="variantStock">{{ $variants['optionStocks'][0] ?? 0 }}</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hidden inputs for variant data -->
+            <script>
+                window.productVariants = @json($variants);
+                window.hasVariants = true;
+            </script>
+        @else
+            <script>
+                window.hasVariants = false;
+                window.productVariants = null;
+            </script>
+        @endif
 
-        // for report modal 
-        var modal = document.getElementById("myModalReport");
-        var btn = document.getElementById("reportTriggerBtn");
-        var span = document.getElementsByClassName("cancelReportBtn")[0];
-        function reportTriggerBtn() {
-            document.getElementById('myModalReport').style.display = 'flex';
-        }
-        function closeReportModal() {
-            document.getElementById('myModalReport').style.display = 'none';
-        }
+        <div class="productAttr">
+          <h3>Details</h3>
+          <p>Condition: New</p>
+          <p>Condition: New</p>
+          <p>Condition: New</p>
+          <p>Condition: New</p>
+        </div>
 
+        <div class="description">
+          <h3>Description</h3>
+          <p>
+            {!! $products->description !!}
+          </p>
+        </div>
+
+        <div class="sellerInfo">
+          <div class="sellerTop">
+            <h3>Seller Information</h3>
+            <a class="seeProfile" href="">see profile</a>
+          </div>
+          <div class="profile">
+            <img src="{{asset('storage/users-avatar/'. $seller->avatar)}}" alt="" class="sellerProfile"/>
+            <div class="profileInfo">
+              <p class="name">{{ $seller->name }}</p>
+              <p class="level">{{ ucfirst($role) }}</p>
+            </div>
+            <div class="rating">
+              <img src="{{ asset('img/rating.svg') }}" alt="" />
+              <p>4.7</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTCOTRNOLLER controller nito -->
+    <!-- UNIFIED MODAL FOR BOTH ADD TO CART AND BUY NOW -->
+    <form id="orderForm" action="{{ route('cart.store') }}" method="POST">
+        @csrf
+        <div class="modal hidden" id="orderModal">
+            <div class="modal-blur-background"></div>
+            <div class="modalContent">
+                <!-- Hidden inputs for backend -->
+                <input type="text" name="product_id" value="{{ $products->product_id }}">
+                <input type="text" name="unit_price" value="{{ $products->price }}">
+                <input type="text" name="total_price" id="modalTotalPrice">
+                <input type="text" name="quantity" id="modalQuantity">
+                <input type="text" name="action_type" id="modalActionType">
+                <input type="text" name="selected_variant" id="modalSelectedVariant">
+                <input type="text" name="voucher_id" id="modalVoucherId">
+                <input type="text" name="voucher_amount" id="modalVoucherAmount">
+                <input type="text" id="paymentType" name="paymentType">
+
+                <div class="img-placeholder">
+                    <img src="{{ asset('img/confirmation-logo.svg') }}" alt="" style="width: 179px;">
+                </div>
+                
+                <h2 class="productName">{{ $products->name }}</h2>
+                <p class="productPrice">Price per unit: ₱<span id="modalUnitPrice">{{ number_format($products->price, 2) }}</span></p>
+                
+                <!-- Variant Selection in Modal -->
+                @if ($hasVariants)
+                    <div class="modal-variant-div">
+                        <label>{{ $variants['name'] ?? 'Variation' }}:</label>
+                        <select id="modalVariantSelect" name="variant_selection">
+                            @foreach ($variants['options'] as $index => $option)
+                                <option value="{{ $index }}" data-stock="{{ $variants['optionStocks'][$index] ?? 0 }}" {{ $index === 0 ? 'selected' : '' }}>
+                                    {{ $option }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $variants['optionStocks'][0] ?? 0 }}</span></p>
+                    </div>
+                @endif
+                
+                <div class="quantity-div">
+                    <label>Quantity:</label>
+                    <div class="modal-qty-controls">
+                        <button type="button" id="modalQtyMinus">-</button>
+                        <input type="number" id="modalQuantityInput" value="1" min="1" max="{{ $hasVariants ? ($variants['optionStocks'][0] ?? 0) : $products->stock }}">
+                        <button type="button" id="modalQtyPlus">+</button>
+                    </div>
+                </div>
+
+                @if ($isPBEN)
+                    <div class="voucher-div">
+                        <label>Apply Voucher</label>
+                        <select id="modalVoucherSelect" name="voucher_id">
+                            <option value="">No Voucher</option>
+                            @foreach ($availableVouchers as $voucher)
+                                <option value="{{ $voucher->id }}" data-amount="{{ $voucher->amount }}">
+                                    ₱{{ number_format($voucher->amount, 2) }} Off
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
+                <p class="totalPrice">Total: ₱<span id="modalTotalDisplay">{{ number_format($products->price, 2) }}</span></p>
+                
+                <div class="btnGroup">
+                    <button type="submit" id="modalConfirmBtn">Confirm</button>
+                    <button type="button" class="modal-close-btn">Close</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Pass data to JavaScript -->
+    <script>
+        window.productData = {
+            price: {{ $products->price }},
+            stock: {{ $products->stock }},
+            hasVariants: {{ $hasVariants ? 'true' : 'false' }},
+            variants: @json($hasVariants ? $variants : null),
+            isPBEN: {{ $isPBEN ? 'true' : 'false' }}
+        };
     </script>
-@endsection
+    
+    <script src="productDetails.js"></script>
+  </body>
+</html>

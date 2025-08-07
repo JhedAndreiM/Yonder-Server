@@ -52,7 +52,7 @@ class PageController extends Controller
         $query->where('approved', 'yes');
         if ($topFilter) {
             if($topFilter==="featured"){
-                $query->where('supplier_type', 'verified');
+                $query->where('supplier_type', 'pben');
             }
             if($topFilter==="student-org"){
                 $query->where('supplier_type', 'student-org');
@@ -64,9 +64,17 @@ class PageController extends Controller
         else{
             $query->where('supplier_type', 'verified');
         }
+
         if($search !== ""){
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where(function($q) use ($search) {
+        $q->where('name', 'like', '%' . $search . '%')
+          ->orWhere('description', 'like', '%' . $search . '%')
+          ->orWhereHas('tags', function($tagQuery) use ($search) {
+              $tagQuery->where('name', 'like', '%' . $search . '%');
+          });
+        });
         }
+
         //sort filter
         if($sort !== null){
             if($sort=="lowToHigh"){
@@ -124,7 +132,7 @@ class PageController extends Controller
         }
         
          //colleges
-         $collegeFilters = ['ccst', 'cea', 'cba', 'ctech', 'cahs', 'cas'];
+         $collegeFilters = array_map('strtolower', DB::table('colleges')->pluck('code')->toArray());
          $selectedColleges = array_intersect($filters, $collegeFilters);
          //dd($selectedColleges);
          if (!empty($selectedColleges)) {
@@ -135,6 +143,15 @@ class PageController extends Controller
             });
         }
 
+
+        // for org filtering
+        $studentOrgFilters = DB::table('student_orgs')->pluck('id')->toArray();
+        $selectedStudentOrgs = array_intersect($filters, $studentOrgFilters);
+        if (!empty($selectedStudentOrgs)) {
+            $query->where(function ($q) use ($selectedStudentOrgs) {
+                $q->whereIn('organization_id', $selectedStudentOrgs);
+            });
+        }
 
         //for
         $saleTradeFilters = ['sale', 'trade'];

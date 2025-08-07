@@ -1,0 +1,300 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap");
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  height: 100vh;
+  font-style: normal;
+  background-image: url("imgs/BACKGROUND.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-y: hidden;
+}
+
+/* START OF NAVBAR */
+
+.navBar {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  margin: 30px auto 40px auto;
+  width: 90%;
+  height: 85px;
+  border-radius: 100px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.navBarRight {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.navBarMiddle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 500px;
+  border-radius: 15px;
+  font-size: 24px;
+  border-color: #d7d7d8;
+  border-style: solid;
+  border-width: 2px;
+}
+.searchBtnImg{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.searchInput{
+  flex: 10;
+  border: none;
+}
+.searchInput input{
+  border: none;
+  width: 97%;
+}
+input {
+  height: 50px;
+  border-radius: 15px;
+  border-color: #d7d7d8;
+  border-style: solid;
+  font-size: 24px;
+}
+.mainFilterButtons{
+  padding: 0px;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0px;
+}
+button.mainFilterButtons:hover {
+  animation: none !important;
+  transition: none !important;
+}
+input::placeholder {
+  font-weight: 100;
+  opacity: 50%;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+}
+.profileBtn{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+.hover,
+.searchBtn {
+  transition: transform 0.3s ease;
+}
+
+@keyframes bounceTilt {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-10deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.hover:hover,
+.searchBtn:hover {
+  cursor: pointer;
+  animation: bounceTilt 0.4s ease-in-out;
+}
+
+.navBarRight {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+
+/* END OF NAVBAR */
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 90%;
+  display: flex;
+  padding-top: 3%;
+  align-items: start;
+  justify-content: center;
+  background-color: aqua;
+  height: 100vh;
+  gap: 5%;
+}
+
+.productPictures {
+  border-radius: 15px;
+  width: 50%;
+  height: 60%;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding-left: 20px;
+}
+
+.productDetails {
+  max-height: 700px;
+  border-radius: 15px;
+  width: 30%;
+  padding: 0px 20px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding-left: 20px;
+  overflow-y: auto;
+}
+
+.productDetails::-webkit-scrollbar {
+  display: none;
+}
+
+.detailsTop {
+  margin-top: 20px;
+  display: flex;
+  gap: 5%;
+}
+
+.detailsRight {
+  display: flex;
+  width: 300px;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.priceAndReviews {
+  justify-content: start;
+  align-items: center;
+  width: 300px;
+  height: 15%;
+  gap: 1%;
+  display: flex;
+}
+
+.qtyButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20%;
+  cursor: pointer;
+}
+
+button {
+  cursor: pointer;
+}
+
+.price {
+  font-weight: 700;
+  margin-right: 30px;
+}
+
+.ratings {
+  font-weight: 500;
+}
+
+p {
+  font-size: 14px;
+  color: #555;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+a {
+  font-weight: 400;
+  opacity: 80%;
+  font-size: 20px;
+  text-decoration: none;
+  color: #0d62ff;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 24px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.priceAndReviews {
+  padding-bottom: 0px;
+}
+
+.addToCart,
+.buy {
+  font-size: 16px;
+  font-family: "inter";
+  font-weight: 550;
+  color: #1d1d1d;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  width: auto;
+  height: 40px;
+  padding: 10px 20px 10px 20px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+.productAttr,
+.description {
+  margin-bottom: 30px;
+}
+
+.sellerInfo {
+  padding-bottom: 20px;
+}
+
+.sellerTop {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.rating {
+  display: flex;
+  margin-left: 170px;
+  align-items: center;
+}
+
+.profileInfo {
+  min-width: 40%;
+  margin-left: 10px;
+}
+
+.level {
+  margin-top: 0px;
+}
+
+.name {
+  font-weight: 600;
+  margin: 0;
+  padding: 5px 5px 3px 0px;
+}

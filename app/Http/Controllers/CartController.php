@@ -24,26 +24,53 @@ class CartController extends Controller
                 'total_price' => 'required|min:0',
                 'voucher_id' => 'nullable|numeric|min:0',
                 'voucher_amount' => 'nullable|numeric|min:0',
-                'action_type' => 'required|in:cart,buy_now'
+                'action_type' => 'required|in:in_cart,buy_now',
+                'paymentType' => 'required|in:onlinePayment,cashPayment'
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors());
-        }
+        
 
 
         //bali eto kukunin niya yung row ng product_id :)
         $product = Product::findOrFail($validated['product_id']);
+        $variantData = $product->variants;
+        $variantIndex = (int) $request->selected_variant;
+
+        $selectedVariantName=isset($variantData['options'][$variantIndex])
+        ? $variantData['options'][$variantIndex]
+        : null;
         // check yung status ng buy order if add to cart ba or direct buy 
         $status = $request['action_type'] === 'buy_now' ? 'pending' : 'in_cart';
+
+        // pang check ng stock ng specific variant
+        if ($variantData) {
+            $variantOptions = $variantData['options'];
+            $variantStocks = $variantData['optionStocks'];
+            $availableStock = isset($variantStocks[$variantIndex]) ? $variantStocks[$variantIndex] : 0;
+        } else {
+            $availableStock = $product->stock;
+        }
 
         $existingCartItem  = DB::table('cart_items')
             ->where('user_id', Auth::id())
             ->where('product_id', $request['product_id'])
             ->where('status', 'in_cart')
+            ->where('selected_variant', $selectedVariantName)
             ->first();
 
         if ($existingCartItem) {
-            return redirect()->back()->with('Failed', 'Item already in Cart!');
+            $newQuantity = $existingCartItem->quantity + $request['quantity'];
+
+            if ($newQuantity > $availableStock) {
+                return redirect()->back()->with('error', 'Not enough stock. Only ' . $availableStock . ' available.');
+            }
+            DB::table('cart_items')
+                ->where('id', $existingCartItem->id)
+                ->update([
+                    'quantity' => $newQuantity,
+                    'updated_at' => now(),
+                ]);
+
+            return redirect()->back()->with('success', 'Cart updated: quantity increased.');
         } else {
             $status = $request['action_type'] === 'buy_now' ? 'pending' : 'in_cart';
             // insert sa cart_items
@@ -55,6 +82,8 @@ class CartController extends Controller
                 'unit_price' => $request['unit_price'],
                 'voucher_applied' => $request['voucher_amount'] ?? 0,
                 'status' => $status,
+                'selected_variant' => $selectedVariantName,
+                'payment_type' => $request['paymentType'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -94,6 +123,9 @@ class CartController extends Controller
             elseif($status === 'pending'){
                 return redirect()->back()->with('success', 'Product bought successfully!');
             }
+        }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            dd($e->errors());
         }
     }
 
@@ -311,24 +343,131 @@ class CartController extends Controller
         return view('mysales', compact('items', 'filters'));
     }
 
-    public function confirmStudentSales(Request $request, $id)
-    {
+public function confirmStudentSales(Request $request, $id)
+{
+    DB::beginTransaction();
+
+    try {
+        $cartItem = DB::table('cart_items')->where('id', $id)->lockForUpdate()->first();
+
+        if (!$cartItem) {
+            DB::rollBack();
+            return back()->with('error', 'Buy order not found.');
+        }
+
+        // Get the related product with a lock
+        $product = DB::table('product')->where('product_id', $cartItem->product_id)->lockForUpdate()->first();
+
+        if (!$product) {
+            DB::rollBack();
+            return back()->with('error', 'Product not found.');
+        }
+        $selectedOption = $cartItem->selected_variant;
+        $requestedQty = $cartItem->quantity;
+
+        $hasVariants = !empty($product->variants);
+        $available = 0;
+        if ($hasVariants) {
+            $variantData = json_decode($product->variants, true);
+
+            if (
+                !isset($variantData['options']) ||
+                !isset($variantData['optionStocks']) ||
+                !is_array($variantData['options']) ||
+                !is_array($variantData['optionStocks'])
+            ) {
+                DB::rollBack();
+                return back()->with('error', 'Invalid variant data.');
+            }
+
+            $optionIndex = array_search($selectedOption, $variantData['options']);
+
+            if ($optionIndex === false) {
+                DB::rollBack();
+                return back()->with('error', 'Selected variant not found.');
+            }
+
+            $originalStock = (int) $variantData['optionStocks'][$optionIndex];
+
+            // Calculate reserved quantity (excluding current cart item)
+            $reservedQty = DB::table('cart_items')
+                ->where('product_id', $product->product_id)
+                ->where('selected_variant', $selectedOption)
+                ->whereIn('status', ['receive'])
+                ->where('id', '!=', $cartItem->id)
+                ->sum('quantity');
+
+            $available = $originalStock - $reservedQty;
+
+            if ($available < $requestedQty) {
+                DB::rollBack();
+                return back()->with('error', "Not enough stock. Only $available left.");
+            }
+
+            // SUBTRACT STOCK
+            $variantData['optionStocks'][$optionIndex] = max(0, $originalStock - $requestedQty);
+
+            DB::table('product')
+                ->where('product_id', $product->product_id)
+                ->update(['variant' => json_encode($variantData)]);
+
+        } else {
+            $originalStock = (int) $product->stock;
+
+            // Calculate reserved quantity (excluding current cart item)
+            $reservedQty = DB::table('cart_items')
+                ->where('product_id', $product->product_id)
+                ->where('status', 'receive')
+                ->where('id', '!=', $cartItem->id)
+                ->sum('quantity');
+
+            $available = $originalStock - $reservedQty;
+            if ($available < $requestedQty) {
+                DB::rollBack();
+            //      dd([
+            //     'Original Stock' => $originalStock,
+            //     'Reserved Qty (excluding current)' => $reservedQty,
+            //     'Available Stock' => $available,
+            //     'Requested Qty' => $requestedQty,
+            // ]);
+                //dd('went here');
+                return back()->with('error', "Not enough stock. Only $available left.");
+            }
+            //  dd([
+            //     'Original Stock' => $originalStock,
+            //     'Reserved Qty (excluding current)' => $reservedQty,
+            //     'Available Stock' => $available,
+            //     'Requested Qty' => $requestedQty,
+            // ]);
+        }
+
+        // Update cart item to 'receive'
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
                 'status' => 'receive',
                 'updated_at' => now()
             ]);
+
+        DB::commit();
+
         $filters = $request->input('filterValue');
+
         if (Auth::check() && Auth::user()->role === 'student') {
-             return redirect()->route('student.sales', ['filters' => $filters])
-            ->with('success', 'Item cancelled.');
-        }
-        elseif(Auth::check() && Auth::user()->role === 'organization'){
+            return redirect()->route('student.sales', ['filters' => $filters])
+                ->with('success', 'Item Approved.');
+        } elseif (Auth::check() && Auth::user()->role === 'organization') {
             return redirect()->route('order.page', ['filters' => $filters])
-            ->with('success', 'Item cancelled.');
+                ->with('success', 'Item Approved.');
         }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'An error occurred while processing the order.');
     }
+}
+
+
+
 
     // working SMS no Credits lang
     // public function confirmStudentSales(Request $request, $id)

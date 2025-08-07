@@ -7,8 +7,9 @@
     @foreach ($products as $product)
     
     @php
-        $images = explode(',', $product->image_path);
-        $firstImage = $images[0];
+      $firstImage = DB::table('product_images')
+          ->where('product_id', $product->product_id)
+          ->value('image_path');
         
     @endphp
             <!-- <div class="card" onclick="hrefClick(this)">
@@ -36,8 +37,9 @@
             </div> -->
             
             <div class="card" onclick="hrefClick(this)">
+                 <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $product->product_id]) }}">
                 @if($firstImage && file_exists(public_path('images/' . $firstImage)))
-                    <img alt="Product"src="{{ asset('images/' . $firstImage) }}" class="cardImg" />
+                    <img alt="Product" src="{{ asset('images/' . $firstImage) }}" class="cardImg" />
                 @else
                     <img src="{{ asset('img/default-product.png') }}" alt="No image available" class="cardImg">
                 @endif
@@ -45,18 +47,35 @@
                 <div class="price">
                   <p>P {{ number_format($product->price, 2) }}</p>
                   <img
-                    src="{{ asset('img/wishlist.png') }}"
+                    src="{{ in_array($product->product_id, $wishlist) ? asset('img/wishlist-red.png') : asset('img/wishlist.png') }}"
                     alt="Wishlist"
-                    class="wishlist"
+                    class="wishlist-icon"
+                    data-product-id="{{ $product->product_id }}"
                   />
                 </div>
                 <p class="productDesc">
                   {{ $product->name }}
                 </p>
                 <div class="rating">
+                  
                   <img src="{{ asset('img/rating.svg') }}" alt="Star" />
-                  <p class="ratingScore">4.7</p>
-                  <p class="numberOfReview">(10 reviews)</p>
+                  <p class="ratingScore">
+                    @if(isset($globalRatings[$product->product_id]))
+                      {{ number_format($globalRatings[$product->product_id]->avg_rating, 1) }}
+                    @else
+                        0
+                    @endif
+                  </p>
+                  <p class="numberOfReview">
+                  @php
+                  $data = $globalRatings[$product->product_id] ?? null;
+                  @endphp
+
+                  @if($data)
+                      <p class="numberOfReview">({{ $data->review_count }} review(s))</p>
+                  @else
+                      <p class="numberOfReview">(No reviews yet)</p>
+                  @endif</p>
                 </div>
               </div>
             </div>

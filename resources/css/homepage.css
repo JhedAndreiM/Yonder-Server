@@ -454,7 +454,10 @@ select {
   font-weight: bold;
   background-color: #f1f1f1;
 }
-
+.wishlist-icon{
+  width: 20px;
+  height: 17px;
+}
 .notification {
   padding: 10px;
   border-bottom: 1px solid #eee;
@@ -474,4 +477,53 @@ select {
 .profile-dropdown li a {
   text-decoration: none;
   color: #333;
+}
+/* CROPPER :P */
+.cropper-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+
+.cropper-modal.show {
+  display: block;
+}
+
+.cropper-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+
+.cropper-modal-content {
+  position: relative;
+  z-index: 1;
+  max-width: 90%;
+  max-height: 90%;
+  margin: 40px auto;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cropper-wrapper {
+  width: 100%;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.cropper-wrapper img {
+  max-width: 100%;
+  display: block;
+}
+
+.cropper-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }

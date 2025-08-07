@@ -73,7 +73,7 @@
                 <button type="submit" class="btn">Upload Excel</button>
             </form>
         </div>
-
+<!-- Product Upload Approval -->
         <div class="approval-product">
             <div class="section-two">
                 <h2>Unapproved Products</h2>
@@ -91,7 +91,7 @@
                         @foreach ($products as $product)
                             <tr class="perRow"id="product-row-{{ $product->product_id }}">
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->description }}</td>
+                                <td>{!! $product->description !!}</td>
                                 <td><a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">view
                                         details</a></td>
                                 <td>
@@ -107,19 +107,17 @@
                                     <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
                                     <h2>{{ $product->name }}</h2>
                                     <h2>P {{ $product->price }}</h2>
-                                    <p>{{ $product->description }}</p>
-
+                                    <p>{!! $product->description !!}</p>
                                     <div class="image-gallery">
                                         @php
-                                            $images = explode(',', $product->image_path);
+                                            $images = \Illuminate\Support\Facades\DB::table('product_images')
+                                                        ->where('product_id', $product->product_id)
+                                                        ->get();
                                         @endphp
-                                        @if ($images)
-                                            @foreach ($images as $img)
-                                                <img src="{{ asset('images/' . $img) }}" alt="Product Image">
-                                            @endforeach
-                                        @else
-                                            <img src="{{ asset('images/' . $product->image_path) }}" alt="Product Image">
-                                        @endif
+
+                                        @foreach ($images as $img)
+                                            <img src="{{ asset('images/' . $img->image_path) }}" alt="Product Image">
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +265,6 @@
             document.getElementById('modal-' + productId).style.display = "none";
         }
 
-        // Optional: Close modal when clicking outside
         window.onclick = function(event) {
             const modals = document.querySelectorAll(".modal");
             modals.forEach(modal => {
@@ -277,20 +274,27 @@
             });
         }
 
-        function approveProduct(productId) {
+        function approveProduct(productId, tagsArray) {
             fetch(`/admin/approve/${productId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tags: tagsArray
                 })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById(`product-row-${productId}`).remove();
-                    }
-                });
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Approval failed");
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message);
+                document.getElementById(`product-row-${productId}`).remove();
+            })
+            .catch(err => console.error("Error:", err));
         }
 
         function showRejectModal(productId) {
@@ -338,7 +342,6 @@
         document.getElementById('modal-' + id).style.display = 'none';
     }
 
-    // Close modal on outside click (optional)
     window.onclick = function(event) {
         document.querySelectorAll('.modal').forEach(function(modal) {
             if (event.target === modal) {

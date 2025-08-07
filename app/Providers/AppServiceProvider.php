@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Tag;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,5 +43,38 @@ class AppServiceProvider extends ServiceProvider
             $view->with('notifications', $notifications);
         }
     });
+
+    View::composer('*', function ($view) {
+        $view->with('colleges', DB::table('colleges')->orderBy('code')->get());
+    });
+
+    View::composer('*', function ($view) {
+        $tags = Tag::whereHas('products', function ($query) {
+            $query->where('approved', 'yes');
+        })
+        ->orderBy('name')
+        ->get();
+
+        $view->with('tags', $tags);
+    });
+
+    View::composer('*', function ($view) {
+        $view->with('student_orgs', DB::table('student_orgs')->orderBy('name')->get());
+    });
+
+   View::composer('*', function ($view) {
+        $globalRatings = DB::table('reviews')
+            ->select(
+                'product_id',
+                DB::raw('AVG(rating) as avg_rating'),
+                DB::raw('COUNT(*) as review_count') 
+            )
+            ->groupBy('product_id')
+            ->get()
+            ->keyBy('product_id');
+
+        $view->with('globalRatings', $globalRatings);
+    });
+
     }
 }
