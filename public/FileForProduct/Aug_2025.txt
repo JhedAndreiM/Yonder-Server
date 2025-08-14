@@ -1,0 +1,3 @@
+Product Name                                      Stock     Price     
+TestingFileCreate_Seven                           1         P 350.00  
+TestingFileCreate_Eight                           555       P 4       For Sell                                          555       P 5       Product Quality                                   23143     P 2       

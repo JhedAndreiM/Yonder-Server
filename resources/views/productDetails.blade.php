@@ -193,19 +193,29 @@
             <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
           </div>
           <div class="detailsRight">
+            @if($products->forSaleTrade==='trade')
+            @else
             <h3 class="qty">Quantity</h3>
             <div class="qtyButtons">
               <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
               <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
               <img src="{{ asset('img/plus.svg') }}" alt="" id="qtyPlus"/>
             </div>
+            @endif
+            @if($products->forSaleTrade==='trade')
+            <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Message Seller</a>
+            @elseif($products->user_id=== Auth::id())
+            <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
+            @else
             <div class="buttonCartAndBuy">
               <button class="addToCart" id="addToCart">Add to cart</button>
               <button class="buy" id="buyNow">Buy Now</button>
             </div>
+            @endif
           </div>
         </div>
-
+        @if($products->forSaleTrade==='trade')
+        @else
         <div class="paymentMethod">
           {{ session('error')}}
           <h3>Payment Method</h3>
@@ -214,7 +224,7 @@
             <option value="cashPayment">Cash Payment</option>
           </select>
         </div>
-        
+        @endif
         @php
             $variants = $products->variants;
             $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
@@ -253,10 +263,15 @@
 
         <div class="productAttr">
           <h3>Details</h3>
-          <p>Condition: New</p>
-          <p>Condition: New</p>
-          <p>Condition: New</p>
-          <p>Condition: New</p>
+          @if($products->product_condition)
+          <p>Product Condition: {{ ucfirst($products->product_condition) }}</p>
+          @endif
+          @if($products->forSaleTrade)
+          <p>Transaction Type: {{ ucfirst($products->forSaleTrade) }}</p>
+          @endif
+          @if($products->colleges)
+          <p>Colleges: {{ strtoupper($products->colleges) }}</p>
+          @endif
         </div>
 
         <div class="description">
@@ -279,7 +294,7 @@
             </div>
             <div class="rating">
               <img src="{{ asset('img/rating.svg') }}" alt="" />
-              <p>4.7</p>
+              <p>{{ number_format($sellerRating->avg_rating, 1) }}</p>
             </div>
           </div>
         </div>
@@ -294,15 +309,15 @@
             <div class="modal-blur-background"></div>
             <div class="modalContent">
                 <!-- Hidden inputs for backend -->
-                <input type="text" name="product_id" value="{{ $products->product_id }}">
-                <input type="text" name="unit_price" value="{{ $products->price }}">
-                <input type="text" name="total_price" id="modalTotalPrice">
-                <input type="text" name="quantity" id="modalQuantity">
-                <input type="text" name="action_type" id="modalActionType">
-                <input type="text" name="selected_variant" id="modalSelectedVariant">
-                <input type="text" name="voucher_id" id="modalVoucherId">
-                <input type="text" name="voucher_amount" id="modalVoucherAmount">
-                <input type="text" id="paymentType" name="paymentType">
+                <input type="hidden" name="product_id" value="{{ $products->product_id }}">
+                <input type="hidden" name="unit_price" value="{{ $products->price }}">
+                <input type="hidden" name="total_price" id="modalTotalPrice">
+                <input type="hidden" name="quantity" id="modalQuantity">
+                <input type="hidden" name="action_type" id="modalActionType">
+                <input type="hidden" name="selected_variant" id="modalSelectedVariant">
+                <input type="hidden" name="voucher_id" id="modalVoucherId">
+                <input type="hidden" name="voucher_amount" id="modalVoucherAmount">
+                <input type="hidden" id="paymentType" name="paymentType">
 
                 <div class="img-placeholder">
                     <img src="{{ asset('img/confirmation-logo.svg') }}" alt="" style="width: 179px;">

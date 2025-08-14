@@ -146,24 +146,6 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
         category = button.dataset.category;
         console.log('Clicked category:', category);
         updateFilters();
-        //
-        // const selectedCategory= category;
-        // url += `&topFilter=${encodeURIComponent(selectedCategory)}`;
-        // console.log(url);
-        // fetch(url,{
-        // headers:{
-        //     'X-Requested-With':'XMLHttpRequest'
-        // }
-        // })
-        // .then(response => response.text())
-        // .then(data => {
-        //     const productContainer=document.getElementById('product-container');
-        //     productContainer.innerHTML = data;
-        // })
-        // .catch(error=>{
-        //     console.error('Error fetching filtered products:', error);
-        // })
-        //
     });
 });
     notifBtn.addEventListener("click", function () {

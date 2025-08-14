@@ -1,219 +1,416 @@
-@extends('Front_layouts.org')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('head')
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style>
-        body {
-            background-image: url("{{ asset('img/background.svg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: top center;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <title>Report Page</title>
-    @vite('resources/css/orgReport.css')
-@endsection
-@section('maincontent')
-    <div class="container">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organization Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <!-- FilePond core -->
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+  <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 
-        <div class="container-top"></div>
-        <div class="container-bottom">
-            <div class="container-bottom-left">
-                <div class="left-container">
-                    <div class="left-one">
-                        <h3>PBEN Organization</h3>
-                    </div>
-                    <div class="left-two">
-                        <hr>
-                    </div>
-                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><a href="{{ route('organization.dashboard') }}">Products</a></div>
-                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i><a href="{{ route('order.page') }}">Orders</a></div>
-                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i><a href="{{ route('review.page') }}">Reviews</a></div>
-                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><span class="currentPage">Dashboard</span></div>
-                </div>
+  <!-- FilePond image plugins -->
+  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+    rel="stylesheet" />
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script
+    src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+
+
+  <!-- cropper.js :P -->
+  <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
+  <script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
+  <!-- Sortable.js for drag-and-drop ordering -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  @vite('resources/css/orgReport.css')
+</head>
+
+<body>
+  <!-- nav bar -->
+  <div class="navBar">
+    <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+
+    <!-- <div class="navBarMiddle">
+        <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
+        <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
+      </div> -->
+
+    <div class="navBarRight">
+      <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+      <div class="dropdown-container">
+        <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
+        <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+          <div class="notification-header">
+            <h3>Notifications</h3>
+          </div>
+          <div class="notification-list">
+            @if ($notifications->isEmpty())
+            <p style="padding-left:10px;">No notifications</p>
+            @else
+            @foreach ($notifications as $notification)
+            <div class="notification">
+              <div class="title">
+                <h1>
+                  @if($notification['title'] === "Product Approved")
+                  <span style="color:Green;">{{ $notification['title'] }}</span>
+                  @elseif($notification['title'] === "Product Rejected")
+                  <span style="color:red;">{{ $notification['title'] }}</span>
+                  @else
+                  {{ $notification['title'] }}
+                  @endif
+                </h1>
+              </div>
+              <div class="Message">{{ $notification['message'] }}</div>
+              <div class="time">{{ $notification['time_ago'] }}</div>
             </div>
-            <div class="container-bottom-right">
-                <div class="container-bottom-right-top">
-                    <h1>Dashboard</h1>
-                    <h4>Here’s your sales report!</h4>
-                </div>
-                <div class="container-bottom-right-bottom">
-                    <div class="graph-container">
-                        <div class="graph-container-items">
-                        <!-- LEFT SIDE NG GRAPH CONTAINER-->
-                        <div class="graph-container-left">
-                            <!-- CONTAINER NG 4 na cards -->
-                            <div class="graph-container-minicards">
-                                <div class="minicards-top">
-                                    <div class="cards-totalSales firstCard">
-                                        <div class="firstCard-top">Total Sales</div>
-                                        <div class="firstCard-middle">
-                                            <h1>PHP </h1>
-                                            <pre>{{ print_r($totalAmount, true) }}</pre>
-                                        </div>
-                                    </div>
-                                    <div class="cards-totalSales thirdCard">
-                                        <div class="firstCard-top">Wishlist Count</div>
-                                        <div class="firstCard-middle">
-                                            <h1>
-                                                <pre>{{ print_r($totalWishlistItems, true) }}</pre>
-                                            </h1>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="minicards-bottom">
-                                    <div class="cards-totalSales secondCard">
-                                        <div class="firstCard-top">Top Selling Product</div>
-                                        <div class="firstCard-middle">
-                                            <h1>
-                                                <pre> 
-                                            @if ($topSellerProduct)
-                                            {{ $topSellerProduct->product_name }}
-                                            @else
-                                            No top-selling product yet.
-                                            @endif
-                                        </pre>
-                                            </h1>
-                                        </div>
-                                    </div>
-                                    <div class="cards-totalSales fourthCard">
-                                        <div class="firstCard-top">Low in Stock</div>
-                                        <div class="firstCard-middle">
-                                            <h1>
-                                                <pre>{{ print_r($lowStockCount, true) }}</pre>
-                                            </h1>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Container ng Recents-->
-                            <div class="graph-container-recents">
-                                <div class="recents-content">
-                                    <h3 class="recents-title">Recent Activity</h3>
-                                    <div class="tableDiv">
-                                        <table class="recents-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Customer</th>
-                                                    <th>Customer ID</th>
-                                                    <th>Time</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($cartData as $item)
-                                                <tr>
-                                                    <td>{{ $item->buyer_name }}</td>
-                                                    <td>#{{ $item->buyer_id }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Manila')->format('F j, Y \a\t g:i A') }}</td>
-                                                    <td>PHP {{ $item->unit_price * $item->quantity }}</td>
-                                                </tr>
-                                                @endforeach
-                                                
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- RIGHT SIDE NG GRAPH CONTAINER-->
-                        <div class="graph-container-right">
-                            <div class="graph-one">
-                                <div class="graph-one-top">
-                                    <h3>Status of Items</h3>
-                                </div>
-                                <div class="graph-one-bottom">
-                                    <canvas id="statusChart" width="600" height="200"></canvas>
-                                </div>
-
-                            </div>
-                            <div class="graph-two">
-                                <div class="graph-two-top">
-                                    <h3>Sales per month</h3>
-                                </div>
-                                <div class="graph-two-bottom">
-                                    <canvas id="monthlySalesChart" width="500" height="200"></canvas>
-                                </div>
-
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
+            @endif
+          </div>
         </div>
+      </div>
+      <div class="dropdown-container">
+        <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
+        <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+          <ul>
+            <li><a href="">My Profile</a></li>
+            <li><a href=" ">Wishlist</a></li>
+            <li><a href="">Logout</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <script>
-        const ctx = document.getElementById('statusChart').getContext('2d');
+  </div>
 
-        const statusChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Pending', 'Completed', 'Cancelled', 'In Cart', 'To Receive'],
-                datasets: [{
-                    label: 'Listings by Status',
-                    data: {!! json_encode(array_values($statusCounts)) !!},
-                    backgroundColor: [
-                        '#f6c23e',
-                        '#1cc88a',
-                        '#e74a3b',
-                        '#6c757d',
-                        '#4e73df',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
+  <!-- nav bar -->
+    <div class="mainContainer">
+      <div class="container">
+        <div class="containerLeft">
+          <ul>
+            <li><i class="fa-solid fa-cart-shopping"></i>My Products</li>
+            <li><i class="fa-solid fa-pencil"></i>Buy Orders</li>
+            <li><i class="fa-solid fa-star"></i>Product Reviews</li>
+            <li><i class="fa-solid fa-paperclip"></i>Sales Report</li>
+          </ul>
+        </div>
+        <div class="containerRight">
+  <div class="dashboard-header">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Here's your sales report</p>
+    </div>
+    <button class="generate-btn" id="generatePdfBtn">Generate Sales Report</button>
+  </div>
+
+  <div class="cards-row">
+    <div class="report-card">
+      <h4>Best Selling Product</h4>
+      <p>{{ $topSellerProduct->product_name }}</p>
+      <span>{{ $topSellerProduct->total_quantity }} total sold</span>
+      <button id="bestSellingViewReport" class="view-report-btn" data-modal="viewReportModal">View report →</button>
+    </div>
+    <div class="report-card">
+      <h4>Most Wishlisted Item</h4>
+      <p>{{ $mostWishlisted->name }}</p>
+      <span>{{ $mostWishlisted->wishlist_count }} total wishlist</span>
+      <button id="wishlistViewReport"  class="view-report-btn" data-modal="viewReportModal">View report →</button>
+    </div>
+    <div class="report-card">
+      <h4>Low Stock Products</h4>
+        @if($lowStockFirst)
+            <p>{{ $lowStockFirst->name }}</p>
+        @else
+            <p>No low stock products.</p>
+        @endif
+
+      <span>Current Stock: {{ $lowStockFirst->stock }}</span>
+      <button id="lowStockViewReport" class="view-report-btn" data-modal="viewReportModal">View report →</button>
+    </div>
+  </div>
+
+  <div class="recent-sales">
+    <div class="sales-header">
+      <h4>Recent Sales</h4>
+    </div>
+<table>
+  <thead>
+    <tr>
+      <th>Product Name</th>
+      <th>Buyer Id</th>
+      <th>Date</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+     @foreach ($cartData as $item)
+         <tr>
+          <td>{{ $item->buyer_name }}</td>
+          <td>#{{ $item->buyer_id }}</td>
+          <td>{{ \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Manila')->format('F j, Y \a\t g:i A') }}</td>
+          <td>PHP {{ $item->unit_price * $item->quantity }}</td>
+        </tr>
+      @endforeach
+  </tbody>
+</table>
+  </div>
+</div>
+
+<!-- View Report Modal for wishlist -->
+<div class="modal" id="viewReportModalWishlist">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3 class="modal-title">Wishlist Report</h3>
+
+    @if(!empty($mostWishlisted) && $mostWishlisted->name)
+      <p class="highlight">
+        Most Wishlisted: <strong>{{ $mostWishlisted->name }}</strong> 
+        ({{ $mostWishlisted->wishlist_count }} wishlists)
+      </p>
+
+      <div class="wishlist-table-container">
+        <table class="wishlist-table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Wishlist Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($wishlistCounts as $product)
+              <tr>
+                <td>{{ $product->name }}</td>
+                <td>{{ $product->wishlist_count }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    @else
+      <p class="no-data">No wishlist data found.</p>
+    @endif
+  </div>
+</div>
+
+<!-- View Report Modal for best seller -->
+<div class="modal" id="viewReportModalBestSeller">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3 class="modal-title">Best Selling</h3>
+
+    @if(!empty($topSellerProduct) && $topSellerProduct->product_name)
+      <p class="highlight">
+        Most Sold: <strong>{{ $topSellerProduct->product_name }}</strong> 
+        ({{ $topSellerProduct->total_quantity }} sold)
+      </p>
+
+      <div class="wishlist-table-container">
+        <table class="wishlist-table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Total Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($salesData as $product)
+              <tr>
+                <td>{{ $product->product_name }}</td>
+                <td>{{ $product->total_quantity }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    @else
+      <p class="no-data">No Sales data found.</p>
+    @endif
+  </div>
+</div>
+
+<!-- View Report Modal for stock -->
+<div class="modal" id="viewReportModalStock">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3 class="modal-title">Stock Quantity</h3>
+
+    @if($lowStockProducts->isNotEmpty())
+      <p class="highlight">
+        Lowest Stock: <strong>{{ $lowStockFirst->name }}</strong> 
+        ({{ $lowStockFirst->stock }} sold)
+      </p>
+
+      <div class="wishlist-table-container">
+        <table class="wishlist-table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Total Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($lowStockProducts as $product)
+              <tr>
+                <td>{{ $product->name  }}</td>
+                <td>{{ $product->stock }}</td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    @else
+      <p class="no-data">No Product data found.</p>
+    @endif
+  </div>
+</div>
+
+<!-- Generate PDF Modal -->
+<div class="modal" id="generatePdfModal" >
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form id="pdfForm" action="{{ route('generate.pdf') }}" method="POST" target="_blank">
+      @csrf
+      <h3>Generate PDF</h3>
+      
+      <label for="fromDate">From:</label>
+      <input type="date" id="fromDate" name="fromDate" required max="">
+      
+      <label for="toDate">To:</label>
+      <input type="date" id="toDate" name="toDate" required max="">
+      
+      <div class="buttonSubmit">
+        <button type="submit" class="generate-btn">Generate</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+      </div>
+    </div>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Handle View modals
+  document.getElementById("wishlistViewReport").addEventListener("click", function () {
+    document.getElementById("viewReportModalWishlist").style.display = "flex";
+  });
+  document.getElementById("bestSellingViewReport").addEventListener("click", function () {
+    document.getElementById("viewReportModalBestSeller").style.display = "flex";
+  });
+  document.getElementById("lowStockViewReport").addEventListener("click", function () {
+    document.getElementById("viewReportModalStock").style.display = "flex";
+  });
+
+
+
+  // Handle Generate PDF button
+  document.getElementById("generatePdfBtn").addEventListener("click", function () {
+    document.getElementById("generatePdfModal").style.display = "flex";
+  });
+
+  // Close modals
+  document.querySelectorAll(".modal .close").forEach(closeBtn => {
+    closeBtn.addEventListener("click", function () {
+      this.closest(".modal").style.display = "none";
+    });
+  });
+
+  // Close on outside click
+  document.querySelectorAll(".modal").forEach(modal => {
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  });
+
+    const fromDate = document.getElementById('fromDate');
+    const toDate = document.getElementById('toDate');
+    const form = document.getElementById('pdfForm');
+
+    const today = new Date().toISOString().split('T')[0];
+    fromDate.max = today;
+    toDate.max = today;
+
+    fromDate.addEventListener('change', () => {
+      if(fromDate.value) {
+        toDate.min = fromDate.value;
+        if(toDate.value && toDate.value < fromDate.value) {
+          toDate.value = '';
+        }
+      } else {
+        toDate.min = '';
+      }
+    });
+    toDate.addEventListener('change', () => {
+      if(toDate.value) {
+        fromDate.max = toDate.value < today ? toDate.value : today;
+        if(fromDate.value && fromDate.value > toDate.value) {
+          fromDate.value = '';
+        }
+      } else {
+        fromDate.max = today;
+      }
+    });
+
+});
+
+// notifs
+ document.addEventListener("DOMContentLoaded", function () {
+    const notifBtn = document.querySelector(".notificationBtn");
+    const notifDropdown = document.getElementById("notificationDropdown");
+    const profileBtn = document.querySelector(".profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const closeNotif = document.querySelector(".closeButton");
+    let category = 'featured';
+
+    document.querySelectorAll(".mainFilterButtons").forEach(button => {
+    button.addEventListener("click", () => {
+        // Remove 'current' from all filter buttons
+        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
+            btn.classList.remove("current");
         });
+        let url='?page=${page}';
+        button.classList.add("current");
 
-        const salesCtx = document.getElementById('monthlySalesChart').getContext('2d');
+        category = button.dataset.category;
+        console.log('Clicked category:', category);
+        updateFilters();
+    });
+});
+    notifBtn.addEventListener("click", function () {
+      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
+      profileDropdown.style.display = "none"; 
+      console.log("clicked");
+    });
 
-        const monthlySalesChart = new Chart(salesCtx, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                ],
-                datasets: [{
-                    label: 'Completed Sales ({{ now()->year }})',
-                    data: {!! json_encode($monthlySalesData) !!},
-                    backgroundColor: '#1cc88a',
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                }
-            }
-        });
-    </script>
-@endsection
+    profileBtn.addEventListener("click", function () {
+      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
+      notifDropdown.style.display = "none"; // close notifications if open
+    });
+
+    closeNotif.addEventListener("click", function () {
+      notifDropdown.style.display = "none";
+    });
+
+    // Optional: Close dropdowns if clicked outside
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest(".dropdown-container")) {
+        notifDropdown.style.display = "none";
+        profileDropdown.style.display = "none";
+      }
+    });
+  });
+</script>
+
+</body>
+
+</html>

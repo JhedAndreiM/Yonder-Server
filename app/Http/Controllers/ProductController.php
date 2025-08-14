@@ -93,6 +93,8 @@ public function store(Request $request)
             'variants_json'=> 'nullable|string',
             'colleges_json'=> 'nullable|string',
             'tags_json'=> 'nullable|string',
+            'tradeOrSell'=> 'required|string',
+            'productQuality' => 'required|string',
             'images'=> 'required|array|min:1',
             'images.*'=> 'image|mimes:jpeg,png,webp',
         ]);
@@ -116,6 +118,8 @@ public function store(Request $request)
     $product->stock = $validated['stock'];
     $product->price = $validated['price'];
     $product->colleges = $collegesString;
+    $product->forSaleTrade = $validated['tradeOrSell'];
+    $product->product_condition = $validated['productQuality'];
     $product->approved = "not";
     $product->organization_id = $validated['organization_id'] ?? null;
     $product->user_id = Auth::id(); 
@@ -164,6 +168,24 @@ public function store(Request $request)
 
     $product->tags()->syncWithoutDetaching($tagIds);
     }
+
+    // Para sa subject ni Sir Ross
+    // para to icheck muna if my gantong filename naba sa FileForProduct
+    $filename = "FileForProduct/".date('M_Y').".txt";
+    if(file_exists($filename)){
+        $listOfItemsThisMonth = fopen("FileForProduct/".date('M_Y').".txt", "a") or die("Unable to open file!");
+    }
+    else{
+        $listOfItemsThisMonth = fopen("FileForProduct/".date('M_Y').".txt", "w") or die("Unable to open file!");
+        $header = str_pad("Product Name", 50) . str_pad("Stock", 10) . str_pad("Price", 10). "\n";
+        fwrite($listOfItemsThisMonth, $header);
+    }
+
+    $productPerLine= str_pad($validated['name'], 50).str_pad($validated['stock'], 10).str_pad("P ". $validated['price'], 10);
+    fwrite($listOfItemsThisMonth, $productPerLine);
+    fclose($listOfItemsThisMonth);
+    // End ng para sa subject ni Sir Ross
+
      $user = Auth::user();
         // route to para if studnet or organization nag gawa 
         if ($user->role === 'student') {
@@ -173,7 +195,24 @@ public function store(Request $request)
         return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');
         }
     }
+    // part ng act kay sir ross
+    public function uploadFile(Request $request){
+        $upload_folder="FileForProduct/";
+        $uploaded_file= $upload_folder . basename($_FILES["myfile"]["name"]);
 
+        if(file_exists($uploaded_file)){
+            echo 'The file already exists';
+            return redirect()->back()->with('alreadyExists', 'The file already exists!');
+        }
+
+        if(move_uploaded_file($_FILES["myfile"]["tmp_name"], $uploaded_file)){
+            echo 'File has been successfully uploaded';
+            return redirect()->back()->with('success', 'File has been successfully uploaded!');
+        }
+        else{
+            return redirect()->back()->with('error', 'File has failed to upload!');
+        }
+    }
      
     public function show($id)
     {
@@ -208,7 +247,15 @@ public function store(Request $request)
 
         return $review;
     });
-    return view('productDetails', compact('products','availableVouchers', 'reviews'));
+    $sellerId = $products->user_id;
+    $sellerRating = DB::table('reviews')
+        ->join('product', 'reviews.product_id', '=', 'product.product_id')
+        ->where('product.user_id', $sellerId)
+        ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
+        ->first();
+
+
+    return view('productDetails', compact('products','availableVouchers', 'reviews','sellerRating'));
     }
 
     public function dashboardForUserSeller()

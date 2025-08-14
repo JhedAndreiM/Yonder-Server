@@ -230,7 +230,7 @@ class CartController extends Controller
         $query = DB::table('cart_items')
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users', 'cart_items.seller_id', '=', 'users.id')
-            ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->leftJoin('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
             ->where('cart_items.user_id', $userId)
             ->select(
                 'cart_items.id as cart_id',
@@ -258,14 +258,18 @@ class CartController extends Controller
         foreach ($items as $item) {
         $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
         }
-        // $querySeller = DB::table('cart_items')
-        // ->join('users', 'cart_items.seller_id', '=', 'users.id')
-        // ->where('cart_items.')
+        $sellerId = Auth::id();
+        $sellerRating = DB::table('reviews')
+            ->join('product', 'reviews.product_id', '=', 'product.product_id')
+            ->where('product.user_id', $sellerId)
+            ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
+            ->first();
         // bali need to if ajax yung tatawag kasi if hindi mo to nilagay, ididsplay niya buong page imbis na cards(nakuha sa query)
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items', 'filters'))->render();
+            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating'))->render();
         }
-        return view('profile', compact('items', 'filters'));
+
+        return view('profile', compact('items', 'filters', 'sellerRating'));
     }
 
     public function cancel(Request $request, $id)

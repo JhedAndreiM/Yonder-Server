@@ -22,3 +22,22 @@ form.addEventListener('submit', function(event) {
     updateFilters(); // Update filters just before submitting the form
     form.submit(); // Manually trigger the form submission
 });
+
+// for tabs
+document.getElementById("tabBtnDetails").addEventListener("click", function(){
+    console.log("clicked one");
+    document.getElementById("tab-details").classList.add("active-tab-content");
+    document.getElementById("tab-other").classList.remove("active-tab-content");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnOther").classList.remove("active-tab");
+});
+
+document.getElementById("tabBtnOther").addEventListener("click", function(){
+    console.log("clicked two");
+    document.getElementById("tab-other").classList.add("active-tab-content");
+    document.getElementById("tab-details").classList.remove("active-tab-content");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnDetails").classList.remove("active-tab");
+});

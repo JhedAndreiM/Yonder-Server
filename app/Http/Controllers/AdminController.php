@@ -47,10 +47,80 @@ class AdminController extends Controller
             'users.last_name as reporter_last_name'
         )
         ->get();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports'));
+
+        $productPolicies = DB::table('product_policies')->get();
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies'));
     }
 
-    
+    public function productPolicy(Request $request){
+        $validated=$request->validate([
+            'descriptionAllowed' => 'required|string|min:5',
+            'descriptionProhibited' => 'required|string|min:5'
+        ],[
+            'descriptionAllowed.required' => '"Allowed" Listing is required',
+            'descriptionAllowed.min' => '"Allowed" Listing  must be at least :min characters',
+            'descriptionProhibited.required' => '"Prohibited" Listing is required',
+            'descriptionAllowed.min' => '"Prohibited" Listing  must be at least :min characters',
+        ]);
+
+        DB::table('product_policies')->updateOrInsert(
+            ['type' => 'allowed'],
+            [
+                'content' => $validated['descriptionAllowed'],
+                'updated_at'=> now()
+            ]
+        );
+
+        DB::table('product_policies')->updateOrInsert(
+            ['type' => 'prohibited'],
+            [
+                'content' => $validated['descriptionProhibited'],
+                'updated_at'=> now()
+            ]
+        );
+
+        // $post_data=array(
+        //     'sub_account'=>'32064_yonder',
+        //     'sub_account_pass'=>'jhed200414563',
+        //     'action'=>'send_sms',
+        //     'sender_id'=>'3361',
+        //     'recipients'=>'639484386078,',
+        //     'message'=>"Your Buy Order has been confirmed by the seller!."
+        // );
+        // $api_url='https://cheapglobalsms.com/api_v1/';
+
+        // $ch = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $api_url);
+        // curl_setopt($ch, CURLOPT_POST, true);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        // $response = curl_exec($ch);
+        // $response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // if($response_code != 200)$response=curl_error($ch);
+        // curl_close($ch);
+
+        // if($response_code != 200)$msg="HTTP ERROR $response_code: $response";
+        // else
+        // {
+        //     $json=@json_decode($response,true);
+            
+        //     if($json===null)$msg="INVALID RESPONSE: $response"; 
+        //     elseif(!empty($json['error']))$msg=$json['error'];
+        //     else
+        //     {
+        //         $msg="SMS sent to ".$json['total']." recipient(s).";
+        //         $sms_batch_id=$json['batch_id'];
+        //     }
+        // }
+        
+        // dd($msg);
+        return redirect()->back()->with('success', 'Product policies updated successfully!');
+
+    }
     public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);

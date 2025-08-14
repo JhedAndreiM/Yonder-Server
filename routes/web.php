@@ -18,6 +18,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CustomMessageController;
 use App\Http\Controllers\FeaturedImageController;
+use App\Http\Controllers\PDFController;
+
 
 
 
@@ -50,7 +52,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
     Route::get('/Reviews', [OrganizationController::class, 'reviews'])->name('review.page');
     Route::get('/Orders', [OrganizationController::class, 'orggetAllNotCartItems'])->name('order.page');
     Route::get('/chart', [OrganizationController::class, 'showChart'])->name('org.report');
-
+    Route::get('/ListOfProduct', function () {
+        return view('viewListedItems');})->name('viewListedItems.page');
+    Route::POST('/generate-pdf', [PDFController::class, 'generate'])->name('generate.pdf');
 });
 
 // Middleware for Admin
@@ -59,6 +63,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
+    Route::post('/admin/product-policy/', [AdminController::class, 'productPolicy'])->name('admin.productPolicy');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
     Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');
@@ -99,6 +104,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
     // for products page
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::post('/product-fileupload', [ProductController::class, 'uploadFile'])->name('products.sirRoss');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 

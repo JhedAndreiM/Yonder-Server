@@ -148,34 +148,42 @@ class OrganizationController extends Controller
             }, 0);
 
         // Get total wishlist items
-        $totalWishlistItems = DB::table('wishlists')
-            ->join('product', 'wishlists.product_id', '=', 'product.product_id')
-            ->where('product.user_id',  Auth::id())
-            ->select('wishlists.*')
-            ->count();
+        $wishlistCounts=DB::table('product')
+        ->leftJoin('wishlists', 'product.product_id', '=', 'wishlists.product_id')
+        ->where('product.user_id', Auth::id())
+        ->select(
+            'product.product_id',
+            'product.name',
+            DB::raw('COUNT(wishlists.product_id) as wishlist_count')
+        )
+        ->groupBy('product.product_id', 'product.name')
+        ->orderByDesc('wishlist_count')
+        ->get();
+        $mostWishlisted = $wishlistCounts->first();
 
         // Get stocks with less than 10
         $lowStockProducts = DB::table('product')
             ->where('user_id', Auth::id())
             ->where('stock', '<', 10)
             ->where('approved', 'yes')
+            ->orderBy('stock', 'asc')
             ->get();
-        $lowStockCount = $lowStockProducts->count();
+        $lowStockFirst = $lowStockProducts->first();
 
         // Get top seller products
-        $topSellerProduct = DB::table('cart_items')
-    ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-    ->where('cart_items.seller_id', Auth::id())
-    ->where('cart_items.status', 'completed')
-    ->select(
-        'product.name as product_name',
-        DB::raw('SUM(cart_items.quantity) as total_quantity')
-    )
-    ->groupBy('product.product_id', 'product.name')
-    ->orderByDesc('total_quantity')
-    ->limit(5)
-    ->first();
-
+        $salesData = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        ->where('cart_items.seller_id', Auth::id())
+        ->where('cart_items.status', 'completed')
+        ->select(
+            'product.product_id',
+            'product.name as product_name',
+            DB::raw('SUM(cart_items.quantity) as total_quantity')
+        )
+        ->groupBy('product.product_id', 'product.name')
+        ->orderByDesc('total_quantity')
+        ->get();
+        $topSellerProduct = $salesData->first();
 
 
     // for recent 
@@ -206,7 +214,7 @@ class OrganizationController extends Controller
             )
             ->orderBy('cart_items.updated_at', 'desc');
             $cartData = $query->get();
-            return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'totalWishlistItems', 'lowStockCount', 'topSellerProduct', 'cartData'));
+            return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'wishlistCounts', 'mostWishlisted', 'lowStockProducts','lowStockFirst', 'topSellerProduct','salesData', 'cartData'));
     }
 
     public function orggetAllNotCartItems(Request $request){
@@ -231,7 +239,7 @@ class OrganizationController extends Controller
                 'product.image_path',
                 'product.description',
                 'cart_items.voucher_applied',
-                'users.name as seller_name',
+                'users.name as buyer_name',
                 'buyers.id as buyer_id'
             );
         if ($filters == "all" || $filters == null) {

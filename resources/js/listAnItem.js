@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-  // custom tag entry
   tagInputEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -229,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // init empty
   renderTags();
 });
 
@@ -247,6 +245,40 @@ supplierButtons.forEach((button) => {
     }
        hiddenInput.value = button.dataset.type;
   });
+});
+
+const tradeOrSellBtn = document.querySelectorAll('.filter-btn');
+const tradeOrSellInput = document.getElementById('tradeOrSell');
+
+tradeOrSellBtn.forEach(button => {
+  button.addEventListener("click", () => {
+    tradeOrSellBtn.forEach(btn => btn.classList.remove('active'));
+
+    tradeOrSellInput.value = button.dataset.filter;
+  });
+});
+
+const productQualityBtn = document.querySelectorAll('.filter-btn-quality');
+const productQualityInput = document.getElementById('productQuality');
+
+productQualityBtn.forEach(button => {
+  button.addEventListener("click", () => {
+    productQualityBtn.forEach(btn => btn.classList.remove('active'));
+
+    productQualityInput.value = button.dataset.filter;
+  })
+})
+
+
+document.querySelectorAll('.filter-btn').forEach(button=>{
+  button.addEventListener("click", ()=>{
+    button.classList.toggle("active");
+  })
+});
+document.querySelectorAll('.filter-btn-quality').forEach(button=>{
+  button.addEventListener("click", ()=>{
+    button.classList.toggle("active");
+  })
 });
 
 // collegeButtons.forEach((button) => {
@@ -286,4 +318,28 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   syncColleges();
+});
+
+
+// for tabs
+document.getElementById("tabBtnDetails").addEventListener("click", function(){
+    console.log("clicked one");
+    document.getElementById("tab-details").classList.add("active-tab-content");
+    document.getElementById("tabBtnDetails").classList.add("active-button");
+    document.getElementById("tab-other").classList.remove("active-tab-content");
+    document.getElementById("tabBtnOther").classList.remove("active-button");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnOther").classList.remove("active-tab");
+});
+
+document.getElementById("tabBtnOther").addEventListener("click", function(){
+    console.log("clicked two");
+    document.getElementById("tab-other").classList.add("active-tab-content");
+    document.getElementById("tabBtnOther").classList.add("active-button");
+    document.getElementById("tab-details").classList.remove("active-tab-content");
+    document.getElementById("tabBtnDetails").classList.remove("active-button");
+
+    this.classList.add("active-tab");
+    document.getElementById("tabBtnDetails").classList.remove("active-tab");
 });

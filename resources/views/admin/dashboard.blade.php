@@ -14,11 +14,16 @@
             background-position: top center;
         }
     </style>
+    <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 @endsection
 
 @section('maincontent')
 <div class="container">
-    <div class="upload-container">
+    <div class="upload-container">  
         <!-- Featured Image Upload Section -->
         <div class="upload-section">
             <h2>Upload Featured Images</h2>
@@ -73,7 +78,33 @@
                 <button type="submit" class="btn">Upload Excel</button>
             </form>
         </div>
-<!-- Product Upload Approval -->
+
+
+        <!-- FOR PRODUCT POLICY -->
+         <form id="policyForm" action="{{ route('admin.productPolicy') }}" method="POST">
+            @csrf
+            <div class="productPolicy">
+                <div class="section">
+                    <h5>Allowed Listing</h5>
+                    <div id="editor" style="height: 300px;"></div>
+                    <input type="hidden" name="descriptionAllowed" id="descriptionAllowed">
+                    
+                    </div>
+                    <div class="section">
+                    <h5>Prohibited</h5>
+                    <div id="editorProhibited" style="height: 300px;"></div>
+                    <input type="hidden" name="descriptionProhibited" id="descriptionProhibited">
+                    
+                    <button type="submit">Submit</button>
+                    <button type="button">Cancel</button>
+                </div>
+            </div>
+         </form>
+        
+
+
+
+        <!-- Product Upload Approval -->
         <div class="approval-product">
             <div class="section-two">
                 <h2>Unapproved Products</h2>
@@ -239,11 +270,12 @@
                 <button type="button" onclick="hideRejectModal()">Cancel</button>
             </form>
         </div>
+        
     </div>
 </div>
 
-
-<form method="POST" action="{{ route('admin.disableButtons') }}">
+<div class="disableStudOrgMarketplace">
+    <form method="POST" action="{{ route('admin.disableButtons') }}">
     @csrf
     <label>
         <input type="checkbox" name="show_student_org" {{ \App\Models\disableButtons::getValue('show_student_org') ? 'checked' : '' }}>
@@ -255,6 +287,8 @@
     </label>
     <button type="submit">Save Settings</button>
 </form>
+</div>
+
 
     <script>
         function openModal(productId) {
@@ -388,6 +422,43 @@
                 alert('Something went wrong while deleting the product.');
             }
         });
+    }
+
+    // FOR PRODUCT POLICY
+    const toolbarOptions = [
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }],
+    [{ 'list': 'bullet' }],
+    ['clean']
+    ];
+
+    // Hidden inputs
+    const hiddenFieldAllowed = document.getElementById('descriptionAllowed');
+    const hiddenFieldProhibited = document.getElementById('descriptionProhibited');
+    // separating 'yung contents
+    const productPolicies = @json($productPolicies);
+    let productPolicyAllowedContent = productPolicies.find(p => p.type === 'allowed')?.content || '';
+    let productPolicyProhibitedContent = productPolicies.find(p => p.type === 'prohibited')?.content || '';
+    // Init Quill editors
+    const quillAllowed = new Quill('#editor', {
+    modules: { toolbar: toolbarOptions },
+    theme: 'snow'
+    });
+    quillAllowed.clipboard.dangerouslyPasteHTML(productPolicyAllowedContent);
+
+    const quillProhibited = new Quill('#editorProhibited', {
+    modules: { toolbar: toolbarOptions },
+    theme: 'snow'
+    });
+    quillProhibited.clipboard.dangerouslyPasteHTML(productPolicyProhibitedContent);
+    // Copy Quill HTML into hidden fields before submit
+    const form = document.getElementById('policyForm');
+    if (form) {
+    form.addEventListener('submit', function () {
+        hiddenFieldAllowed.value = quillAllowed.root.innerHTML;
+        hiddenFieldProhibited.value = quillProhibited.root.innerHTML;
+    });
     }
     </script>
 @endsection

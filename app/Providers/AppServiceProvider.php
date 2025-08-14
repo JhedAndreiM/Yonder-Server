@@ -76,5 +76,9 @@ class AppServiceProvider extends ServiceProvider
         $view->with('globalRatings', $globalRatings);
     });
 
+    
+    View::composer('*', function ($view) {
+    $view->with('productPolicies', DB::table('product_policies')->get());
+    });
     }
 }

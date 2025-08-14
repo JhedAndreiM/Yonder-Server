@@ -10,11 +10,8 @@ const elements = {
     qtyDisplay: document.getElementById("qtyDisplay"),
     qtyPlus: document.getElementById("qtyPlus"),
     qtyMinus: document.getElementById("qtyMinus"),
-    addToCartBtn: document.getElementById("addToCart"),
-    buyNowBtn: document.getElementById("buyNow"),
     mainStockDisplay: document.getElementById("mainStockDisplay"),
     variantStock: document.getElementById("variantStock"),
-    
     // Modal elements
     orderModal: document.getElementById("orderModal"),
     orderForm: document.getElementById("orderForm"),
@@ -43,12 +40,16 @@ const elements = {
 };
 
 // Initialize the page
+const paymentSelect = document.getElementById("payment");
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("paymentType").value = document.getElementById("payment").value;
-    // Payment Type
-    document.getElementById("payment").addEventListener("change", function () {
+    if (paymentSelect && paymentSelect.value) {
+        document.getElementById("paymentType").value = paymentSelect.value;
+        // Payment Type
+        document.getElementById("payment").addEventListener("change", function () {
         document.getElementById("paymentType").value = this.value;
     });
+    }
+
     initializeVariants();
     initializeEventListeners();
     initSeeMore();
@@ -155,21 +156,25 @@ function updateMainPageStock() {
 // Initialize all event listeners
 function initializeEventListeners() {
     // Main page quantity controls
-    elements.qtyPlus.addEventListener("click", () => {
+    if(elements.qtyPlus){
+            elements.qtyPlus.addEventListener("click", () => {
         let current = parseInt(elements.qtyDisplay.value) || 1;
         if (current < currentStock) {
             elements.qtyDisplay.value = current + 1;
         }
     });
-
-    elements.qtyMinus.addEventListener("click", () => {
+    }
+    if(elements.qtyMinus){
+            elements.qtyMinus.addEventListener("click", () => {
         let current = parseInt(elements.qtyDisplay.value) || 1;
         if (current > 1) {
             elements.qtyDisplay.value = current - 1;
         }
     });
+    }
 
-    elements.qtyDisplay.addEventListener("input", () => {
+    if(elements.qtyDisplay){
+            elements.qtyDisplay.addEventListener("input", () => {
         let val = parseInt(elements.qtyDisplay.value);
         if (isNaN(val) || val < 1) {
             val = 1;
@@ -178,10 +183,19 @@ function initializeEventListeners() {
         }
         elements.qtyDisplay.value = val;
     });
+    }
+
+
+    const addToCartBtn = document.getElementById("addToCart");
+    const buyNowBtn = document.getElementById("buyNow");
 
     // Modal triggers
-    elements.addToCartBtn.addEventListener("click", () => openModal('in_cart'));
-    elements.buyNowBtn.addEventListener("click", () => openModal('buy_now'));
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener("click", () => openModal('in_cart'));
+    }
+    if (buyNowBtn) {
+        buyNowBtn.addEventListener("click", () => openModal('buy_now'));
+    }
 
     // Modal controls
     if (elements.modalQtyPlus) {
@@ -252,14 +266,17 @@ function initializeEventListeners() {
         elements.orderForm.addEventListener("submit", handleFormSubmission);
     }
 
-    // Reviews popup
-    if (elements.seeReviews) {
-        elements.seeReviews.addEventListener("click", (e) => {
-            e.preventDefault();
-            elements.popup.classList.add("show");
-            setTimeout(initSeeMore, 100);
-        });
-    }
+// Reviews popup
+const reviewLinks = document.querySelectorAll(".seeReviews");
+
+reviewLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+        console.log('clicked');
+        e.preventDefault();
+        elements.popup.classList.add("show");
+        setTimeout(initSeeMore, 100);
+    });
+});
 
     if (elements.closeBtn) {
         elements.closeBtn.addEventListener("click", () => {
@@ -445,4 +462,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show the first image initially
     showImage(currentIndex);
+    // link to papunta sa chat ni seller
+
   });
+
+

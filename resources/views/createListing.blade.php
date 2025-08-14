@@ -98,9 +98,19 @@
   <!-- nav bar -->
   <form id="createListingForm" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    <h1 class="topText">List an Item</h1>
+    <div class="tab-buttons">
+      <button class="listAnItemBtn active-button" id="tabBtnDetails" type="button">
+          <h1 class="topText">List an Item</h1>
+      </button>
 
-    <div class="mainContainer">
+       <div class="button-divider"></div>
+
+      <button class="ProductPolicyBtn" id="tabBtnOther" type="button">
+          <h1 class="topText">Posting Policies</h1>
+      </button>
+    </div>
+
+    <div id="tab-details" class="mainContainer tab-content active-tab-content">
       @if(auth()->user()->role === 'organization')
       <div class="section" id="supplierType">
         <h5>Supplier Type</h5>
@@ -203,6 +213,30 @@
           <input type="hidden" name="variants_json" id="variants_json" value="">
         </div>
 
+      <div class="section" id="TradeOrSell">
+        <h5>Is this Item for Trade or for Sell?</h5>
+        <div class="Trade-SellButtons">
+            <button type="button" class="filter-btn button active" name="forSaleTrade"data-filter="sale"
+              data-filter-type="forSaleTrade">Sale</button>
+            <button type="button" class="filter-btn button" name="forSaleTrade"data-filter="trade"
+              data-filter-type="forSaleTrade">Trade</button>
+              <input type="hidden" name="tradeOrSell" id="tradeOrSell" value="sale">
+          </div>
+      </div>
+
+      <div class="section" id="qualityOfProduct">
+        <h5>Quality of the Product</h5>
+        <div class="Trade-SellButtons">
+            <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
+              data-filter-type="forSaleTrade">New</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="like-new"
+              data-filter-type="forSaleTrade">Like-new</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="used"
+              data-filter-type="forSaleTrade">Used</button>
+              <input type="hidden" name="productQuality" id="productQuality" value="new">
+          </div>
+      </div>
+      
       <div class="section" id="collegeSection">
         <h5>What college(s) is this item for?</h5>
         <div class="college-buttons">
@@ -229,27 +263,27 @@
           @endforeach
         </div>
         <details class="user-tags-dropdown">
-    <summary class="summaryDropdown">
-      User Tags <span style="font-size: 14px; color: #555;">(click to expand)</span>
-    </summary>
+        <summary class="summaryDropdown">
+          User Tags <span style="font-size: 14px; color: #555;">(click to expand)</span>
+        </summary>
 
-    <div class="user-tags-list">
-      @foreach($tags->where('is_admin', false)->sortByDesc('usage_count') as $tag)
-        <button
-          type="button"
-          class="button tag-btn"
-          data-id="{{ $tag->id }}"
-          data-name="{{ $tag->name }}"
-        >
-          {{ $tag->name }} ({{ $tag->usage_count }})
-        </button>
-      @endforeach
-    </div>
-    </details>
-        <input type="text" id="tagInput" placeholder="+ add a tag" />
-        <div class="tagsButton" id="tagsContainer"></div>
-        <input type="text" name="tags_json" id="tags_json" value="[]">
-        
+        <div class="user-tags-list">
+          @foreach($tags->where('is_admin', false)->sortByDesc('usage_count') as $tag)
+            <button
+              type="button"
+              class="button tag-btn"
+              data-id="{{ $tag->id }}"
+              data-name="{{ $tag->name }}"
+            >
+              {{ $tag->name }} ({{ $tag->usage_count }})
+            </button>
+          @endforeach
+        </div>
+        </details>
+            <input type="text" id="tagInput" placeholder="+ add a tag" />
+            <div class="tagsButton" id="tagsContainer"></div>
+            <input type="hidden" name="tags_json" id="tags_json" value="[]">
+            
   
       </div>
 
@@ -257,9 +291,25 @@
         <button class="button cancel-btn">Cancel</button>
         <button class="button confirm-btn">Confirm</button>
       </div>
-  </form>
+    </div>
+    </div>
+    </form>
   <!-- END OF MAIN -->
-  </div>
+  @php
+    $allowedPolicy = $productPolicies->firstWhere('type', 'allowed');
+    $prohibitedPolicy = $productPolicies->firstWhere('type', 'prohibited');
+  @endphp
+     <div id="tab-other" class="mainContainer tab-content">
+      <div class="policyContainer">
+        <div class="policyContainer-left">
+          <!-- bali pag nisasave sa DB nagiging ol siya so nicoconvert natin to ul ulit -->
+          {!! str_replace(['<ol>', '</ol>'], ['<ul>', '</ul>'], $allowedPolicy->content) !!}
+        </div>
+        <div class="policyContainer-right">
+          {!! str_replace(['<ol>', '</ol>'], ['<ul>', '</ul>'], $prohibitedPolicy->content) !!}
+        </div>
+      </div>
+    </div>
   
   <script>
     const toolbarOptions = [

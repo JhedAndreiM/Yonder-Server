@@ -93,7 +93,17 @@
           <input id="min"class="input-min priceInput" type="number" placeholder="Min" min="0" data-filter-type="condition">
           <input id="max"class="input-max priceInput" type="number" placeholder="Max" min="0" data-filter-type="condition">
         </div>
+        @if($activeTopFilter==='marketplace')
+        <h3>For</h3>
+        <button class="filter-btn" data-filter="sale" data-filter-type="condition">Sale</button>
+        <button class="filter-btn" data-filter="trade" data-filter-type="condition">Trade</button>
+        <h3>Product Quality</h3>
+        <button class="filter-btn" data-filter="new" data-filter-type="condition">New</button>
+        <button class="filter-btn" data-filter="like-new" data-filter-type="condition">Like-new</button>
+        <button class="filter-btn" data-filter="used" data-filter-type="condition">Used</button>
+        @endif
         @if($activeTopFilter==='featured' || $activeTopFilter==='marketplace')
+        @if($colleges)
         <h3>Colleges</h3>
         <div class="filterBtn">
           @foreach($colleges as $college)
@@ -101,7 +111,10 @@
           @endforeach
         </div>
         @endif
+        @endif
+
         @if($activeTopFilter==='student-org')
+        @if($student_orgs)
         <h3>Student Organization</h3>
         <div class="filterBtn">
           @foreach($student_orgs as $student_org)
@@ -109,22 +122,26 @@
           @endforeach
         </div>
         @endif
+        @endif
       </div>
       <div class="content">
         <div class="textContent">
           
 
       <div class="left">
+        <form class="buttonForm" action="" method="GET" id="filterForm">
           <button 
               class="mainFilterButtons {{ $activeTopFilter === 'featured' ? 'current' : 'notCurrent' }}" 
-              data-category="featured">
+              data-category="featured"
+              onclick="setFilter('featured')">
               Featured Items
           </button>
 
           @if (\App\Models\disableButtons::getValue('show_student_org'))
               <button 
                   class="mainFilterButtons {{ $activeTopFilter === 'student-org' ? 'current' : 'notCurrent' }}" 
-                  data-category="student-org">
+                  data-category="student-org"
+                  onclick="setFilter('student-org')">
                   Student Organization
               </button>
           @endif
@@ -132,10 +149,12 @@
           @if (\App\Models\disableButtons::getValue('show_marketplace'))
               <button 
                   class="mainFilterButtons {{ $activeTopFilter === 'marketplace' ? 'current' : 'notCurrent' }}" 
-                  data-category="marketplace">
+                  data-category="marketplace"
+                  onclick="setFilter('marketplace')">
                   Marketplace
               </button>
           @endif
+        </form>
       </div>
           <div class="right">
             <div id="sort-dropdown" class="sort-dropdown">
@@ -193,14 +212,14 @@
             })
         });
 
-        document.querySelectorAll('.mainFilterButtons').forEach(button => {
-        button.addEventListener('click', () => {
-            setTimeout(() => {
-                window.location.reload();
-            }, 0.1); 
-        });
-    });
-    
+    //     document.querySelectorAll('.mainFilterButtons').forEach(button => {
+    //     button.addEventListener('click', () => {
+    //         setTimeout(() => {
+    //             window.location.reload();
+    //         }, 0.1); 
+    //     });
+    // });
+
     document.querySelectorAll('.wishlist-icon').forEach(function (icon) {
     icon.addEventListener('click', function (event) {
       event.stopPropagation(); 
