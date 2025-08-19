@@ -36,6 +36,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
     Route::get('/wishlist-Show', [WishlistController::class, 'showWishlist'])->name('show.wishlist');
     Route::get('/student/profile', [CartController::class, 'getAllNotCartItems'])->name('student.profile');
     Route::get('/student/Sales', [CartController::class, 'getAllSales'])->name('student.sales');
+    Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
+    Route::post('/products/saveGcashReceipt/{id}', [CartController::class, 'saveGcashReceipt'])->name('gcash.receipt');
+    Route::post('/products/RemoveGcashReceipt/{id}', [CartController::class, 'removeGcashReceipt'])->name('gcash.receiptRemove');
     Route::post('/products/updateSeller', [CartController::class, 'updateSeller'])->name('products.updateSeller');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
@@ -140,10 +143,10 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
    //confirm ni student seller
    Route::post('/cart/{id}/Update Sales', [CartController::class, 'confirmStudentSales'])->name('cart.confirmSales');
+   Route::post('/cart/{id}/Update Status', [CartController::class, 'confirmGcashPayment'])->name('cart.confirmPayment');
 
    // confirm ni buyer yung order
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');
-   Route::get('/Listings', [ProductController::class, 'dashboardForUserSeller'])->name('listing.seller');
    Route::post('/delete', [ProductController::class, 'destroyListing'])->name('delete.listing');
     // para to sa reviews
     Route::post('/submit-review', [ReviewController::class, 'store'])->name('review.store');

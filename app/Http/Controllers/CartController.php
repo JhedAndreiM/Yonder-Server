@@ -242,6 +242,8 @@ class CartController extends Controller
                 'cart_items.unit_price',
                 'cart_items.product_id',
                 'cart_items.updated_at',
+                'cart_items.paymentConfirmation',
+                'cart_items.gcash_receipt',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
@@ -271,6 +273,36 @@ class CartController extends Controller
 
         return view('profile', compact('items', 'filters', 'sellerRating'));
     }
+
+    public function saveGcashReceipt(Request $request, $id){
+        $request->validate([
+            'gcash_receipt' => 'required|image|mimes:jpeg,png,jpg'
+        ]);
+        $image = $request->file('gcash_receipt');
+        $filename = time() . '_' . $image->getClientOriginalName();
+        $image->move(public_path('gcash_receipts'), $filename);
+
+        DB::table('cart_items')
+        ->where('id', $id)
+        ->update([
+            'gcash_receipt' => basename($filename),
+            'updated_at' => now()
+        ]);
+        return redirect()
+            ->route('student.profile', ['filters' => 'pending']) 
+            ->with('successfull', 'GCash receipt uploaded successfully.');
+        }
+    public function removeGcashReceipt(Request $request, $id){
+        DB::table('cart_items')
+        ->where('id', $id)
+        ->update([
+            'gcash_receipt' => null,
+            'updated_at' => now()
+        ]);
+        return redirect()
+            ->route('student.profile', ['filters' => 'pending']) // or whatever value you want
+            ->with('successfull', 'GCash receipt Removed successfully.');
+        }
 
     public function cancel(Request $request, $id)
     {
@@ -445,11 +477,11 @@ public function confirmStudentSales(Request $request, $id)
             // ]);
         }
 
-        // Update cart item to 'receive'
+        // Update cart item
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
-                'status' => 'receive',
+                'paymentConfirmation' => 'yes',
                 'updated_at' => now()
             ]);
 
@@ -469,7 +501,26 @@ public function confirmStudentSales(Request $request, $id)
         return back()->with('error', 'An error occurred while processing the order.');
     }
 }
-
+    public function confirmGcashPayment(Request $request, $id){
+        DB::table('cart_items')
+        ->where('id', $id)
+        ->update([
+            'status' => 'receive',
+            'updated_at' => now()
+        ]);
+        if(Auth::user()->role=== 'student'){
+            return redirect()
+            ->route('student.sales', ['filters' => 'pending']) 
+            ->with('successfull', 'Order now up for delivery');
+        }
+        elseif(Auth::user()->role=== 'organization'){
+            return redirect()
+            ->route('order.page', ['filters' => 'pending']) 
+            ->with('successfull', 'Order now up for delivery');
+        }
+        
+    }    
+    
 
 
 

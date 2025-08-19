@@ -24,7 +24,7 @@
     <!-- nav bar -->
 
     <div class="navBar">
-      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+      <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
 
       <div class="navBarRight">
         <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
@@ -194,7 +194,7 @@
                 </div>
                 <div class="middle-success">
                     <h1>Success!</h1>
-                    <h5>Review Successfully Recorded!</h5>
+                    <h5>{{session('successfull')}}</h5>
                 </div>
                 <div class="bottom-success">
                     <button class="button" onclick="closeSuccessModal()">Okay!</button>
@@ -323,6 +323,9 @@
       notifDropdown.style.display = "none";
     });
     }
+    document.getElementById('logoClick').addEventListener('click', function() {
+    window.location.href = "{{ route('student.dashboard') }}";
+    });
     // Optional: Close dropdowns if clicked outside
     window.addEventListener("click", function (e) {
       if (!e.target.closest(".dropdown-container")) {
@@ -500,6 +503,81 @@ function screenshot() {
     });
 }
 // end
+
+// for the upload receipt
+document.addEventListener('DOMContentLoaded', function() {
+    // Event delegation for dynamically loaded elements
+    document.body.addEventListener('change', function(e) {
+      console.log('hello');
+        if (e.target && e.target.id === 'receiptInput') {
+            const file = e.target.files[0];
+            if (file) {
+                console.log("File selected:", file);
+                const receiptModal = document.getElementById('gcashReceiptModal');
+                const receiptPreview = document.getElementById('receiptPreview');
+                
+                if (receiptModal && receiptPreview) {
+                    // Show the modal
+                    receiptModal.style.display = "flex";
+                    // Preview the image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        receiptPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    });
+
+    // Similarly for other events
+    document.body.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'cancelReceipt') {
+            const receiptModal = document.getElementById('gcashReceiptModal');
+            const receiptInput = document.getElementById('receiptInput');
+            if (receiptModal && receiptInput) {
+                receiptModal.style.display = "none";
+                receiptInput.value = "";
+            }
+        }
+        
+        if (e.target && e.target.id === 'submitReceipt') {
+            const form = document.querySelector('.uploadGcashReceipt');
+            if (form) form.submit();
+        }
+    });
+
+    // for pop up ng view image button
+    document.body.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('viewReceiptBtn')) {
+            const imageUrl = e.target.getAttribute('data-image');
+            const modalView = document.getElementById('gcashReceiptModalView');
+            const receiptView = document.getElementById('receiptView');
+            
+            if (modalView && receiptView) {
+                receiptView.src = imageUrl;
+                modalView.style.display = 'flex';
+            }
+        }
+
+        // Close View Image modal
+        if (e.target && e.target.id === 'closeReceiptView') {
+            const modalView = document.getElementById('gcashReceiptModalView');
+            if (modalView) {
+                modalView.style.display = 'none';
+            }
+        }
+    });
+
+    // for links
+    const myListings = document.querySelectorAll('.myListings');
+    myListings.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('listing.seller') }}";
+        });
+    });    
+});
+//end
 </script>
   </body>
 </html>

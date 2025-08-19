@@ -38,7 +38,7 @@
                     <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><a href="{{ route('org.report') }}">Dashboard</a></div>
                 </div>
             </div>
-            <div class="rightPart">
+            <div class="rightPartContainer">
                 <div class="categories">
                     <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
                     <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
@@ -191,7 +191,7 @@
                 </div>
                 <div class="middle-success">
                     <h1>Success!</h1>
-                    <h5>Review Successfully Recorded!</h5>
+                <h5>{{session('successfull')}}</h5>
                 </div>
                 <div class="bottom-success">
                     <button onclick="closeSuccessModal()">Okay!</button>
@@ -367,5 +367,25 @@
                     });
                 }
             });
+                document.body.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('viewReceiptBtn')) {
+            const imageUrl = e.target.getAttribute('data-image');
+            const modalView = document.getElementById('gcashReceiptModalView');
+            const receiptView = document.getElementById('receiptView');
+            
+            if (modalView && receiptView) {
+                receiptView.src = imageUrl;
+                modalView.style.display = 'flex';
+            }
+        }
+
+        // Close View Image modal
+        if (e.target && e.target.id === 'closeReceiptView') {
+            const modalView = document.getElementById('gcashReceiptModalView');
+            if (modalView) {
+                modalView.style.display = 'none';
+            }
+        }
+    });
         </script>
 @endsection

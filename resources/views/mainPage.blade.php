@@ -130,29 +130,25 @@
 
       <div class="left">
         <form class="buttonForm" action="" method="GET" id="filterForm">
-          <button 
-              class="mainFilterButtons {{ $activeTopFilter === 'featured' ? 'current' : 'notCurrent' }}" 
-              data-category="featured"
-              onclick="setFilter('featured')">
-              Featured Items
-          </button>
-
+            <a 
+                href="{{ route('student.dashboard', ['topFilter' => 'featured']) }}" 
+                class="mainFilterButtons {{ $activeTopFilter === 'featured' ? 'current' : 'notCurrent' }}">
+                Featured Items
+            </a>
           @if (\App\Models\disableButtons::getValue('show_student_org'))
-              <button 
-                  class="mainFilterButtons {{ $activeTopFilter === 'student-org' ? 'current' : 'notCurrent' }}" 
-                  data-category="student-org"
-                  onclick="setFilter('student-org')">
-                  Student Organization
-              </button>
+            <a 
+                href="{{ route('student.dashboard', ['topFilter' => 'student-org']) }}" 
+                class="mainFilterButtons {{ $activeTopFilter === 'student-org' ? 'current' : 'notCurrent' }}">
+                Student Organization
+            </a>
           @endif
 
           @if (\App\Models\disableButtons::getValue('show_marketplace'))
-              <button 
-                  class="mainFilterButtons {{ $activeTopFilter === 'marketplace' ? 'current' : 'notCurrent' }}" 
-                  data-category="marketplace"
-                  onclick="setFilter('marketplace')">
-                  Marketplace
-              </button>
+            <a 
+                href="{{ route('student.dashboard', ['topFilter' => 'marketplace']) }}" 
+                class="mainFilterButtons {{ $activeTopFilter === 'marketplace' ? 'current' : 'notCurrent' }}">
+                Marketplace
+            </a>
           @endif
         </form>
       </div>

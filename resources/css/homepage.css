@@ -149,6 +149,11 @@ input:focus {
   flex-direction: row;
   gap:1rem;
 }
+.buttonForm a{
+  text-decoration: none;
+  color: black;
+  font-size: 20px;
+}
 h2 {
   font-size: 27px;
   color: #ad1f23;
@@ -234,7 +239,7 @@ button.active {
   opacity: 100%;
   font-weight: 500;
   text-shadow:0px 0px 1px black;
-  text-decoration: underline;
+  text-decoration: underline !important;
   text-decoration-color: #ad1f23;
   text-underline-offset: 6px;
 }
@@ -530,4 +535,142 @@ select {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+/* MOBILE RESPONSIVE STYLES */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 100%;
+  }
+  .filter {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    padding-right: 20px;
+  }
+  .content {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0;
+  }
+  .cardContainer,
+  .card-container {
+    justify-content: center;
+    gap: 18px;
+  }
+  .card {
+    width: 90vw;
+    max-width: 350px;
+    height: auto;
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    background-size: auto 100vh;
+    overflow-y: auto;
+  }
+  .navBar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 10px;
+    gap: 10px;
+    width: 98%;
+    margin: 10px auto 20px auto;
+    border-radius: 10px; /* Changed from 100px */
+  }
+  .navBarMiddle {
+    width: 100%;
+    font-size: 18px;
+    min-width: 0;
+  }
+  .searchBarForm {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .navBarRight {
+    gap: 16px;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+  }
+  .profileBtn {
+    width: 40px;
+    height: 40px;
+  }
+  .filter {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    height: auto;
+  }
+  .buttonForm {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .cardContainer,
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .card {
+    width: 98vw;
+    max-width: 98vw;
+    min-width: 0;
+    height: auto;
+  }
+  .banner {
+    height: 120px;
+  }
+  .floating {
+    right: 10px;
+    bottom: 10px;
+    gap: 8px;
+  }
+  .notification-dropdown,
+  .profile-dropdown {
+    width: 95vw !important;
+    min-width: 0;
+    max-width: 98vw;
+    right: 0;
+    left: 0;
+  }
+  .cropper-modal-content {
+    max-width: 98vw;
+    max-height: 98vh;
+    margin: 10px auto;
+    padding: 8px;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  h3 {
+    font-size: 16px;
+  }
+  .priceInput {
+    width: 60px;
+    font-size: 16px;
+    height: 32px;
+  }
+  button,
+  #sort-by {
+    font-size: 16px;
+    padding: 8px 10px;
+    height: 36px;
+  }
+  .sort {
+    font-size: 14px;
+  }
+}
+
+/* Hide scrollbars on mobile for smoother look */
+@media (max-width: 600px) {
+  .content::-webkit-scrollbar {
+    display: none;
+  }
 }

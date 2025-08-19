@@ -197,6 +197,9 @@ input:focus {
   font-size: 1rem;
   font-weight: normal;
 }
+.navBarLeft{
+  cursor: pointer;
+}
 /* END OF NAVBAR */
 
 .left {
@@ -224,6 +227,7 @@ input:focus {
   display: flex;
   gap: 30px;
   align-items: center;
+  cursor: pointer;
 }
 .mySales img{
   width: 20px;
@@ -503,6 +507,160 @@ td.center-align{
 ,.close{
   cursor: pointer;
 }
+.uploadGcashReceipt{
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}
+.uploadGcashReceipt label{
+  opacity: 60%;
+  color: #1d1d1d;
+  margin-left: 10px;
+  font-weight:600;
+}
+
+/* ================= New Pending STYLING ================= */
+#receiptInput[type="file"]{
+  display: none;
+}
+label {
+  display: inline-flex; /* or flex */
+  justify-content: center; /* horizontal center */
+  align-items: center;    /* vertical center */
+  text-transform: uppercase;
+  color: black;
+  background-color: transparent; /* 'none' isn't valid */
+  user-select: none;
+  cursor: pointer;
+  height: 46px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 0px 10px 0px 10px;
+  border-radius: 5px;
+}
+.buttonGroup{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+/* modal receipt */
+.gcashReceiptModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.gcashReceiptModalView {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.gcashReceipt-containerView .closeButton_ViewGcash{
+  background-color:#ad1f23;
+  opacity: 100%;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 10px 25px 10px 25px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Modal container */
+.gcashReceipt-container {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.gcashReceipt-containerView {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Title */
+.gcashReceipt-containerView h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.gcashReceipt-container h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Image preview */
+.gcashReceipt-containerView img {
+  flex: 1;
+  object-fit: contain; 
+  max-width: 100%;
+  max-height: calc(90vh - 140px); 
+  margin: 15px 0;
+  border-radius: 4px;
+}
+.gcashReceipt-container img {
+  flex: 1;
+  object-fit: contain; 
+  max-width: 100%;
+  max-height: calc(90vh - 140px); 
+  margin: 15px 0;
+  border-radius: 4px;
+}
+
+/* Button container */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* Buttons */
+.modal-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#cancelReceipt {
+  background: #f0f0f0;
+  color: #333;
+}
+
+#submitReceipt {
+  background: #4CAF50;
+  color: white;
+}
+/* ================= End New Pending STYLING ================= */
 /* modal */
 .modal-content{
   background-color: white;

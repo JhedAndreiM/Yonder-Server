@@ -5,38 +5,37 @@
 @else
     @foreach ($products as $items)
     @php
-        $images = explode(',', $items->image_path);
-        $firstImage = $images[0];
+        $images = \Illuminate\Support\Facades\DB::table('product_images')
+            ->where('product_id', $items->product_id)
+            ->get();
+        $firstImage = count($images) > 0 ? $images[0]->image_path : 'default.png';
         
     @endphp
-        <div class="card">
-            @if($items->image_path)
-            <div class="placeholder">
-                <img src="{{ asset('images/' . $firstImage) }}" alt="{{ $items->image_path }}">
-            </div>
-                
-            @else
-            <div class="placeholder">
-                <img src="{{ asset('img/default-product.png') }}" alt="No image available">
-            </div>
+          <div class="card">
+            <img src="{{ asset('images/'.$firstImage) }}" alt="Product" class="cardImg" />
+            <div class="info">
+              <div class="price">
+                <p>P {{$items->price}}</p>
+              </div>
+              <p class="productDesc">
+                {{$items->name}}
+              </p>
+            @if($items->approved === 'not')
+                <div class="overlay">
+                    <span>Listing Under Review</span>
+                </div>
             @endif
-            <h3 class="price">P {{$items->price}}</h3>
-            <h4 class="productName">{{$items->name}}</h4>
-            <h4 class="stocks">Stocks: <span>{{$items->stock}}</span></h4>
-            <div class="click">
-                <button class="card-delete" onclick="openModalRemove(this)"
-                data-id="{{ $items->product_id}}"
-                >Remove</button>
-                <button class="card-edit" onclick="openModal(this)"
-                data-bs-toggle="modal"
-                data-bs-target="#myModal"
-                data-name="{{ $items->name }}"
-                data-price="{{ $items->price }}"
-                data-stock="{{ $items->stock }}"
-                data-id="{{ $items->product_id}}"
-                data-fImage="{{ asset('images/' . $firstImage) }}"
-                >edit</button>
+              <div class="editButtons">
+                <div class="editButtons-edit">
+                  <img src="{{asset('img/blueEditLogo.png')}}" alt="Star" />
+                  <p class="ratingScore">Edit</p>
+                </div>
+                <div class="editButtons-delete">
+                  <img src="{{asset('img/redRemoveLogo.png')}}" alt="Star" />
+                  <p class="ratingScore">Delete</p>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
     @endforeach
 @endif

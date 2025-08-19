@@ -107,6 +107,104 @@ input:focus {
     display: flex;
     flex-direction: row;
 }
+/* Card */
+.card {
+  border-radius: 5px;
+  width: 1300px;
+  height: 190px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 0px 20px;
+  margin-bottom: 20px;
+}
+
+.text {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 5px;
+  height: 1rem;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.placeholder img {
+  border-radius: 5px;
+  width: 170px;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.leftPart {
+  height: 156px;
+  gap: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.cardButtons {
+  display: flex;
+  justify-content: center;
+}
+
+.status {
+  color: #0d62ff;
+}
+
+.price {
+  opacity: 100%;
+  font-weight: 500;
+}
+
+.cancelButton {
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 10px 25px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.totalPrice,
+.cardButtons button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0;
+}
+.rightPart{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 1rem;
+  align-items: end;
+}
+.cardButtons button {
+  margin-left: 10px;
+}
+
+.items {
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.items::-webkit-scrollbar {
+  display: none;
+}
+.placeholder img{
+  border-radius: 5px;
+  width: 170px;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
 /* bottom left side */
 
 .left-container{
@@ -173,7 +271,8 @@ hr{
 }
 
 /*========= LEFT PART =============*/
-.rightPart {
+
+.rightPartContainer {
   margin-left: 3%;
   width: 70%;
   display: flex;
@@ -181,7 +280,7 @@ hr{
   overflow-y: auto;
   height: 700px;
 }
-.rightPart::-webkit-scrollbar {
+.rightPartContainer::-webkit-scrollbar {
   display: none;
 }
 .categories {
@@ -233,9 +332,158 @@ a {
   flex-direction: row;
   gap: 1rem;
 }
+/* ================= New Pending STYLING ================= */
+#receiptInput[type="file"]{
+  display: none;
+}
+label {
+  display: inline-flex; /* or flex */
+  justify-content: center; /* horizontal center */
+  align-items: center;    /* vertical center */
+  text-transform: uppercase;
+  color: black;
+  background-color: transparent; /* 'none' isn't valid */
+  user-select: none;
+  cursor: pointer;
+  height: 46px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 0px 10px 0px 10px;
+  border-radius: 5px;
+}
+.buttonGroup{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+/* modal receipt */
+.gcashReceiptModal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.gcashReceiptModalView {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.gcashReceipt-containerView .closeButton_ViewGcash{
+  background-color:#ad1f23;
+  opacity: 100%;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 10px 25px 10px 25px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Modal container */
+.gcashReceipt-container {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.gcashReceipt-containerView {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
+/* Title */
+.gcashReceipt-containerView h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.gcashReceipt-container h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Image preview */
+.gcashReceipt-containerView img {
+  flex: 1;
+  object-fit: contain; 
+  max-width: 100%;
+  max-height: calc(90vh - 140px); 
+  margin: 15px 0;
+  border-radius: 4px;
+}
+.gcashReceipt-container img {
+  flex: 1;
+  object-fit: contain; 
+  max-width: 100%;
+  max-height: calc(90vh - 140px); 
+  margin: 15px 0;
+  border-radius: 4px;
+}
+
+/* Button container */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* Buttons */
+.modal-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#cancelReceipt {
+  background: #f0f0f0;
+  color: #333;
+}
+
+#submitReceipt {
+  background: #4CAF50;
+  color: white;
+}
+/* ================= End New Pending STYLING ================= */
 /*======== CARDS ==========*/
-
+.bottom-success button{
+  border: none;
+  cursor: pointer;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 10px 25px 10px 25px;
+  border-radius: 5px;
+}
 .items {
   min-height: 200px;
   height: auto;
@@ -293,17 +541,6 @@ a {
   
 }
 
-button {
-  width: 150px;
-  height: 50px;
-  background-color: #ffffff;
-  border: #1d1d1d;
-  border-style: solid;
-  border-width: 1px;
-  box-shadow: 0px 2px 0px 0px #1d1d1d;
-  border-radius: 8px;
-  font-size: 20px;
-}
 .sellerName {
   text-decoration: underline;
   font-size: 20px;
@@ -353,11 +590,6 @@ a {
   margin-bottom: 3px;
   color: #494949;
 }
-.price {
-  font-weight: 400;
-  font-size: 18px;
-  color: #494949;
-}
 .voucher {
   font-weight: 400;
   font-size: 18px;
@@ -376,7 +608,6 @@ a {
   height: calc(100% - 70px);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  will-change: transform;
 }
 
 .itemsContainer::-webkit-scrollbar {
@@ -390,7 +621,7 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4); /* This now covers the whole screen */
+  background-color: rgba(0,0,0,0.4);
 }
 
 /* Modal Content/Box */
@@ -608,7 +839,7 @@ textarea {
     .add-listing{
         display: none;
     }
-    .rightPart{
+    .rightPartContainer{
         height: 800px;
     }
 }
@@ -638,7 +869,7 @@ textarea {
     .add-button{
         right: 15%;
     }
-    .rightPart{
+    .rightPartContainer{
         justify-content: center;
         align-items: center;
         height: 700px;
@@ -657,7 +888,7 @@ textarea {
     .container-top{
         display: none;
     }
-    .rightPart{
+    .rightPartContainer{
         height:calc(100vh - 500px);
     }
 }
