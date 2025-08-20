@@ -40,4 +40,8 @@ return [
     'from' => env('TWILIO_PHONE_NUMBER'),
     ],
 
+    'iprogsms' => [
+        'api_url' => env('IPROGSMS_API_URL'),
+        'api_token' => env('IPROGSMS_API_TOKEN'),
+    ],
 ];

@@ -16,7 +16,11 @@ use App\Models\Tag;
 class AdminController extends Controller
 {
     public function dashboard(){
-        $featuredImages = FeaturedImage::latest()->take(5)->get();
+        $featuredImages = DB::table('featured_images')
+        ->orderBy('sort_order')
+        ->limit(5)
+        ->orderBy('created_at', 'desc')
+        ->get();
         $products = Product::where('approved', 'not')->get();
         $notifications = DB::table('notifications')
             ->where('user_id', Auth::id())
@@ -47,7 +51,6 @@ class AdminController extends Controller
             'users.last_name as reporter_last_name'
         )
         ->get();
-
         $productPolicies = DB::table('product_policies')->get();
         return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies'));
     }
@@ -124,8 +127,8 @@ class AdminController extends Controller
     public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $product->approved = 'yes';
-        $product->save();
+        // $product->approved = 'yes';
+        // $product->save();
 
         $tags = Tag::whereHas('products', function ($query) {
             $query->where('approved', 'yes');
@@ -135,7 +138,7 @@ class AdminController extends Controller
             $tag->increment('usage_count');
         }
         Log::info('Parsed tags:', $tags->toArray());
-        return response()->json(['message' => 'Tags received and product approved']);
+
         $user = $product->user_id;
         DB::table('notifications')->insert([
             'user_id' => $user,
@@ -153,7 +156,10 @@ class AdminController extends Controller
         'updated_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Product approved!');
+        // $smsService = app(\App\Services\IprogSmsService::class);
+        // $response = $smsService->send('09484386078', 'Your verification code is wtf');
+        Log::info('SMS API Response', $response);
+        return response()->json(['message' => 'Tags received and product approved']);
     }
 
 

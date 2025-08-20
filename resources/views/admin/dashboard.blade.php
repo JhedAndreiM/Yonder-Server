@@ -17,58 +17,81 @@
     <link
     href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
     rel="stylesheet" />
+      <!-- FilePond core -->
+  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+  <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+
+  <!-- FilePond image plugins -->
+  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+    rel="stylesheet" />
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script
+    src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+
+  <!-- cropper.js :P -->
+  <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
+  <script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
+  <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
+  <!-- Sortable.js for drag-and-drop ordering -->
+   <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 @endsection
 
 @section('maincontent')
 <div class="container">
-    <div class="upload-container">  
-        <!-- Featured Image Upload Section -->
-        <div class="upload-section">
-            <h2>Upload Featured Images</h2>
-            @if (session('image_success'))
-                <div class="alert alert-success">
-                    {{ session('image_success') }}
-                </div>
-            @endif
 
+    <div class="upload-container">
+
+        <!-- Featured Image Upload -->
+        <section class="upload-section">
+            <h2>Featured Images</h2>
+            @if (session('image_success'))
+                <div class="alert alert-success">{{ session('image_success') }}</div>
+            @endif
             <form action="{{ route('admin.featured.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="image">Select Images</label>
-                    <input type="file" name="image[]" id="image" required multiple accept="image/*">
+                    <input type="file" name="images[]" id="images" required multiple accept="image/*">
+                    <input type="hidden" name="image_order" id="image_order" value="[]">
                 </div>
                 <button type="submit" class="btn">Upload Images</button>
             </form>
-
-            <!-- Image Preview Section -->
             <div class="preview-section">
                 <h3>Current Featured Images</h3>
                 <div class="image-preview">
                     @foreach ($featuredImages as $image)
-                        <img src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured"
-                            style="max-width: 200px; margin: 10px;">
+                        <div class="image-card">
+                            <img src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured">
+
+                            {{-- Delete Button --}}
+                            <form action="{{ route('admin.featured.delete', $image->id) }}" 
+                                method="POST" 
+                                onsubmit="return confirm('Delete this image?')" 
+                                class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="delete-btn">✖</button>
+                            </form>
+                        </div>
                     @endforeach
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Excel Upload Section -->
-        <div class="upload-section">
+        <!-- Excel Upload -->
+        <section class="upload-section">
             <h2>Upload User Data (Excel)</h2>
-            
             @if (session('excel_success'))
-                <div class="alert alert-success">
-                    {{ session('excel_success') }}
-                </div>
+                <div class="alert alert-success">{{ session('excel_success') }}</div>
             @endif
             @if (session('excel_error'))
-                <div class="alert alert-danger">
-                    {{ session('excel_error') }}
-                </div>
+                <div class="alert alert-danger">{{ session('excel_error') }}</div>
             @endif
-
             <form action="{{ route('upload.users') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
@@ -77,219 +100,233 @@
                 </div>
                 <button type="submit" class="btn">Upload Excel</button>
             </form>
-        </div>
+        </section>
 
-
-        <!-- FOR PRODUCT POLICY -->
-         <form id="policyForm" action="{{ route('admin.productPolicy') }}" method="POST">
-            @csrf
-            <div class="productPolicy">
+        <!-- Product Policy -->
+        <section class="productPolicy">
+            <form id="policyForm" action="{{ route('admin.productPolicy') }}" method="POST">
+                @csrf
                 <div class="section">
                     <h5>Allowed Listing</h5>
-                    <div id="editor" style="height: 300px;"></div>
+                    <div id="editor"></div>
                     <input type="hidden" name="descriptionAllowed" id="descriptionAllowed">
-                    
-                    </div>
-                    <div class="section">
-                    <h5>Prohibited</h5>
-                    <div id="editorProhibited" style="height: 300px;"></div>
-                    <input type="hidden" name="descriptionProhibited" id="descriptionProhibited">
-                    
-                    <button type="submit">Submit</button>
-                    <button type="button">Cancel</button>
                 </div>
-            </div>
-         </form>
-        
+                <div class="section">
+                    <h5>Prohibited</h5>
+                    <div id="editorProhibited"></div>
+                    <input type="hidden" name="descriptionProhibited" id="descriptionProhibited">
+                </div>
+                <button type="submit" class="btn">Save Policy</button>
+                <button type="button" onclick="window.location.reload()">Cancel</button>
+            </form>
+        </section>
 
-
-
-        <!-- Product Upload Approval -->
-        <div class="approval-product">
-            <div class="section-two">
-                <h2>Unapproved Products</h2>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>View Details</th>
-                            <th>Approve</th>
+        <!-- Product Approval -->
+        <section class="approval-product">
+            <h2>Unapproved Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>View</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($products as $product)
+                        <tr class="perRow" id="product-row-{{ $product->product_id }}">
+                            <td>{{ $product->name }}</td>
+                            <td>{!! $product->description !!}</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">Details</a>
+                            </td>
+                            <td>
+                                <button type="button" onclick="approveProduct({{ $product->product_id }})">Approve</button>
+                                <button type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($products as $product)
-                            <tr class="perRow"id="product-row-{{ $product->product_id }}">
-                                <td>{{ $product->name }}</td>
-                                <td>{!! $product->description !!}</td>
-                                <td><a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">view
-                                        details</a></td>
-                                <td>
-                                    <button type="button"
-                                        onclick="approveProduct({{ $product->product_id }})">Approve</button>
-                                    <button type="button"
-                                        onclick="showRejectModal({{ $product->product_id }})">Reject</button>
-                                </td>
-                            </tr>
-
-                            <div id="modal-{{ $product->product_id }}" class="modal">
-                                <div class="modal-content">
-                                    <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
-                                    <h2>{{ $product->name }}</h2>
-                                    <h2>P {{ $product->price }}</h2>
-                                    <p>{!! $product->description !!}</p>
-                                    <div class="image-gallery">
-                                        @php
-                                            $images = \Illuminate\Support\Facades\DB::table('product_images')
-                                                        ->where('product_id', $product->product_id)
-                                                        ->get();
-                                        @endphp
-
-                                        @foreach ($images as $img)
-                                            <img src="{{ asset('images/' . $img->image_path) }}" alt="Product Image">
+                        <div id="modal-{{ $product->product_id }}" class="modal" style="display:none; align-items:center; justify-content:center;">
+                            <div class="modal-content" style="position:relative;">
+                                <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
+                                <h2 style="margin-bottom:0.5rem;">{{ $product->name }}</h2>
+                                <div style="color:#771217; font-weight:600; margin-bottom:1rem;">₱ {{ $product->price }}</div>
+                                <p style="margin-bottom:1.5rem;">{!! $product->description !!}</p>
+                                @php
+                                    $tags = DB::table('product_tag')
+                                        ->join('tags', 'product_tag.tag_id', '=', 'tags.id')
+                                        ->where('product_tag.product_id', $product->product_id)
+                                        ->select('tags.name')
+                                        ->get();
+                                @endphp
+                                @if($tags->count() > 0)
+                                    <div class="product-tags" style="margin-top:1rem;">
+                                        <strong>Tags:</strong>
+                                        @foreach ($tags as $tag)
+                                            <span style="background:#eee; padding:4px 8px; margin:2px; border-radius:5px; display:inline-block;">
+                                                {{ $tag->name }}
+                                            </span>
                                         @endforeach
                                     </div>
+                                @endif
+                                <div class="image-gallery">
+                                    @php
+                                        $images = \Illuminate\Support\Facades\DB::table('product_images')
+                                                    ->where('product_id', $product->product_id)
+                                                    ->get();
+                                    @endphp
+                                    @foreach ($images as $img)
+                                        <img src="{{ asset('images/' . $img->image_path) }}" alt="Product Image"
+                                             style="cursor:pointer;"
+                                             onclick="openImageViewer('{{ asset('images/' . $img->image_path) }}')">
+                                    @endforeach
                                 </div>
                             </div>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
 
-            </div>
-        </div>
+        <!-- Voucher Management -->
+        <section class="addingOfVoucher">
+            <form>
+                <label for="voucherAmount">Voucher Amount</label>
+                <input type="number" name="voucherAmount" id="voucherAmount">
+                <label for="voucherPrice">Voucher Price</label>
+                <input type="number" name="voucherPrice" id="voucherPrice">
+            </form>
+        </section>
 
-        <!-- USER ROLE MANAGEMENT -->
-        <div class="user-role-management">
-    <h2>User Role Management</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Current Role</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($users as $user)
-                <tr id="user-row-{{ $user->id }}">
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->role }}</td>
-                    <td>
-                        @if ($user->role !== 'organization')
-                            <form action="{{ route('admin.changeRole') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                <input type="hidden" name="role" value="organization">
-                                <button type="submit">Make Organization</button>
-                            </form>
-                        @else
-                            <span>Already Organization</span>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-<!-- REPORTS -->
-<div class="report-show">
-    <div class="section-two">
-        <h2>Reported Products</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Report ID</th>
-                    <th>Product Name</th>
-                    <th>Reported By</th>
-                    <th>View Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($reports as $report)
-                    <tr class="perRow" id="report-row-{{ $report->report_id }}">
-                        <td>{{ $report->report_id }}</td>
-                        <td>{{ $report->product_name }}</td>
-                        <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
-                        <td>
-                            <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View Details</a>
-                            <button onclick="allowReport({{ $report->report_id }})">Allow</button>
-                            <button onclick="deleteProduct({{ $report->report_id_item }}, {{ $report->report_id }})">Delete</button>
-                            <input type="text" value="{{ $report->report_id_item }},{{ $report->report_id }}">
-                        </td>
+        <!-- User Role Management -->
+        <section class="user-role-management">
+            <h2>User Role Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Current Role</th>
+                        <th>Action</th>
                     </tr>
+                </thead>
+                <tbody>
+                    @foreach ($users as $user)
+                        <tr id="user-row-{{ $user->id }}">
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->role }}</td>
+                            <td>
+                                @if ($user->role !== 'organization')
+                                    <form action="{{ route('admin.changeRole') }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                        <input type="hidden" name="role" value="organization">
+                                        <button type="submit">Make Organization</button>
+                                    </form>
+                                @else
+                                    <span>Already Organization</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
 
-                    <!-- Modal -->
-                    <div id="modal-{{ $report->report_id }}" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
-                        <h2>{{ $report->product_name }}</h2>
-                        <p>{{ $report->description }}</p>
-                        <div style="
-                            max-height: 200px;
-                            overflow-y: auto;
-                            word-wrap: break-word;
-                            white-space: pre-wrap;
-                            border: 1px solid #ccc;
-                            border-radius: 8px;">
-                            {{ $report->message }}
+        <!-- Reports -->
+        <section class="report-show">
+            <h2>Reported Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Report ID</th>
+                        <th>Product Name</th>
+                        <th>Reported By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($reports as $report)
+                        <tr class="perRow" id="report-row-{{ $report->report_id }}">
+                            <td>{{ $report->report_id }}</td>
+                            <td>{{ $report->product_name }}</td>
+                            <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View</a>
+                                <button onclick="allowReport({{ $report->report_id }})">Allow</button>
+                                <button onclick="deleteProduct({{ $report->report_id_item }}, {{ $report->report_id }})">Delete</button>
+                            </td>
+                        </tr>
+                        <div id="modal-{{ $report->report_id }}" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
+                                <h2>{{ $report->product_name }}</h2>
+                                <p>{{ $report->description }}</p>
+                                <div style="max-height: 200px; overflow-y: auto; word-wrap: break-word; white-space: pre-wrap; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem;">
+                                    {{ $report->message }}
+                                </div>
+                                <div class="image-gallery">
+                                    @php
+                                        $images = explode(',', $report->image_path);
+                                    @endphp
+                                    @foreach ($images as $img)
+                                        <img src="{{ asset('images/' . trim($img)) }}" alt="Product Image">
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
-                        <div class="image-gallery">
-                            @php
-                                $images = explode(',', $report->image_path);
-                            @endphp
-                            @foreach ($images as $img)
-                                <img src="{{ asset('images/' . trim($img)) }}" alt="Product Image">
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
-    </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
 
+    </div>
 
     <!-- Reject Modal -->
     <div id="rejectModal" class="rejectModal">
         <div class="modal-contents">
             <h3>Reject Product</h3>
-            
             <form id="rejectForm">
                 @csrf
                 <input type="hidden" name="product_id" id="rejectProductId">
-                <label for="message">Reason:</label><br>
-                <textarea name="message" id="rejectMessage" rows="4" cols="50" required></textarea><br><br>
-                <button type="submit">Send Rejection</button>
-                <button type="button" onclick="hideRejectModal()">Cancel</button>
+                <label for="message">Reason:</label>
+                <textarea name="message" id="rejectMessage" required></textarea>
+                <div style="margin-top:1rem;">
+                    <button type="submit" class="btn">Send Rejection</button>
+                    <button type="button" onclick="hideRejectModal()">Cancel</button>
+                </div>
             </form>
         </div>
-        
     </div>
+
+    <!-- Show/Hide Student Org & Marketplace -->
+    <section class="disableStudOrgMarketplace">
+        <form method="POST" action="{{ route('admin.disableButtons') }}">
+            @csrf
+            <label>
+                <input type="checkbox" name="show_student_org" {{ \App\Models\disableButtons::getValue('show_student_org') ? 'checked' : '' }}>
+                Show Student Organization
+            </label>
+            <label>
+                <input type="checkbox" name="show_marketplace" {{ \App\Models\disableButtons::getValue('show_marketplace') ? 'checked' : '' }}>
+                Show Marketplace
+            </label>
+            <button type="submit">Save Settings</button>
+        </form>
+    </section>
+
 </div>
-
-<div class="disableStudOrgMarketplace">
-    <form method="POST" action="{{ route('admin.disableButtons') }}">
-    @csrf
-    <label>
-        <input type="checkbox" name="show_student_org" {{ \App\Models\disableButtons::getValue('show_student_org') ? 'checked' : '' }}>
-        Show Student Organization
-    </label>
-    <label>
-        <input type="checkbox" name="show_marketplace" {{ \App\Models\disableButtons::getValue('show_marketplace') ? 'checked' : '' }}>
-        Show Marketplace
-    </label>
-    <button type="submit">Save Settings</button>
-</form>
+<!-- Image Viewer Modal -->
+<div id="imageViewerModal" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999;">
+    <span onclick="closeImageViewer()" 
+          style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; cursor:pointer;">&times;</span>
+    
+    <img id="imageViewerImg" src="" 
+         style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
 </div>
-
-
     <script>
         function openModal(productId) {
             document.getElementById('modal-' + productId).style.display = "flex";
@@ -369,12 +406,12 @@
 
         // reports
         function openModal(id) {
-        document.getElementById('modal-' + id).style.display = 'block';
-    }
+            document.getElementById('modal-' + id).style.display = 'flex';
+        }
 
-    function closeModal(id) {
-        document.getElementById('modal-' + id).style.display = 'none';
-    }
+        function closeModal(id) {
+            document.getElementById('modal-' + id).style.display = 'none';
+        }
 
     window.onclick = function(event) {
         document.querySelectorAll('.modal').forEach(function(modal) {
@@ -460,5 +497,72 @@
         hiddenFieldProhibited.value = quillProhibited.root.innerHTML;
     });
     }
+
+    function openImageViewer(src) {
+        document.getElementById('imageViewerImg').src = src;
+        document.getElementById('imageViewerModal').style.display = 'flex';
+    }
+function closeImageViewer() {
+    document.getElementById('imageViewerModal').style.display = 'none';
+    document.getElementById('imageViewerImg').src = '';
+}
+
+
+// for Banner File Upload
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // ----- Register plugins -----
+      FilePond.registerPlugin(
+        FilePondPluginFileValidateType,
+        FilePondPluginImagePreview,
+        FilePondPluginImageExifOrientation,
+        FilePondPluginImageCrop,
+        FilePondPluginImageTransform,
+        FilePondPluginImageEdit 
+      );
+
+      // ----- Create instance -----
+      const inputElement = document.getElementById('images');
+      const pond = FilePond.create(inputElement, {
+        allowMultiple: true,
+        maxFiles: 10,
+         acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+        labelIdle: 'Drag & Drop your images or <span class="filepond--label-action">Browse</span>',
+
+        // Enable reordering in the FilePond list
+        allowReorder: true,
+
+        // Auto-crop to 16:9 based on center — no manual UI
+        imageCropAspectRatio: '1353:196',
+
+        // Optional: scale images to a max width for performance
+        //imageResizeTargetWidth: 1600,
+        // /imageResizeMode: 'cover', // maintain crop
+
+        // Process on form submit (no instant upload)
+        instantUpload: false,
+        allowProcess: false,
+        storeAsFile: true  // IMPORTANT: ensures cropped/transformed files replace originals in form POST
+      });
+
+      // ----- Update hidden order field whenever files change -----
+      const orderField = document.getElementById('image_order');
+
+      function updateImageOrder() {
+        // Use file.id to track each file uniquely; map to original name for server pairing
+        const order = pond.getFiles().map(f => ({
+          id: f.id,
+          name: f.file.name
+        }));
+        orderField.value = JSON.stringify(order);
+      }
+
+      pond.on('reorderfiles', updateImageOrder);
+      pond.on('updatefiles', updateImageOrder);
+
+      // Run once initially
+      updateImageOrder();
+    });
+
     </script>
 @endsection

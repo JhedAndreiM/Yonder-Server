@@ -68,6 +68,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
     Route::post('/admin/product-policy/', [AdminController::class, 'productPolicy'])->name('admin.productPolicy');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
+    Route::delete('/admin/featured/{id}', [FeaturedImageController::class, 'destroy'])->name('admin.featured.delete');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
     Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');
     Route::post('/admin/change-role', [AdminController::class, 'changeUserRole'])->name('admin.changeRole');

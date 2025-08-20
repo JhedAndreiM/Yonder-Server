@@ -165,13 +165,21 @@
           </div>
         </div>
         <div class="items">
-          <img class="banner" src="{{ asset('img/banner.png') }}" alt="" />
-          <div class="cardContainer">
-            <div class="card-container infinite-scroll" id="product-container">
-            @include('partials.productList', ['products' => $products])
+            <div class="slideshow-container">
+                @foreach ($featuredImages as $image)
+                    <img class="banner mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%;">
+                @endforeach
+
+                <!-- Prev/Next Buttons -->
+                <a class="prev" onclick="plusDivs(-1)">&#10094;</a>
+                <a class="next" onclick="plusDivs(1)">&#10095;</a>
             </div>
-            
-          </div>
+
+            <div class="cardContainer">
+                <div class="card-container infinite-scroll" id="product-container">
+                    @include('partials.productList', ['products' => $products])
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -207,7 +215,43 @@
                 
             })
         });
+      
+    var slideIndex = 1;
+    var interval;
+    showDivs(slideIndex);
+    autoStart();
 
+    function plusDivs(n) {
+      showDivs(slideIndex += n);
+      resetInterval();
+      //console.log(slideIndex);
+    }
+    
+    function showDivs(n) {
+      var i;
+      var x = document.getElementsByClassName("mySlides");
+      if (n > x.length) {
+        slideIndex = 1
+    }
+      if (n < 1) {
+        slideIndex = x.length
+    }
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
+      }
+      x[slideIndex-1].style.display = "block";  
+    }
+    // 5sec every move yung banner
+    function autoStart(){
+        interval = setInterval(function() {
+        plusDivs(1);
+        }, 5000);
+    }
+    
+    function resetInterval(){
+        clearInterval(interval);
+        autoStart();
+    }
     //     document.querySelectorAll('.mainFilterButtons').forEach(button => {
     //     button.addEventListener('click', () => {
     //         setTimeout(() => {
