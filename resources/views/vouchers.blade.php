@@ -108,6 +108,12 @@
           <h1>My Voucher(s):</h1>
           <button class="redeemButton"><img src="{{asset('img/MyVouchers.svg')}}" alt="">Redeem</button>
         </div>
+            @if (session('voucher_success'))
+                <div class="alert alert-success">{{ session('voucher_success') }}</div>
+            @endif
+            @if (session('voucher_error'))
+                <div class="alert alert-failed">{{ session('voucher_error') }}</div>
+            @endif
         <div class="items">
           @include('partials.showVoucher', ['voucher' => $voucher])
       </div>
@@ -118,46 +124,26 @@
         <div class="redeemModalContent">
           <h2 class="modalTitle">Redeem Vouchers</h2>
           <div class="creditBox">
-            <p>Your Credits: <span id="userCredits">120</span></p>
+            <p>Your Credits: <span id="userCredits">{{$userCredit}}</span></p>
           </div>
-          <form action="">
-                <div class="voucherList">
 
-                    <div class="voucherCard">
-                      <div class="voucherInfo">
-                        <h3>P 100 Voucher</h3>
-                        <p class="voucherCost">Cost: 50 Credits</p>
-                      </div>
-                      <button class="redeemBtn">Redeem</button>
-                      <!-- disabled for now until you add backend -->
-                    </div>
-                    <div class="voucherCard">
-                      <div class="voucherInfo">
-                        <h3>P 100 Voucher</h3>
-                        <p class="voucherCost">Cost: 50 Credits</p>
-                      </div>
-                      <button class="redeemBtn">Redeem</button>
-                      <!-- disabled for now until you add backend -->
-                    </div>
-                    <div class="voucherCard">
-                      <div class="voucherInfo">
-                        <h3>P 100 Voucher</h3>
-                        <p class="voucherCost">Cost: 50 Credits</p>
-                      </div>
-                      <button class="redeemBtn">Redeem</button>
-                      <!-- disabled for now until you add backend -->
-                    </div>
-                    <div class="voucherCard">
-                      <div class="voucherInfo">
-                        <h3>P 100 Voucher</h3>
-                        <p class="voucherCost">Cost: 50 Credits</p>
-                      </div>
-                      <button class="redeemBtn">Redeem</button>
-                      <!-- disabled for now until you add backend -->
-                    </div>
-
+            <div class="voucherList">
+            @foreach($voucherList as $voucher)
+            <form action="{{route('redeem.vouchers')}}" method="POST">
+            @csrf
+              <div class="voucherCard">
+                <div class="voucherInfo">
+                  <h3>P {{$voucher->amount}} Amount</h3>
+                  <p class="voucherCost">Cost: {{$voucher->price}} Credits</p>
+                  <input type="hidden" name="voucherAmount" value="{{$voucher->amount}}">
+                  <input type="hidden" name="voucherCost" value="{{$voucher->price}}">
                 </div>
-          </form>
+                <button class="redeemBtn">Redeem</button>
+              </div>
+            </form>
+            @endforeach
+            </div>
+
         </div>
       </div>
     <!-- eend -->

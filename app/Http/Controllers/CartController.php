@@ -615,22 +615,10 @@ public function confirmStudentSales(Request $request, $id)
                             'updated_at' => now()
                         ]);
                 }
-                $pbenUser = User::getPBENUser();
-                $completedCount = DB::table('cart_items')
-                    ->where('user_id', $confirm->user_id)
-                    ->where('seller_id', $pbenUser->id)
-                    ->where('status', 'completed')
-                    ->count();
-                if ($completedCount % 5 === 0) {
-                    DB::table('vouchers')->insert([
-                        'user_id' => $confirm->user_id,
-                        'seller_id' => $pbenUser->id,
-                        'amount' => 5,
-                        'status' => 'available',
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-                }
+                $totalPrice = $confirm->unit_price * $confirm->quantity;
+                DB::table('users')             
+                ->where('id', '=', Auth::id())
+                ->increment('credits', $totalPrice);
             }
 
 
@@ -665,22 +653,10 @@ public function confirmStudentSales(Request $request, $id)
                             'updated_at' => now()
                         ]);
                 }
-                $pbenUser = User::getPBENUser();
-                $completedCount = DB::table('cart_items')
-                    ->where('user_id', $confirm->user_id)
-                    ->where('seller_id', $pbenUser->id)
-                    ->where('status', 'completed')
-                    ->count();
-                if ($completedCount % 5 === 0) {
-                    DB::table('vouchers')->insert([
-                        'user_id' => $confirm->user_id,
-                        'seller_id' => $pbenUser->id,
-                        'amount' => 5,
-                        'status' => 'available',
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-                }
+                $totalPrice = $confirm->unit_price * $confirm->quantity;
+                DB::table('users')             
+                ->where('id', '=', Auth::id())
+                ->increment('credits', $totalPrice);
             }
 
 

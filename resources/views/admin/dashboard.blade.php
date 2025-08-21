@@ -1,47 +1,89 @@
-@extends('Front_layouts.org')
-
-@section('head')
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin - File Upload</title>
-    @vite('resources/css/admin-younder.css')
-    <style>
-        body {
-            background-image: url("{{ asset('img/background.svg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: top center;
-        }
-    </style>
-    <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    rel="stylesheet" />
-      <!-- FilePond core -->
-  <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
-  <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <!-- FilePond core -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 
-  <!-- FilePond image plugins -->
-  <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-    rel="stylesheet" />
-  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-  <script
-    src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
-  <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
-  <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
+    <!-- FilePond image plugins -->
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet" />
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
 
-  <!-- cropper.js :P -->
-  <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
-  <script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
-  <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
-  <!-- Sortable.js for drag-and-drop ordering -->
-   <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- cropper.js :P -->
+    <link href="https://unpkg.com/cropperjs/dist/cropper.css" rel="stylesheet" />
+    <script src="https://unpkg.com/cropperjs/dist/cropper.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-edit/dist/filepond-plugin-image-edit.js"></script>
+    <!-- Sortable.js for drag-and-drop ordering -->
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-@endsection
+    @vite('resources/css/admin-younder.css')
+</head>
+<body>
+    <!-- nav bar -->
 
-@section('maincontent')
+    <div class="navBar">
+      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+      <div class="navBarRight">
+        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+        <div class="dropdown-container">
+    <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
+    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+      </div>
+      <div class="notification-list">
+        @if ($notifications->isEmpty())
+          <p style="padding-left:10px;">No notifications</p>
+        @else
+          @foreach ($notifications as $notification)
+            <div class="notification">
+              <div class="title">
+                <h1>
+                  @if($notification['title'] === "Product Approved")
+                    <span style="color:Green;">{{ $notification['title'] }}</span>
+                  @elseif($notification['title'] === "Product Rejected")
+                    <span style="color:red;">{{ $notification['title'] }}</span>
+                  @else
+                    {{ $notification['title'] }}
+                  @endif
+                </h1>
+              </div>
+              <div class="Message">{{ $notification['message'] }}</div>
+              <div class="time">{{ $notification['time_ago'] }}</div>
+            </div>
+          @endforeach
+        @endif
+      </div>
+    </div>
+  </div>
+          <div class="dropdown-container">
+    <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
+    <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+      <ul>
+        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
+        <li><a href=" ">Wishlist</a></li>
+        <li><a href="{{ route('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+      </div>
+    </div>
+
+    <!-- nav bar -->
 <div class="container">
 
     <div class="upload-container">
@@ -190,12 +232,39 @@
 
         <!-- Voucher Management -->
         <section class="addingOfVoucher">
-            <form>
-                <label for="voucherAmount">Voucher Amount</label>
-                <input type="number" name="voucherAmount" id="voucherAmount">
-                <label for="voucherPrice">Voucher Price</label>
-                <input type="number" name="voucherPrice" id="voucherPrice">
+            @if (session('voucher_success'))
+                <div class="alert alert-success">{{ session('voucher_success') }}</div>
+            @endif
+            <form class="formAddingOfVoucher" action="{{route('admin.voucher')}}" method="POST">
+            @csrf
+                <h2>Add a Voucher</h2>
+                <div class="formAddingOfVoucher-input">
+                    <label for="voucherAmount">Voucher Amount: </label>
+                    <input type="number" name="voucherAmount" id="voucherAmount" min="1">
+                    <label for="voucherPrice">Voucher Price: </label>
+                    <input type="number" name="voucherPrice" id="voucherPrice" min="1">
+                </div>
+                <div class="formAddingOfVoucher-buttons">
+                    <button class="btn">Submit</button>
+                    <button type="reset" class="voucherResetBtn">Cancel</button>
+                </div>
             </form>
+            <div class="voucherList">
+                <h2>Current Redeemable Vouchers</h2>
+                @foreach($voucherList as $voucher)
+                <div class="voucherCard">
+                    <form class="voucherListForm"action="">
+                    <div class="voucherInfo">
+                        <h3>P {{$voucher->amount}}</h3>
+                        <p class="voucherCost">Cost: {{$voucher->price}} Credits</p>
+                    </div>
+                    <div class="voucherDelete">
+                        <button class="btn">Delete</button>
+                    </div>
+                    </form>
+                </div>
+                @endforeach
+            </div>
         </section>
 
         <!-- User Role Management -->
@@ -560,9 +629,74 @@ function closeImageViewer() {
       pond.on('reorderfiles', updateImageOrder);
       pond.on('updatefiles', updateImageOrder);
 
-      // Run once initially
       updateImageOrder();
     });
 
+
+    // FOR NOTIFS
+     document.addEventListener("DOMContentLoaded", function () {
+    const notifBtn = document.querySelector(".notificationBtn");
+    const notifDropdown = document.getElementById("notificationDropdown");
+    const profileBtn = document.querySelector(".profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const closeNotif = document.querySelector(".closeButton");
+    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+    const cartButton = document.querySelectorAll('.cartBtn');
+    let category = 'featured';
+
+    document.querySelectorAll(".mainFilterButtons").forEach(button => {
+    button.addEventListener("click", () => {
+        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
+            btn.classList.remove("current");
+        });
+        let url='?page=${page}';
+        button.classList.add("current");
+
+        category = button.dataset.category;
+        console.log('Clicked category:', category);
+        updateFilters();
+    });
+});
+    notifBtn.addEventListener("click", function () {
+      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
+      profileDropdown.style.display = "none"; 
+      console.log("clicked");
+    });
+
+    profileBtn.addEventListener("click", function () {
+      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
+      notifDropdown.style.display = "none"; 
+    });
+    if(closeNotif){
+    closeNotif.addEventListener("click", function () {
+      notifDropdown.style.display = "none";
+    });
+    }
+    // close dropdowns if clicked outside
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest(".dropdown-container")) {
+        notifDropdown.style.display = "none";
+        profileDropdown.style.display = "none";
+      }
+    });
+  });
+
+
+  // for voucher input handler
+  const voucherAmount = document.getElementById('voucherAmount');
+  const voucherPrice = document.getElementById('voucherPrice');
+
+    voucherAmount.addEventListener('input', function (e){
+        if(e.target.value < 1){
+            voucherAmount.value=1;
+        }
+    });
+    voucherPrice.addEventListener('input', function (e){
+        if(e.target.value < 1){
+            voucherPrice.value=1;
+        }
+    });
     </script>
-@endsection
+</body>
+</html>
+

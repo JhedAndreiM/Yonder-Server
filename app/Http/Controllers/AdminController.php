@@ -52,7 +52,8 @@ class AdminController extends Controller
         )
         ->get();
         $productPolicies = DB::table('product_policies')->get();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies'));
+        $voucherList = DB::table('voucherList')->get();
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList'));
     }
 
     public function productPolicy(Request $request){
@@ -239,4 +240,20 @@ public function updateDisabledButton(Request $request)
     session()->forget('topFilter');
     return redirect()->back()->with('success', 'Button visibility settings updated!');
 }
+
+public function addVoucherList(Request $request){
+    $request->validate([
+        'voucherAmount' => 'required|min:1',
+        'voucherPrice' => 'required|min:1'
+    ]);
+    DB::table('voucherList')->insert([
+        'amount' => $request->voucherAmount,
+        'price' => $request->voucherPrice,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    return redirect()->back()->with('voucher_success', 'New Voucher uploaded successfully!');
+}
+
+
 }

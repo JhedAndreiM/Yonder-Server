@@ -549,7 +549,23 @@ select {
   border-radius: 10px;
   font-weight: bold;
 }
+.alert {
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
 
+.alert-success {
+    background: #f1f8f4;
+    color: #1a6d3b;
+    border: 1px solid #c7e7d6;
+}
+.alert-failed {
+    background: #f0dada;
+    color: #771217;
+    border: 1px solid #e7c7c7;
+}
 .voucherList {
   display: flex;
   flex-direction: column;

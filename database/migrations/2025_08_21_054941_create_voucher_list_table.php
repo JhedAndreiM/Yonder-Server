@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('featured_images', function (Blueprint $table) {
-            $table->integer('sort_order')->default(0);
+         Schema::create('voucherList', function (Blueprint $table) {
+            $table->id(); 
+            $table->integer('amount');
+            $table->decimal('price', 10, 2); 
+            $table->timestamps(); 
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('featured_images', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('voucherList');
     }
 };

@@ -67,6 +67,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
     Route::post('/admin/product-policy/', [AdminController::class, 'productPolicy'])->name('admin.productPolicy');
+    Route::post('/admin/voucher/', [AdminController::class, 'addVoucherList'])->name('admin.voucher');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     Route::delete('/admin/featured/{id}', [FeaturedImageController::class, 'destroy'])->name('admin.featured.delete');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
@@ -125,6 +126,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     })->name('profileListings.page');
     
     Route::get('/Vouchers', [VoucherController::class, 'showVoucher'])->name('show.vouchers');
+    Route::post('/Voucher/Redeem', [VoucherController::class, 'redeemVoucher'])->name('redeem.vouchers');
     
     
     // cart

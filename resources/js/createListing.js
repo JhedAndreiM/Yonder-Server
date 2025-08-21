@@ -18,9 +18,9 @@ function updateFilters() {
 
 const form = document.querySelector('form');
 form.addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission (if you want to handle it manually)
-    updateFilters(); // Update filters just before submitting the form
-    form.submit(); // Manually trigger the form submission
+    event.preventDefault(); 
+    updateFilters(); 
+    form.submit(); 
 });
 
 // for tabs
