@@ -53,7 +53,8 @@ class AdminController extends Controller
         ->get();
         $productPolicies = DB::table('product_policies')->get();
         $voucherList = DB::table('voucherList')->get();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList'));
+        $creditPercentage = DB::table('credit_settings')->first();
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage'));
     }
 
     public function productPolicy(Request $request){
@@ -82,54 +83,14 @@ class AdminController extends Controller
                 'updated_at'=> now()
             ]
         );
-
-        // $post_data=array(
-        //     'sub_account'=>'32064_yonder',
-        //     'sub_account_pass'=>'jhed200414563',
-        //     'action'=>'send_sms',
-        //     'sender_id'=>'3361',
-        //     'recipients'=>'639484386078,',
-        //     'message'=>"Your Buy Order has been confirmed by the seller!."
-        // );
-        // $api_url='https://cheapglobalsms.com/api_v1/';
-
-        // $ch = curl_init();
-        // curl_setopt($ch, CURLOPT_URL, $api_url);
-        // curl_setopt($ch, CURLOPT_POST, true);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-        // $response = curl_exec($ch);
-        // $response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        // if($response_code != 200)$response=curl_error($ch);
-        // curl_close($ch);
-
-        // if($response_code != 200)$msg="HTTP ERROR $response_code: $response";
-        // else
-        // {
-        //     $json=@json_decode($response,true);
-            
-        //     if($json===null)$msg="INVALID RESPONSE: $response"; 
-        //     elseif(!empty($json['error']))$msg=$json['error'];
-        //     else
-        //     {
-        //         $msg="SMS sent to ".$json['total']." recipient(s).";
-        //         $sms_batch_id=$json['batch_id'];
-        //     }
-        // }
-        
-        // dd($msg);
         return redirect()->back()->with('success', 'Product policies updated successfully!');
 
     }
     public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        // $product->approved = 'yes';
-        // $product->save();
+        $product->approved = 'yes';
+        $product->save();
 
         $tags = Tag::whereHas('products', function ($query) {
             $query->where('approved', 'yes');
@@ -159,7 +120,6 @@ class AdminController extends Controller
 
         // $smsService = app(\App\Services\IprogSmsService::class);
         // $response = $smsService->send('09484386078', 'Your verification code is wtf');
-        Log::info('SMS API Response', $response);
         return response()->json(['message' => 'Tags received and product approved']);
     }
 
@@ -255,5 +215,18 @@ public function addVoucherList(Request $request){
     return redirect()->back()->with('voucher_success', 'New Voucher uploaded successfully!');
 }
 
+public function editCreditPercentage(Request $request){
+    $request->validate([
+        'percentage' => 'required|min:1'
+    ]);
+
+    DB::table('credit_settings')
+    ->where('id', 1)
+    ->update([
+        'percentage' => $request->percentage,
+        'updated_at' => now()
+    ]);
+    return back()->with('credit_success', 'Credit percentage updated successfully.');
+} 
 
 }

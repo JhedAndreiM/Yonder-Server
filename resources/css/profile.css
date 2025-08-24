@@ -311,7 +311,7 @@ button {
 
 .right {
   margin-left: 5%;
-  max-width: 1350px;
+  max-width: 1200px;
   max-height: 80vh; 
   display: flex;
   flex-direction: column;
@@ -319,7 +319,7 @@ button {
 
 .card {
   border-radius: 5px;
-  width: 1300px;
+  width: 1100px;
   height: 190px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,

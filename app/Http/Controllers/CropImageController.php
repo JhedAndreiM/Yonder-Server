@@ -6,8 +6,100 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 class CropImageController extends Controller
 {
+    public function update(Request $request){
+        $user = Auth::user();
+
+        $request->validate([
+            'gender' => 'required|in:Male,Female',
+            'phone_number' => 'nullable|string|max:11',
+            'cropped_avatar' => 'nullable|string',
+            'cropped_qr' => 'nullable|string',
+        ]);
+        
+        if($request->cropped_avatar){
+            $this->processImage($request->cropped_avatar, 'avatar', $user);
+        }
+        if($request->cropped_qr){
+            $this->processImage($request->cropped_qr, 'qr_image', $user);
+        }
+        if ($request->gender) {
+            $user->gender = $request->gender;
+        }
+        $user->last_otp_sent_at = now();
+        $user->save();
+        if($request->phone_number !== $user->phone_number){
+            session(['pending_phoneNumber' => $request->phone_number]);
+            $cooldownMinutes = 10; // 10 mins 'to
+            $lastOtp = $user->last_otp_sent_at ? Carbon::parse($user->last_otp_sent_at) : null;
+            if($lastOtp && $lastOtp->diffInMinutes(now()) < $cooldownMinutes){
+                 $remaining = $cooldownMinutes - floor($lastOtp->diffInMinutes(now()));
+                  return back()->with('otp_required', true)->withErrors(['otp' => "You can request a new OTP in $remaining minutes."]);
+            }
+
+            $otp = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
+            session(['otp' => $otp]);
+            // $smsService = app(\App\Services\IprogSmsService::class);
+            // $response = $smsService->send($request->phone_number, 'Your verification code is ' . $otp);
+            $user->last_otp_sent_at = now();
+            $user->save();
+            return back()->with('otp_required', true)->with('otp_code', $otp);
+        }
+        return back()->with('success', 'Profile updated successfully!');
+    }
+
+    
+    public function sendSmsForOTP(Request $request)
+    {   
+        $user = Auth::user();
+        if ($request->otp_combined === session('otp')) {
+            $user->phone_number = session('pending_phoneNumber');
+            $user->save();
+            return back()->with('success', 'Phone Number Changed!');
+        }
+        return back()->with('otp_required', true)->with('otp_code', session('otp'))->withErrors(['otp' => 'Invalid OTP']);
+    }
+
+    private function processImage($base64Image, $type, $user){
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $matches)) {
+        $extension = $matches[1];
+        $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+    } else {
+        $extension = 'png';
+    }
+
+    $imageData = base64_decode($base64Image);
+
+    if ($imageData === false) {
+        return;
+    }
+
+    $folder = $type === 'avatar' ? 'users-avatar' : 'users-qr';
+    $destinationPath = public_path('storage/' . $folder);
+
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0777, true);
+    }
+
+    $filename = uniqid() . '.' . $extension;
+    $fullPath = $destinationPath . '/' . $filename;
+
+    if (file_put_contents($fullPath, $imageData)) {
+        if ($user->$type && file_exists(public_path($user->$type))) {
+            unlink(public_path($user->$type));
+        }
+
+        $user->$type = $filename;
+    }
+    }
+
+
+
+
+
     public function cropImageUploadAjax(Request $request)
 {
     $imageData = $request->cropped_avatar;

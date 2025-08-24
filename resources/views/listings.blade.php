@@ -186,6 +186,18 @@
             window.location.href = "{{ route('student.profile') }}";
           });
         });
+        const myVouchers = document.querySelectorAll('.myVouchers');
+        myVouchers.forEach(button =>{
+            button.addEventListener('click', function() {
+                window.location.href = "{{ route('show.vouchers') }}";
+            });
+        });    
+        const mySales = document.querySelectorAll('.mySales');
+        mySales.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('student.sales') }}";
+          });
+        });  
   });
     </script>
   </body>

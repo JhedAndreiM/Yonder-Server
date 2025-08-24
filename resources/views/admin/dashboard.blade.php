@@ -232,6 +232,25 @@
 
         <!-- Voucher Management -->
         <section class="addingOfVoucher">
+            @if (session('credit_success'))
+                <div class="alert alert-success">{{ session('credit_success') }}</div>
+            @endif
+            <form class="creditPercentageForm" method="POST" action="{{route('admin.credit')}}">
+                @csrf
+                <h2>Credit Percentage</h2>
+                <span>Current Exchange Rate: {{ $creditPercentage->percentage }}%</span>
+                <div class="example">
+                    <small>
+                        Example: 100 pesos = 
+                        {{ 100 * ($creditPercentage->percentage / 100) }} credits
+                    </small>
+                </div>
+                <div class="creditLabel">
+                    <label for="percentage">Credit Percentage: </label>
+                    <input type="number" step="0.01" name="percentage" value="{{ $creditPercentage->percentage }}">
+                </div>
+                <button type="submit">Save</button>
+            </form>
             @if (session('voucher_success'))
                 <div class="alert alert-success">{{ session('voucher_success') }}</div>
             @endif

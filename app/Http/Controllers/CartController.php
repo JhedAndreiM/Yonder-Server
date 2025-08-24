@@ -373,10 +373,16 @@ class CartController extends Controller
         foreach ($items as $item) {
         $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
         }
+        $sellerId = Auth::id();
+        $sellerRating = DB::table('reviews')
+            ->join('product', 'reviews.product_id', '=', 'product.product_id')
+            ->where('product.user_id', $sellerId)
+            ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
+            ->first();
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items', 'filters'))->render();
+            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating'))->render();
         }
-        return view('mysales', compact('items', 'filters'));
+        return view('mysales', compact('items', 'filters', 'sellerRating'));
     }
 
 public function confirmStudentSales(Request $request, $id)
@@ -615,10 +621,15 @@ public function confirmStudentSales(Request $request, $id)
                             'updated_at' => now()
                         ]);
                 }
+                $pbenUser = User::getPBENUser();
                 $totalPrice = $confirm->unit_price * $confirm->quantity;
-                DB::table('users')             
-                ->where('id', '=', Auth::id())
-                ->increment('credits', $totalPrice);
+                $percentage = DB::table('credit_settings')->value('percentage');
+                $creditsToAdd = ($totalPrice * $percentage) / 100;
+                if ($confirm->seller_id == $pbenUser->id) {
+                    DB::table('users')
+                        ->where('id', '=', Auth::id())
+                        ->increment('credits', $creditsToAdd);
+                }
             }
 
 
@@ -653,10 +664,16 @@ public function confirmStudentSales(Request $request, $id)
                             'updated_at' => now()
                         ]);
                 }
+                $pbenUser = User::getPBENUser();
+                $buyerId = $confirm->user_id;  
                 $totalPrice = $confirm->unit_price * $confirm->quantity;
-                DB::table('users')             
-                ->where('id', '=', Auth::id())
-                ->increment('credits', $totalPrice);
+                $percentage = DB::table('credit_settings')->value('percentage');
+                $creditsToAdd = ($totalPrice * $percentage) / 100;
+                if ($confirm->seller_id == $pbenUser->id) {
+                    DB::table('users')
+                        ->where('id', '=', $buyerId)
+                        ->increment('credits', $creditsToAdd);
+                }
             }
 
 

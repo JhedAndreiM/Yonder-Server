@@ -21,9 +21,10 @@
     @vite('resources/js/productDetails.js')
   </head>
   <body>
-    <!-- nav bar -->
+ <!-- nav bar -->
+
     <div class="navBar">
-      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+      <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
 
       <div class="navBarRight">
         <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
@@ -58,13 +59,17 @@
       </div>
     </div>
   </div>
-        <img class="hover wishlistBtn" src="{{ asset('img/wishlist.png') }}" alt=""/>
-        <img class="hover cartBtn" src="{{ asset('img/cart.png') }}" alt="" />
+        <a href="{{ route('show.wishlist') }}">
+            <img class="hover" src="{{ asset('img/wishlist.png') }}" alt="Wishlist"/>
+        </a>
+        <a href="{{ route('show.cart') }}">
+            <img class="hover" src="{{ asset('img/cart.png') }}" alt="Cart"/>
+        </a>
           <div class="dropdown-container">
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="">My Profile</a></li>
+        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
         <li><a href=" ">Wishlist</a></li>
         <li><a href="{{ route('logout') }}">Logout</a></li>
       </ul>
@@ -376,6 +381,72 @@
 
     <!-- Pass data to JavaScript -->
     <script>
+            // notifs
+ document.addEventListener("DOMContentLoaded", function () {
+    const notifBtn = document.querySelector(".notificationBtn");
+    const notifDropdown = document.getElementById("notificationDropdown");
+    const profileBtn = document.querySelector(".profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const closeNotif = document.querySelector(".closeButton");
+    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
+    const cartButton = document.querySelectorAll('.cartBtn');
+    let category = 'featured';
+
+    document.querySelectorAll(".mainFilterButtons").forEach(button => {
+    button.addEventListener("click", () => {
+        // Remove 'current' from all filter buttons
+        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
+            btn.classList.remove("current");
+        });
+        let url='?page=${page}';
+        button.classList.add("current");
+
+        category = button.dataset.category;
+        console.log('Clicked category:', category);
+        updateFilters();
+    });
+});
+    notifBtn.addEventListener("click", function () {
+      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
+      profileDropdown.style.display = "none"; 
+      console.log("clicked");
+    });
+
+    profileBtn.addEventListener("click", function () {
+      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
+      notifDropdown.style.display = "none"; // close notifications if open
+    });
+    if(closeNotif){
+    closeNotif.addEventListener("click", function () {
+      notifDropdown.style.display = "none";
+    });
+    }
+    document.getElementById('logoClick').addEventListener('click', function() {
+    window.location.href = "{{ route('student.dashboard') }}";
+    });
+    // Optional: Close dropdowns if clicked outside
+    window.addEventListener("click", function (e) {
+      if (!e.target.closest(".dropdown-container")) {
+        notifDropdown.style.display = "none";
+        profileDropdown.style.display = "none";
+      }
+    });
+
+        // wishlist button
+        wishlistButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                window.location.href = "{{ route('show.wishlist') }}";
+            });
+        });
+         // cart button
+        cartButton.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('show.cart')}}";
+                
+            })
+        });
+
+  });
         window.productData = {
             price: {{ $products->price }},
             stock: {{ $products->stock }},

@@ -230,6 +230,26 @@ notifBtn.addEventListener("click", function () {
       redeemModal.style.display = "none";
     }
   });
+
+      // for links
+      const myPurchases = document.querySelectorAll('.myPurchases');
+      myPurchases.forEach(button =>{
+        button.addEventListener('click', function() {
+          window.location.href = "{{ route('student.profile') }}";
+        });
+      });
+      const myListings = document.querySelectorAll('.myListings');
+      myListings.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('listing.seller') }}";
+        });
+      });
+      const mySales = document.querySelectorAll('.mySales');
+      mySales.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('student.sales') }}";
+        });
+      });   
     </script>
   </body>
 </html>
