@@ -64,7 +64,7 @@
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
         <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href=" ">Wishlist</a></li>
+        <li><a href="{{route('account.page')}}">Settings</a></li>
         <li><a href="{{ route('logout') }}">Logout</a></li>
       </ul>
     </div>
@@ -182,15 +182,68 @@
     </div>
     <!-- end of main -->
     <div class="lowerRight">
-      <div class="changePass">
+      <div class="changePass" id="openChangePasswordModal">
         <p>Change password</p>
-        <img src="imgs/lock.svg" alt="" />
+        <img src="{{asset('img/lock.svg')}}" alt="" />
       </div>
-      <div class="signOut">
-        <p>Change password</p>
-        <img src="imgs/signout.svg" alt="" />
+      <div class="signOut" id="signOut">
+        <p>Sign Out</p>
+        <img src="{{asset('img/signout.svg')}}" alt="" />
       </div>
     </div>
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="change-password-modal">
+  <div class="change-password-modal-content">
+    <span class="change-password-modal-close" id="closeChangePasswordModal">&times;</span>
+    <h2 class="change-password-modal-title">Change Password</h2>
+
+    <form method="POST" action="{{ route('profile.update-password') }}" class="change-password-form" id="changePasswordForm">
+      @csrf
+
+      <div class="change-password-form-group">
+        <label for="current_password">Current Password</label>
+        <div class="change-password-input-wrapper">
+          <input type="password" name="current_password" id="current_password" required>
+          <span class="toggle-password-visibility" data-target="current_password">&#128065;</span>
+        </div>
+        @error('current_password')
+            <p class="change-password-error">{{ $message }}</p>
+        @enderror
+      </div>
+
+      <div class="change-password-form-group">
+        <label for="new_password">New Password</label>
+        <div class="change-password-input-wrapper">
+          <input type="password" name="new_password" id="new_password" required>
+          <span class="toggle-password-visibility" data-target="new_password">&#128065;</span>
+        </div>
+        @error('new_password')
+            <p class="change-password-error">{{ $message }}</p>
+        @enderror
+      </div>
+
+      <div class="change-password-form-group">
+        <label for="new_password_confirmation">Confirm New Password</label>
+        <div class="change-password-input-wrapper">
+          <input type="password" name="new_password_confirmation" id="new_password_confirmation" required>
+          <span class="toggle-password-visibility" data-target="new_password_confirmation">&#128065;</span>
+        </div>
+        @error('new_password_confirmation')
+            <p class="change-password-error">{{ $message }}</p>
+        @enderror
+      </div>
+
+      <button type="submit" class="change-password-submit">Update Password</button>
+    </form>
+    @if ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("changePasswordModal").style.display = "flex";
+            });
+        </script>
+    @endif
+  </div>
+</div>
     @if(session('otp_required'))
 <!-- OTP Modal -->
 <div id="otpModal" class="otp-modal">
@@ -293,6 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeNotif = document.querySelector(".closeButton");
     const wishlistButtons = document.querySelectorAll('.wishlistBtn');
     const cartButton = document.querySelectorAll('.cartBtn');
+    const signoutButton = document.querySelectorAll('.signOut');
     let category = 'featured';
 
     document.querySelectorAll(".mainFilterButtons").forEach(button => {
@@ -317,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     profileBtn.addEventListener("click", function () {
       profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
-      notifDropdown.style.display = "none"; // close notifications if open
+      notifDropdown.style.display = "none"; 
     });
     if(closeNotif){
     closeNotif.addEventListener("click", function () {
@@ -346,6 +400,12 @@ document.addEventListener("DOMContentLoaded", function () {
             button.addEventListener('click', function(){
                 window.location.href= "{{route('show.cart')}}";
                 
+            })
+        });
+        //sign out
+        signoutButton.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('logout')}}"
             })
         });
 
@@ -607,6 +667,51 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.currentQr.classList.remove('changed');
         }
     }
+
+    // for change password modal
+    const openBtn = document.getElementById("openChangePasswordModal");
+    const modal = document.getElementById("changePasswordModal");
+    const closeBtn = document.getElementById("closeChangePasswordModal");
+    const form = document.getElementById("changePasswordForm");
+
+    // Open modal
+    openBtn.addEventListener("click", () => {
+        modal.style.display = "block";
+    });
+
+    // Close modal + reset form
+    function closeModal() {
+        modal.style.display = "none";
+        form.reset(); // reset input fields
+        // Reset password inputs to type "password"
+        form.querySelectorAll("input[type='text']").forEach(input => {
+        input.type = "password";
+        });
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+        closeModal();
+        }
+    });
+
+    // Toggle password visibility
+    document.querySelectorAll(".toggle-password-visibility").forEach(icon => {
+        icon.addEventListener("click", () => {
+        const targetId = icon.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.style.color = "#4CAF50"; // green when active
+        } else {
+            input.type = "password";
+            icon.style.color = "#555";
+        }
+        });
+    });
 });
 
     </script>

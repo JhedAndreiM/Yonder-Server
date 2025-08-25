@@ -36,7 +36,7 @@
                 data-stock="{{ $product->stock }}"
                 data-id="{{ $product->product_id}}"
                 data-fImage="{{ asset('images/' . $firstImage) }}"
-                >edit</button>
+                ><a href="{{ route('products.edit', $product->product_id) }}" class="btn btn-sm btn-primary">Edit</a></button>
             </div>
         </div>
     </div>

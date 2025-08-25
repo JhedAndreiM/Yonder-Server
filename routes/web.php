@@ -119,6 +119,8 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
 
     // for products page
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/product-fileupload', [ProductController::class, 'uploadFile'])->name('products.sirRoss');
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 

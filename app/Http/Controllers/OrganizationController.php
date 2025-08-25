@@ -237,6 +237,7 @@ class OrganizationController extends Controller
                 'cart_items.updated_at',
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
+                'cart_items.payment_type',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
@@ -250,7 +251,7 @@ class OrganizationController extends Controller
             $query->where('cart_items.status', $filters);
         }
         
-        $items = $query->get();
+        $items = $query->orderBy('cart_items.updated_at', 'asc')->get();
         foreach ($items as $item) {
         $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
         }

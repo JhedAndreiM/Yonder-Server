@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Validation\Rules\Password;
 
 class UserImportController extends Controller
 {
@@ -63,15 +64,25 @@ class UserImportController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'current_password' => 'required',
+            'new_password' => ['required', 'confirmed',
+            Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ],[
+                'new_password.confirmed' => 'The new password and confirmation do not match.',
+            ]
+        ]);
+        $user = Auth::user();
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Your current password is incorrect.']);
+        }
+        $user->update([
+            'password' => Hash::make($request->new_password),
         ]);
 
-        // Find the user and update the password
-        DB::table('users')
-        ->where('id', Auth::id())
-        ->update(['password' => Hash::make($request->password)]);
-
-        return back()->with('successfull', 'Password updated successfully!')->with('active_tab', 'account');
+        return back()->with('successful', 'Password updated successfully!');
 
     }
 }

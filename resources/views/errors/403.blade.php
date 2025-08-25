@@ -16,7 +16,7 @@
             <p class="error-description">
                 Sorry, you don't have permission to access this page.
             </p>
-            <a href="{{ url('/') }}" class="back-button">Back to Home</a>
+            <a href="{{ url()->previous() }}" class="back-button">Back</a>
         </div>
     </div>
 </body>

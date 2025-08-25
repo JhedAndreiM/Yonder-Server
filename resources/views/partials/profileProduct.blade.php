@@ -70,6 +70,13 @@
                 <div class="cardButtons">
                     <!-- MAIN IF STATEMENT FOR PENDING -->
                     @if($cartItems->status=='pending')
+                    @if($cartItems->seller_id == Auth::id() && $cartItems->payment_type=='cashPayment')
+                        <form action="{{ route('cart.confirmPayment', $cartItems->cart_id) }}" method="POST">
+                            @csrf
+                            <input id="filterValue" name="filterValue" type="hidden" value="{{ $filters }}">
+                            <button class="cancelButton" type="submit">Confirm COD</button>
+                        </form>
+                    @else
                         <!-- For Seller to Confirm an Order -->
                         @if($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "no")
                             <form action="{{route('cart.confirmSales', $cartItems->cart_id)}}" method="POST">
@@ -79,6 +86,7 @@
                             </form>
                         @elseif ($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "no")
                         @endif
+                    @endif
 
                         <!-- If Confirmed na 'yung Buy Order and need nalang Iview 'yung receipt -->
                          <!-- Seller's View -->

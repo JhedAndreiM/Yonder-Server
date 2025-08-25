@@ -29,8 +29,8 @@ public function store(Request $request)
             'variants_json'=> 'nullable|string',
             'colleges_json'=> 'nullable|string',
             'tags_json'=> 'nullable|string',
-            'tradeOrSell'=> 'required|string',
-            'productQuality' => 'required|string',
+            'tradeOrSell'=> 'string',
+            'productQuality' => 'string',
             'images'=> 'required|array|min:1',
             'images.*'=> 'image|mimes:jpeg,png,webp',
         ]);
@@ -54,8 +54,8 @@ public function store(Request $request)
     $product->stock = $validated['stock'];
     $product->price = $validated['price'];
     $product->colleges = $collegesString;
-    $product->forSaleTrade = $validated['tradeOrSell'];
-    $product->product_condition = $validated['productQuality'];
+    $product->forSaleTrade = $validated['tradeOrSell'] ?? null;
+    $product->product_condition = $validated['productQuality'] ?? null;
     $product->approved = "not";
     $product->organization_id = $validated['organization_id'] ?? null;
     $product->user_id = Auth::id(); 
@@ -149,7 +149,132 @@ public function store(Request $request)
             return redirect()->back()->with('error', 'File has failed to upload!');
         }
     }
-     
+    
+    public function edit($id)
+    {
+        $items = \DB::table('product')
+        ->where('product_id', $id)
+        ->where('user_id', auth()->id())
+        ->first();
+
+        if (!$items) {
+            abort(403);
+        }
+
+        $images = DB::table('product_images')
+            ->where('product_id', $id)
+            ->get();
+        $itemTags = DB::table('product_tag')
+        ->join('tags', 'product_tag.tag_id', '=', 'tags.id')
+        ->where('product_tag.product_id', $items->product_id)
+        ->select('tags.id', 'tags.name')
+        ->get();
+        $preloadedColleges = [];
+
+        if (!empty($items->colleges)) {
+            $preloadedColleges = array_map('trim', explode(',', $items->colleges));
+        }
+        return view('editListing', compact('items', 'images', 'itemTags', 'preloadedColleges'));
+    }
+
+    public function update(Request $request, $id){
+        $validated = $request->validate([
+            'name'=> 'required|string|max:50',
+            'price'=> 'required|numeric|min:0',
+            'stock'=> 'required|integer|min:0',
+            'description'=> 'required|string',
+            'supplier_type'=> 'required|in:pben,student-org,marketplace',
+            'organization_id'=> 'required_if:supplier_type,student_org|exists:student_orgs,id',
+            'variants_json'=> 'nullable|string',
+            'colleges_json'=> 'nullable|string',
+            'tags_json'=> 'nullable|string',
+            'tradeOrSell'=> 'required|string',
+            'productQuality' => 'required|string',
+            'images'=> 'required|array|min:1',
+            'images.*'=> 'image|mimes:jpeg,png,webp',
+        ]);
+        $product = Product::findOrFail($id);
+        // Handle variants
+        if (!empty($validated['variants_json'])) {
+            $variantsData = json_decode($validated['variants_json'], true);
+        }
+
+        // Handle colleges
+        $colleges = $validated['colleges_json'] ?? '[]';
+        $collegesArray = json_decode($colleges, true); 
+        $collegesString = is_array($collegesArray) ? implode(',', $collegesArray) : '';
+
+        // Update fields
+        $product->supplier_type = $validated['supplier_type'];
+        $product->name = $validated['name'];
+        $product->description = $validated['description'];
+        $product->variants = $variantsData ?? null;
+        $product->stock = $validated['stock'];
+        $product->price = $validated['price'];
+        $product->colleges = $collegesString;
+        $product->forSaleTrade = $validated['tradeOrSell'];
+        $product->product_condition = $validated['productQuality'];
+        $product->organization_id = $validated['organization_id'] ?? null;
+        $product->approved = "not";
+        $product->updated_at = now();
+        $product->save();
+
+        // IMAGE HANDLING
+        if ($request->hasFile('images')) {
+            // option A: delete old images first
+            DB::table('product_images')->where('product_id', $product->product_id)->delete();
+
+            foreach($request->file('images') as $image){
+                $imageName = time().'_'.$image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                DB::table('product_images')->insert([
+                    'product_id' => $product->product_id,
+                    'image_path' => $imageName,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // ✅ TAG HANDLING
+        if (!empty($validated['tags_json'])) {
+            $tags = json_decode($validated['tags_json'], true); 
+            $tagIds = [];
+
+            foreach ($tags as $tagItem) {
+                $tagName = is_array($tagItem) ? ($tagItem['name'] ?? '') : $tagItem;
+                $tagName = strtolower(trim($tagName));
+
+                if ($tagName === '') continue;
+
+                $tag = Tag::firstOrCreate(
+                    ['name' => $tagName],
+                    [
+                        'usage_count' => 0,
+                        'is_admin' => Auth::user()->role === 'admin',
+                    ]
+                );
+
+                $tagIds[] = $tag->id;
+            }
+
+            // overwrite old tags with new ones
+            $product->tags()->sync($tagIds); 
+        }
+
+        // Redirect based on role
+        $user = Auth::user();
+        if ($user->role === 'student') {
+            return redirect()->route('listing.seller')->with('success', 'Product updated successfully!');
+        } elseif ($user->role === 'organization') {
+            return redirect()->route('organization.dashboard')->with('success', 'Product updated successfully!');
+        }
+
+    }
+
+
+
     public function show($id)
     {
         $products = Product::with('user')->findOrFail($id);
@@ -196,7 +321,7 @@ public function store(Request $request)
 
     public function dashboardForUserSeller()
     {
-        $products = Product::where('user_id', Auth::id())->get();
+        $products = Product::where('user_id', Auth::id())->where('approved', '!=' , 'rejected')->get();
         $productIds = $products->pluck('product_id');
         $images = DB::table('product_images')
             ->whereIn('product_id', $productIds)

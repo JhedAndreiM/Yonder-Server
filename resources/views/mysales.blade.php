@@ -467,19 +467,28 @@ function highlightStars(rating) {
 
 // receipt JS
 // Open receipt modal and populate data
-function openProductModal(button) {
+function openProductModalSeller(button) {
+    console.log('went here');
     var modal = document.getElementById("myModal");
-    modal.style.display = "block";
+    modal.style.display = "flex";
 
-    document.getElementById('productName').textContent = button.dataset.name;
-    document.getElementById('productQuantity').textContent = button.dataset.qty;
-    document.getElementById('productPrice').textContent = button.dataset.price;
-    document.getElementById('productVoucherPrice').textContent = button.dataset.voucher;
+    // Use fallback: try new attribute, else old attribute
+    function getData(attr, fallback) {
+        return button.dataset[attr] !== undefined ? button.dataset[attr] : button.dataset[fallback];
+    }
+
+    document.getElementById('productName').textContent = getData('name', 'names');
+    document.getElementById('productQuantity').textContent = getData('qty', 'qtys');
+    document.getElementById('productPrice').textContent = getData('price', 'prices');
+    document.getElementById('productVoucherPrice').textContent = getData('voucher', 'vouchers');
     document.getElementById('productID').textContent = button.dataset.id;
     document.getElementById('receiptDate').textContent = button.dataset.date;
 
     // Calculate total
-    const total = (button.dataset.price * button.dataset.qty) - button.dataset.voucher;
+    const price = parseFloat(getData('price', 'prices')) || 0;
+    const qty = parseInt(getData('qty', 'qtys')) || 0;
+    const voucher = parseFloat(getData('voucher', 'vouchers')) || 0;
+    const total = (price * qty) - voucher;
     document.getElementById('productTotal').textContent = total;
 }
 

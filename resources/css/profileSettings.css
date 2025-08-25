@@ -753,3 +753,100 @@ input:focus {
     transform: translateX(-50%) translateY(0);
 }
 
+/* Password Modal Background */
+.change-password-modal {
+  display: none; 
+  position: fixed; 
+  z-index: 2000; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Modal Content */
+.change-password-modal-content {
+  background: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-height: 450px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s ease;
+}
+
+/* Close Button */
+.change-password-modal-close {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Form */
+.change-password-form-group {
+  margin-bottom: 15px;
+}
+
+.change-password-form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.change-password-form-group input {
+  width: 100%;
+  padding: 5px 0px 5px 5px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.change-password-input-wrapper {
+  position: relative;
+}
+
+.change-password-input-wrapper input {
+  width: 100%;
+}
+
+.toggle-password-visibility {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+.toggle-password-visibility:hover {
+  color: #000;
+}
+.change-password-submit {
+  background: #4CAF50;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+.change-password-submit:hover {
+  background: #45a049;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+/* error handler */
+.change-password-error {
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: 5px;
+}

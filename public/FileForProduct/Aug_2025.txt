@@ -1,3 +1,3 @@
 Product Name                                      Stock     Price     
 TestingFileCreate_Seven                           1         P 350.00  
-TestingFileCreate_Eight                           555       P 4       For Sell                                          555       P 5       Product Quality                                   23143     P 2       Testing Credits                                   20        P 100     
+TestingFileCreate_Eight                           555       P 4       For Sell                                          555       P 5       Product Quality                                   23143     P 2       Testing Credits                                   20        P 100     WYSIWYG                                           55        P 5       Testing No Product Quali                          5         P 5       Testing No Product Quali2                         5         P 150.00  

@@ -28,7 +28,7 @@
               <div class="editButtons">
                 <div class="editButtons-edit">
                   <img src="{{asset('img/blueEditLogo.png')}}" alt="Star" />
-                  <p class="ratingScore">Edit</p>
+                  <a href="{{ route('products.edit', $items->product_id) }}" class="btn btn-sm btn-primary">Edit</a>
                 </div>
                 <div class="editButtons-delete">
                   <img src="{{asset('img/redRemoveLogo.png')}}" alt="Star" />

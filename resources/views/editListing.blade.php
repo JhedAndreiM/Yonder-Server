@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>List an Item</title>
+  <title>Edit an Item</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,7 +34,7 @@
   <!-- Sortable.js for drag-and-drop ordering -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   @vite('resources/css/listAnItem.css')
-  @vite('resources/js/listAnItem.js')
+  @vite('resources/js/editAnItem.js')
 </head>
 
 <body>
@@ -96,8 +96,9 @@
   </div>
 
   <!-- nav bar -->
-  <form id="createListingForm" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+  <form id="createListingForm" action="{{  route('products.update', $items->product_id) }}" method="POST" enctype="multipart/form-data">
     @csrf
+    @method('PUT')
     <div class="tab-buttons">
       <button class="listAnItemBtn active-button" id="tabBtnDetails" type="button">
           <h1 class="topText">List an Item</h1>
@@ -119,15 +120,17 @@
           <button type="button" class="supplier-btn" data-type="student-org">Student Organization</button>
         </div>
 
-        <input type="hidden" name="supplier_type" id="supplier_type" value="pben">
+        <input type="text" name="supplier_type" id="supplier_type" value="{{ old('supplier_type', $items->supplier_type ?? 'pben') }}">
 
         <div id="organizationSelect" style="display:none;margin-top:10px;">
-          <select name="organization_id" id="organization_id">
-            <option value="" disabled selected>Select Organization</option>
+        <select name="organization_id" id="organization_id">
+            <option value="" disabled {{ empty($items->organization_id) ? 'selected' : '' }}>Select Organization</option>
             @foreach($student_orgs as $student_org)
-            <option value="{{ $student_org->id }}">{{ $student_org->code }}</option>
+                <option value="{{ $student_org->id }}" {{ $items->organization_id == $student_org->id ? 'selected' : '' }}>
+                    {{ $student_org->code }}
+                </option>
             @endforeach
-          </select>
+        </select>
           @error('organization_id')
             <div class="form-error">{{ $message }}</div>
           @enderror
@@ -140,7 +143,7 @@
 
       <div class="section">
         <h5>Item Name</h5>
-        <input name="name" id="product_name" class="boxes" type="text" placeholder="Item name" value="{{ old('name') }}" />
+        <input name="name" id="product_name" class="boxes" type="text" placeholder="Item name" value="{{ old('name', $items->name) }}" />
         @error('name')
             <div class="form-error">{{ $message }}</div>
         @enderror
@@ -148,7 +151,7 @@
       <div class="section">
         <h5>Item Description</h5>
         <div id="editor" style="height: 300px;"></div>
-        <input type="hidden" name="description" id="description" value="{{ old('description') }}">
+        <input type="hidden" name="description" id="description" value="{{ old('description', $items->description) }}">
         @error('description')
         <div class="form-error">{{ $message }}</div>
         @enderror
@@ -158,14 +161,14 @@
       <div class="section" id="priceStocks">
         <div class="priceContainer">
           <h5>Price</h5>
-          <input name="price" class="boxes" type="number" placeholder="₱100" value="{{ old('price') }}"/>
+          <input name="price" class="boxes" type="number" placeholder="₱100" value="{{ old('price', $items->price) }}"/>
           @error('price')
             <div class="form-error">{{ $message }}</div>
           @enderror
         </div>
         <div class="stocksContainer">
           <h5>Stocks</h5>
-          <input id="stock-input"name="stock" class="boxes" type="number" placeholder="100" value="{{ old('stock') }}"/>
+          <input id="stock-input"name="stock" class="boxes" type="number" placeholder="100" value="{{ old('stock', $items->stock) }}"/>
           @error('stock')
             <div class="form-error">{{ $message }}</div>
           @enderror
@@ -210,10 +213,9 @@
             </div>
           </div>
 
-          <input type="text" name="variants_json" id="variants_json" value="">
+          <input type="hidden" name="variants_json" id="variants_json" value="" data-variants='{{ $items->variants ?? "" }}'>
         </div>
 
-      @if(auth()->user()->role === 'student')
       <div class="section" id="TradeOrSell">
         <h5>Is this Item for Trade or for Sell?</h5>
         <div class="Trade-SellButtons">
@@ -237,7 +239,7 @@
               <input type="hidden" name="productQuality" id="productQuality" value="new">
           </div>
       </div>
-      @endif
+      
       <div class="section" id="collegeSection">
         <h5>What college(s) is this item for?</h5>
         <div class="college-buttons">
@@ -245,6 +247,7 @@
                   <button type="button" class="college-btn" data-code="{{ $college->code }}" data-id="{{ $college->id }}">{{ $college->code }}</button>
               @endforeach
               <input type="hidden" name="colleges_json" id="colleges_json" value="[]">
+              <input type="hidden" name="preloadedColleges" id="preloadedColleges" value='@json($preloadedColleges)'>
           </div>
       </div>
 
@@ -283,13 +286,17 @@
         </details>
             <input type="text" id="tagInput" placeholder="+ add a tag" />
             <div class="tagsButton" id="tagsContainer"></div>
+            <input type="hidden" id="preloadedTags" value='@json($itemTags)'>
             <input type="hidden" name="tags_json" id="tags_json" value="[]">
             
   
       </div>
 
       <div class="section action-buttons">
-        <button class="button cancel-btn">Cancel</button>
+        <button
+        type="button"
+        class="button cancel-btn"
+        onclick="window.location.href='{{ auth()->user()->role === 'organization' ? route('organization.dashboard') : route('listing.seller') }}'"> Cancel</button>
         <button class="button confirm-btn">Confirm</button>
       </div>
     </div>
@@ -311,7 +318,6 @@
         </div>
       </div>
     </div>
-  
   <script>
     const toolbarOptions = [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -345,56 +351,71 @@
     
     document.addEventListener('DOMContentLoaded', function () {
 
-      // ----- Register plugins -----
-      FilePond.registerPlugin(
-        FilePondPluginImagePreview,
-        FilePondPluginImageExifOrientation,
-        FilePondPluginImageCrop,
-        FilePondPluginImageTransform
-      );
+  // ----- Register plugins -----
+  FilePond.registerPlugin(
+    FilePondPluginImagePreview,
+    FilePondPluginImageExifOrientation,
+    FilePondPluginImageCrop,
+    FilePondPluginImageTransform
+  );
 
-      // ----- Create instance -----
-      const inputElement = document.getElementById('images');
-      const pond = FilePond.create(inputElement, {
-        allowMultiple: true,
-        maxFiles: 10,
-         acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
-        labelIdle: 'Drag & Drop your images or <span class="filepond--label-action">Browse</span>',
+  // ----- Create instance -----
+  const inputElement = document.getElementById('images');
+  const pond = FilePond.create(inputElement, {
+    allowMultiple: true,
+    maxFiles: 10,
+    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+    labelIdle: 'Drag & Drop your images or <span class="filepond--label-action">Browse</span>',
 
-        // Enable reordering in the FilePond list
-        allowReorder: true,
+    // Enable reordering in the FilePond list
+    allowReorder: true,
 
-        // Auto-crop to 16:9 based on center — no manual UI
-        imageCropAspectRatio: '16:9',
+    // Auto-crop to 16:9 based on center — no manual UI
+    imageCropAspectRatio: '16:9',
 
-        // Optional: scale images to a max width for performance
-        //imageResizeTargetWidth: 1600,
-        // /imageResizeMode: 'cover', // maintain crop
+    // Process on form submit (no instant upload)
+    instantUpload: false,
+    allowProcess: false,
+    storeAsFile: true, // ensures cropped/transformed files are in form POST
+    server: null,
 
-        // Process on form submit (no instant upload)
-        instantUpload: false,
-        allowProcess: false,
-        storeAsFile: true  // IMPORTANT: ensures cropped/transformed files replace originals in form POST
-      });
+    // ----- Preload existing images from DB -----
+    files: [
+      @foreach ($images as $img)
+        {
+        source: "{{ asset('images/' . $img->image_path) }}",
+        options: {
+            type: 'server',
+            file: null,
+            metadata: {
+            id: "{{ $img->id }}"
+            }
+        }
+        },
+      @endforeach
+    ]
+  });
 
-      // ----- Update hidden order field whenever files change -----
-      const orderField = document.getElementById('image_order');
+  // ----- Update hidden order field whenever files change -----
+  const orderField = document.getElementById('image_order');
 
-      function updateImageOrder() {
-        // Use file.id to track each file uniquely; map to original name for server pairing
-        const order = pond.getFiles().map(f => ({
-          id: f.id,
-          name: f.file.name
-        }));
-        orderField.value = JSON.stringify(order);
-      }
+  function updateImageOrder() {
+    const order = pond.getFiles().map(f => ({
+      id: f.id,         // FilePond’s unique id
+      name: f.file.name // File name (either uploaded or preloaded)
+    }));
+    orderField.value = JSON.stringify(order);
+  }
 
-      pond.on('reorderfiles', updateImageOrder);
-      pond.on('updatefiles', updateImageOrder);
+  pond.on('reorderfiles', updateImageOrder);
+  pond.on('updatefiles', updateImageOrder);
 
-      // Run once initially
-      updateImageOrder();
-    });
+  // Run once initially
+  updateImageOrder();
+});
+
+
+
   </script>
 </body>
 

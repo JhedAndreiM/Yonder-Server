@@ -244,6 +244,7 @@ class CartController extends Controller
                 'cart_items.updated_at',
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
+                'cart_items.payment_type',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
@@ -256,7 +257,7 @@ class CartController extends Controller
         } else {
             $query->where('cart_items.status', $filters);
         }
-        $items = $query->get();
+        $items = $query->orderBy('cart_items.updated_at', 'asc')->get();
         foreach ($items as $item) {
         $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
         }
@@ -357,6 +358,9 @@ class CartController extends Controller
                 'cart_items.unit_price',
                 'cart_items.product_id',
                 'cart_items.updated_at',
+                'cart_items.paymentConfirmation',
+                'cart_items.gcash_receipt',
+                'cart_items.payment_type',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
@@ -391,7 +395,6 @@ public function confirmStudentSales(Request $request, $id)
 
     try {
         $cartItem = DB::table('cart_items')->where('id', $id)->lockForUpdate()->first();
-
         if (!$cartItem) {
             DB::rollBack();
             return back()->with('error', 'Buy order not found.');
@@ -399,11 +402,11 @@ public function confirmStudentSales(Request $request, $id)
 
         // Get the related product with a lock
         $product = DB::table('product')->where('product_id', $cartItem->product_id)->lockForUpdate()->first();
-
         if (!$product) {
             DB::rollBack();
             return back()->with('error', 'Product not found.');
         }
+        
         $selectedOption = $cartItem->selected_variant;
         $requestedQty = $cartItem->quantity;
 
@@ -411,7 +414,7 @@ public function confirmStudentSales(Request $request, $id)
         $available = 0;
         if ($hasVariants) {
             $variantData = json_decode($product->variants, true);
-
+            
             if (
                 !isset($variantData['options']) ||
                 !isset($variantData['optionStocks']) ||
@@ -423,7 +426,7 @@ public function confirmStudentSales(Request $request, $id)
             }
 
             $optionIndex = array_search($selectedOption, $variantData['options']);
-
+            
             if ($optionIndex === false) {
                 DB::rollBack();
                 return back()->with('error', 'Selected variant not found.');
@@ -438,7 +441,7 @@ public function confirmStudentSales(Request $request, $id)
                 ->whereIn('status', ['receive'])
                 ->where('id', '!=', $cartItem->id)
                 ->sum('quantity');
-
+            
             $available = $originalStock - $reservedQty;
 
             if ($available < $requestedQty) {
@@ -451,7 +454,8 @@ public function confirmStudentSales(Request $request, $id)
 
             DB::table('product')
                 ->where('product_id', $product->product_id)
-                ->update(['variant' => json_encode($variantData)]);
+                ->update(['variants' => json_encode($variantData)]);
+                
 
         } else {
             $originalStock = (int) $product->stock;
@@ -526,69 +530,6 @@ public function confirmStudentSales(Request $request, $id)
         }
         
     }    
-    
-
-
-
-    // working SMS no Credits lang
-    // public function confirmStudentSales(Request $request, $id)
-    // {
-    //     DB::table('cart_items')
-    //         ->where('id', $id)
-    //         ->update([
-    //             'status' => 'receive',
-    //             'updated_at' => now()
-    //         ]);
-    //     $post_data=array(
-    //         'sub_account'=>'32064_yonder',
-    //         'sub_account_pass'=>'jhed200414563',
-    //         'action'=>'send_sms',
-    //         'sender_id'=>'3361',
-    //         'recipients'=>'639484386078,',
-    //         'message'=>"Your Buy Order has been confirmed by the seller!."
-    //     );
-        
-    //     $api_url='https://cheapglobalsms.com/api_v1/';
-
-    //     $ch = curl_init();
-    //     curl_setopt($ch, CURLOPT_URL, $api_url);
-    //     curl_setopt($ch, CURLOPT_POST, true);
-    //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    //     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    //     //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    //     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-    //     $response = curl_exec($ch);
-    //     $response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    //     if($response_code != 200)$response=curl_error($ch);
-    //     curl_close($ch);
-
-    //     if($response_code != 200)$msg="HTTP ERROR $response_code: $response";
-    //     else
-    //     {
-    //         $json=@json_decode($response,true);
-            
-    //         if($json===null)$msg="INVALID RESPONSE: $response"; 
-    //         elseif(!empty($json['error']))$msg=$json['error'];
-    //         else
-    //         {
-    //             $msg="SMS sent to ".$json['total']." recipient(s).";
-    //             $sms_batch_id=$json['batch_id'];
-    //         }
-    //     }
-        
-    //     dd($msg);
-    //     $filters = $request->input('filterValue');
-    //     if (Auth::check() && Auth::user()->role === 'student') {
-    //          return redirect()->route('student.sales', ['filters' => $filters])
-    //         ->with('success', 'Item cancelled.');
-    //     }
-    //     elseif(Auth::check() && Auth::user()->role === 'organization'){
-    //         return redirect()->route('order.page', ['filters' => $filters])
-    //         ->with('success', 'Item cancelled.');
-    //     }
-    // }
 
     public function orderReceivedDelivered(Request $request, $id)
     {
