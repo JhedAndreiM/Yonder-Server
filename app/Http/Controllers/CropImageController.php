@@ -29,11 +29,10 @@ class CropImageController extends Controller
         if ($request->gender) {
             $user->gender = $request->gender;
         }
-        $user->last_otp_sent_at = now();
         $user->save();
         if($request->phone_number !== $user->phone_number){
             session(['pending_phoneNumber' => $request->phone_number]);
-            $cooldownMinutes = 10; // 10 mins 'to
+            $cooldownMinutes = 10;
             $lastOtp = $user->last_otp_sent_at ? Carbon::parse($user->last_otp_sent_at) : null;
             if($lastOtp && $lastOtp->diffInMinutes(now()) < $cooldownMinutes){
                  $remaining = $cooldownMinutes - floor($lastOtp->diffInMinutes(now()));
