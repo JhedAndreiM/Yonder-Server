@@ -306,7 +306,7 @@ public function addStudOrg(Request $request){
             'updated_at' => now()
         ]);
 
-        return redirect()->back()->with('studOrg_success', 'College added successfully!');
+        return redirect()->back()->with('studOrg_success', 'Student Organization added successfully!');
 
     } catch (ValidationException $e) {
         // Handles validation errors
