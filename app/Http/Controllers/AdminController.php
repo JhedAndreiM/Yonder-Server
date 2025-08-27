@@ -17,7 +17,6 @@ class AdminController extends Controller
 {
     public function dashboard(){
         $featuredImages = DB::table('featured_images')
-        ->orderBy('sort_order')
         ->limit(5)
         ->orderBy('created_at', 'desc')
         ->get();
