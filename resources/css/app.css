@@ -726,8 +726,10 @@ footer a {
     }
     /*section one*/
     .pageOne {
-        height: 75dvh;
         margin-top: 5.344dvh;
+    }
+    .pageOne,.pageTwo,.pageThree{
+        height: 100dvh;
     }
     .section-content .section-text h1 {
         font-size: 1.5rem;

@@ -207,6 +207,20 @@ Route::get('/login/{role}', [AuthController::class, 'showLoginForm'])->name('log
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
 Route::get('/', function () {
+
+    $studentInfo = Auth::user();
+
+    if(auth()->user()){
+        if($studentInfo->role=='student'){
+            return redirect()->route('student.dashboard');
+        }
+        elseif($studentInfo->role=='organization'){
+                return redirect()->route('organization.dashboard');
+        }
+        elseif($studentInfo->role=='admin'){
+                return redirect()->route('admin.dashboard');
+        }
+    }
     return view('landing');
 });
 

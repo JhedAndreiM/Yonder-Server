@@ -8,10 +8,34 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function selectRole(){
+        $studentInfo = Auth::user();
+
+        if(auth()->user()){
+            if($studentInfo->role=='student'){
+                return redirect()->route('student.dashboard');
+            }
+            elseif($studentInfo->role=='organization'){
+                return redirect()->route('organization.dashboard');
+            }
+            elseif($studentInfo->role=='admin'){
+                return redirect()->route('admin.dashboard');
+            }
+        }
         return view('select-role');
     }
 
     public function showLoginForm($role){
+        if(auth()->user()){
+            if($role=='student'){
+                return redirect()->route('student.dashboard');
+            }
+            elseif($role=='organization'){
+                return redirect()->route('organization.dashboard');
+            }
+            elseif($role=='admin'){
+                return redirect()->route('admin.dashboard');
+            }
+        }
         $validRoles=['admin','organization','student'];
         if (!in_array($role, $validRoles)) {
             abort(404);

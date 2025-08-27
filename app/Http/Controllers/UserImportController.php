@@ -40,13 +40,13 @@ class UserImportController extends Controller
                 
                 // Create new user
                 User::create([
-                    'name' => $row[1],         
-                    'middle_name' => $row[2],   
-                    'last_name' => $row[3],     
-                    'gender' => $row[4],        
-                    'email' => $row[5],          
-                    'phone_number' => $row[6],  
-                    'password' => Hash::make($row[0]),
+                    'name' => $row[0],         
+                    'middle_name' => $row[1],   
+                    'last_name' => $row[2],     
+                    'gender' => $row[3],        
+                    'email' => $row[4],          
+                    'phone_number' => $row[5],  
+                    'password' => Hash::make('12345678'),
                     'role' => 'student',         
                     'active_status' => 0,
                     'messenger_color' => '#2180f3',

@@ -111,7 +111,7 @@
         <button class="filter-btn" data-filter="used" data-filter-type="condition">Used</button>
         @endif
         @if($activeTopFilter==='featured' || $activeTopFilter==='marketplace')
-        @if($colleges)
+        @if($colleges && $colleges->count() > 0)
         <h3>Colleges</h3>
         <div class="filterBtn">
           @foreach($colleges as $college)
@@ -122,7 +122,7 @@
         @endif
 
         @if($activeTopFilter==='student-org')
-        @if($student_orgs)
+        @if($student_orgs && $student_orgs->count() > 0)
         <h3>Student Organization</h3>
         <div class="filterBtn">
           @foreach($student_orgs as $student_org)

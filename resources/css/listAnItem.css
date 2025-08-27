@@ -129,6 +129,84 @@ input:focus {
   align-items: center;
   gap: 40px;
 }
+
+/* for notifs */
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-dropdown{
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif !important;
+}
+.notification .Message{
+  padding-bottom: 1rem;
+}
+.notification h1{
+  font-size: 1.5rem;
+}
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notification-header {
+  max-height: 50px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #f1f1f1;
+}
+.wishlist-icon{
+  width: 20px;
+  height: 17px;
+}
+.notification {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-dropdown li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  margin: 0px;
+}
+
+.profile-dropdown li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+  font-weight: normal;
+}
+.navBarLeft{
+  cursor: pointer;
+}
 /* END OF NAVBAR */
 
 .mainContainer {
