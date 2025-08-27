@@ -214,10 +214,10 @@
                             </button>
 
                             <!-- Delete -->
-                            <form action="" method="POST" style="display:inline-block;">
+                            <form class="deleteForm" data-id="{{ $college->id }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
+                               <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -299,10 +299,10 @@
                             </button>
 
                             <!-- Delete -->
-                            <form action="" method="POST" style="display:inline-block;">
+                            <form class="delFormStudOrg" data-id="{{ $studOrg->id }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="deleteBtnStudOrg" onclick="return confirm('Are you sure?')">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -974,6 +974,45 @@ editForm.addEventListener('submit', function(e){
         }
     });
 });
+document.querySelectorAll('.deleteForm').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!confirm('Are you sure?')) return; // confirm before delete
+
+        const id = this.getAttribute('data-id');
+        const token = this.querySelector('input[name="_token"]').value;
+
+        fetch(`/admin/delete-college/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const messageBox = document.getElementById('ajaxMessages');
+            if (data.status === 'success') {
+                messageBox.innerHTML = `
+                    <div class="alert alert-success">
+                        College deleted successfully!
+                    </div>
+                `;
+                // remove the row from the DOM
+                this.closest('tr').remove();
+            } else {
+                messageBox.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${data.message || 'Error deleting college!'}
+                    </div>
+                `;
+            }
+        })
+        .catch(err => console.error(err));
+    });
+});
 });
 
 
@@ -1072,6 +1111,45 @@ editFormStudOrg.addEventListener('submit', function(e){
         modalErrorStudOrg.textContent = 'An unexpected error occurred.';
         modalErrorStudOrg.style.display = 'block';
     }
+    });
+});
+document.querySelectorAll('.delFormStudOrg').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!confirm('Are you sure?')) return; // confirm before delete
+
+        const id = this.getAttribute('data-id');
+        const token = this.querySelector('input[name="_token"]').value;
+
+        fetch(`/admin/delete-student-org/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const messageBox = document.getElementById('ajaxMessagesStudOrg');
+            if (data.status === 'success') {
+                messageBox.innerHTML = `
+                    <div class="alert alert-success">
+                        College deleted successfully!
+                    </div>
+                `;
+                // remove the row from the DOM
+                this.closest('tr').remove();
+            } else {
+                messageBox.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${data.message || 'Error deleting college!'}
+                    </div>
+                `;
+            }
+        })
+        .catch(err => console.error(err));
     });
 });
 });

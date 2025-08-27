@@ -78,8 +78,10 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct']);
     Route::post('/admin/add-college', [AdminController::class, 'addCollege'])->name('admin.addCollege');
     Route::post('/admin/update-college/{id}', [AdminController::class, 'updateCollege'])->name('admin.updateCollege');
+    Route::delete('/admin/delete-college/{id}', [AdminController::class, 'deleteCollege'])->name('admin.deleteCollege');
     Route::post('/admin/add-Student-Org', [AdminController::class, 'addStudOrg'])->name('admin.addStudOrg');
     Route::post('/admin/update-Student-Org/{id}', [AdminController::class, 'updateStudOrg'])->name('admin.StudOrg');
+    Route::delete('/admin/delete-student-org/{id}', [AdminController::class, 'deleteStudOrg'])->name('admin.deleteStudOrg');
 });
 
 // Middleware for Orgs and Studnts

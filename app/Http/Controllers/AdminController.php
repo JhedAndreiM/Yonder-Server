@@ -289,7 +289,22 @@ public function updateCollege(Request $request, $id)
         ], 422);
     }
 }
+public function deleteCollege($id)
+{
+    try {
+        DB::table('colleges')->where('id', $id)->delete();
 
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Deleted successfully!'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
 public function addStudOrg(Request $request){
     try {
         // Validate input
@@ -347,6 +362,22 @@ public function updateStudOrg(Request $request, $id)
             'status' => 'error',
             'errors' => $e->errors()
         ], 422);
+    }
+}
+public function deleteStudOrg($id)
+{
+    try {
+        DB::table('student_orgs')->where('id', $id)->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Deleted successfully!'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
     }
 }
 }
