@@ -5,8 +5,10 @@
 @else
 @foreach ($wishlistItems as $wishlistItem)
 @php
-$images = explode(',', $wishlistItem->product->image_path);
-$firstImage = $images[0];
+$images = DB::table('product_images')
+        ->where('product_id', $wishlistItem->product_id)
+        ->get();
+        $firstImage= $images->first();
 
 @endphp
         <a id="card-link" href="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}" class="card-link">
@@ -14,7 +16,7 @@ $firstImage = $images[0];
             <div class="card-container">
                 <input id="cardLinkFromInput" type="hidden" value="{{ route('product.show', ['id' => $wishlistItem->product->product_id]) }}">
             @if($firstImage)
-                <img class="image-placeholder"src="{{ asset('images/' . $firstImage) }}" alt="{{ $firstImage }}">
+                <img class="image-placeholder"src="{{ asset('images/' . $firstImage->image_path) }}" alt="Product Image">
             @else
                 <img class="image-placeholder"src="{{ asset('img/default-product.png') }}" alt="No image available">
             @endif

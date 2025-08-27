@@ -3,11 +3,7 @@
 body {
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
-  height: 100vh;
   font-style: normal;
-  background-image: url("imgs/BACKGROUND.png");
-  background-repeat: no-repeat;
-  background-size: cover;
   overflow-y: hidden;
 }
 
@@ -409,107 +405,140 @@ button {
   background-color: rgba(0,0,0,0.4); /* This now covers the whole screen */
 }
 
-/* Modal Content/Box */
-
-.modal-wrapper {
-  position: relative;
-  width: 578px;
-  height: 732px;
-  top: calc(50% - 366px);  
-  left: calc(50% - 289px);
+/* RECEIPT MODAL */
+#myModal {
+  display: none; /* hidden by default */
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
 }
 
-.modal-content-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 40px;
-  color: black;
+#myModal .modal-wrapper {
+  position: relative;
+  width: 600px;
+  max-width: 95%;
+  max-height: 90vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+  animation: fadeInScale 0.3s ease;
+}
+
+#myModal .modal-content-overlay {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  padding: 1.5rem;
+  box-sizing: border-box;
 }
 
-.modal-top{
-  flex: 0.2;
+#myModal .modal-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-inline: 1rem;
 }
-.modal-middle{
-  padding-inline: 1rem;
-  flex: 0.8;
-  display: flex;
-  flex-direction: column;
+
+#myModal .modal-top .close,
+#myModal .modal-top .downloadBtn {
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
-.middle-top{
-  flex: 0.4;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.5rem;
+#myModal .modal-top .close:hover,
+#myModal .modal-top .downloadBtn:hover {
+  transform: scale(1.1);
 }
-.middle-top h3{
-  color:red;
-}
-.middle-bottom{
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 1rem;
-  color: red;
-}
-.middle-bottom img{
-  height: 134px;
-  width: 134px;
-}
-.modal-bottom{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.bottom-top{
-  flex: 0.2;
-  display: flex;
-  font-weight: 200;
-  align-items: center;
-}
-.bottom-top h1{
-  color: black;
-  font-weight: 500;
-  font-size: 24px;
-}
-.bottom-bottom{
-  flex: 1;
-}
-table{
-  width: 100%;
-  padding-top: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  font-size: 17px;
-}
-td.dotted-bottom{
-  border-bottom: 1px dotted black;
-  padding-block : 1rem;
-  padding-inline: 1rem;
-}
-td.center-align{
+
+#myModal .middle-top {
+  margin-top: 1rem;
   text-align: center;
 }
-.total{
-  padding-block : 1rem;
-  padding-inline: 1rem;
+#myModal .middle-top h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1d1d1d;
 }
-.downloadBtn
-,.close{
-  cursor: pointer;
+#myModal .middle-top h6 {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #666;
+}
+
+#myModal .middle-bottom {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+#myModal .middle-bottom h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #ad1f23;
+}
+#myModal .middle-bottom img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+}
+
+#myModal .modal-bottom {
+  margin-top: 2rem;
+}
+#myModal .bottom-top h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+#myModal table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+#myModal td {
+  padding: 0.75rem;
+}
+#myModal td.dotted-bottom {
+  border-bottom: 1px dotted #ccc;
+}
+#myModal td.center-align {
+  text-align: center;
+}
+#myModal td.total {
+  font-weight: 600;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  #myModal .modal-wrapper {
+    width: 100%;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  #myModal .middle-bottom img {
+    width: 100px;
+    height: 100px;
+  }
+  #myModal .middle-top h3 {
+    font-size: 1rem;
+  }
+  #myModal .middle-bottom h2 {
+    font-size: 1.2rem;
+  }
 }
 .uploadGcashReceipt{
   display: flex;
@@ -856,4 +885,124 @@ textarea {
   font-size: 12px;
   color: #999;
   margin-top: 15px;
+}
+@media (max-width: 1024px) {
+  .navBar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 20px;
+  }
+  .navBarMiddle {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .mainContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .left {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .right {
+    margin-left: 0;
+    max-width: 100%;
+  }
+  .card {
+    width: 100%;
+  }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  .btn-filter{
+    margin-right: 10px;
+  }
+  .navBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  .navBarRight {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .navBarMiddle {
+    font-size: 18px;
+  }
+  input, .searchInput input {
+    font-size: 16px;
+    height: 40px;
+  }
+  .left {
+    display: none; /* hide sidebar for mobile */
+  }
+  .card {
+    flex-direction: column;
+    height: auto;
+    padding: 15px;
+  }
+  .content {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .placeholder img {
+    height: auto;
+  }
+  .text{
+    padding-right: 30px;
+  }
+  .totalPrice{
+    padding-right: 30px;
+  }
+  .cardButtons{
+    padding-right: 30px;
+  }
+}
+
+/* Small Mobile (≤480px) */
+@media (max-width: 480px) {
+    .btn-filter{
+    margin-right: 0px;
+  }
+  body {
+    overflow-y: auto;
+  }
+  .navBar {
+    padding: 10px;
+  }
+  .navBarMiddle {
+    font-size: 16px;
+    border-width: 1px;
+  }
+  .navBarRight {
+    gap: 10px;
+  }
+  h2, h3 {
+    font-size: 18px;
+  }
+  p {
+    font-size: 14px;
+  }
+  button, .button {
+    font-size: 16px;
+    width: auto;
+    padding: 8px 12px;
+  }
+  .card {
+    padding: 10px;
+  }
+  .modal-content, 
+  .sessionModal-content, 
+  .gcashReceipt-container, 
+  .gcashReceipt-containerView {
+    width: 95%;
+    height: auto;
+    max-height: 90vh;
+  }
+  .cardButtons{
+    font-size: 10px;
+  }
 }

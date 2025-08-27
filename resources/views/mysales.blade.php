@@ -70,7 +70,7 @@
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
         <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href=" ">Wishlist</a></li>
+        <li><a href="{{route('account.page')}}">Settings</a></li>
         <li><a href="{{ route('logout') }}">Logout</a></li>
       </ul>
     </div>

@@ -19,6 +19,14 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/homepage.css')
     @vite('resources/js/homepage.js')
+    <style>
+      body {
+      background-image: url("{{ asset('img/background.svg') }}");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top center;
+      }
+  </style>
   </head>
   <body>
     <!-- nav bar -->

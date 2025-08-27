@@ -5,22 +5,21 @@
 @else
     @foreach ($cartItems as $items)
     @php
-        $images = explode(',', $items->image_path);
-        $firstImage = $images[0];
+    $images = DB::table('product_images')
+        ->where('product_id', $items->product_id)
+        ->get();
+        $firstImage= $images->first();
         
     @endphp
     <div class="card cart-item" data-id="{{ $items->cart_id }}" data-stock="{{ $items->product_stock }}">
         <div class="card-image">
-            @if($items->image_path)
             <div class="image-placeholder">
-                <img src="{{ asset('images/' . $firstImage) }}" alt="{{ $items->image_path }}">
+                @if($firstImage)
+                    <img class="image-placeholder"src="{{ asset('images/' . $firstImage->image_path) }}" alt="Product Image">
+                @else
+                    <img class="image-placeholder"src="{{ asset('img/default-product.png') }}" alt="No image available">
+                @endif
             </div>
-                
-            @else
-            <div class="image-placeholder">
-                <img src="{{ asset('img/default-product.png') }}" alt="No image available">
-            </div>
-            @endif
         </div>
         <div class="card-details">
             <h2>{{ $items->product_name }}</h1>
