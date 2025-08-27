@@ -31,6 +31,7 @@ export default defineConfig({
                 "resources/css/vouchers.css",
                 "resources/css/wishlist.css",
                 "resources/js/app.js",
+                "resources/css/admin-younder.css"
             ],
             refresh: true,
         }),
