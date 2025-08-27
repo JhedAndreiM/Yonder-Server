@@ -232,6 +232,9 @@ input:focus {
 .user-role-management,
 .report-show,
 .addingOfVoucher,
+.addingOfCollege,
+.collegeSection,
+.studOrgsSection,
 .disableStudOrgMarketplace {
     background: #fff;
     border-radius: var(--radius);
@@ -249,7 +252,8 @@ input:focus {
 .user-role-management::-webkit-scrollbar,
 .report-show::-webkit-scrollbar,
 .addingOfVoucher::-webkit-scrollbar,
-.disableStudOrgMarketplace::-webkit-scrollbar {
+.addingOfVoucher::-webkit-scrollbar,
+.collegeSection::-webkit-scrollbar {
     width: 8px; 
     height: 8px; 
 }
@@ -260,6 +264,7 @@ input:focus {
 .user-role-management::-webkit-scrollbar-track,
 .report-show::-webkit-scrollbar-track,
 .addingOfVoucher::-webkit-scrollbar-track,
+.collegeSection::-webkit-scrollbar-track,
 .disableStudOrgMarketplace::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
@@ -271,6 +276,7 @@ input:focus {
 .user-role-management::-webkit-scrollbar-thumb,
 .report-show::-webkit-scrollbar-thumb,
 .addingOfVoucher::-webkit-scrollbar-thumb,
+.collegeSection::-webkit-scrollbar-thumb,
 .disableStudOrgMarketplace::-webkit-scrollbar-thumb {
     background: #b5b5b5; 
     border-radius: 10px;
@@ -282,6 +288,7 @@ input:focus {
 .user-role-management::-webkit-scrollbar-thumb:hover,
 .report-show::-webkit-scrollbar-thumb:hover,
 .addingOfVoucher::-webkit-scrollbar-thumb:hover,
+.collegeSection::-webkit-scrollbar-thumb:hover,
 .disableStudOrgMarketplace::-webkit-scrollbar-thumb:hover {
     background: #888; 
 }
@@ -756,6 +763,257 @@ button[type="reset"]:hover {
 }
 .redeemBtn:hover:not(:disabled) {
   background: #0f55c4;
+}
+
+/* Adding Of College */
+.addingOfCollege {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 400px;
+    margin: 20px auto;
+    font-family: var(--font);
+}
+.addingOfStudOrg {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 400px;
+    margin: 20px auto;
+    font-family: var(--font);
+}
+
+.addingOfCollege h2 {
+    color: var(--theme);
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+.addingOfStudOrg h2 {
+    color: var(--theme);
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.addingOfCollege form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.addingOfStudOrg form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.addingOfCollege label {
+    font-weight: 500;
+    color: var(--theme-dark);
+    margin-bottom: 4px;
+}
+.addingOfStudOrg label {
+    font-weight: 500;
+    color: var(--theme-dark);
+    margin-bottom: 4px;
+}
+
+.addingOfCollege input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+.addingOfStudOrg input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+.addingOfCollege input:focus {
+    outline: none;
+    border-color: var(--theme);
+}
+.addingOfStudOrg input:focus {
+    outline: none;
+    border-color: var(--theme);
+}
+
+.addingOfCollege button {
+    padding: 12px;
+    background-color: var(--theme);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+.addingOfStudOrg button {
+    padding: 12px;
+    background-color: var(--theme);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.addingOfCollege button:hover {
+    background-color: var(--theme-dark);
+}
+.addingOfStudOrg button:hover {
+    background-color: var(--theme-dark);
+}
+/* Table Styling */
+.collegeTable {
+    margin: 30px auto;
+    width: 90%;
+    border-collapse: collapse;
+    font-family: var(--font);
+}
+
+.collegeTable th,
+.collegeTable td {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.collegeTable th {
+    background-color: var(--theme);
+    color: #fff;
+    font-weight: 600;
+}
+
+.collegeTable tr:nth-child(even) {
+    background-color: var(--theme-light);
+}
+
+.collegeTable button {
+    padding: 6px 12px;
+    margin-right: 6px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+.collegeTable .editBtn {
+    background-color: #4d90cc;
+}
+.collegeTable .editBtnStudOrg {
+    background-color: #4d90cc;
+}
+
+.collegeTable .editBtn:hover {
+    background-color: #357ab7;
+}
+.collegeTable .editBtnStudOrg:hover {
+    background-color: #357ab7;
+}
+
+.collegeTable .deleteBtn {
+    background-color: #d9534f;
+}
+
+.collegeTable .deleteBtn:hover {
+    background-color: #c12e2a;
+}
+.collegeModal {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal content wrapper */
+.collegeModal .modal-wrapper {
+    background-color: var(--theme-light);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 400px;
+    max-width: 90%;
+    font-family: var(--font);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Modal heading */
+.collegeModal .modal-wrapper h3 {
+    color: var(--theme);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* Labels */
+.collegeModal .modal-wrapper label {
+    font-weight: 500;
+    color: var(--theme-dark);
+    margin-bottom: 4px;
+}
+
+/* Inputs */
+.collegeModal .modal-wrapper input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border 0.2s;
+    width: 100%;
+}
+
+.collegeModal .modal-wrapper input:focus {
+    outline: none;
+    border-color: var(--theme);
+}
+
+/* Buttons */
+.collegeModal .modal-wrapper button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Save button */
+.collegeModal .modal-wrapper button[type="submit"] {
+    background-color: var(--theme);
+    color: white;
+    margin-top: 8px;
+}
+
+.collegeModal .modal-wrapper button[type="submit"]:hover {
+    background-color: var(--theme-dark);
+}
+
+/* Cancel button */
+.collegeModal .modal-wrapper button#closeModal {
+    background-color: #ccc;
+    color: #333;
+    margin-top: 4px;
+}
+
+.collegeModal .modal-wrapper button#closeModal:hover {
+    background-color: #aaa;
 }
 @media (max-width: 900px) {
     .container,

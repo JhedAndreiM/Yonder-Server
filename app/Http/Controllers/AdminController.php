@@ -52,8 +52,10 @@ class AdminController extends Controller
         ->get();
         $productPolicies = DB::table('product_policies')->get();
         $voucherList = DB::table('voucherList')->get();
+        $collegeList = DB::table('colleges')->get();
+        $studOrgList = DB::table('student_orgs')->get();
         $creditPercentage = DB::table('credit_settings')->first();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage'));
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList'));
     }
 
     public function productPolicy(Request $request){
@@ -228,4 +230,123 @@ public function editCreditPercentage(Request $request){
     return back()->with('credit_success', 'Credit percentage updated successfully.');
 } 
 
+public function addCollege(Request $request){
+    try {
+        // Validate input
+        $request->validate([
+            'code' => 'required|unique:colleges,code',
+            'name' => 'required'
+        ]);
+
+        // Insert into database
+        DB::table('colleges')->insert([
+            'code' => $request->input('code'),
+            'name' => $request->input('name'),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return redirect()->back()->with('college_success', 'College added successfully!');
+
+    } catch (ValidationException $e) {
+        // Handles validation errors
+        return redirect()->back()->withErrors($e->errors())->withInput();
+
+    } catch (QueryException $e) {
+        // Handles database errors (like constraint violations)
+        return redirect()->back()->with('college_error', 'Database error: ' . $e->getMessage());
+    }
+
+}
+public function updateCollege(Request $request, $id)
+{
+    try {
+        $request->validate([
+            'code' => 'required|unique:colleges,code,' . $id,
+            'name' => 'required'
+        ]);
+
+        DB::table('colleges')->where('id', $id)->update([
+            'code' => $request->input('code'),
+            'name' => $request->input('name'),
+            'updated_at' => now()
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'College updated successfully!',
+            'data' => [
+                'id' => $id,
+                'code' => $request->input('code'),
+                'name' => $request->input('name')
+            ]
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'errors' => $e->errors()
+        ], 422);
+    }
+}
+
+public function addStudOrg(Request $request){
+    try {
+        // Validate input
+        $request->validate([
+            'code' => 'required|unique:student_orgs,code',
+            'name' => 'required'
+        ]);
+
+        // Insert into database
+        DB::table('student_orgs')->insert([
+            'code' => $request->input('code'),
+            'name' => $request->input('name'),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return redirect()->back()->with('studOrg_success', 'College added successfully!');
+
+    } catch (ValidationException $e) {
+        // Handles validation errors
+        return redirect()->back()->withErrors($e->errors())->withInput();
+
+    } catch (QueryException $e) {
+        // Handles database errors (like constraint violations)
+        return redirect()->back()->with('studOrg_success', 'Database error: ' . $e->getMessage());
+    }
+
+}
+public function updateStudOrg(Request $request, $id)
+{
+    try {
+       $request->validate([
+        'code' => 'required|unique:student_orgs,code,' . $id,
+        'name' => 'required'
+        ]);
+
+        DB::table('student_orgs')->where('id', $id)->update([
+            'code' => $request->input('code'),
+            'name' => $request->input('name'),
+            'updated_at' => now()
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student Organization updated successfully!',
+            'data' => [
+                'id' => $id,
+                'code' => $request->input('code'),
+                'name' => $request->input('name')
+            ]
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'errors' => $e->errors()
+        ], 422);
+    }
+}
 }

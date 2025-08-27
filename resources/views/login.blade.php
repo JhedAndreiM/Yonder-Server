@@ -22,8 +22,7 @@
 </head>
 <body>
 <header>
-        <img class="menu-button"src="{{ asset('img/Menu.svg') }}" alt="">
-        <a href=""><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
+    <a href="/"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
         <div class="nav-container">
         <nav>
             <ul class="navLinks">

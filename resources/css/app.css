@@ -634,6 +634,25 @@ footer a {
     display: none;
 }
 /* iphone 16 pro max view*/
+@media (max-height: 700px) {
+    /* Ensure sections have proper gaps and don't overlap */
+    .pageOne,
+    .pageTwo,
+    .pageThree {
+        min-height: auto; 
+        margin-top: 5rem; 
+        margin-bottom: 5rem !important; 
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        gap: 2rem;
+    }
+
+    /* Remove the long divider scrolling lines */
+    .dividerOne,
+    .dividerTwo {
+        display: none;
+    }
+}
 @media (max-width: 1529px) {
     .section-content .section-text h1 {
         font-size: 40px;
@@ -728,8 +747,12 @@ footer a {
     .pageOne {
         margin-top: 5.344dvh;
     }
-    .pageOne,.pageTwo,.pageThree{
-        height: 100dvh;
+    .pageOne,
+    .pageTwo,
+    .pageThree {
+        min-height: calc(100dvh - 5.344dvh); /* subtract header height */
+        margin-top: 5.344dvh; /* optional if you want spacing below header */
+        padding: 0; /* ensure no extra padding */
     }
     .section-content .section-text h1 {
         font-size: 1.5rem;
@@ -885,7 +908,7 @@ footer a {
     }
     .pageThree {
         padding-bottom: 7rem;
-        height: 80dvh;
+        height: 100dvh;
     }
 
     /* FOOTER */

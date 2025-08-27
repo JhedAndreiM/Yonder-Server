@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -163,6 +164,175 @@
             </form>
         </section>
 
+        <!-- Adding of College -->
+        <section class="collegeSection">
+            <section class="addingOfCollege">
+            <h2>Add College</h2>
+            @if (session('college_success'))
+                <div class="alert alert-success">{{ session('college_success') }}</div>
+            @endif
+            @if (session('college_error'))
+                <div class="alert alert-danger">{{ session('college_error') }}</div>
+            @endif
+            <!-- Validation Errors -->
+            @if ($errors->any())
+                <div class="alert alert-danger">{{$errors->first()}}</div>
+            @endif
+            <form id="collegeForm" action="{{route('admin.addCollege')}}" method="POST">
+                @csrf
+                <div>
+                    <label for="code">College Code</label>
+                    <input type="text" id="code" name="code" placeholder="Ex. CCST" required>
+                </div>
+                <div>
+                    <label for="name">College Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter college name" required>
+                </div>
+                <button type="submit">Add College</button>
+            </form>
+        </section>
+        <!-- College Table -->
+        <section class="collegeList">
+            <div id="ajaxMessages"></div>
+            <table class="collegeTable">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($collegeList as $college)
+                    <tr id="collegeRow{{ $college->id }}"> <!-- Add this ID -->
+                        <td class="collegeCode">{{ $college->code }}</td> <!-- Add class -->
+                        <td class="collegeName">{{ $college->name }}</td> <!-- Add class -->
+                        <td>
+                            <!-- Edit -->
+                            <button type="button" class="editBtn" data-id="{{ $college->id }}" data-code="{{ $college->code }}" data-name="{{ $college->name }}">
+                                Edit
+                            </button>
+
+                            <!-- Delete -->
+                            <form action="" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
+        <!-- Modal for College -->
+        <div id="editCollegeModal" class="collegeModal">
+            <div class="modal-wrapper">
+                <h3>Edit College</h3>
+
+                <div id="modalError" class="alert alert-danger" style="display:none;"></div>
+
+                <form id="editCollegeForm">
+                    @csrf
+                    <input type="hidden" id="editCollegeId">
+
+                    <label for="editCode">Code</label>
+                    <input type="text" id="editCode" required>
+
+                    <label for="editName">Name</label>
+                    <input type="text" id="editName" required>
+
+                    <button type="submit">Save Changes</button>
+                    <button type="button" id="closeModalCollege">Cancel</button>
+                </form>
+            </div>
+        </div>
+        </section>
+
+        <!-- Adding of Student Orgs -->
+        <section class="studOrgsSection">
+            <section class="addingOfStudOrg">
+            <h2>Add Student Organization</h2>
+            @if (session('studOrg_success'))
+                <div class="alert alert-success">{{ session('studOrg_success') }}</div>
+            @endif
+            @if (session('studOrg_error'))
+                <div class="alert alert-danger">{{ session('studOrg_error') }}</div>
+            @endif
+            <!-- Validation Errors -->
+            @if ($errors->any())
+                <div class="alert alert-danger">{{$errors->first()}}</div>
+            @endif
+            <form id="studOrgForm" action="{{route('admin.addStudOrg')}}" method="POST">
+                @csrf
+                <div>
+                    <label for="code">Student Organization Code</label>
+                    <input type="text" class="code" id="code" name="code" placeholder="Short Name" required>
+                </div>
+                <div>
+                    <label for="name">Student Organization Name</label>
+                    <input type="text" class="name" id="name" name="name" placeholder="Enter Student Organization Name" required>
+                </div>
+                <button type="submit">Add Student Org</button>
+            </form>
+        </section>
+        <!-- Stud Table -->
+        <section class="collegeList">
+            <div id="ajaxMessagesStudOrg"></div>
+            <table class="collegeTable">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($studOrgList as $studOrg)
+                    <tr id="studOrgRow{{ $studOrg->id }}"> <!-- Add this ID -->
+                        <td class="studOrgCode">{{ $studOrg->code }}</td> <!-- Add class -->
+                        <td class="studOrgName">{{ $studOrg->name }}</td> <!-- Add class -->
+                        <td>
+                            <!-- Edit -->
+                            <button type="button" class="editBtnStudOrg" data-id="{{ $studOrg->id }}" data-code="{{ $studOrg->code }}" data-name="{{ $studOrg->name }}">
+                                Edit
+                            </button>
+
+                            <!-- Delete -->
+                            <form action="" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
+        <!-- Modal for Student org -->
+        <div id="editStudModal" class="collegeModal">
+            <div class="modal-wrapper">
+                <h3>Edit Student Org</h3>
+
+                <div id="modalErrorStudOrg" class="alert alert-danger" style="display:none;"></div>
+
+                <form id="editStudOrgForm">
+                    @csrf
+                    <input type="hidden" id="editStudOrgId">
+
+                    <label for="editCode">Code</label>
+                    <input type="text" id="editStudOrgCode" required>
+
+                    <label for="editName">Name</label>
+                    <input type="text" id="editStudOrgName" required>
+
+                    <button type="submit">Save Changes</button>
+                    <button type="button" id="closeModalStudOrg">Cancel</button>
+                </form>
+            </div>
+        </div>
+        </section>
         <!-- Product Approval -->
         <section class="approval-product">
             <h2>Unapproved Products</h2>
@@ -715,6 +885,196 @@ function closeImageViewer() {
             voucherPrice.value=1;
         }
     });
+
+
+    // for college modal
+document.addEventListener('DOMContentLoaded', () => {
+    const editButtons = document.querySelectorAll('.editBtn');
+    const modal = document.getElementById('editCollegeModal');
+    const closeModal = document.getElementById('closeModalCollege');
+    const editForm = document.getElementById('editCollegeForm');
+    const modalError = document.getElementById('modalError');
+
+    // Open modal & populate
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const code = btn.dataset.code;
+            const name = btn.dataset.name;
+
+            document.getElementById('editCollegeId').value = id;
+            document.getElementById('editCode').value = code;
+            document.getElementById('editName').value = name;
+
+            modalError.style.display = 'none';
+            modal.style.display = 'flex';
+        });
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        modalError.style.display = 'none';
+    });
+
+    // Submit form via AJAX
+editForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const id = document.getElementById('editCollegeId').value;
+    const code = document.getElementById('editCode').value;
+    const name = document.getElementById('editName').value;
+    const token = document.querySelector('input[name="_token"]').value;
+
+    fetch(`/admin/update-Student-Org/${id}`, {
+        method: 'POST', 
+        headers: {
+            'Content-Type':'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept':'application/json'
+        },
+        body: JSON.stringify({ code, name })
+    })
+    .then(res => {
+        console.log('Response status:', res.status);
+        if(!res.ok) throw res;
+        return res.json();
+    })
+    .then(data => {
+        if(data.status === 'success'){
+            // Update table row dynamically
+            const row = document.querySelector(`#collegeRow${id}`);
+            if(row) {
+                row.querySelector('.collegeCode').textContent = data.data.code;
+                row.querySelector('.collegeName').textContent = data.data.name;
+            }
+            const editBtn = row.querySelector('.editBtn');
+            if(editBtn){
+                editBtn.dataset.code = data.data.code;
+                editBtn.dataset.name = data.data.name;
+            }
+            const messagesContainer = document.getElementById('ajaxMessages');
+            messagesContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+        
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messagesContainer.innerHTML = '';
+            }, 5000);
+            modal.style.display = 'none';
+        }
+    })
+    .catch(async err => {
+        if(err.status === 422){
+            const errorData = await err.json();
+            modalError.textContent = Object.values(errorData.errors).flat().join(' ');
+            modalError.style.display = 'block';
+        } else {
+            modalError.textContent = 'An error occurred while updating.';
+            modalError.style.display = 'block';
+        }
+    });
+});
+});
+
+
+
+// for student Org
+document.addEventListener('DOMContentLoaded', () => {
+    const editButtonsStudOrg = document.querySelectorAll('.editBtnStudOrg');
+    const modalStudOrg = document.getElementById('editStudModal');
+    const closeModalStudOrg = document.getElementById('closeModalStudOrg');
+    const editFormStudOrg = document.getElementById('editStudOrgForm');
+    const modalErrorStudOrg = document.getElementById('modalErrorStudOrg');
+
+    // Open modal & populate
+    editButtonsStudOrg.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const code = btn.dataset.code;
+            const name = btn.dataset.name;
+
+            document.getElementById('editStudOrgId').value = id;
+            document.getElementById('editStudOrgCode').value = code;
+            document.getElementById('editStudOrgName').value = name;
+
+            modalErrorStudOrg.style.display = 'none';
+            modalStudOrg.style.display = 'flex';
+        });
+    });
+
+    // Close modal
+    closeModalStudOrg.addEventListener('click', () => {
+        modalStudOrg.style.display = 'none';
+        modalErrorStudOrg.style.display = 'none';
+    });
+
+    // Submit form via AJAX
+editFormStudOrg.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const idStudOrgId = document.getElementById('editStudOrgId').value;
+    const codeStudOrgId = document.getElementById('editStudOrgCode').value;
+    const nameStudOrgId = document.getElementById('editStudOrgName').value;
+    const token = document.querySelector('input[name="_token"]').value;
+
+    fetch(`/admin/update-Student-Org/${idStudOrgId}`, { 
+    method: 'POST', 
+    headers: {
+        'Content-Type':'application/json',
+        'X-CSRF-TOKEN': token,
+        'Accept':'application/json'
+    },
+    body: JSON.stringify({ 
+        code: codeStudOrgId, 
+        name: nameStudOrgId 
+    })
+    })
+    .then(ress => {
+        console.log('Response status:', ress.status);
+        if(!ress.ok) throw ress;
+        return ress.json();
+    })
+    .then(data => {
+        if(data.status === 'success'){
+            // Update table row dynamically
+            const row = document.querySelector(`#studOrgRow${idStudOrgId}`);
+            if(row) {
+                row.querySelector('.studOrgCode').textContent = data.data.code;
+                row.querySelector('.studOrgName').textContent = data.data.name;
+            }
+            const editBtnStudOrg = row.querySelector('.editBtnStudOrg');
+            if(editBtnStudOrg){
+                editBtnStudOrg.dataset.code = data.data.code;
+                editBtnStudOrg.dataset.name = data.data.name;
+            }
+            const messagesContainer = document.getElementById('ajaxMessagesStudOrg');
+            messagesContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+        
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messagesContainer.innerHTML = '';
+            }, 5000);
+            modalStudOrg.style.display = 'none';
+        }
+    })
+    .catch(async err => {
+
+    if (err instanceof Response) {
+        const text = await err.text();
+        console.error("Error response:", text);
+
+        if (err.status === 422) {
+            const errorData = JSON.parse(text);
+            modalErrorStudOrg.textContent = Object.values(errorData.errors).flat().join(' ');
+            modalErrorStudOrg.style.display = 'block';
+        }
+    } else {
+        modalErrorStudOrg.textContent = 'An unexpected error occurred.';
+        modalErrorStudOrg.style.display = 'block';
+    }
+    });
+});
+});
     </script>
 </body>
 </html>

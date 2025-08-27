@@ -182,13 +182,13 @@
             <div class="nav-list">
                 <ul class="slide-top">
                     <div class="slide-highlight">aaa</div>
-                    <li class="navHome"><img class="navSlide-logo" src="{{ asset('img/Home.svg') }}" alt="">Home</li>
-                    <li><img class="navSlide-logo" src="{{ asset('img/Info Squared.svg') }}" alt=""><a href="{{ route('about.us') }}">About</a></li>
-                    <li><img class="navSlide-logo" src="{{ asset('img/FAQ.svg') }}" alt="">FAQ</li>
+                    <li class="navHome">Home</li>
+                    <li><a href="{{ route('about.us') }}">About</a></li>
+                    <li>FAQ</li>
                 </ul>
                 <hr class="solid">
                 <ul class="slide-bottom">
-                    <li class="navEnter"><img class="navSlide-logo" src="{{ asset('img/Enter.svg') }}" alt="">Log in</li>
+                    <li class="navEnter">Log in</li>
                 </ul>
             </div>
             

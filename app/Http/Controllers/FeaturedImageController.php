@@ -20,7 +20,7 @@ public function addFeaturedImage(Request $request)
     foreach ($request->file('images') as $image) {
         // Save new image
         $imageName = time() . '_' . uniqid() . '_' . $image->getClientOriginalName();
-        $image->move(public_path('featured'), $imageName);
+        $image->move(public_path('Featured'), $imageName);
 
         FeaturedImage::create(['image_path' => $imageName]);
 
@@ -38,7 +38,7 @@ private function trimFeaturedImages()
     if ($images->count() > 5) {
         $excess = $images->slice(5); // everything after the newest 5
         foreach ($excess as $old) {
-            $fullPath = public_path('featured/' . $old->image_path);
+            $fullPath = public_path('Featured/' . $old->image_path);
             if (file_exists($fullPath) && is_file($fullPath)) {
                 unlink($fullPath);
             }

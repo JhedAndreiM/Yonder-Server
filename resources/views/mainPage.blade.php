@@ -196,10 +196,11 @@
     
     let isHeartClicked = false;
     function hrefClick(cardElement){
+        console.log('wtf');
         const input = cardElement.querySelector('#cardLinkFromInput');
         setTimeout(function() {
             if (!isHeartClicked) {
-            console.log('clicked');
+            console.log('clickedone');
             window.location.href = input.value;
             
         }
@@ -267,17 +268,16 @@
     //         }, 0.1); 
     //     });
     // });
+    document.querySelectorAll('.wishlist-icon').forEach(img => {
+      img.addEventListener('click', function (event){
+        event.stopPropagation();
+        isHeartClicked = true;
 
-    document.querySelectorAll('.wishlist-icon').forEach(function (icon) {
-    icon.addEventListener('click', function (event) {
-      event.stopPropagation(); 
-      isHeartClicked = true;
-
-      const currentSrc = icon.getAttribute('src');
+      const currentSrc = img.getAttribute('src');
       const grayHeart = "{{ asset('img/wishlist.png') }}";
       const redHeart = "{{ asset('img/wishlist-red.png') }}";
 
-      icon.setAttribute(
+      img.setAttribute(
         'src',
         currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
       );
@@ -299,8 +299,41 @@
                 console.log("worked");
             }
         });
+      });
     });
-  });
+  //   document.querySelectorAll('.wishlist-icon').forEach(function (icon) {
+  //   icon.addEventListener('click', function (event) {
+  //     event.stopPropagation(); 
+  //     isHeartClicked = true;
+
+  //     const currentSrc = icon.getAttribute('src');
+  //     const grayHeart = "{{ asset('img/wishlist.png') }}";
+  //     const redHeart = "{{ asset('img/wishlist-red.png') }}";
+
+  //     icon.setAttribute(
+  //       'src',
+  //       currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
+  //     );
+
+  //     event.preventDefault();     
+  //       event.stopPropagation();
+  //       console.log("clicked");
+  //       var productId = $(this).data('product-id');
+  //       var heart = $(this);
+        
+  //       $.ajax({
+  //           url: "{{ route('wishlist.toggle') }}", 
+  //           method: 'POST',
+  //           data: {
+  //               product_id: productId,
+  //               _token: "{{ csrf_token() }}"
+  //           },
+  //           success: function (response) {
+  //               console.log("worked");
+  //           }
+  //       });
+  //   });
+  // });
 
     </script>
   </body>
