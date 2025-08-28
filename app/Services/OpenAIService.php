@@ -55,9 +55,10 @@ class OpenAIService
             Who can join?
             Yonder is exclusively for our university community, so only those with a verified university email can use it. Students, faculty, and staff can access it. No outsiders allowed. [FAQ_ID: 7]
 
-            If any related FAQs exist, add them under 'Related FAQs' at the end(ONLY SAY THE RELATED QUESTION, NOT THE ANSWER, if no related FAQs == show nothing.
+            If any related FAQs exist, add them under 'Related FAQs' at the end(ONLY SAY THE RELATED QUESTION, NOT THE ANSWER, if no related FAQs show nothing not even the 'Related FAQs'.
             BOLD the QUESTION
             ";
+        try {
         $response = $this->client->chat()->create([
             'model' => 'gpt-4o-mini',
             'messages' => [
@@ -67,9 +68,17 @@ class OpenAIService
             'max_tokens' => 200,
         ]);
         $content = $response->choices[0]->message->content ?? 'Sorry, I could not find an answer.';
+        } catch (\Exception $e) {
+            // Handle errors gracefully
+            $content = 'Sorry, the FAQ assistant is temporarily unavailable.';
+            $faqId = null;
+        }
         // Try to extract FAQ_ID from GPT response
-        preg_match('/\[FAQ_ID:\s*(\d+)\]/', $content, $matches);
-        $faqId = $matches[1] ?? null;
+        // Extract FAQ_ID from GPT response
+        if (!isset($faqId)) {
+            preg_match('/\[FAQ_ID:\s*(\d+)\]/', $content, $matches);
+            $faqId = $matches[1] ?? null;
+        }
         // Remove the [FAQ_ID: ...] tag from the answer text
         $answerText = preg_replace('/\[FAQ_ID:\s*\d+\]/', '', $content);
         $answerText = trim($answerText);
