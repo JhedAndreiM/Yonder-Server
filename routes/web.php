@@ -19,6 +19,8 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CustomMessageController;
 use App\Http\Controllers\FeaturedImageController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\FaqCategoryController;
+use App\Http\Controllers\FaqController;
 
 
 
@@ -82,6 +84,15 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/add-Student-Org', [AdminController::class, 'addStudOrg'])->name('admin.addStudOrg');
     Route::post('/admin/update-Student-Org/{id}', [AdminController::class, 'updateStudOrg'])->name('admin.StudOrg');
     Route::delete('/admin/delete-student-org/{id}', [AdminController::class, 'deleteStudOrg'])->name('admin.deleteStudOrg');
+    Route::post('/faq-categories', [FaqCategoryController::class, 'store'])->name('faq-category.store');
+    Route::post('/faq-categories-update/{id}', [FaqCategoryController::class, 'update'])->name('faq-category.update');
+    Route::delete('/faq-categories-delete/{id}', [FaqCategoryController::class, 'delete'])->name('faq-category.delete');
+    Route::get('/faq-categories-table', [FaqCategoryController::class, 'table'])->name('faq-category.table');
+    Route::post('/admin/faq', [FaqController::class, 'store'])->name('faq.store');
+    Route::delete('/admin/faq/{faqQuestion}', [FaqController::class, 'destroy'])->name('faq.destroy');
+    Route::put('/admin/faq/{faqQuestion}', [FaqController::class, 'update'])->name('faq.update');
+
+
 });
 
 // Middleware for Orgs and Studnts
@@ -114,6 +125,8 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin']
     Route::get('/Profile-Setting', function () {
     return view('profileSettings');
     })->name('account.page');
+
+    
  });
 
 Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->group(function () {
@@ -234,11 +247,9 @@ Route::get('/', function () {
 Route::get('/AboutUs', function () {
     return view('AboutUs');
 })->name('about.us');
-Route::get('/FAQ', function () {
-    return view('FAQs');
-})->name('FAQs');
+Route::get('/FAQ', [FaqController::class, 'showFAQ'])->name('FAQs');
+Route::get('/faq/search', [FAQController::class, 'search'])->name('faq.search');
 Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
-

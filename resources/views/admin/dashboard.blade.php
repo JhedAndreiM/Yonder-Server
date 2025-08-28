@@ -164,6 +164,183 @@
             </form>
         </section>
 
+        <section class="frequentlyAsked">
+            <h2>Frequenty Asked Questions</h2>
+            <section class="addingOfCategory">
+                <h2>Add Category</h2>
+                <div id="ajaxMessagesCategory"></div>
+                @if (session('college_success'))
+                <div class="alert alert-success">{{ session('college_success') }}</div>
+                @endif
+                @if (session('college_error'))
+                    <div class="alert alert-danger">{{ session('college_error') }}</div>
+                @endif
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">{{$errors->first()}}</div>
+                @endif
+                <form id="addCategoryForm" action="{{ route('faq-category.store') }}" method="POST">
+                    @csrf
+                    <div>
+                        <label for="categoryName"></label>
+                        <input type="text" name="categoryName" placeholder="Ex. Getting Started">
+                    </div>
+                    <button type="submit">Add Category</button>
+                </form>
+            </section>
+            <!-- Category Table -->
+             <section class="categoryList">
+                <div id="ajaxMessagesCategoryList"></div>
+                <table class="collegeTable">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($categoryList as $category)
+                    <tr id="collegeRow{{ $category->id }}"> <!-- Add this ID -->
+                        <td class="collegeName">{{ $category->name }}</td> <!-- Add class -->
+                        <td>
+                            <!-- Edit -->
+                            <button type="button" class="editBtnCategory" data-id="{{ $category->id }}" data-name="{{ $category->name }}">
+                                Edit
+                            </button>
+
+                            <!-- Delete -->
+                            <button type="button" class="deleteBtn" data-id="{{ $category->id }}">Delete</button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+             </section>
+             <!-- Category Modal -->
+            <div id="editCategoryModal" class="collegeModal">
+                <div class="modal-wrapper">
+                    <h3>Edit College</h3>
+
+                    <div id="modalErrorCategory" class="alert alert-danger" style="display:none;"></div>
+
+                    <form id="editCategoryForm">
+                        @csrf
+                        <input type="hidden" id="editCategoryId">
+
+                        <label for="editCategoryName">Name</label>
+                        <input type="text" id="editCategoryName" required>
+
+                        <button type="submit">Save Changes</button>
+                        <button type="button" id="closeModalCategory">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section class="addingOfQuestion">
+    <h2>Adding Of Question</h2>
+
+    <!-- Form -->
+     @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <form action="{{ route('faq.store') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="categorySelect">Category</label>
+            <select id="categorySelect" name="category_id" required>
+                <option value="">-- Select Category --</option>
+                @foreach($categoryList as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="questionInput">Question</label>
+            <input type="text" id="questionInput" name="question" required>
+        </div>
+
+        <div class="form-group">
+            <label for="answerInput">Answer</label>
+            <textarea id="answerInput" name="answer" rows="3" required></textarea>
+        </div>
+
+        <button type="submit">Add FAQ</button>
+    </form>
+
+    <!-- FAQ Table -->
+    <table class="faqTable">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($questions as $faq)
+            <tr>
+                <td>{{ $faq->category->name ?? 'N/A' }}</td>
+                <td>{{ $faq->question }}</td>
+                <td>{{ $faq->answer }}</td>
+                <td>
+                    <!-- Edit Button triggers modal -->
+                    <button type="button" class="faqEditBtn" data-modal="editModal{{ $faq->id }}">Edit</button>
+
+                    <!-- Delete form -->
+                    <form action="{{ route('faq.destroy', $faq) }}" method="POST" style="display:inline;" class="faq-delete-form-{{ $faq->id }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="faq-delete-btn" data-faq-id="{{ $faq->id }}">Delete</button>
+                    </form>
+
+                    <!-- Edit Modal -->
+                    <div id="editModal{{ $faq->id }}" class="faqEditModal">
+                        <div class="faqModalContent">
+                            <span class="faqCloseBtn" data-modal="editModal{{ $faq->id }}">&times;</span>
+                            <h3>Edit FAQ</h3>
+                            <form action="{{ route('faq.update', $faq) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="form-group">
+                                    <label for="categorySelect{{ $faq->id }}">Category</label>
+                                    <select id="categorySelect{{ $faq->id }}" name="category_id" required>
+                                        @foreach($categoryList as $category)
+                                            <option value="{{ $category->id }}" @if($category->id == $faq->category_id) selected @endif>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="questionInput{{ $faq->id }}">Question</label>
+                                    <input type="text" id="questionInput{{ $faq->id }}" name="question" value="{{ $faq->question }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="answerInput{{ $faq->id }}">Answer</label>
+                                    <textarea id="answerInput{{ $faq->id }}" name="answer" rows="3" required>{{ $faq->answer }}</textarea>
+                                </div>
+                                <button type="submit">Update FAQ</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</section>
+
+
         <!-- Adding of College -->
         <section class="collegeSection">
             <section class="addingOfCollege">
@@ -586,6 +763,30 @@
          style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
 </div>
     <script>
+        // Function to save scroll position
+        function saveScrollPosition() {
+            sessionStorage.setItem('scrollPosition', window.scrollY);
+        }
+
+        // Function to restore scroll position
+        function restoreScrollPosition() {
+            const scrollPosition = sessionStorage.getItem('scrollPosition');
+            if (scrollPosition) {
+                window.scrollTo(0, parseInt(scrollPosition, 10));
+                sessionStorage.removeItem('scrollPosition'); // Clear the stored position
+            }
+        }
+
+        // Add event listener to all forms
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', saveScrollPosition);
+            });
+
+            // Restore scroll position after page load
+            restoreScrollPosition();
+        });
         function openModal(productId) {
             document.getElementById('modal-' + productId).style.display = "flex";
         }
@@ -1152,6 +1353,173 @@ document.querySelectorAll('.delFormStudOrg').forEach(form => {
         .catch(err => console.error(err));
     });
 });
+
+
+
+
+document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let form = e.target;
+    let formData = new FormData(form);
+
+    fetch("{{ route('faq-category.store') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": form.querySelector('input[name="_token"]').value,
+            "Accept": "application/json",
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageBox = document.getElementById('ajaxMessagesCategory');
+        if (data.success) {
+            messageBox.innerHTML = `
+                <div class="alert alert-success">
+                    ${data.message}
+                </div>
+            `;
+            form.reset();
+            // Optionally append new category to dropdown
+            let dropdown = document.getElementById('faqCategoryDropdown');
+            if (dropdown) {
+                let option = document.createElement('option');
+                option.value = data.category.id;
+                option.text = data.category.name;
+                dropdown.appendChild(option);
+            }
+            location.reload();
+        } else {
+            messageBox.innerHTML = `<div style="color:red;">${data.message}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        document.getElementById('messageBox').innerHTML = `<div style="color:red;">Something went wrong.</div>`;
+    });
+});
+
+$(document).ready(function() {
+    $('.editBtnCategory').on('click', function() {
+        const categoryId = $(this).data('id');
+        const categoryName = $(this).data('name');
+        // Set the values in the modal
+        $('#editCategoryId').val(categoryId);
+        $('#editCategoryName').val(categoryName);
+        // Show the modal
+        $('#editCategoryModal').show();
+    });
+    // Handle form submission for editing
+    $('#editCategoryForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+        const categoryId = $('#editCategoryId').val();
+        const categoryName = $('#editCategoryName').val();
+        $.ajax({
+            url: '/faq-categories-update/' + categoryId, // Adjust the URL as needed
+            type: 'POST', // Change to POST
+            data: {
+                _token: $('input[name="_token"]').val(),
+                name: categoryName
+            },
+            success: function(response) {
+                // Update the table row with the new name
+                $('#collegeRow' + categoryId + ' .collegeName').text(categoryName);
+                $('#editCategoryModal').hide(); // Hide the modal
+                $('#ajaxMessagesCategoryList').html(`
+                <div class="alert alert-success">
+                    ${response.message ?? 'Category updated successfully!'}
+                </div>
+            `);
+            },
+            error: function(xhr) {
+                // Handle errors
+                $('#modalErrorCategory').text(xhr.responseJSON.message).show();
+            }
+        });
+    });
+    // Close modal
+    $('#closeModalCategory').on('click', function() {
+        $('#editCategoryModal').hide();
+        $('#modalErrorCategory').hide().text(''); // Clear the error message
+    });
+    // Handle delete button click
+    $('.deleteBtn').on('click', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+        const categoryId = $(this).data('id');
+        if (confirm('Are you sure you want to delete this category?')) {
+            $.ajax({
+                url: '/faq-categories-delete/' + categoryId, // Adjust the URL as needed
+                type: 'DELETE', // Use DELETE method
+                data: {
+                    _token: $('input[name="_token"]').val()
+                },
+                success: function(response) {
+                    // Remove the category row from the table
+                    $('#collegeRow' + categoryId).remove();
+                    $('#ajaxMessagesCategoryList').html(`
+                    <div class="alert alert-success">
+                        ${response.message ?? 'Category deleted successfully!'}
+                    </div>
+                `);
+                },
+                error: function(xhr) {
+                    // Handle errors
+                    $('#ajaxMessagesCategoryList').html(`
+                    <div class="alert alert-danger">
+                        ${xhr.responseJSON.message ?? 'An error occurred while deleting the category.'}
+                    </div>
+                `);
+                }
+            });
+        }
+    });
+});
+
+    // Open modal
+    document.querySelectorAll('.faqEditBtn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const modalId = btn.dataset.modal;
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'block';
+        });
+    });
+
+    // Close modal via close button
+    document.querySelectorAll('.faqCloseBtn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const modalId = btn.dataset.modal;
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'none';
+        });
+    });
+
+    // Close modal when clicking outside modal content
+    window.addEventListener('click', function(e) {
+        document.querySelectorAll('.faqEditModal').forEach(function(modal) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    document.querySelectorAll('.faq-delete-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            const faqId = btn.getAttribute('data-faq-id');
+            
+            if (confirm('Are you sure you want to delete this FAQ?')) {
+                saveScrollPosition();
+                const form = document.querySelector('.faq-delete-form-' + faqId);
+                if (form) {
+                    // Submit directly without triggering other event listeners
+                    form.submit();
+                }
+            }
+        });
+    });
+
 });
     </script>
 </body>

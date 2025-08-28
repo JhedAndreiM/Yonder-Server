@@ -40,7 +40,7 @@
       </div>
 
       <div class="navBarRight">
-        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+        <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
         <div class="dropdown-container">
     <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
     <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
@@ -211,6 +211,7 @@
     }
     const wishlistButtons = document.querySelectorAll('.wishlistBtn');
     const cartButton = document.querySelectorAll('.cartBtn');
+    const faqsBtn = document.querySelectorAll('.faqsBtn');
         // wishlist button
         wishlistButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -221,6 +222,12 @@
         cartButton.forEach(button=>{
             button.addEventListener('click', function(){
                 window.location.href= "{{route('show.cart')}}";
+                
+            })
+        });
+        faqsBtn.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('FAQs')}}";
                 
             })
         });

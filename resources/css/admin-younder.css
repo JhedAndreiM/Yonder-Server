@@ -235,6 +235,8 @@ input:focus {
 .addingOfCollege,
 .collegeSection,
 .studOrgsSection,
+.frequentlyAsked,
+.addingOfQuestion,
 .disableStudOrgMarketplace {
     background: #fff;
     border-radius: var(--radius);
@@ -355,7 +357,19 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background: var(--theme-dark);
 }
-
+.faqEditBtn{
+    background: var(--theme);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.18s;
+    box-shadow: 0 1px 4px rgba(119, 18, 23, 0.07);
+}
 button[type="button"] {
     background: #f3f3f3;
     color: var(--theme);
@@ -775,6 +789,15 @@ button[type="reset"]:hover {
     margin: 20px auto;
     font-family: var(--font);
 }
+.addingOfCategory {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 400px;
+    margin: 20px auto;
+    font-family: var(--font);
+}
 .addingOfStudOrg {
     background-color: #fff;
     padding: 24px;
@@ -786,6 +809,12 @@ button[type="reset"]:hover {
 }
 
 .addingOfCollege h2 {
+    color: var(--theme);
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+.addingOfCategory h2 {
     color: var(--theme);
     margin-bottom: 16px;
     font-size: 1.5rem;
@@ -803,6 +832,11 @@ button[type="reset"]:hover {
     flex-direction: column;
     gap: 16px;
 }
+.addingOfCategory form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 .addingOfStudOrg form {
     display: flex;
     flex-direction: column;
@@ -814,6 +848,11 @@ button[type="reset"]:hover {
     color: var(--theme-dark);
     margin-bottom: 4px;
 }
+.addingOfCategory label {
+    font-weight: 500;
+    color: var(--theme-dark);
+    margin-bottom: 4px;
+}
 .addingOfStudOrg label {
     font-weight: 500;
     color: var(--theme-dark);
@@ -821,6 +860,13 @@ button[type="reset"]:hover {
 }
 
 .addingOfCollege input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+.addingOfCategory input {
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -913,8 +959,14 @@ button[type="reset"]:hover {
 .collegeTable .editBtnStudOrg {
     background-color: #4d90cc;
 }
+.collegeTable .editBtnCategory {
+    background-color: #4d90cc;
+}
 
 .collegeTable .editBtn:hover {
+    background-color: #357ab7;
+}
+.collegeTable .editBtnCategory:hover {
     background-color: #357ab7;
 }
 .collegeTable .editBtnStudOrg:hover {
@@ -1015,6 +1067,201 @@ button[type="reset"]:hover {
 .collegeModal .modal-wrapper button#closeModal:hover {
     background-color: #aaa;
 }
+.collegeModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.modal-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+}
+.modal-wrapper h3 {
+    margin-top: 0;
+}
+.modal-wrapper button {
+    margin-top: 10px;
+}
+
+.addingOfQuestion {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem 2.5rem;
+    border: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow: auto;
+    max-height: 800px;
+    font-family: var(--font);
+}
+
+.addingOfQuestion h2 {
+    color: var(--theme);
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    font-family: var(--font);
+}
+
+button#addFaqBtn {
+    background: var(--theme);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+button.editBtn,
+button.deleteBtn {
+    margin-right: 5px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+}
+
+button.editBtn {
+    background: #f0ad4e;
+    color: #fff;
+}
+
+button.deleteBtn {
+    background: #d9534f;
+    color: #fff;
+}
+/*  */
+.faqTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+.faqTable th,
+.faqTable td {
+    border: 1px solid var(--border);
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.faqTable th {
+    background: var(--theme-light);
+}
+/* Table styling */
+.faqTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.faqTable th, .faqTable td {
+    border: 1px solid var(--border);
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.faqTable th {
+    background: var(--theme-light);
+}
+
+/* Modal overlay */
+.faqEditModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Modal content */
+.faqModalContent {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 500px;
+    position: relative;
+}
+
+/* Close button */
+.faqCloseBtn {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--theme-dark);
+}
+
+.faqModalContent h3 {
+    color: var(--theme);
+    margin-bottom: 1rem;
+}
+
+.faqModalContent .form-group {
+    margin-bottom: 1rem;
+}
+
+.faqModalContent .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.faqModalContent .form-group input,
+.faqModalContent .form-group select,
+.faqModalContent .form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.faqModalContent button {
+    background: var(--theme);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
 @media (max-width: 900px) {
     .container,
     .upload-container {

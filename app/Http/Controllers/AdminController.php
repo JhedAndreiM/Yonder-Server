@@ -10,6 +10,7 @@ use App\Models\FeaturedImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\CheapGlobalSmsService;
+use App\Models\FaqQuestion;
 use Illuminate\Support\Facades\Log;
 use App\Models\Tag;
 
@@ -54,8 +55,10 @@ class AdminController extends Controller
         $voucherList = DB::table('voucherList')->get();
         $collegeList = DB::table('colleges')->get();
         $studOrgList = DB::table('student_orgs')->get();
+        $categoryList = DB::table('faq_categories')->get();
+        $questions = FaqQuestion::with('category')->get();
         $creditPercentage = DB::table('credit_settings')->first();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList'));
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList', 'categoryList', 'questions'));
     }
 
     public function productPolicy(Request $request){
