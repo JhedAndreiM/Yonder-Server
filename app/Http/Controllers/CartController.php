@@ -571,6 +571,16 @@ public function confirmStudentSales(Request $request, $id)
                         ->where('id', '=', Auth::id())
                         ->increment('credits', $creditsToAdd);
                 }
+
+                // for critical level
+                $product = Product::find($confirm->product_id);
+
+                // Recalculate critical level if in automatic mode
+                if ($product->critical_mode === 'automatic') {
+                    $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
+                }
+
+                $product->save();
             }
 
 
@@ -615,6 +625,15 @@ public function confirmStudentSales(Request $request, $id)
                         ->where('id', '=', $buyerId)
                         ->increment('credits', $creditsToAdd);
                 }
+                // for critical level
+                $product = Product::find($confirm->product_id);
+
+                // Recalculate critical level if in automatic mode
+                if ($product->critical_mode === 'automatic') {
+                    $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
+                }
+
+                $product->save();
             }
 
 
@@ -628,7 +647,21 @@ public function confirmStudentSales(Request $request, $id)
             }
         }
     }
+    private function calculateAutomaticCriticalLevel(Product $product): int
+    {
+        $daysSinceCreation = now()->diffInDays($product->created_at, false);
+        $daysSinceCreation = max(1, abs($daysSinceCreation)); 
 
+        $days = min(15, $daysSinceCreation); 
+        $startDate = now()->subDays($days);
+        $totalSold = DB::table('cart_items')
+            ->where('product_id', $product->product_id)
+            ->where('status', 'completed')
+            ->where('updated_at', '>=', $startDate)
+            ->sum('quantity');
+        $average_daily_usage = $days > 0 ? ($totalSold / $days) : 0;
+        return (int) round(($product->lead_time * $average_daily_usage) + $product->safety_stock);
+    }
     public function updateSeller(Request $request)
     {
         try {

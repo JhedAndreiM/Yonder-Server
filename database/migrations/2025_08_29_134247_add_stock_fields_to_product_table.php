@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faq_questions', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('product', function (Blueprint $table) {
+            $table->integer('lead_time')->default(7);
+            $table->integer('safety_stock')->default(10);
+            $table->integer('critical_level')->default(0);
         });
     }
 
@@ -22,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faq_questions');
+        Schema::table('product', function (Blueprint $table) {
+            //
+        });
     }
 };

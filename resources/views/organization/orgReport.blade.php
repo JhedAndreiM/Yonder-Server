@@ -105,7 +105,7 @@
             <li><i class="fa-solid fa-paperclip"></i>Sales Report</li>
           </ul>
         </div>
-        <div class="containerRight">
+        <div class="containerRight"  id="containerRight">
   <div class="dashboard-header">
     <div>
       <h2>Dashboard</h2>
@@ -127,17 +127,6 @@
       <span>{{ $mostWishlisted->wishlist_count }} total wishlist</span>
       <button id="wishlistViewReport"  class="view-report-btn" data-modal="viewReportModal">View report →</button>
     </div>
-    <div class="report-card">
-      <h4>Low Stock Products</h4>
-        @if($lowStockFirst)
-            <p>{{ $lowStockFirst->name }}</p>
-        @else
-            <p>No low stock products.</p>
-        @endif
-
-      <span>Current Stock: {{ $lowStockFirst->stock }}</span>
-      <button id="lowStockViewReport" class="view-report-btn" data-modal="viewReportModal">View report →</button>
-    </div>
   </div>
 
   <div class="recent-sales">
@@ -145,24 +134,48 @@
       <h4>Recent Sales</h4>
     </div>
 <table>
-  <thead>
-    <tr>
-      <th>Product Name</th>
-      <th>Buyer Id</th>
-      <th>Date</th>
-      <th>Total</th>
-    </tr>
-  </thead>
-  <tbody>
-     @foreach ($cartData as $item)
-         <tr>
-          <td>{{ $item->buyer_name }}</td>
-          <td>#{{ $item->buyer_id }}</td>
-          <td>{{ \Carbon\Carbon::parse($item->updated_at)->timezone('Asia/Manila')->format('F j, Y \a\t g:i A') }}</td>
-          <td>PHP {{ $item->unit_price * $item->quantity }}</td>
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Stock</th>
+            <th>Lead Time (Per Day)</th>
+            <th>Safety Stock</th>
+            <th>Critical Level</th>
+            <th>Mode</th>
+            <th>Action</th>
         </tr>
-      @endforeach
-  </tbody>
+    </thead>
+    <tbody>
+        @foreach($lowStockProducts as $product)
+            <tr @if($product->stock <= $product->critical_level) class="critical" @endif>
+                <td>{{ $product->name }}</td>
+                <td>{{ $product->stock }}</td>
+                <form action="{{ route('update.stock') }}" method="POST">
+                    @csrf
+                    <td>
+                        <input name="lead_time" type="number" value="{{ $product->lead_time }}" class="lead-time" min="0">
+                    </td>
+                    <td>
+                        <input name="safety_stock" type="number" value="{{ $product->safety_stock }}" class="safety-stock" min="0">
+                    </td>
+                    <td>
+                        <input name="critical_level" type="number" value="{{ $product->critical_level }}" class="critical-level" 
+                               @if($product->critical_mode != 'manual') disabled @endif>
+                    </td>
+                    <td>
+                        <select name="critical_mode" class="critical-mode" onchange="toggleCriticalInput(this)">
+                            <option value="automatic" @if($product->critical_mode == 'automatic') selected @endif>Automatic</option>
+                            <option value="manual" @if($product->critical_mode == 'manual') selected @endif>Manual</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                        <button type="submit">Save</button>
+                    </td>
+                </form>
+            </tr>
+        @endforeach
+    </tbody>
 </table>
   </div>
 </div>
@@ -220,7 +233,7 @@
           <thead>
             <tr>
               <th>Product Name</th>
-              <th>Total Stock</th>
+              <th>Total Sold</th>
             </tr>
           </thead>
           <tbody>
@@ -299,6 +312,30 @@
       </div>
     </div>
   <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('containerRight');
+
+    // Restore scroll position if exists
+    const savedScroll = localStorage.getItem('containerRightScroll');
+    if (savedScroll) {
+        container.scrollTop = parseInt(savedScroll, 10);
+    }
+
+    // Save scroll position before submitting any form inside containerRight
+    container.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+            localStorage.setItem('containerRightScroll', container.scrollTop);
+        });
+    });
+     console.log('function toggleCriticalInput(select)');
+    container.querySelectorAll('.critical-mode').forEach(select => {
+        select.addEventListener('change', function() {
+            const row = select.closest('tr');
+            const input = row.querySelector('.critical-level');
+            input.disabled = (select.value !== 'manual');
+        });
+    });
+});
 document.addEventListener("DOMContentLoaded", function () {
   // Handle View modals
   document.getElementById("wishlistViewReport").addEventListener("click", function () {
@@ -306,9 +343,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   document.getElementById("bestSellingViewReport").addEventListener("click", function () {
     document.getElementById("viewReportModalBestSeller").style.display = "flex";
-  });
-  document.getElementById("lowStockViewReport").addEventListener("click", function () {
-    document.getElementById("viewReportModalStock").style.display = "flex";
   });
 
 
@@ -395,10 +429,6 @@ document.addEventListener("DOMContentLoaded", function () {
     profileBtn.addEventListener("click", function () {
       profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
       notifDropdown.style.display = "none"; // close notifications if open
-    });
-
-    closeNotif.addEventListener("click", function () {
-      notifDropdown.style.display = "none";
     });
 
     // Optional: Close dropdowns if clicked outside

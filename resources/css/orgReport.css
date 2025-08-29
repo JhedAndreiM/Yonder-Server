@@ -447,3 +447,18 @@ th {
   font-style: italic;
   color: #666;
 }
+/* FOR CRITICAL LEVEL TABLE */
+.critical { 
+  background-color: #fdd; 
+}
+.lead-time,
+.critical-level,
+.safety-stock{
+  height: 25px;
+  font-size: 1rem;
+  border-radius: 0px;
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  width: 100px;
+}

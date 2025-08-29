@@ -60,6 +60,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
     Route::get('/ListOfProduct', function () {
         return view('viewListedItems');})->name('viewListedItems.page');
     Route::POST('/generate-pdf', [PDFController::class, 'generate'])->name('generate.pdf');
+    Route::POST('/products/update-stock-settings', [OrganizationController::class, 'updateStockSettings'])->name('update.stock');
+
 });
 
 // Middleware for Admin

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OrganizationController extends Controller
 {
@@ -161,10 +162,7 @@ class OrganizationController extends Controller
         ->get();
         $mostWishlisted = $wishlistCounts->first();
 
-        // Get stocks with less than 10
-        $lowStockProducts = DB::table('product')
-            ->where('user_id', Auth::id())
-            ->where('stock', '<', 10)
+        $lowStockProducts = Product::where('user_id', Auth::id())
             ->where('approved', 'yes')
             ->orderBy('stock', 'asc')
             ->get();
@@ -293,4 +291,42 @@ $reviews = DB::table('reviews')
 
         return view('organization/reviews', compact('reviews'));
     }
+
+    public function updateStockSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:product,product_id',
+            'lead_time' => 'required|integer|min:0|max:365',
+            'safety_stock' => 'required|integer|min:0|max:10000',
+            'critical_mode' => 'required|in:automatic,manual',
+            'critical_level' => 'required_if:critical_mode,manual|nullable|integer|min:0',
+        ]);
+        $product = Product::findOrFail($validated['product_id']);
+        $product->lead_time = $validated['lead_time'];
+        $product->safety_stock = $validated['safety_stock'];
+        $product->critical_mode = $validated['critical_mode'];
+        if ($validated['critical_mode'] === 'manual') {
+            $product->critical_level = $validated['critical_level'];
+        } else {
+            $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
+        }
+        $product->save();
+        return redirect()->back()->with('success', 'Stock settings updated successfully.');
+    }
+    private function calculateAutomaticCriticalLevel(Product $product): int
+    {
+        $daysSinceCreation = now()->diffInDays($product->created_at, false);
+        $daysSinceCreation = max(1, abs($daysSinceCreation)); 
+
+        $days = min(15, $daysSinceCreation); 
+        $startDate = now()->subDays($days);
+        $totalSold = DB::table('cart_items')
+            ->where('product_id', $product->product_id)
+            ->where('status', 'completed')
+            ->where('updated_at', '>=', $startDate)
+            ->sum('quantity');
+        $average_daily_usage = $days > 0 ? ($totalSold / $days) : 0;
+        return (int) round(($product->lead_time * $average_daily_usage) + $product->safety_stock);
+    }
+
 }

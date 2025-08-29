@@ -17,6 +17,9 @@ class Product extends Model
         'price',
         'college',
         'for',
+        'lead_time',
+        'safety_stock',
+        'critical_level'
     ];
     protected $casts = [
     'variants' => 'array',  
@@ -37,6 +40,7 @@ class Product extends Model
     {
         return $this->belongsToMany(College::class, 'college_product');
     }
+
     
 
 }
