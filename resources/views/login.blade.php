@@ -11,6 +11,13 @@
     <title>Log in</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite('resources/css/login.css')
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         body {
         background-image: url("{{ asset('img/background.svg') }}");
@@ -21,23 +28,60 @@
     </style>
 </head>
 <body>
-<header>
-    <a href="/"><img class="webName" src="{{ asset('img/logo.svg') }}" alt=""></a>
-        <div class="nav-container">
-        <nav>
-            <ul class="navLinks">
-            <div class="ovalHover"></div>
-                <li class="navHome"><a href="#"></a>Home</li>
-                <li><a href="#"></a>About</li>
-                <li><a href="#"></a>FAQs</li>
-                
-            </ul>
+        <nav class="navbar navbar-expand-lg py-3">
+          <div class="container-fluid px-4">
+            <!-- Left: Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+              <img src="{{ asset('img/logo.svg') }}" alt="Logo" height="40" />
+            </a>
+
+            <!-- Hamburger for mobile -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainNavbar"
+              aria-controls="mainNavbar"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar content -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+              <!-- Middle: Nav links -->
+              <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4 text-center">
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-semibold"
+                    aria-current="page"
+                    href="{{ url('/') }}"
+                    >Home</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link fw-semibold" href="{{ route('about.us') }}">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link fw-semibold" href="{{ route('FAQs') }}">FAQs</a>
+                </li>
+              </ul>
+
+              <!-- Right: Login -->
+              <div class="d-flex">
+                <a
+                  href="{{ route('select.role') }}"
+                  class="btn rounded-pill px-4"
+                  >Login</a
+                >
+              </div>
+            </div>
+          </div>
         </nav>
-        </div>
-</header>
 <div class="container">
     <div class="left">
-        <div class="form-header">
+        <div class="form-header" data-aos="fade-right">
         <h4>GET STARTED</h4>
         <h1>Login to your account</h1>
         <h6>Log in to access your account, track your orders, and <br>
@@ -45,7 +89,7 @@
         </div>
         
 
-        <form action="{{ route('login.submit') }}" method="POST">
+        <form action="{{ route('login.submit') }}" method="POST" data-aos="fade-right">
             @csrf
             <input type="hidden" name="role" value="{{ $role }}">
             <div class="form-firstRow">
@@ -79,10 +123,22 @@
         </form>
         
     </div>
-    <div class="right">
+    <div class="right" data-aos="fade-left">
         <img src="{{ asset('img/login-image.svg') }}" alt="">
     </div>
 </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+    AOS.init({
+        duration: 1000,   // animation duration (ms)
+        once: true        // animate only once
+    });
+    </script>
 <script>
     const showPassword = document.querySelector("#showPassword");
     const passwordField = document.querySelector("#password");

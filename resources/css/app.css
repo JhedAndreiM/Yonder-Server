@@ -1,3 +1,6 @@
+:root{
+    --main-color: #ae0505;
+}
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,122 +29,48 @@ body {
     scrollbar-width: none;
 }
 /* NAV BAR */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    height: 80px;
-    display: flex;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    justify-content: center;
-    align-items: center;
-    font-family: "Raleway", sans-serif;
-    background-color: white;
-    border-bottom: solid rgb(0, 0, 0) 2px;
-    border: solid black 1px;
-}
-.webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    top: 27%;
-    color: #ae0505;
-    width: 100px;
-}
-.menu-button {
-    display: none;
-}
-.navContainer {
-    padding-left: 2%;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-.navLinks {
-    list-style: none;
-    z-index: 3;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    gap: 2rem;
-}
-.navLinks li {
-    position: relative;
-    display: inline-block;
-    padding: 0rem 2.2rem;
-    font-size: 1.5rem;
-    z-index: 3;
-}
-.button-group {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-.button-group button {
-    height: 80px;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 500;
-    background-color: white;
-    border: solid 1px black;
-    border-style: solid none solid none;
-}
-.button-group .StartSelling {
-    width: 11.67rem;
-    margin-left: -1px;
-}
-.button-group .Login {
-    width: 9.25rem;
-}
-.Login:hover {
-    width: 9.25rem;
-    background-color: gray;
-    color: white;
-    transition: ease-in 0.1s;
-}
-.ovalHover {
-    background-color: #ae0505;
-    position: absolute;
-    width: 7rem;
-    height: 3rem;
-    top: 35%;
-    transform: translate(12px, -20px);
-    border-radius: 30px;
-    z-index: 0;
-}
-.navHome {
-    color: white;
-}
-.navHome a {
-    color: white;
-    text-decoration: none;
-}
-.navAbout a {
-    text-decoration: none;
-    color: black;
-}
-.navFAQ a {
-    text-decoration: none;
-    color: black;
+.navbar {
+  border-radius: 50px;
+  margin: 20px auto;
+  max-width: 95%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  margin: 30px auto 40px auto !important;
+  width: 90% !important;
 }
 
+.navbar-nav .nav-link {
+  font-size: 24px;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-color) !important;
+}
+.sectionOne {
+  height: 100dvh;
+}
+.navbar-brand img {
+  height: 50px;
+}
+.d-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn{
+    background-color:  #ae0505 !important;
+    color: white !important;
+}
 /* SECTIONS AND SHIT */
 section {
     display: block;
     width: 100dvw;
 }
 .pageOne {
-    height: calc(100vh - 124px);
-    margin-top: 124px;
-}
-.pageTwo,
-.pageThree {
     height: 100vh;
+}
+.secdivider{
+    height: 30vh;
 }
 
 /* SECTION ONE */
@@ -192,7 +121,7 @@ section {
     flex-direction: column;
 }
 .pageOne .section-content {
-    padding: 2rem 10%;
+    padding: 0.5rem 2rem 0.5rem 2rem;
     display: flex;
     justify-content: center;
     gap: 10rem;
@@ -236,17 +165,19 @@ section {
 }
 
 .card {
-    width: 35.56rem; /* Fixed width */
-    height: 15.87rem; /* Fixed height */
+    width: 35.56rem;
+    height: 15.87rem; 
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     font-weight: bold;
-    border-radius: 20px;
+    border-radius: 20px !important;
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
-
+.cardLinks{
+    text-decoration: none;
+}
 /* Adjust gaps for desktop */
 .card1 {
     margin-right: 150px;
@@ -437,62 +368,91 @@ section {
     font-weight: normal;
 }
 
-/* divider */
+/* Container for both dividers */
 .divider {
-    transform: translateY(5rem);
+  transform: translateY(5rem);
+  position: relative; 
+  height: 5.56rem;
+  overflow: visible;
 }
+
+/* Common styles for both dividers */
+.dividerOne, .dividerTwo {
+  position: absolute;
+  width: 100%;
+  height: 5.56rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden; 
+  font-size: 2rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  white-space: nowrap;
+  box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Specific styles for dividerOne */
 .dividerOne {
-    position: absolute;
-    background: rgb(174, 5, 5);
-    background: linear-gradient(
-        99deg,
-        rgba(174, 5, 5, 1) 0%,
-        rgba(72, 2, 2, 1) 100%
-    );
-    width: 100%;
-    height: 5.56rem;
-    rotate: 3deg;
-    transform: translateX(-3px);
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    color: white;
-    font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 700;
-    font-style: normal;
-    white-space: nowrap;
-    overflow: hidden;
-    box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    99deg,
+    rgba(174, 5, 5, 1) 0%,
+    rgba(72, 2, 2, 1) 100%
+  );
+  color: white;
+  rotate: 3deg;
+  transform: translateX(-3px);
+  z-index: 2;
 }
+
+/* Specific styles for dividerTwo */
 .dividerTwo {
-    position: absolute;
-    background: rgb(234, 234, 234);
-    background: linear-gradient(
-        261deg,
-        rgba(234, 234, 234, 1) 0%,
-        rgba(153, 153, 153, 1) 100%
-    );
-    width: 100%;
-    height: 5.56rem;
-    rotate: -3deg;
-    transform: translateX(-5px);
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    color: #ae0505;
-    font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 700;
-    font-style: normal;
-    white-space: nowrap;
-    overflow: hidden;
-    box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    261deg,
+    rgba(234, 234, 234, 1) 0%,
+    rgba(153, 153, 153, 1) 100%
+  );
+  color: #ae0505;
+  rotate: -3deg;
+  transform: translateX(-5px);
+  z-index: 1;
 }
+.scrolling-text {
+  display: flex;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 15s;
+  user-select: none;
+}
+.dividerOne .scrolling-text {
+  animation-name: scroll-left;
+}
+.dividerTwo .scrolling-text {
+  animation-name: scroll-right;
+}
+.scrolling-text span {
+  padding-right: 2rem; 
+  white-space: nowrap;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 
 /* page three */
 .pageThree {
@@ -646,12 +606,6 @@ footer a {
         padding-bottom: 2rem;
         gap: 2rem;
     }
-
-    /* Remove the long divider scrolling lines */
-    .dividerOne,
-    .dividerTwo {
-        display: none;
-    }
 }
 @media (max-width: 1529px) {
     .section-content .section-text h1 {
@@ -687,7 +641,7 @@ footer a {
 }
 @media (max-width: 1060px) {
     .header-img {
-        width: 300px;
+        width: 400px;
     }
     .pageThree-container {
         width: 800px;
@@ -699,6 +653,11 @@ footer a {
     .card3,
     .card4 {
         width: 400px;
+    }
+}
+@media (max-width: 1131px){
+    .section-content{
+        gap: 1rem!important;
     }
 }
 @media (max-width: 852px) {
@@ -748,11 +707,16 @@ footer a {
         margin-top: 5.344dvh;
     }
     .pageOne,
-    .pageTwo,
-    .pageThree {
+    .pageTwo {
         min-height: calc(100dvh - 5.344dvh); /* subtract header height */
         margin-top: 5.344dvh; /* optional if you want spacing below header */
         padding: 0; /* ensure no extra padding */
+    }
+    .pageThree{
+        height: 700px !important;
+    }
+    .secdivider{
+        height: 10px;
     }
     .section-content .section-text h1 {
         font-size: 1.5rem;
@@ -777,7 +741,6 @@ footer a {
         height: 20rem;
         width: 14.5rem;
         border-radius: 8px;
-        border: solid black 2px;
     }
     .section-content .section-text button {
         width: 11rem;

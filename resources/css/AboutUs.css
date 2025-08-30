@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -21,107 +22,36 @@ html {
   background-repeat: no-repeat;
   background-position: top center;
 }
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    height: 80px;
-    display: flex;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    justify-content: center;
-    align-items: center;
-    font-family: "Raleway", sans-serif;
-    background-color: white;
-    border-bottom: solid rgb(0, 0, 0) 2px;
-    border: solid black 1px;
-}
-.webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    top: 27%;
-    color: #ae0505;
-    width: 100px;
-}
-.menu-button{
-    display: none;
-}
-.navContainer{
-    padding-left: 2%;
-    flex:1;
-    display: flex;
-    justify-content: center; 
-}
-.navLinks {
-    list-style: none;
-    z-index: 3;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    gap: 2rem;
-}
-.navLinks li {
-    position: relative;
-    display: inline-block;
-    padding: 0rem 2.2rem;
-    font-size: 1.5rem;
-    z-index: 3;
-}
-.button-group{
-    flex:1;
-    display: flex;
-    justify-content: flex-end;
-}
-.button-group button{
-    height: 80px;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 500;
-    background-color: white;
-    border: solid 1px black;
-    border-style: solid none solid none;
-}
-.button-group .StartSelling{
-    width: 11.67rem;
-    margin-left: -1px;
-}
-.button-group .Login{
-    width: 9.25rem;
-}
-.Login:hover{
-    width: 9.25rem;
-    background-color: gray;
-    color: white;
-    transition: ease-in 0.1s;
-}
-.ovalHover {
-    background-color: #ae0505;
-    position: absolute;
-    width: 7rem;
-    height: 3rem;
-    top: 35%;
-    transform: translate(155px,-20px);
-    border-radius: 30px;
-    z-index: 0;
-}
-.navHome a{
-    color: black;
-    text-decoration: none;
-}
-.navAbout a{
-  text-decoration: none;
-  color: white;
-}
-.navFAQ a{
-  text-decoration: none;
-  color: black;
+/* NAV BAR */
+.navbar {
+  border-radius: 50px;
+  margin: 20px auto;
+  max-width: 95%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  margin: 30px auto 40px auto !important;
+  width: 90% !important;
 }
 
+.navbar-nav .nav-link {
+  font-size: 24px;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-color) !important;
+}
+.navbar-brand img {
+  height: 50px;
+}
+.d-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn{
+    background-color:  #ae0505 !important;
+    color: white !important;
+}
 /* end navbar */
 
 .top {
@@ -136,12 +66,12 @@ header {
   margin-bottom: 50px;
 }
 h2 {
-  position: absolute;
-  top: 250px;
-  left: 39%;
-  color: white;
-  z-index: 2;
-  font-size: 100px;
+  position: absolute !important;
+  top: 250px !important;
+  left: 39% !important;
+  color: white !important;
+  z-index: 2 !important;
+  font-size: 100px !important;
 }
 
 /* container */
@@ -234,4 +164,191 @@ img {
 img:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Media Queries for Responsive Design */
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+  h2 {
+    top: 150px !important;
+    left: 35% !important;
+    font-size: 80px !important;
+  }
+  
+  .img, .portImg {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  
+  .leftContent {
+    margin-left: 5%;
+  }
+  
+  .contents {
+    margin-right: 5%;
+  }
+  
+  .end {
+    margin: 0 10% 0 10%;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  h2 {
+    top: 100px !important;
+    left: 32% !important;
+    font-size: 70px !important;
+  }
+  
+  .container, .secondContainer {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .img, .portImg {
+    margin: 0;
+    text-align: center;
+  }
+  
+  .img img, .portImg img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .leftContent {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  
+  .contents {
+    margin-right: 0;
+    padding-top: 30px;
+    width: 100%;
+  }
+  
+  h3 {
+    font-size: 36px;
+  }
+  
+  h5 {
+    font-size: 20px;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  h2 {
+    top: 100px !important;
+    left: 20% !important;
+    font-size: 60px !important;
+  }
+  
+  .gradient {
+    margin-bottom: 30px;
+  }
+  
+  .container, .secondContainer {
+    padding: 15px;
+  }
+  
+  .solo {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .solo img {
+    width: 45%;
+    margin-bottom: 15px;
+  }
+  
+  .end {
+    padding: 20px;
+    margin: 0 5% 0 5%;
+  }
+  
+  h3 {
+    font-size: 32px;
+  }
+  
+  h5 {
+    font-size: 18px;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  h2 {
+    top: 50px !important;
+    left: 30% !important;
+    font-size: 40px !important;
+  }
+  
+  .gradient {
+    margin-bottom: 20px;
+  }
+  
+  .container, .secondContainer {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .solo {
+    gap: 10px;
+  }
+  
+  .solo img {
+    width: 80%;
+  }
+  
+  .end {
+    padding: 15px;
+    margin: 0;
+  }
+  
+  h3 {
+    font-size: 28px;
+    text-align: center;
+  }
+  
+  h5 {
+    font-size: 16px;
+  }
+  
+  .contents p {
+    margin-top: 20px;
+  }
+  
+  .secondContainer h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Extra extra small devices (small portrait phones, less than 400px) */
+@media (max-width: 399.98px) {
+  h2 {
+    top: 30px !important;
+    left: 30% !important;
+    font-size: 36px !important;
+  }
+  
+  .navbar-brand img {
+    height: 40px;
+  }
+  
+  h3 {
+    font-size: 24px;
+  }
+  
+  h5 {
+    font-size: 15px;
+  }
+  
+  .solo img {
+    width: 90%;
+  }
 }

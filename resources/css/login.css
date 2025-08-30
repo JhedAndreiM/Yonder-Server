@@ -2,6 +2,10 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: "Raleway";
+}
+body{
+    overflow-y: hidden;
 }
 .raleway-normal {
     font-family: "Raleway", sans-serif;
@@ -9,54 +13,37 @@
     font-weight: 400;
     font-style: normal;
 }
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    height: 80px;
+/* NAV BAR */
+.navbar {
+  border-radius: 50px;
+  margin: 20px auto;
+  max-width: 95%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  margin: 30px auto 40px auto !important;
+  width: 90% !important;
+}
+
+.navbar-nav .nav-link {
+  font-size: 24px;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-color) !important;
+}
+.navbar-brand img {
+  height: 50px;
+}
+.d-flex{
     display: flex;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
     justify-content: center;
     align-items: center;
-    font-family: "Raleway", sans-serif;
-    background-color: white;
-    border-bottom: solid rgb(0, 0, 0) 2px;
 }
-.menu-button {
-    display: none;
-}
-.webName {
-    position: absolute;
-    flex: 0.7;
-    font-size: 2rem;
-    left: 5%;
-    top: 27%;
-    color: #ae0505;
-    width: 100px;
-}
-.navContainer {
-    padding-left: 2%;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-.navLinks {
-    list-style: none;
-    z-index: 3;
-}
-.navLinks li {
-    position: relative;
-    display: inline-block;
-    padding: 0rem 1.2rem;
-    font-size: 1.5rem;
-    z-index: 3;
+.btn{
+    background-color:  #ae0505 !important;
+    color: white !important;
 }
 .container {
-    height: calc(100vh - 124px);
-    margin-top: 124px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,8 +54,9 @@ header {
     font-style: normal;
 }
 h1 {
-    font-size: 3rem;
-    color: #ae0505;
+    font-size: 3rem !important;
+    color: #ae0505 !important;
+    font-weight: 600 !important;
 }
 h4 {
     font-size: 1.75rem;
@@ -82,7 +70,7 @@ h4 {
     margin-bottom: 1rem;
 }
 h6 {
-    margin-bottom: 3rem;
+    margin-bottom: 3rem !important;
     font-size: 1.25rem;
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
@@ -225,7 +213,21 @@ input:focus {
      Order: 1670px -> 1300px -> 1024px -> 768px -> 480px
      Fixes .webName stacking, header, form and right image
      ---------------------------------------- */
+@media (max-height: 730px){
+    body{
+        overflow-y: auto;
+    }
+    .container{
+        margin-top: 0px !important;
 
+    }
+    h1{
+        font-size: 25px !important;
+    }
+    h6{
+        display: none;
+    }
+}
 @media (max-width: 1670px) {
     /* gentle adjustments for large laptops / small desktops */
     .container {
@@ -233,7 +235,7 @@ input:focus {
         padding: 1rem 2rem;
     }
     form { width: 30rem; }
-    h1 { font-size: 2.6rem; }
+    h1 { font-size: 2.6rem !important; }
     h4 { font-size: 1.5rem; }
     .right img { max-width: 80%; height: auto; display: block; margin: 0 auto; }
     .webName { font-size: 1.6rem; left: 4%; top: 26%; width: auto; }
@@ -243,7 +245,7 @@ input:focus {
 @media (max-width: 1300px) {
     /* medium screens */
     form { width: 28rem; }
-    h1 { font-size: 2.4rem; }
+    h1 { font-size: 2.4rem !important; }
     .right img { max-width: 70%; }
     .webName { font-size: 1.5rem; left: 4%; top: 25%; }
 }
@@ -251,7 +253,7 @@ input:focus {
 @media (max-width: 1024px) {
     /* tablets and small laptops */
     form { width: 24rem; }
-    h1 { font-size: 2.2rem; }
+    h1 { font-size: 2.2rem !important; }
     .right img { max-width: 60%; }
     .webName { font-size: 1.4rem; left: 4%; top: 25%; }
 }
@@ -274,7 +276,7 @@ input:focus {
 
 @media (max-width: 480px) {
     /* small phones: tighter spacing */
-    .container { margin-top: 100px; padding: 0.5rem; }
+    .container { margin-top: 0px !important; padding: 0.5rem; }
     h1 { font-size: 1.9rem; }
     h4 { font-size: 1.25rem; }
     .webName { font-size: 1.05rem; left: 50%; top: 50%; transform: translate(-50%, -50%); }
