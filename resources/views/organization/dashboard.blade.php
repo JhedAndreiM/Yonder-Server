@@ -1,108 +1,190 @@
-@extends('Front_layouts.org')
-
-@section('head')
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Dashboard</title>
+    @vite('resources/css/admin-org.css')
+    @vite('resources/js/org.dashboard.js')
     <style>
         body {
-            background-image: url("{{ asset('img/background.svg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: top center;
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <title>Admin Page</title>
-    @vite('resources/css/admin-org.css')
-@endsection
-@section('maincontent')
-    <div class="container">
-        <div class="left">
-            <div class="left-top">
-                <div class="nav-container-top1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- nav bar -->
+        <div class="navBar">
+            <div class="navBarLeft">
+                <img src="{{ asset('img/logo.svg') }}" alt="" />
+            </div>
+            <div class="navBarRight">
+                <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+                <div class="dropdown-container">
+                    <img
+                        class="hover notificationBtn"
+                        src="{{ asset('img/notif.png') }}"
+                        alt=""
+                    />
+                    <div
+                        class="notification-dropdown"
+                        id="notificationDropdown"
+                        style="display: none"
+                    >
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                        </div>
+                        <div class="notification-list">
+                            @if ($notifications->isEmpty())
+                            <p style="padding-left: 10px">No notifications</p>
+                            @else @foreach ($notifications as $notification)
+                            <div class="notification">
+                                <div class="title">
+                                    <h1>
+                                        @if($notification['title'] === "Product
+                                        Approved")
+                                        <span style="color: Green"
+                                            >{{ $notification['title'] }}</span
+                                        >
+                                        @elseif($notification['title'] ===
+                                        "Product Rejected")
+                                        <span style="color: red"
+                                            >{{ $notification['title'] }}</span
+                                        >
+                                        @else {{ $notification['title'] }}
+                                        @endif
+                                    </h1>
+                                </div>
+                                <div class="Message">
+                                    {{ $notification['message'] }}
+                                </div>
+                                <div class="time">
+                                    {{ $notification['time_ago'] }}
+                                </div>
+                            </div>
+                            @endforeach @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <img
+                        class="hover profileBtn"
+                        src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}"
+                        alt=""
+                    />
+                    <div
+                        class="profile-dropdown"
+                        id="profileDropdown"
+                        style="display: none"
+                    >
+                        <ul>
+                            <li><a href="">My Profile</a></li>
+                            <li><a href=" ">Wishlist</a></li>
+                            <li><a href="">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="left-bottom">
-                <div class="left-container">
-                    <div class="left-one">
-                        <h3>PBEN Organization</h3>
-                    </div>
-                    <div class="left-two">
-                        <hr>
-                    </div>
-                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><span class="currentPage">Products</span></div>
-                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i><a href="{{ route('order.page') }}">Orders</a></div>
-                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i><a href="{{ route('review.page') }}">Reviews</a></div>
-                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><a href="{{ route('org.report') }}">Dashboard</a></div>
-                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><a href="{{ route('viewListedItems.page') }}">View Listed Items</a></div>
-                </div>
-                <div class="add-listing">
-                    <a class="listing_link"href="{{ route('create.listing') }}">
-                        <h3>Add Product</h3>
-                    </a>
-                </div>
-            </div>
-            
         </div>
-
-        <div class="right">
-            <div class="right-top">
-                <div class="nav-container-top">
-                    <div class="nav-top-one"></div>
-                    <div class="nav-top-two">Name</div>
-                    <div class="nav-top-three">Stock</div>
-                    <div class="nav-top-four">Price</div>
-                    <div class="nav-top-five">
-                    </div>
-
-
+        <!-- nav bar -->
+        <div class="mainContainer">
+            <div class="container">
+                <div class="containerLeft">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="{{ route('organization.dashboard') }}" 
+                            class="{{ request()->routeIs('organization.dashboard') ? 'active' : '' }}">
+                                <i class="fa-solid fa-cart-shopping"></i> My Products
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('order.page') }}" 
+                            class="{{ request()->routeIs('order.page') ? 'active' : '' }}">
+                                <i class="fa-solid fa-pencil"></i> Buy Orders
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('review.page') }}" 
+                            class="{{ request()->routeIs('review.page') ? 'active' : '' }}">
+                                <i class="fa-solid fa-star"></i> Product Reviews
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('org.report') }}" 
+                            class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
+                                <i class="fa-solid fa-paperclip"></i> Sales Report
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-
-            </div>
-            <div class="right-bottom">
-                <div class="card-container">
-                    @include('partials.adminProducts', ['products' => $products])
-
+                <div class="containerRight">
+                    <div class="card-container">
+                        @include('partials.adminProducts', ['products' => $products])
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script>
-        var modal = document.getElementById("myModal");
+        <script>
+                        // notifs
+            document.addEventListener("DOMContentLoaded", function () {
+                const notifBtn = document.querySelector(".notificationBtn");
+                const notifDropdown = document.getElementById(
+                    "notificationDropdown"
+                );
+                const profileBtn = document.querySelector(".profileBtn");
+                const profileDropdown =
+                    document.getElementById("profileDropdown");
+                const closeNotif = document.querySelector(".closeButton");
+                let category = "featured";
 
-        function previewModalImages(event) {
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = "";
+                document
+                    .querySelectorAll(".mainFilterButtons")
+                    .forEach((button) => {
+                        button.addEventListener("click", () => {
+                            // Remove 'current' from all filter buttons
+                            document
+                                .querySelectorAll(".mainFilterButtons")
+                                .forEach((btn) => {
+                                    btn.classList.remove("current");
+                                });
+                            let url = "?page=${page}";
+                            button.classList.add("current");
 
-            for (let file of event.target.files) {
-                const reader = new FileReader();
-                const figure = document.createElement("figure");
-                figure.style.margin = "10px";
-                figure.style.position = "relative";
+                            category = button.dataset.category;
+                            console.log("Clicked category:", category);
+                            updateFilters();
+                        });
+                    });
+                notifBtn.addEventListener("click", function () {
+                    notifDropdown.style.display =
+                        notifDropdown.style.display === "none"
+                            ? "block"
+                            : "none";
+                    profileDropdown.style.display = "none";
+                    console.log("clicked");
+                });
 
-                const figCap = document.createElement("figcaption");
-                figCap.innerText = "";
-                figure.appendChild(figCap);
+                profileBtn.addEventListener("click", function () {
+                    profileDropdown.style.display =
+                        profileDropdown.style.display === "none"
+                            ? "block"
+                            : "none";
+                    notifDropdown.style.display = "none"; // close notifications if open
+                });
 
-                reader.onload = function() {
-                    const img = document.createElement("img");
-                    img.src = reader.result;
-                    img.style.width = "100px";
-                    img.style.height = "100px";
-                    img.style.objectFit = "cover";
-                    figure.insertBefore(img, figCap);
-                }
-
-                reader.readAsDataURL(file);
-                previewContainer.appendChild(figure);
-            }
-        }
-
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-            document.getElementById("previewContainer").innerHTML = "";
-            document.getElementById("imageInput").value = "";
-        }
-    </script>
-@endsection
+                // Optional: Close dropdowns if clicked outside
+                window.addEventListener("click", function (e) {
+                    if (!e.target.closest(".dropdown-container")) {
+                        notifDropdown.style.display = "none";
+                        profileDropdown.style.display = "none";
+                    }
+                });
+            });
+        </script>
+</body>
+</html>

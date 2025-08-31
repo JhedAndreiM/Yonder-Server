@@ -36,6 +36,14 @@
   <!-- FONT AWESOME -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   @vite('resources/css/orgReport.css')
+    <style>
+        body {
+        background-image: url("{{ asset('img/background.svg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top center;
+        }
+    </style>
 </head>
 
 <body>
@@ -98,11 +106,31 @@
     <div class="mainContainer">
       <div class="container">
         <div class="containerLeft">
-          <ul>
-            <li><i class="fa-solid fa-cart-shopping"></i>My Products</li>
-            <li><i class="fa-solid fa-pencil"></i>Buy Orders</li>
-            <li><i class="fa-solid fa-star"></i>Product Reviews</li>
-            <li><i class="fa-solid fa-paperclip"></i>Sales Report</li>
+          <ul class="sidebar-menu">
+            <li>
+              <a href="{{ route('organization.dashboard') }}" 
+              class="{{ request()->routeIs('organization.dashboard') ? 'active' : '' }}">
+                <i class="fa-solid fa-cart-shopping"></i> My Products
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('order.page') }}" 
+              class="{{ request()->routeIs('order.page') ? 'active' : '' }}">
+                <i class="fa-solid fa-pencil"></i> Buy Orders
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('review.page') }}" 
+              class="{{ request()->routeIs('review.page') ? 'active' : '' }}">
+                <i class="fa-solid fa-star"></i> Product Reviews
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('org.report') }}" 
+              class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
+                <i class="fa-solid fa-paperclip"></i> Sales Report
+              </a>
+            </li>
           </ul>
         </div>
         <div class="containerRight"  id="containerRight">

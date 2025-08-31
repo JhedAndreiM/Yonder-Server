@@ -55,12 +55,14 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
     // Route::get('/orgPage', function () {return view('organization/orderPage');})->name('order.page');
     //Route::get('/Reviews', function () {return view('organization/reviews');})->name('reivew.page');
     Route::get('/Reviews', [OrganizationController::class, 'reviews'])->name('review.page');
+    Route::get('/organization/reviews/search', [OrganizationController::class, 'searchReviews'])->name('reviews.search');
     Route::get('/Orders', [OrganizationController::class, 'orggetAllNotCartItems'])->name('order.page');
     Route::get('/chart', [OrganizationController::class, 'showChart'])->name('org.report');
     Route::get('/ListOfProduct', function () {
         return view('viewListedItems');})->name('viewListedItems.page');
     Route::POST('/generate-pdf', [PDFController::class, 'generate'])->name('generate.pdf');
     Route::POST('/products/update-stock-settings', [OrganizationController::class, 'updateStockSettings'])->name('update.stock');
+    Route::delete('/products/{id}', [OrganizationController::class, 'destroy'])->name('products.destroy');
 
 });
 

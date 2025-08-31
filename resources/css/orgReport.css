@@ -222,6 +222,7 @@ input:focus {
   display: flex;
   justify-content: center;
   align-items:center;
+  background-color: white;
 }
 ul {
   font-size: 1.5rem;
@@ -461,4 +462,38 @@ th {
   border-radius: 10px;
   border: 1px solid #ddd;
   width: 100px;
+}
+/* for side bar */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin: 10px 0;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 25px; 
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-menu a i {
+    margin-right: 10px;
+}
+
+.sidebar-menu a:hover {
+    background: #f0f0f0;
+}
+
+.sidebar-menu a.active {
+    background: #ae0505;
+    color: white;
+    font-weight: 600;
 }

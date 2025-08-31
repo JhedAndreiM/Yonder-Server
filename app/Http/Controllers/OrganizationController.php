@@ -259,38 +259,54 @@ class OrganizationController extends Controller
         return view('organization/orderPage', compact('items', 'filters'));
     }
 
-    public function reviews()
-    {
-        $userId = Auth::id(); // currently logged-in user
+public function reviews(Request $request)
+{
+    $userId = Auth::id(); 
+    $search = request('searching');
 
-$reviews = DB::table('reviews')
-    ->join('users', 'reviews.user_id', '=', 'users.id') // reviewer info
-    ->join('product', 'reviews.product_id', '=', 'product.product_id')
-    ->where('product.user_id', $userId) // only your products
-    ->select(
-        'users.name',
-        'users.last_name',
-        'product.image_path',
-        'users.avatar',
-        'reviews.rating',
-        'reviews.comment',
-        'reviews.created_at'
-    )
-    ->orderBy('reviews.created_at', 'desc')
-    ->get()
-    ->map(function ($review) {
-        // Get first image
-        $images = explode(',', $review->image_path);
-        $review->first_image = $images[0];
+    $query = DB::table('reviews')
+        ->join('users', 'reviews.user_id', '=', 'users.id')
+        ->join('product', 'reviews.product_id', '=', 'product.product_id')
+        ->leftJoin('product_images', function ($join) {
+            $join->on('product.product_id', '=', 'product_images.product_id')
+                 ->whereRaw('product_images.id = (select MIN(id) from product_images where product_images.product_id = product.product_id)');
+        }) // joins only the FIRST image for each product
+        ->where('product.user_id', $userId)
+        ->select(
+            'users.name',
+            'users.last_name',
+            'users.avatar',
+            'reviews.rating',
+            'reviews.comment',
+            'reviews.created_at',
+            'product.name as product_name',
+            'product_images.image_path as first_image'
+        )
+        ->orderBy('reviews.created_at', 'desc');
 
+    // Apply search filter
+    if (!empty($search) && $search !== 'undefined') {
+        $query->where(function($q) use ($search) {
+            $q->where('users.name', 'like', '%' . $search . '%')
+              ->orWhere('users.last_name', 'like', '%' . $search . '%')
+              ->orWhere('reviews.comment', 'like', '%' . $search . '%')
+              ->orWhere('product.name', 'like', '%' . $search . '%');
+        });
+    }
+
+    $reviews = $query->get()->map(function ($review) {
         // Format the date
         $review->formatted_date = Carbon::parse($review->created_at)->format('F j, Y');
-
         return $review;
     });
 
-        return view('organization/reviews', compact('reviews'));
+    if ($request->ajax()) {
+        return view('partials.reviewCards', compact('reviews'));
     }
+
+    return view('organization/reviews', compact('reviews'));
+}
+
 
     public function updateStockSettings(Request $request)
     {
@@ -327,6 +343,21 @@ $reviews = DB::table('reviews')
             ->sum('quantity');
         $average_daily_usage = $days > 0 ? ($totalSold / $days) : 0;
         return (int) round(($product->lead_time * $average_daily_usage) + $product->safety_stock);
+    }
+
+    // delete product
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+
+        // Optional: also delete image
+        if ($product->image_path && file_exists(public_path('images/' . $product->image_path))) {
+            unlink(public_path('images/' . $product->image_path));
+        }
+
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted successfully.']);
     }
 
 }
