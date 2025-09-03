@@ -13,7 +13,12 @@ class OrganizationController extends Controller
 {
     public function dashboard()
     {
-        $products = Product::where('user_id', Auth::id())->get();
+        $products = DB::table('product')
+        ->where('product.user_id', Auth::id())
+        ->leftJoin('product_images', 'product.product_id', '=', 'product_images.product_id')
+        ->select('product.*', 'product_images.image_path')
+        ->groupBy('product.product_id')
+        ->get();
         return view('organization.dashboard', compact('products'));
     }
     public function update(Request $request)

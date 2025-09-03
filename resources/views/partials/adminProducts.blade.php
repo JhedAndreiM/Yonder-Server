@@ -4,14 +4,10 @@
     </div>
 @else
     @foreach($products as $product)
-    @php
-        $images = explode(',', $product->image_path);
-        $firstImage = $images[0];
-    @endphp
 <div class="card">
     <div class="card-left">
-        @if($firstImage && file_exists(public_path('images/' . $firstImage)))
-            <img src="{{ asset('images/' . $firstImage) }}" alt="{{ $product->name }}">
+        @if($product->image_path && file_exists(public_path('images/' . $product->image_path)))
+            <img src="{{ asset('images/' . $product->image_path) }}" alt="{{ $product->name }}">
         @else
             <img src="{{ asset('img/default-product.png') }}" alt="No image available">
         @endif

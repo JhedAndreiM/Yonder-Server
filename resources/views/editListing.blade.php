@@ -120,7 +120,7 @@
           <button type="button" class="supplier-btn" data-type="student-org">Student Organization</button>
         </div>
 
-        <input type="text" name="supplier_type" id="supplier_type" value="{{ old('supplier_type', $items->supplier_type ?? 'pben') }}">
+        <input type="hidden" name="supplier_type" id="supplier_type" value="{{ old('supplier_type', $items->supplier_type ?? 'pben') }}">
 
         <div id="organizationSelect" style="display:none;margin-top:10px;">
         <select name="organization_id" id="organization_id">

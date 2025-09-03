@@ -27,9 +27,7 @@
     </div>
     
     <p class="review-text">
-      The product was great, fast delivery and good quality! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed feugiat elit non turpis blandit, at sagittis ipsum interdum. Mauris id est ac urna commodo lacinia sit amet id erat.
-      The product was great, fast delivery and good quality! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed feugiat elit non turpis blandit, at sagittis ipsum interdum. Mauris id est ac urna commodo lacinia sit amet id erat.
-      The product was great, fast delivery and good quality! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed feugiat elit non turpis blandit, at sagittis ipsum interdum. Mauris id est ac urna commodo lacinia sit amet id erat.
+      {{ $review->comment }}
     </p>
     
     <button class="see-more" style="display:none;">See more</button>

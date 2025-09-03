@@ -10,7 +10,7 @@
         ->get();
         $firstImage= $images->first();
     @endphp
-          <div class="card">
+          <div class="card" data-id="{{$cartItems->cart_id}}">
             <div class="text">
             <!-- For User Name -->
             @if(Auth::user()->role==="student")
@@ -70,156 +70,20 @@
                 <div class="cardButtons">
                     <!-- MAIN IF STATEMENT FOR PENDING -->
                     @if($cartItems->status=='pending')
-                    @if($cartItems->seller_id == Auth::id() && $cartItems->payment_type=='cashPayment')
-                        <form action="{{ route('cart.confirmPayment', $cartItems->cart_id) }}" method="POST">
-                            @csrf
-                            <input id="filterValue" name="filterValue" type="hidden" value="{{ $filters }}">
-                            <button class="cancelButton" type="submit">Confirm COD</button>
-                        </form>
-                    @else
-                        <!-- For Seller to Confirm an Order -->
-                        @if($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "no")
-                            <form action="{{route('cart.confirmSales', $cartItems->cart_id)}}" method="POST">
-                                @csrf
-                                <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-                                <button class="cancelButton">Confirm Order</button>
-                            </form>
-                        @elseif ($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "no")
-                        @endif
-                    @endif
-
-                        <!-- If Confirmed na 'yung Buy Order and need nalang Iview 'yung receipt -->
-                         <!-- Seller's View -->
-                        @if($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "yes")
-                            @if($cartItems->gcash_receipt)
-                            <button 
-                                    class="cancelButton viewReceiptBtn" 
-                                    data-image="{{ asset('gcash_receipts/' . $cartItems->gcash_receipt) }}">
-                                    View Image
-                                </button>
-                                <div class="gcashReceiptModalView" id="gcashReceiptModalView">
-                                    <div class="gcashReceipt-ContentView" id="gcashReceipt-ContentView">
-                                        <div class="gcashReceipt-containerView" id="gcashReceipt-containerView">
-                                            <h3>Uploaded GCash Receipt</h3>
-                                            <img id="receiptView" alt="Receipt Preview">
-                                            <div class="buttonGroup">
-                                                <button class="closeButton_ViewGcash" id="closeReceiptView">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            <form action="{{ route('cart.confirmPayment', $cartItems->cart_id) }}" method="POST">
-                                @csrf
-                                <input id="filterValue" name="filterValue" type="hidden" value="{{ $filters }}">
-                                <button class="cancelButton" type="submit">Confirm Payment</button>
-                            </form>
-                        <!-- Buyer's View -->
-                        @elseif ($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "yes")
-                            @if($cartItems->gcash_receipt)
-                                <button 
-                                    class="cancelButton viewReceiptBtn" 
-                                    data-image="{{ asset('gcash_receipts/' . $cartItems->gcash_receipt) }}">
-                                    View Image
-                                </button>
-                                <div class="gcashReceiptModalView" id="gcashReceiptModalView">
-                                    <div class="gcashReceipt-ContentView" id="gcashReceipt-ContentView">
-                                        <div class="gcashReceipt-containerView" id="gcashReceipt-containerView">
-                                            <h3>Uploaded GCash Receipt</h3>
-                                            <img id="receiptView" alt="Receipt Preview">
-                                            <div class="buttonGroup">
-                                                <form action="{{route('gcash.receiptRemove', $cartItems->cart_id)}}" method="POST">
-                                                    @csrf
-                                                    <button class="cancelButton" id="closeReceiptView">Remove Image</button>
-                                                </form>
-                                                <button class="closeButton_ViewGcash" id="closeReceiptView">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            <form class="uploadGcashReceipt" action="{{route('gcash.receipt', $cartItems->cart_id)}}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input id="receiptInput" type="file" class="gcash_receipt" name="gcash_receipt" accept="image/*"  required>
-                                <label class="lbl_gcash_receipt" for="receiptInput">Upload GCash Receipt</label>
-                            </form>
-                            <!-- Modal -->
-                            <div class="gcashReceiptModal" id="gcashReceiptModal">
-                                <div class="gcashReceipt-Content" id="gcashReceipt-Content">
-                                    <div class="gcashReceipt-container" id="gcashReceipt-container">
-                                         <h3>Preview GCash Receipt</h3>
-                                        <img id="receiptPreview" alt="Receipt Preview">
-                                        <div class="modal-buttons">
-                                            <button type="button" id="cancelReceipt">Cancel</button>
-                                            <button type="button" id="submitReceipt">Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    
-                        <form action="{{route('cart.cancel',$cartItems->cart_id)}}" method="post">
-                            @csrf
-                            <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-                            <button class="cancelButton">Cancel {{$cartItems->cart_id}}</button>
-                        </form>
+                        @include('partials.status._pending', ['cartItems' => $cartItems, 'filters' => $filters])
                     <!-- MAIN IF STATEMENT FOR RECEIVE -->
                     @elseif($cartItems->status=='receive')
-                        @if($cartItems->seller_id != Auth::id())
-                            @if ($cartItems->buyer_response=='no')
-                                <form action="{{route('cart.orderReceivedDelivered',$cartItems->cart_id)}}" method="post">
-                                    @csrf
-                                    <input type="hidden" value="buyer" name="role">
-                                    <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-                                    <button class="cancelButton">Order Received</button>
-                                </form>
-                            @else
-                                <button class="cancelButton" style="background-color:#4CAF50; color:white;">checked</button>
-                            @endif
-                                    
-                        @elseif ($cartItems->seller_id == Auth::id())
-                            @if ($cartItems->seller_response=='no')
-                                <form action="{{route('cart.orderReceivedDelivered',$cartItems->cart_id)}}" method="post">
-                                    @csrf
-                                    <input type="hidden" value="seller" name="role">
-                                    <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-                                    <button class="cancelButton">Order Delivered</button>
-                                </form>
-                            @else
-                                <button class="cancelButton" style="background-color:#4CAF50; color:white;">checked</button>
-                            @endif
-                        @endif
+                        @include('partials.status._receive', ['cartItems' => $cartItems, 'filters' => $filters])
                     <!-- MAIN IF STATEMENT FOR COMPLETED -->
                     @elseif($cartItems->status=='completed')
-                        @if($cartItems->seller_id == Auth::id())
-                            <button
-                                class="view-receipt cancelButton"
-                                data-bs-toggle="modal"
-                                data-bs-target="#myModal"
-                                data-names="{{ $cartItems->product_name }}"
-                                data-prices="{{ $cartItems->unit_price }}"
-                                data-qtys="{{ $cartItems->quantity }}"
-                                data-vouchers="{{ $cartItems->voucher_applied }}"
-                                data-id="{{ $cartItems->cart_id }}"
-                                data-date="{{ $cartItems->formatted_updated_at ?? $cartItems->updated_at}}"
-                                onclick="openProductModalSeller(this)"
-                                >Receipt</button>
-                        @else
-                                
-                            <button class="btn btn-primary rate-btn cancelButton" data-itemid="{{ $cartItems->product_id}}">Review</button>
-                            <button
-                                class="view-receipt cancelButton"
-                                data-bs-toggle="modal"
-                                data-bs-target="#myModal"
-                                data-name="{{ $cartItems->product_name }}"
-                                data-price="{{ $cartItems->unit_price }}"
-                                data-qty="{{ $cartItems->quantity }}"
-                                data-voucher="{{ $cartItems->voucher_applied }}"
-                                data-id="{{ $cartItems->cart_id }}"
-                                data-date="{{ $cartItems->formatted_updated_at }}"
-                                onclick="openProductModal(this)"
-                                >Receipt</button>
-                        @endif
+                        @include('partials.status._completed', ['cartItems' => $cartItems, 'filters' => $filters])
+                    @endif
+                    @if($cartItems->status !== 'cancelled' && $cartItems->status !== 'completed' && $cartItems->status !=='receive')
+                    <form action="{{route('cart.cancel',$cartItems->cart_id)}}" method="post">
+                        @csrf
+                        <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
+                        <button type="submit" class="cancelButton">Cancel</button>
+                    </form>
                     @endif
                 </div>
               </div>

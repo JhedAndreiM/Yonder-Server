@@ -23,12 +23,6 @@
             <div class="navBarLeft">
                 <img src="{{ asset('img/logo.svg') }}" alt="" />
             </div>
-
-            <!-- <div class="navBarMiddle">
-        <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
-        <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
-      </div> -->
-
             <div class="navBarRight">
                 <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
                 <div class="dropdown-container">
@@ -123,7 +117,7 @@
                         <li>
                             <a href="{{ route('org.report') }}" 
                             class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
-                                <i class="fa-solid fa-paperclip"></i> Sales Report
+                                <i class="fa-solid fa-paperclip"></i> Inventory
                             </a>
                         </li>
                     </ul>

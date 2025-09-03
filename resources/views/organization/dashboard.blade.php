@@ -83,9 +83,8 @@
                         style="display: none"
                     >
                         <ul>
-                            <li><a href="">My Profile</a></li>
-                            <li><a href=" ">Wishlist</a></li>
-                            <li><a href="">Logout</a></li>
+                            <li><a href="{{route('account.page')}}">Accounts</a></li>
+                            <li><a href="{{ route('logout') }}">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -117,7 +116,7 @@
                         <li>
                             <a href="{{ route('org.report') }}" 
                             class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
-                                <i class="fa-solid fa-paperclip"></i> Sales Report
+                                <i class="fa-solid fa-paperclip"></i> Inventory
                             </a>
                         </li>
                     </ul>

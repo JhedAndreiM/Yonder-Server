@@ -128,7 +128,7 @@
             <li>
               <a href="{{ route('org.report') }}" 
               class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
-                <i class="fa-solid fa-paperclip"></i> Sales Report
+                <i class="fa-solid fa-paperclip"></i> Inventory
               </a>
             </li>
           </ul>

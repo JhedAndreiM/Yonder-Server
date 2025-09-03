@@ -274,6 +274,47 @@ class CartController extends Controller
 
         return view('profile', compact('items', 'filters', 'sellerRating'));
     }
+    public function getCardPartial($id, Request $request)
+    {
+        $items = DB::table('cart_items')
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->join('users', 'cart_items.seller_id', '=', 'users.id')
+            ->leftJoin('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->where('cart_items.id', $id)
+            ->select(
+                'cart_items.id as cart_id',
+                'cart_items.quantity',
+                'cart_items.seller_id',
+                'cart_items.buyer_response',
+                'cart_items.seller_response',
+                'cart_items.status',
+                'cart_items.unit_price',
+                'cart_items.product_id',
+                'cart_items.updated_at',
+                'cart_items.paymentConfirmation',
+                'cart_items.gcash_receipt',
+                'cart_items.payment_type',
+                'product.name as product_name',
+                'product.image_path',
+                'product.description',
+                'cart_items.voucher_applied',
+                'users.name as seller_name',
+                'buyers.id as buyer_id',
+                'buyers.name as buyer_name'
+            )
+            ->first();
+
+        if (!$items) {
+            return response()->json(['success' => false, 'message' => 'Cart item not found.']);
+        }
+
+        $items->formatted_updated_at = Carbon::parse($items->updated_at)->format('F d, Y');
+        $filters = $request->query('filter');
+        $items = collect([$items]);
+        $html = view('partials.profileProduct', compact('items', 'filters'))->render();
+        return response()->json(['success' => true, 'html' => $html]);
+        
+    }
 
     public function saveGcashReceipt(Request $request, $id){
         $request->validate([
@@ -300,8 +341,11 @@ class CartController extends Controller
             'gcash_receipt' => null,
             'updated_at' => now()
         ]);
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
         return redirect()
-            ->route('student.profile', ['filters' => 'pending']) // or whatever value you want
+            ->route('student.profile', ['filters' => 'pending'])
             ->with('successfull', 'GCash receipt Removed successfully.');
         }
 
@@ -315,6 +359,9 @@ class CartController extends Controller
             ]);
         $filters = $request->input('filterValue');
         //dd($filters);
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
         return redirect()->route('student.profile', ['filters' => $filters])
             ->with('success', 'Item cancelled.');
     }
@@ -498,7 +545,9 @@ public function confirmStudentSales(Request $request, $id)
         DB::commit();
 
         $filters = $request->input('filterValue');
-
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
         if (Auth::check() && Auth::user()->role === 'student') {
             return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item Approved.');
@@ -518,6 +567,9 @@ public function confirmStudentSales(Request $request, $id)
             'status' => 'receive',
             'updated_at' => now()
         ]);
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
         if(Auth::user()->role=== 'student'){
             return redirect()
             ->route('student.sales', ['filters' => 'pending']) 
@@ -582,7 +634,9 @@ public function confirmStudentSales(Request $request, $id)
 
                 $product->save();
             }
-
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'id' => $id]);
+            }
 
             return redirect()->route('student.profile', ['filters' => $filters])
                 ->with('success', 'Item received.');
@@ -636,6 +690,9 @@ public function confirmStudentSales(Request $request, $id)
                 $product->save();
             }
 
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'id' => $id]);
+            }
 
             if(Auth::check() && Auth::user()->role === 'student'){
                 return redirect()->route('student.sales', ['filters' => $filters])
