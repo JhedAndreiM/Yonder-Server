@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Listings</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -61,9 +62,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -199,6 +200,11 @@
           });
         });  
   });
+      document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
     </script>
   </body>
 </html>

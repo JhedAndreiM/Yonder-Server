@@ -189,8 +189,12 @@ input:focus {
   padding: 10px;
   border-bottom: 1px solid #eee;
   margin: 0px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-
+.profile-dropdown li:hover {
+  background-color: #f5f5f5;
+}
 .profile-dropdown li a {
   text-decoration: none;
   color: #333;
@@ -647,4 +651,221 @@ select {
 }
 .redeemBtn:hover:not(:disabled) {
   background: #0f55c4;
+}
+@media (max-width: 1200px) {
+  html { overflow-y: auto; scrollbar-gutter: stable both-edges; }
+  html, body { overflow-x: hidden; }
+  body { overflow-y: auto; }
+
+  /* Shared container widths like other pages */
+  :root { --page-max: 1200px; }
+  header, .navBar {
+    width: min(94%, var(--page-max));
+    margin: 24px auto 28px;
+    border-radius: 20px;
+  }
+  .container, .mainContainer {
+    width: min(96%, var(--page-max));
+    margin-inline: auto;
+  }
+
+  /* Guard against children forcing sideways scroll */
+  header, nav, .container, .mainContainer, .leftPart, .rightPart, .cardContainer {
+    min-width: 0;
+  }
+}
+
+/* ---------- Large tablets (≤1024px) ---------- */
+@media (max-width: 1024px) {
+  /* Navbar/header */
+  header, .navBar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    height: auto;
+    padding: 12px 18px;
+  }
+  .webName, .navBarMiddle {
+    width: 100%;
+    max-width: 680px;
+    font-size: 18px;
+    margin-top: 6px;
+  }
+  .nav-search,
+  .navBarMiddle input,
+  .searchInput input,
+  input {
+    height: 44px;
+    font-size: 18px;
+  }
+
+  /* Layout: stack sidebar above content, align like other pages */
+  .container, .mainContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .leftPart {
+    display: block !important;         /* keep visible */
+    width: 100%;
+    margin: 0;                         /* remove any lateral offset */
+    border-radius: 14px;
+  }
+
+  .rightPart {
+    width: 100%;
+    margin-left: 0;                    /* fix subtle “push to right” */
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Cards → neat grid */
+  .cardContainer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 16px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+  .card {
+    width: 100%;
+    height: auto;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  /* Redeem button/link stays visible and aligned */
+  .use, .redeem, .voucher__redeem {
+    margin-left: auto;                 /* align to the right naturally */
+    margin-top: 10px;
+    display: inline-block;
+  }
+
+  /* Dropdowns / popovers fit viewport */
+  .notification-dropdown,
+  .profile-dropdown {
+    width: min(92vw, 360px);
+    right: 0;
+    left: auto;
+  }
+
+  /* Modals (Redeem) — fit viewport, scroll internally */
+  .modal, .redeemModal, .voucherModal, [class*="modal"] {
+    padding: 16px;                     /* space at screen edges */
+  }
+  .modal .modal-content,
+  .redeemModal .modal-content,
+  .voucherModal .modal-content,
+  .modal .redeem-content,
+  .modal .voucher-content,
+  [class*="modal"] .modal-content {
+    width: 94vw;
+    max-width: 640px;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+  }
+}
+
+/* ---------- Phones & small tablets (≤768px) ---------- */
+@media (max-width: 768px) {
+  /* Navbar aesthetics */
+  header, .navBar {
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px auto 20px;
+    padding: 12px 14px;
+  }
+  .navBarRight, .left-nav {
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* Typography & controls */
+  h1{
+    font-size: 1.5rem;
+  }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  p  { font-size: 15px; }
+  button { font-size: 16px; }
+  .nav-search,
+  .navBarMiddle input,
+  .searchInput input,
+  input { height: 40px; font-size: 16px; }
+
+  /* Sidebar above content */
+  .leftPart { width: 100%; margin: 0 0 12px 0; }
+
+  .card{
+    height: 200px;
+    width: 250px !important;
+    padding: 0px;
+  }
+  .cardContainer {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    gap: 14px;
+  }
+
+  .placeholder { width: 60px; height: 60px; }
+  .info { padding: 10px; }
+
+  /* Redeem button still visible/tappable */
+  .use, .redeem, .voucher__redeem { font-size: 1rem; }
+
+  /* Modal size on phones */
+  .modal .modal-content,
+  .redeemModal .modal-content,
+  .voucherModal .modal-content,
+  [class*="modal"] .modal-content {
+    width: 94vw;
+    max-width: 520px;
+    max-height: 90vh;
+  }
+}
+
+/* ---------- Small phones (≤480px) ---------- */
+@media (max-width: 480px) {
+  /* Navbar compact */
+  header, .navBar {
+    width: 96%;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 14px;
+  }
+  .navBarMiddle { font-size: 16px; border-width: 1px; }
+
+  /* One-column grid when tight */
+  .cardContainer {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .card { padding: 10px; border-radius: 10px; }
+
+  /* Keep layout clean */
+  .totalPrice, .cardButtons { padding-right: 0; }
+
+  /* Redeem stays easy to tap */
+  .use, .redeem, .voucher__redeem {
+    margin-top: 8px;
+    text-underline-offset: 2px;
+  }
+
+  /* Modal fit on smallest phones */
+  .modal .modal-content,
+  .redeemModal .modal-content,
+  .voucherModal .modal-content,
+  [class*="modal"] .modal-content {
+    width: 95vw;
+    max-width: 95vw;
+    max-height: 88vh;
+  }
 }

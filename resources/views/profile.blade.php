@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profile</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -79,9 +80,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -477,11 +478,20 @@ function openProductModal(button) {
 }
 
 // Close receipt modal
-var span = document.getElementsByClassName("close")[0];
-span.onclick = function() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
-};
+function closeReceiptModal() {
+  const modal = document.getElementById('myModal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  // UNLOCK SCROLL — remove any locks/classes/inline overrides
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
+// Wire up all "close" buttons inside the receipt modal
+document.querySelectorAll('#myModal .close').forEach(btn => {
+  btn.addEventListener('click', closeReceiptModal);
+});
 
 // Screenshot receipt modal
 function screenshot() {
@@ -582,6 +592,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });  
 });
+    document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
 //end
 </script>
   </body>

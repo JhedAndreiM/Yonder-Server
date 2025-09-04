@@ -24,7 +24,7 @@
                 <img src="{{ asset('img/logo.svg') }}" alt="" />
             </div>
             <div class="navBarRight">
-                <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+                <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
                 <div class="dropdown-container">
                     <img
                         class="hover notificationBtn"
@@ -119,6 +119,12 @@
                                 <i class="fa-solid fa-paperclip"></i> Inventory
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('create.listing') }}" 
+                            class="{{ request()->routeIs('create.listing') ? 'active' : '' }}">
+                                <i class="fa-solid fa-plus"></i> Add Product
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="containerRight">
@@ -139,6 +145,7 @@
                 const profileDropdown =
                     document.getElementById("profileDropdown");
                 const closeNotif = document.querySelector(".closeButton");
+                const faqsBtn = document.querySelectorAll('.faqsBtn');
                 let category = "featured";
 
                 document
@@ -183,6 +190,13 @@
                         profileDropdown.style.display = "none";
                     }
                 });
+
+                faqsBtn.forEach(button=>{
+                button.addEventListener('click', function(){
+                    window.location.href= "{{route('FAQs')}}";
+                    
+                })
+            });
             });
         </script>
 </body>

@@ -7,6 +7,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homepage</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,9 +79,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -268,13 +269,7 @@
         clearInterval(interval);
         autoStart();
     }
-    //     document.querySelectorAll('.mainFilterButtons').forEach(button => {
-    //     button.addEventListener('click', () => {
-    //         setTimeout(() => {
-    //             window.location.reload();
-    //         }, 0.1); 
-    //     });
-    // });
+    
     document.querySelectorAll('.wishlist-icon').forEach(img => {
       img.addEventListener('click', function (event){
         event.stopPropagation();
@@ -308,39 +303,11 @@
         });
       });
     });
-  //   document.querySelectorAll('.wishlist-icon').forEach(function (icon) {
-  //   icon.addEventListener('click', function (event) {
-  //     event.stopPropagation(); 
-  //     isHeartClicked = true;
-
-  //     const currentSrc = icon.getAttribute('src');
-  //     const grayHeart = "{{ asset('img/wishlist.png') }}";
-  //     const redHeart = "{{ asset('img/wishlist-red.png') }}";
-
-  //     icon.setAttribute(
-  //       'src',
-  //       currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
-  //     );
-
-  //     event.preventDefault();     
-  //       event.stopPropagation();
-  //       console.log("clicked");
-  //       var productId = $(this).data('product-id');
-  //       var heart = $(this);
-        
-  //       $.ajax({
-  //           url: "{{ route('wishlist.toggle') }}", 
-  //           method: 'POST',
-  //           data: {
-  //               product_id: productId,
-  //               _token: "{{ csrf_token() }}"
-  //           },
-  //           success: function (response) {
-  //               console.log("worked");
-  //           }
-  //       });
-  //   });
-  // });
+    document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
 
     </script>
   </body>

@@ -245,7 +245,7 @@ Route::get('/', function () {
         }
     }
     return view('landing');
-});
+})->name('landing');
 
     
     

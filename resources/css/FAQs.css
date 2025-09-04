@@ -17,7 +17,39 @@ body::-webkit-scrollbar {
   display: none;
 }
 /* START OF NAVBAR */
+/* NAV BAR */
+.navbar {
+  border-radius: 50px;
+  margin: 20px auto;
+  max-width: 95%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  margin: 30px auto 40px auto !important;
+  width: 90% !important;
+}
 
+.navbar-nav .nav-link {
+  font-size: 24px;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-color) !important;
+}
+.sectionOne {
+  height: 100dvh;
+}
+.navbar-brand img {
+  height: 50px;
+}
+.d-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn{
+    background-color:  #ae0505 !important;
+    color: white !important;
+}
 .navBar {
   justify-content: space-between;
   align-items: center;
@@ -271,7 +303,7 @@ input:focus {
   background-color: #9a0000;
   position: relative;
   left: -10%;
-  top: 3px;
+  top: -3px;
 }
 
 .searchContainer {
@@ -307,10 +339,11 @@ input:focus {
 
 h2 {
   margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 h3 {
-  margin-top: 3px;
+  font-size: 1.5rem;
   margin-bottom: 10px;
   color: black;
   opacity: 100%;
@@ -348,6 +381,7 @@ h3 {
   cursor: pointer;
   margin: 5px 0;
   color: #888;
+  font-size: 1.5rem;
 }
 
 h3.active {
@@ -374,6 +408,7 @@ p {
 }
 /* Auth Buttons for navbar */
 .authBtn {
+    border: none;
     display: inline-block;
     padding: 10px 20px;
     border-radius: 25px;

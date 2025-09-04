@@ -221,6 +221,11 @@ input:focus {
   padding: 10px;
   border-bottom: 1px solid #eee;
   margin: 0px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.profile-dropdown li:hover {
+  background-color: #f5f5f5;
 }
 
 .profile-dropdown li a {

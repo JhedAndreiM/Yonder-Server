@@ -189,6 +189,11 @@ input:focus {
   padding: 10px;
   border-bottom: 1px solid #eee;
   margin: 0px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.profile-dropdown li:hover {
+  background-color: #f5f5f5;
 }
 
 .profile-dropdown li a {
@@ -817,4 +822,243 @@ input[type=number]::-webkit-outer-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make long pages scrollable on small screens */
+@media (max-width: 992px) {
+  body {
+    overflow-y: auto;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+}
+
+/* Tablet and below */
+@media (max-width: 992px) {
+  .navBar {
+    width: 95%;
+    height: auto;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+
+  .navBarRight {
+    gap: 20px;
+  }
+
+  .navBarMiddle {
+    width: 100%;
+    max-width: 600px;
+    font-size: 18px;
+  }
+
+  input,
+  .searchInput input {
+    font-size: 18px;
+    height: 44px;
+  }
+
+  .container {
+    max-width: 96%;
+    gap: 24px;
+    height: auto;
+    padding-top: 20px;
+    align-items: stretch;
+  }
+
+  .productPictures {
+    width: 100%;
+    height: auto;
+    min-height: 320px;
+  }
+
+  .sliderWrapper {
+    min-height: 280px;
+  }
+
+  .productDetails {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .detailsTop {
+    flex-wrap: wrap;
+  }
+
+  .detailsRight,
+  .priceAndReviews {
+    width: 100%;
+  }
+
+  .priceAndReviews {
+    gap: 8px;
+    align-items: center;
+  }
+
+  .addToCart,
+  .buy,
+  .variationsButton,
+  .addToCartBtn,
+  .addToBuyNowBtn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  h2 { font-size: 26px; }
+  h3 { font-size: 20px; }
+  p  { font-size: 18px; }
+}
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  .navBar {
+    flex-wrap: wrap;
+    border-radius: 20px;
+  }
+
+  .profileBtn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .wishlist-icon {
+    width: 18px;
+    height: 16px;
+  }
+
+  .container {
+    flex-direction: column;
+  }
+
+  .sliderImage {
+    object-fit: contain;
+    border-radius: 10px;
+  }
+
+  .prevBtn,
+  .nextBtn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .productDetails {
+    padding: 16px;
+  }
+
+  .profile {
+    gap: 10px;
+  }
+
+  .sellerProfile {
+    width: 50px;
+    height: 50px;
+  }
+
+  .rating {
+    margin-left: auto;
+  }
+
+  .modalContent,
+  .modalContentSuccess,
+  .modalContentFailed {
+    width: 95%;
+    max-width: 420px;
+  }
+
+  .quantity-div input[type="number"] {
+    height: 32px;
+    font-size: 16px;
+  }
+
+  select {
+    width: 100%;
+  }
+
+  .popup-content {
+    width: 92%;
+    max-width: 680px;
+  }
+
+  .notification-dropdown,
+  .profile-dropdown {
+    width: min(92vw, 360px);
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .navBar {
+    margin: 16px auto 22px;
+    padding-left: 12px;
+    padding-right: 12px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .navBarRight {
+    gap: 12px;
+  }
+
+  .navBarMiddle {
+    border-width: 1px;
+    border-radius: 10px;
+  }
+
+  input,
+  .searchInput input {
+    height: 40px;
+    font-size: 16px;
+  }
+
+  h2 { font-size: 22px; }
+  h3 { font-size: 18px; }
+  p  { font-size: 16px; }
+
+  .prevBtn,
+  .nextBtn {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+
+  .btnGroup {
+    flex-direction: column;
+  }
+
+  .btnGroup button,
+  .btnGroup .close-btn {
+    width: 100%;
+  }
+
+  .floating {
+    right: 12px;
+    bottom: 12px;
+    gap: 10px;
+  }
+
+  .profileInfo {
+    min-width: auto;
+  }
+}
+
+/* Prevent layout overflow on ultra-wide content */
+.productDetails,
+.productPictures,
+.navBar,
+.container {
+  min-width: 0;
 }

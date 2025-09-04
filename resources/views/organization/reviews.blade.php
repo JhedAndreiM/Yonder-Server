@@ -24,7 +24,7 @@
                 <img src="{{ asset('img/logo.svg') }}" alt="" />
             </div>
             <div class="navBarRight">
-                <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+                <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
                 <div class="dropdown-container">
                     <img
                         class="hover notificationBtn"
@@ -118,6 +118,12 @@
                             <a href="{{ route('org.report') }}" 
                             class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
                                 <i class="fa-solid fa-paperclip"></i> Inventory
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('create.listing') }}" 
+                            class="{{ request()->routeIs('create.listing') ? 'active' : '' }}">
+                                <i class="fa-solid fa-plus"></i> Add Product
                             </a>
                         </li>
                     </ul>
@@ -219,6 +225,13 @@
                     }
                     });
                 });
+                const faqsBtn = document.querySelectorAll('.faqsBtn');
+                faqsBtn.forEach(button=>{
+                button.addEventListener('click', function(){
+                    window.location.href= "{{route('FAQs')}}";
+                    
+                })
+            });
             });
 
         </script>

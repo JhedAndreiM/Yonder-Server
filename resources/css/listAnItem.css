@@ -627,3 +627,237 @@ input[type="number"]::-webkit-outer-spin-button {
   padding: 1rem;
   flex: 1;
 }
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+img, video { max-width: 100%; height: auto; }
+
+body { overflow-y: auto; } /* allow scroll on small screens */
+
+/* Make long fixed-width blocks shrink responsibly */
+.mainContainer,
+.navBar,
+.navBarMiddle,
+.notification-dropdown,
+.profile-dropdown,
+.policyContainer,
+.tab-buttons {
+  min-width: 0;
+}
+
+/* ---------- Large tablets & down ---------- */
+@media (max-width: 992px) {
+  .navBar {
+    width: 95%;
+    height: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 20px;
+    gap: 14px;
+  }
+
+  .navBarMiddle {
+    width: 100%;
+    max-width: 640px;
+    font-size: 18px;
+  }
+
+  .searchInput input,
+  input {
+    font-size: 18px;
+    height: 44px;
+  }
+
+  .mainContainer {
+    width: 90%;
+    padding: 28px;
+    margin-bottom: 6%;
+  }
+
+  /* Tabs row wraps neatly */
+  .tab-buttons {
+    margin-left: 0;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Policy split becomes more breathable */
+  .policyContainer {
+    gap: 1rem;
+    font-size: large;
+  }
+
+  /* Options/variants rows can wrap */
+  .option-row {
+    flex-wrap: wrap;
+  }
+
+  #priceStocks {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- Phones & small tablets ---------- */
+@media (max-width: 768px) {
+  .navBar {
+    flex-wrap: wrap;
+    margin: 16px auto 24px auto;
+    gap: 12px;
+  }
+
+  .navBarRight {
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+    position: static;
+  }
+
+  .profileBtn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .wishlist-icon {
+    width: 18px;
+    height: 16px;
+  }
+
+  .mainContainer {
+    width: 94%;
+    padding: 22px;
+  }
+
+  .topText {
+    font-size: 24px;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  /* Inputs & text areas scale down a bit */
+  .section input.boxes,
+  .variants input,
+  #tags input[type="text"],
+  #tagInput,
+  textarea {
+    font-size: 18px;
+  }
+
+  textarea { height: 110px; }
+
+  /* Variants inputs are full-width when needed */
+  .variants input,
+  .option-input {
+    width: 100%;
+    max-width: none;
+  }
+
+  #priceStocks input.boxes {
+    width: 90px;
+  }
+
+  /* Supplier/college buttons wrap nicely */
+  .supplier-buttons,
+  .college-buttons,
+  .tagsButton {
+    flex-wrap: wrap;
+  }
+
+  /* Policy columns become vertical */
+  .policyContainer {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+  .policyContainer-left,
+  .policyContainer-right {
+    padding: 0.5rem 0;
+    width: 100%;
+  }
+
+  /* Dropdowns and popovers fit viewport */
+  .notification-dropdown,
+  .profile-dropdown {
+    width: min(92vw, 360px);
+    right: 0;
+    left: auto;
+  }
+
+  /* Buttons & controls comfortable on touch */
+  .button,
+  .supplier-btn,
+  .college-btn,
+  .confirm-btn,
+  .cancel-btn {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  /* Tabs */
+  .listAnItemBtn h1,
+  .ProductPolicyBtn h1 {
+    font-size: 22px;
+  }
+}
+
+/* ---------- Small phones ---------- */
+@media (max-width: 480px) {
+  .navBar {
+    width: 96%;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 14px;
+  }
+
+  .navBarMiddle {
+    border-width: 1px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .searchInput input,
+  input {
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .mainContainer {
+    width: 96%;
+    padding: 16px;
+  }
+
+  h5 { font-size: 20px; }
+
+  .button {
+    font-size: 15px;
+    padding: 8px 12px;
+  }
+
+  /* Controls inside price & stocks stack cleanly */
+  #priceStocks {
+    gap: 12px;
+  }
+  #priceStocks input.boxes {
+    width: 80px;
+    height: 40px;
+  }
+
+  /* Chips & tags don’t overflow */
+  .tag-chip {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+
+  /* Switch remains tappable */
+  .switch { width: 46px; height: 22px; }
+  .slider:before { width: 16px; height: 16px; }
+}
+
+/* ---------- Safety: prevent layout overflow on flexible parents ---------- */
+.navBar,
+.mainContainer,
+.policyContainer,
+.tab-buttons {
+  overflow: visible;
+}
