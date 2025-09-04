@@ -218,7 +218,7 @@
             </div>
           </div>
 
-          <input type="text" name="variants_json" id="variants_json" value="">
+          <input type="hidden" name="variants_json" id="variants_json" value="">
         </div>
 
       @if(auth()->user()->role === 'student')

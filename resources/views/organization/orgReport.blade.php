@@ -145,14 +145,40 @@
   <div class="cards-row">
     <div class="report-card">
       <h4>Best Selling Product</h4>
-      <p>{{ $topSellerProduct->product_name }}</p>
-      <span>{{ $topSellerProduct->total_quantity }} total sold</span>
+      @if($topSellerProduct)
+            @if($topSellerProduct->product_name)
+                <p>{{ $topSellerProduct->product_name }}</p>
+            @else
+                <p>No Product Available</p>
+            @endif
+            @if($topSellerProduct->total_quantity)
+                <span>{{ $topSellerProduct->total_quantity }} total sold</span>
+            @else
+                <span>No Data Available</span> 
+            @endif
+        @else
+            <p>No Product Available</p>
+            <span>No Data Available</span>
+        @endif
       <button id="bestSellingViewReport" class="view-report-btn" data-modal="viewReportModal">View report →</button>
     </div>
     <div class="report-card">
       <h4>Most Wishlisted Item</h4>
-      <p>{{ $mostWishlisted->name }}</p>
-      <span>{{ $mostWishlisted->wishlist_count }} total wishlist</span>
+      @if($mostWishlisted)
+            @if($mostWishlisted->name)
+                <p>{{ $mostWishlisted->name }}</p>
+            @else
+                <p>No Product Available</p>
+            @endif
+            @if($mostWishlisted->wishlist_count)
+                <span>{{ $mostWishlisted->wishlist_count }} total wishlist</span>
+            @else
+                <span>No Data Available</span>
+            @endif
+        @else
+            <p>No Product Available</p>
+            <span>No Data Available</span>
+        @endif
       <button id="wishlistViewReport"  class="view-report-btn" data-modal="viewReportModal">View report →</button>
     </div>
   </div>

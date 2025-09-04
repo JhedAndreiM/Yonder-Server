@@ -32,7 +32,7 @@ class CropImageController extends Controller
         $user->save();
         if($request->phone_number !== $user->phone_number){
             session(['pending_phoneNumber' => $request->phone_number]);
-            $cooldownMinutes = 10;
+            $cooldownMinutes = 1;
             $lastOtp = $user->last_otp_sent_at ? Carbon::parse($user->last_otp_sent_at) : null;
             if($lastOtp && $lastOtp->diffInMinutes(now()) < $cooldownMinutes){
                  $remaining = $cooldownMinutes - floor($lastOtp->diffInMinutes(now()));
@@ -41,8 +41,8 @@ class CropImageController extends Controller
 
             $otp = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
             session(['otp' => $otp]);
-            // $smsService = app(\App\Services\IprogSmsService::class);
-            // $response = $smsService->send($request->phone_number, 'Your verification code is ' . $otp);
+            $smsService = app(\App\Services\IprogSmsService::class);
+            $response = $smsService->send($request->phone_number, 'Your verification code is ' . $otp);
             $user->last_otp_sent_at = now();
             $user->save();
             return back()->with('otp_required', true)->with('otp_code', $otp);

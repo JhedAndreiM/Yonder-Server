@@ -41,6 +41,8 @@ export default defineConfig({
                 "resources/js/listAnItem.js",
                 "resources/js/mainPage.js",
                 "resources/js/productDetails.js",
+                "resources/js/org.dashboard.js",
+                "resources/js/review.js",
             ],
             refresh: true,
         }),
