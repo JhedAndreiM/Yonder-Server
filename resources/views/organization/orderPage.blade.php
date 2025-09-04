@@ -1,8 +1,11 @@
-@extends('Front_layouts.org')
-
-@section('head')
-<title>Order</title>
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
         body {
         background-image: url("{{ asset('img/background.svg') }}");
         background-size: cover;
@@ -10,48 +13,136 @@
         background-position: top center;
         }
     </style>
-    <!-- Bootstrap CSS -->
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-@vite('resources/css/orderPage.css')
-@endsection
-@section('maincontent')
-<div class="container">
-        <div class="container-top"></div>
-        <div class="container-bottom">
-            <div class="container-bottom-left">
-                <div class="left-container">
-                    <div class="left-one">
-                        <h3>PBEN Organization</h3>
-                    </div>
-                    <div class="left-two">
-                        <hr>
-                    </div>
-                    <div class="left-three"><i class="fa-solid fa-basket-shopping left-icon"></i><a href="{{ route('organization.dashboard') }}">Products</a></div>
-                    <div class="left-four"><i class="fa-solid fa-list-check left-icon"></i><span class="currentPage">Orders</span></div>
-                    <div class="left-five"><i class="fa-solid fa-star-half-stroke left-icon"></i><a href="{{ route('review.page') }}">Reviews</a></div>
-                    <div class="left-six"><i class="fa-solid fa-money-check-dollar left-icon"></i><a href="{{ route('org.report') }}">Dashboard</a></div>
-                </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @vite('resources/css/orderPage.css')
+    @vite('resources/js/profile.js')
+</head>
+<body>
+         <!-- nav bar -->
+        <div class="navBar">
+            <div class="navBarLeft">
+                <img src="{{ asset('img/logo.svg') }}" alt="" />
             </div>
-            <div class="rightPartContainer">
-                <div class="categories">
-                    <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
-                    <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
-                    <button id="btnReceive" class="btn-filter" data-tab="receive">To Pickup</button>
-                    <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
-                    <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
+            <div class="navBarRight">
+                <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
+                <div class="dropdown-container">
+                    <img
+                        class="hover notificationBtn"
+                        src="{{ asset('img/notif.png') }}"
+                        alt=""
+                    />
+                    <div
+                        class="notification-dropdown"
+                        id="notificationDropdown"
+                        style="display: none"
+                    >
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                        </div>
+                        <div class="notification-list">
+                            @if ($notifications->isEmpty())
+                            <p style="padding-left: 10px">No notifications</p>
+                            @else @foreach ($notifications as $notification)
+                            <div class="notification">
+                                <div class="title">
+                                    <h1>
+                                        @if($notification['title'] === "Product
+                                        Approved")
+                                        <span style="color: Green"
+                                            >{{ $notification['title'] }}</span
+                                        >
+                                        @elseif($notification['title'] ===
+                                        "Product Rejected")
+                                        <span style="color: red"
+                                            >{{ $notification['title'] }}</span
+                                        >
+                                        @else {{ $notification['title'] }}
+                                        @endif
+                                    </h1>
+                                </div>
+                                <div class="Message">
+                                    {{ $notification['message'] }}
+                                </div>
+                                <div class="time">
+                                    {{ $notification['time_ago'] }}
+                                </div>
+                            </div>
+                            @endforeach @endif
+                        </div>
+                    </div>
                 </div>
-                <div class="itemsContainer" id="itemsContainer">
-                    @include('partials.profileProduct', ['cartItems' => $items])
+                <div class="dropdown-container">
+                    <img
+                        class="hover profileBtn"
+                        src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}"
+                        alt=""
+                    />
+                    <div
+                        class="profile-dropdown"
+                        id="profileDropdown"
+                        style="display: none"
+                    >
+                        <ul>
+                            <li><a href="">My Profile</a></li>
+                            <li><a href=" ">Wishlist</a></li>
+                            <li><a href="">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="myModal" class="modal">
+        <!-- nav bar -->
+         <div class="mainContainer">
+            <div class="container">
+                <div class="containerLeft">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="{{ route('organization.dashboard') }}" 
+                            class="{{ request()->routeIs('organization.dashboard') ? 'active' : '' }}">
+                                <i class="fa-solid fa-cart-shopping"></i> My Products
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('order.page') }}" 
+                            class="{{ request()->routeIs('order.page') ? 'active' : '' }}">
+                                <i class="fa-solid fa-pencil"></i> Buy Orders
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('review.page') }}" 
+                            class="{{ request()->routeIs('review.page') ? 'active' : '' }}">
+                                <i class="fa-solid fa-star"></i> Product Reviews
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('org.report') }}" 
+                            class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
+                                <i class="fa-solid fa-paperclip"></i> Inventory
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('create.listing') }}" 
+                            class="{{ request()->routeIs('create.listing') ? 'active' : '' }}">
+                                <i class="fa-solid fa-plus"></i> Add Product
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="containerRight">
+                    <div class="categories">
+                        <button id="btnAll" class="btn-filter active" data-tab="all">All</button>
+                        <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
+                        <button id="btnReceive" class="btn-filter" data-tab="receive">To Pickup</button>
+                        <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
+                        <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
+                    </div>
+                    <div class="itemsContainer" id="itemsContainer">
+                        @include('partials.profileProduct', ['cartItems' => $items])
+                    </div>
+                </div>
+            </div>
+         </div>
+         <div id="myModal" class="modal">
             <div class="modal-wrapper">
                 <svg width="578" height="732" viewBox="0 0 578 732" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g filter="url(#filter0_d_802_127)">
@@ -164,228 +255,300 @@
             </div>
         </div>
         @if (session('error'))
-            <div id="sessionModalFailed" class="sessionModal">
-
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Failed!</h1>
-                    <h5>{{ session('error')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button onclick="closeFailedModal()">Okay!</button>
-                </div>
-                </div>
-
+        <div id="errorBar" class="error-bar">
+                {{session('error')}} <img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
             </div>
-        @elseif (session('successfull'))
-            <div id="sessionModal" class="sessionModal">
+            <script>
+                const errorbar = document.getElementById('errorBar');
+                errorbar.classList.add('show');
 
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Success!</h1>
-                <h5>{{session('successfull')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button onclick="closeSuccessModal()">Okay!</button>
-                </div>
-                </div>
-
-            </div>
-        @endif
-<script>
-            const successModal = document.getElementById("sessionModal");
-            function closeSuccessModal() {
-            successModal.style.display = "none";
-            }
-            const failedModal = document.getElementById("sessionModalFailed");
-            function closeFailedModal(){
-            failedModal.style.display = "none";
-            }
-            const buttons = document.querySelectorAll('.btn-filter');
-            //para pag ka load gana agad all filter
-            window.addEventListener('DOMContentLoaded', () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const filters = urlParams.get('filters');
-                const cancelledButton = document.getElementById('btnCancelled');
-                const allButton = document.getElementById('btnAll');
-                const pendingButton = document.getElementById('btnPending');
-                const receiveButton = document.getElementById('btnReceive');
-                const completedButton = document.getElementById('btnCompleted');
-                if (true) {
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    filter="cancelled"
-                    if (filters === 'all') {
-                        allButton.classList.add('active');
-                        console.log('all');
-                    }
-                    if (filters === 'pending') {
-                        pendingButton.classList.add('active');
-                        console.log('pending');
-                    }
-                    if (filters === 'receive') {
-                        receiveButton.classList.add('active');
-                        console.log('receive');
-                    }
-                    if (filters === 'cancelled') {
-                        cancelledButton.classList.add('active');
-                        console.log('cancelled');
-                    }
-                    if (filters === 'completed') {
-                        completedButton.classList.add('active');
-                        console.log('completed');
-                    }
-
-                    fetchFilter(filters);
-                    // basically remove yung ?filters= sa url para malinis
-                    const url = new URL(window.location);
-                    url.searchParams.delete('filters');
-                    window.history.replaceState({}, '', url);
-                }
-                //para sa modal
-                console.log('modal');
-
-
-
-            });
-            // modal opem
-            function openProductModalSeller(button) {
-                var modal = document.getElementById("myModal");
-                modal.style.display = "block";
-                document.getElementById('productName').textContent = button.dataset.names;
-                document.getElementById('productQuantity').textContent = button.dataset.qtys;
-                document.getElementById('productPrice').textContent = button.dataset.prices;
-                document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
-                document.getElementById('productID').textContent = button.dataset.id;
-                document.getElementById('receiptDate').textContent = button.dataset.date;
-                document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
-                    .dataset.vouchers);
-                console.log('wtf');
-            }
-            // modal close
-            var span = document.getElementsByClassName("close")[0];
-            span.onclick = function() {
-                var modal = document.getElementById("myModal");
-                modal.style.display = "none";
-            }
-            // screenshot
-            function screenshot() {
-                const captureElement = document.querySelector(".modal-wrapper");
-                html2canvas(captureElement).then(function(c) {
-                    const url = c.toDataURL();
-                    const linkEl = document.createElement("a");
-                    linkEl.setAttribute("href", url);
-                    linkEl.setAttribute("download", "receipt.png");
-                    linkEl.click();
-                    linkEl.remove();
-                });
-            }
-
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove .active from all buttons para isang button lagn active
-                    buttons.forEach(btn => btn.classList.remove('active'));
-
-                    // Add .active sa clicked button
-                    button.classList.add('active');
-
-                    const tab = button.getAttribute('data-tab');
-
-                    fetchFilter(tab);
-                });
-            });
-
-            function fetchFilter(tab) {
-                let url = "?filter=";
-                if (tab) {
-                    url += tab;
-                }
-                // kukunin current url tapos dadagdag yung let url tapos send sa sarili so mapunta sa route.
-
-                fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    //basically converts yung raw HTTP Req to Html tapos nilalagay sa id div ko
-                    .then(response => response.text())
-                    .then(data => {
-                        const itemsContainer = document.getElementById('itemsContainer');
-                        itemsContainer.innerHTML = data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching filtered products:', error);
-                    })
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                // Handle Rate button click
-                document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('rate-btn')) {
-        const itemId = e.target.dataset.itemid;
-        document.getElementById('itemId').value = itemId;
-        const modal = new bootstrap.Modal(document.getElementById('ratingModal'));
-        modal.show();
-    }
-});
-
-                // Handle star rating
-                const stars = document.querySelectorAll('.rating-stars .stars i');
-                stars.forEach(star => {
-                    star.addEventListener('mouseover', function() {
-                        const rating = this.getAttribute('data-rating');
-                        highlightStars(rating);
-                    });
-
-                    star.addEventListener('click', function() {
-                        const rating = this.getAttribute('data-rating');
-                        document.getElementById('selectedRating').value = rating;
-                        highlightStars(rating);
-                    });
-                });
-
-                const starsContainer = document.querySelector('.rating-stars .stars');
-                starsContainer.addEventListener('mouseout', function() {
-                    const selectedRating = document.getElementById('selectedRating').value;
-                    highlightStars(selectedRating);
-                });
-
-                function highlightStars(rating) {
-                    stars.forEach(star => {
-                        const starRating = star.getAttribute('data-rating');
-                        if (starRating <= rating) {
-                            star.classList.add('active');
-                        } else {
-                            star.classList.remove('active');
-                        }
-                    });
-                }
-            });
-                document.body.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('viewReceiptBtn')) {
-            const imageUrl = e.target.getAttribute('data-image');
-            const modalView = document.getElementById('gcashReceiptModalView');
-            const receiptView = document.getElementById('receiptView');
-            
-            if (modalView && receiptView) {
-                receiptView.src = imageUrl;
-                modalView.style.display = 'flex';
-            }
-        }
-
-        // Close View Image modal
-        if (e.target && e.target.id === 'closeReceiptView') {
-            const modalView = document.getElementById('gcashReceiptModalView');
-            if (modalView) {
-                modalView.style.display = 'none';
-            }
-        }
-    });
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    errorbar.classList.remove("show");
+                    setTimeout(() => bar.remove(), 400);
+                }, 5000);
         </script>
-@endsection
+        @elseif (session('successfull'))
+        <div id="successBar" class="success-bar">
+            {{session('successfull')}} <img src="{{ asset('imgModal/barCheckLogo.svg') }}" alt="success" class="success-icon">
+        </div>
+        <script>
+            const bar = document.getElementById('successBar');
+            bar.classList.add('show');
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                bar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
+        @endif
+        <div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+  <div class="unique-modal-content">
+    <div id="uniqueModalHeader" class="unique-modal-header">
+        <div class="imageWrapper" id="imageWrapper">
+            <img id="uniqueModalIcon" src="" alt="icon" />
+        </div>
+    </div>
+    <h3 id="uniqueHeaderMessage"></h3>
+    <p id="uniqueConfirmMessage"></p>
+    <div class="unique-modal-buttons">
+      <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
+      <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
+    </div>
+
+  </div>
+</div>
+             <script>
+        const successModal = document.getElementById("sessionModal");
+
+        function closeSuccessModal() {
+            successModal.style.display = "none";
+        }
+        const failedModal = document.getElementById("sessionModalFailed");
+
+        function closeFailedModal() {
+            failedModal.style.display = "none";
+        }
+        const buttons = document.querySelectorAll('.btn-filter');
+        //para pag ka load gana agad all filter
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filters = urlParams.get('filters');
+            const cancelledButton = document.getElementById('btnCancelled');
+            const allButton = document.getElementById('btnAll');
+            const pendingButton = document.getElementById('btnPending');
+            const receiveButton = document.getElementById('btnReceive');
+            const completedButton = document.getElementById('btnCompleted');
+            if (true) {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                filter = "cancelled"
+                if (filters === 'all') {
+                    allButton.classList.add('active');
+                    console.log('all');
+                }
+                if (filters === 'pending') {
+                    pendingButton.classList.add('active');
+                    console.log('pending');
+                }
+                if (filters === 'receive') {
+                    receiveButton.classList.add('active');
+                    console.log('receive');
+                }
+                if (filters === 'cancelled') {
+                    cancelledButton.classList.add('active');
+                    console.log('cancelled');
+                }
+                if (filters === 'completed') {
+                    completedButton.classList.add('active');
+                    console.log('completed');
+                }
+
+                fetchFilter(filters);
+                // basically remove yung ?filters= sa url para malinis
+                const url = new URL(window.location);
+                url.searchParams.delete('filters');
+                window.history.replaceState({}, '', url);
+            }
+            //para sa modal
+            console.log('modal');
+
+
+
+        });
+        // modal opem
+        function openProductModalSeller(button) {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+            document.getElementById('productName').textContent = button.dataset.names;
+            document.getElementById('productQuantity').textContent = button.dataset.qtys;
+            document.getElementById('productPrice').textContent = button.dataset.prices;
+            document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
+            document.getElementById('productID').textContent = button.dataset.id;
+            document.getElementById('receiptDate').textContent = button.dataset.date;
+            document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
+                .dataset.vouchers);
+            console.log('wtf');
+        }
+        // modal close
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+        // screenshot
+        function screenshot() {
+            const captureElement = document.querySelector(".modal-wrapper");
+            html2canvas(captureElement).then(function(c) {
+                const url = c.toDataURL();
+                const linkEl = document.createElement("a");
+                linkEl.setAttribute("href", url);
+                linkEl.setAttribute("download", "receipt.png");
+                linkEl.click();
+                linkEl.remove();
+            });
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove .active from all buttons para isang button lagn active
+                buttons.forEach(btn => btn.classList.remove('active'));
+
+                // Add .active sa clicked button
+                button.classList.add('active');
+
+                const tab = button.getAttribute('data-tab');
+
+                fetchFilter(tab);
+            });
+        });
+
+        function fetchFilter(tab) {
+            let url = "?filter=";
+            if (tab) {
+                url += tab;
+            }
+            // kukunin current url tapos dadagdag yung let url tapos send sa sarili so mapunta sa route.
+
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                //basically converts yung raw HTTP Req to Html tapos nilalagay sa id div ko
+                .then(response => response.text())
+                .then(data => {
+                    const itemsContainer = document.getElementById('itemsContainer');
+                    itemsContainer.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching filtered products:', error);
+                })
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle Rate button click
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('rate-btn')) {
+                    const itemId = e.target.dataset.itemid;
+                    document.getElementById('itemId').value = itemId;
+                    const modal = new bootstrap.Modal(document.getElementById('ratingModal'));
+                    modal.show();
+                }
+            });
+
+            // Handle star rating
+            const stars = document.querySelectorAll('.rating-stars .stars i');
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const rating = this.getAttribute('data-rating');
+                    highlightStars(rating);
+                });
+
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    document.getElementById('selectedRating').value = rating;
+                    highlightStars(rating);
+                });
+            });
+
+            const starsContainer = document.querySelector('.rating-stars .stars');
+            starsContainer.addEventListener('mouseout', function() {
+                const selectedRating = document.getElementById('selectedRating').value;
+                highlightStars(selectedRating);
+            });
+
+            function highlightStars(rating) {
+                stars.forEach(star => {
+                    const starRating = star.getAttribute('data-rating');
+                    if (starRating <= rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+        });
+        document.body.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('viewReceiptBtn')) {
+                const imageUrl = e.target.getAttribute('data-image');
+                const modalView = document.getElementById('gcashReceiptModalView');
+                const receiptView = document.getElementById('receiptView');
+
+                if (modalView && receiptView) {
+                    receiptView.src = imageUrl;
+                    modalView.style.display = 'flex';
+                }
+            }
+
+            // Close View Image modal
+            if (e.target && e.target.id === 'closeReceiptView') {
+                const modalView = document.getElementById('gcashReceiptModalView');
+                if (modalView) {
+                    modalView.style.display = 'none';
+                }
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+                const notifBtn = document.querySelector(".notificationBtn");
+                const notifDropdown = document.getElementById(
+                    "notificationDropdown"
+                );
+                const profileBtn = document.querySelector(".profileBtn");
+                const profileDropdown =
+                    document.getElementById("profileDropdown");
+                const closeNotif = document.querySelector(".closeButton");
+                let category = "featured";
+
+                document
+                    .querySelectorAll(".mainFilterButtons")
+                    .forEach((button) => {
+                        button.addEventListener("click", () => {
+                            // Remove 'current' from all filter buttons
+                            document
+                                .querySelectorAll(".mainFilterButtons")
+                                .forEach((btn) => {
+                                    btn.classList.remove("current");
+                                });
+                            let url = "?page=${page}";
+                            button.classList.add("current");
+
+                            category = button.dataset.category;
+                            console.log("Clicked category:", category);
+                            updateFilters();
+                        });
+                    });
+                notifBtn.addEventListener("click", function () {
+                    notifDropdown.style.display =
+                        notifDropdown.style.display === "none"
+                            ? "block"
+                            : "none";
+                    profileDropdown.style.display = "none";
+                    console.log("clicked");
+                });
+
+                profileBtn.addEventListener("click", function () {
+                    profileDropdown.style.display =
+                        profileDropdown.style.display === "none"
+                            ? "block"
+                            : "none";
+                    notifDropdown.style.display = "none"; // close notifications if open
+                });
+
+                // Optional: Close dropdowns if clicked outside
+                window.addEventListener("click", function (e) {
+                    if (!e.target.closest(".dropdown-container")) {
+                        notifDropdown.style.display = "none";
+                        profileDropdown.style.display = "none";
+                    }
+                });
+                const faqsBtn = document.querySelectorAll('.faqsBtn');
+                faqsBtn.forEach(button=>{
+                button.addEventListener('click', function(){
+                    window.location.href= "{{route('FAQs')}}";
+                    
+                })
+            });
+            });
+    </script>
+</body>
+</html>

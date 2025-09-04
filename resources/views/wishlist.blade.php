@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <title>Document</title>
+  <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
   @vite('resources/css/wishlist.css')
     <style>
       body {
@@ -29,7 +30,7 @@
       <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
 
       <div class="navBarRight">
-        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+        <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
         <div class="dropdown-container">
     <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
     <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
@@ -71,9 +72,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -185,7 +186,13 @@
                 
             })
         });
-
+        const faqsBtn = document.querySelectorAll('.faqsBtn');
+        faqsBtn.forEach(button=>{
+            button.addEventListener('click', function(){
+                window.location.href= "{{route('FAQs')}}";
+                
+            })
+        });
   });
     </script>
 </body>

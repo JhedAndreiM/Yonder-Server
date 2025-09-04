@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profile</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,6 +21,7 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @vite('resources/css/profile.css')
+    @vite('resources/js/profile.js')
     <style>
       body {
       background-image: url("{{ asset('img/background.svg') }}");
@@ -77,9 +80,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -175,41 +178,33 @@
 
     <!--  FOR MODALS  -->
       @if (session('error'))
-            <div id="sessionModalFailed" class="sessionModal">
-
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Failed!</h1>
-                    <h5>{{ session('error')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button class="button" onclick="closeFailedModal()">Okay!</button>
-                </div>
-                </div>
-
+        <div id="errorBar" class="error-bar">
+                {{session('error')}} <img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
             </div>
+            <script>
+                const errorbar = document.getElementById('errorBar');
+                errorbar.classList.add('show');
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    errorbar.classList.remove("show");
+                    setTimeout(() => bar.remove(), 400);
+                }, 5000);
+        </script>
         @elseif (session('successfull'))
-            <div id="sessionModal" class="sessionModal">
+        <div id="successBar" class="success-bar">
+            {{session('successfull')}} <img src="{{ asset('imgModal/barCheckLogo.svg') }}" alt="success" class="success-icon">
+        </div>
+        <script>
+            const bar = document.getElementById('successBar');
+            bar.classList.add('show');
 
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Success!</h1>
-                    <h5>{{session('successfull')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button class="button" onclick="closeSuccessModal()">Okay!</button>
-                </div>
-                </div>
-
-            </div>
+            // Hide after 3 seconds
+            setTimeout(() => {
+                bar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
         @endif
         <!-- END NG MODALS -->
         <!-- For receipt modal -->
@@ -261,6 +256,24 @@
             </div>
         </div>
          <!-- End ng Receipt Modal -->
+        <!-- Unique modal container -->
+<div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+  <div class="unique-modal-content">
+    <div id="uniqueModalHeader" class="unique-modal-header">
+        <div class="imageWrapper" id="imageWrapper">
+            <img id="uniqueModalIcon" src="" alt="icon" />
+        </div>
+    </div>
+    <h3 id="uniqueHeaderMessage"></h3>
+    <p id="uniqueConfirmMessage"></p>
+    <div class="unique-modal-buttons">
+      <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
+      <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
+    </div>
+
+  </div>
+</div>
+
 
 
     <script>
@@ -465,11 +478,20 @@ function openProductModal(button) {
 }
 
 // Close receipt modal
-var span = document.getElementsByClassName("close")[0];
-span.onclick = function() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
-};
+function closeReceiptModal() {
+  const modal = document.getElementById('myModal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  // UNLOCK SCROLL — remove any locks/classes/inline overrides
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
+// Wire up all "close" buttons inside the receipt modal
+document.querySelectorAll('#myModal .close').forEach(btn => {
+  btn.addEventListener('click', closeReceiptModal);
+});
 
 // Screenshot receipt modal
 function screenshot() {
@@ -568,8 +590,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             window.location.href = "{{ route('student.sales') }}";
         });
-    });    
+    });  
 });
+    document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
 //end
 </script>
   </body>

@@ -185,8 +185,12 @@ input:focus {
   padding: 10px;
   border-bottom: 1px solid #eee;
   margin: 0px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-
+.profile-dropdown li:hover {
+  background-color: #f5f5f5;
+}
 .profile-dropdown li a {
   text-decoration: none;
   color: #333;
@@ -365,12 +369,24 @@ button {
   font-weight: 500;
 }
 
-.cancelButton {
+.cancelButton,
+.confirmCOD,
+.confirmOrder,
+.viewImage,
+.confirmPayment,
+.orderReceived,
+.removeImage {
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   padding: 10px 25px 10px 25px;
   border-radius: 5px;
+}
+.confirmPayment:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .totalPrice,
@@ -886,123 +902,385 @@ textarea {
   color: #999;
   margin-top: 15px;
 }
+
+/* Universal Modal natin */
+.unique-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* === Modal Box === */
+.unique-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 362px;
+  max-width: 90%;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  animation: uniqueFadeIn 0.2s ease-in-out;
+}
+
+/* === Header (color changes via JS) === */
+.unique-modal-header {
+  background-color: #5196F0;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 60px;
+}
+.imageWrapper{
+  background-color: white;
+  padding: 1rem 1.1rem 1rem 1.1rem;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -43px;
+  box-shadow: 0 1px 0 rgba(81, 150, 240, 0.6);
+}
+.unique-modal-header img {
+  width: 50px;
+  height: 50px;
+}
+
+/* === Message text === */
+#uniqueHeaderMessage{
+  padding-top: 50px;
+  margin-top: 0px;
+  color: #5196F0;
+}
+#uniqueConfirmMessage {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 20px;
+  color: #333;
+  padding-bottom: 2rem;
+}
+
+/* === Buttons container === */
+.unique-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.unique-modal-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-radius: 5px;
+  width: 146px;
+  height: 32px;
+}
+
+/* Cancel button */
+.unique-modal-no {
+  background: #f5f5f5;
+  color: #333;
+  border-right: 1px solid #eee;
+  margin: 0px;
+  opacity: 100%;
+}
+.unique-modal-no:hover {
+  background: #e0e0e0;
+}
+
+/* Confirm/Save button */
+.unique-modal-yes {
+  background: #5196F0;
+  color: #fff;
+  font-weight: 500;
+  margin: 0px;
+  opacity: 100%;
+}
+.unique-modal-yes:hover {
+  background: #1976d2;
+}
+
+/* === Animation === */
+@keyframes uniqueFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* for the banner */
+.success-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5196F0;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+    font-size: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+}
+.success-bar.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.success-bar img.success-icon {
+    width: 20px;
+    height: 20px;
+}
+.error-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #BE1A1A;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+    font-size: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+}
+.error-bar.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.error-bar img.error-icon {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 1200px) {
+  body { overflow-y: auto; }
+}
+
+/* ---------- Large tablets (≤1024px) ---------- */
 @media (max-width: 1024px) {
+  /* Nav */
   .navBar {
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    width: 94%;
     height: auto;
-    padding: 10px 20px;
+    margin: 24px auto 28px;
+    padding: 12px 18px;
+    border-radius: 20px;
   }
   .navBarMiddle {
     width: 100%;
-    margin-top: 10px;
+    max-width: 680px;
+    font-size: 18px;
+    margin-top: 6px;
   }
+  input, .searchInput input {
+    height: 44px;
+    font-size: 18px;
+  }
+
+  /* Layout */
   .mainContainer {
+    max-width: 96%;
+    margin-inline: auto;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
   }
+  /* Keep sidebar visible; just stack it above content */
   .left {
+    display: block !important;
     width: 100%;
-    margin-bottom: 20px;
+    margin: 0;
+    border-radius: 14px;
   }
   .right {
     margin-left: 0;
     max-width: 100%;
+    max-height: none;
   }
+
+  /* Cards/content */
   .card {
     width: 100%;
-  }
-}
-
-/* Mobile (≤768px) */
-@media (max-width: 768px) {
-  .btn-filter{
-    margin-right: 10px;
-  }
-  .navBar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-  }
-  .navBarRight {
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .navBarMiddle {
-    font-size: 18px;
-  }
-  input, .searchInput input {
-    font-size: 16px;
-    height: 40px;
-  }
-  .left {
-    display: none; /* hide sidebar for mobile */
-  }
-  .card {
-    flex-direction: column;
     height: auto;
-    padding: 15px;
+    padding: 16px;
+    border-radius: 10px;
   }
   .content {
-    flex-direction: column;
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
   .placeholder img {
+    width: 100%;
+    max-width: 220px;
     height: auto;
+    object-fit: cover;
+    border-radius: 8px;
   }
-  .text{
-    padding-right: 30px;
+
+  /* Dropdowns */
+  .notification-dropdown,
+  .profile-dropdown {
+    width: min(92vw, 360px);
+    right: 0;
+    left: auto;
   }
-  .totalPrice{
-    padding-right: 30px;
-  }
-  .cardButtons{
-    padding-right: 30px;
+
+  /* Modals — fit viewport, scroll internally */
+  #myModal .modal-wrapper,
+  .modal-content,
+  .sessionModal-content,
+  .unique-modal-content,
+  .gcashReceipt-container,
+  .gcashReceipt-containerView {
+    width: 95%;
+    max-width: 680px;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 }
 
-/* Small Mobile (≤480px) */
-@media (max-width: 480px) {
-    .btn-filter{
-    margin-right: 0px;
-  }
-  body {
-    overflow-y: auto;
-  }
+/* ---------- Phones & small tablets (≤768px) ---------- */
+@media (max-width: 768px) {
+  /* Nav */
   .navBar {
-    padding: 10px;
-  }
-  .navBarMiddle {
-    font-size: 16px;
-    border-width: 1px;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px auto 20px;
+    padding: 12px 14px;
   }
   .navBarRight {
-    gap: 10px;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
   }
-  h2, h3 {
-    font-size: 18px;
+  .profileBtn { width: 48px; height: 48px; }
+  .wishlist-icon { width: 18px; height: 16px; }
+
+  /* Typography & controls */
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  p  { font-size: 15px; }
+  button, .button { font-size: 16px; }
+
+  input, .searchInput input { height: 40px; font-size: 16px; }
+
+  /* Keep sidebar visible; full-width above content */
+  .left {
+    display: block !important;
+    width: 100%;
+    margin-bottom: 12px;
   }
-  p {
-    font-size: 14px;
-  }
-  button, .button {
-    font-size: 16px;
-    width: auto;
-    padding: 8px 12px;
-  }
-  .card {
-    padding: 10px;
-  }
-  .modal-content, 
-  .sessionModal-content, 
-  .gcashReceipt-container, 
+
+  /* Content stack */
+  .content { flex-direction: column; gap: 12px; }
+  .text { flex-wrap: wrap; height: auto; gap: 6px; }
+  .cardButtons { justify-content: flex-start; gap: 8px; }
+
+  /* Modals on phones */
+  #myModal .modal-wrapper,
+  .modal-content,
+  .sessionModal-content,
+  .unique-modal-content,
+  .gcashReceipt-container,
   .gcashReceipt-containerView {
-    width: 95%;
-    height: auto;
+    width: 94%;
+    max-width: 540px;
     max-height: 90vh;
   }
-  .cardButtons{
-    font-size: 10px;
+}
+
+/* ---------- Small phones (≤480px) ---------- */
+@media (max-width: 480px) {
+  /* Nav */
+  .navBar {
+    width: 96%;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 14px;
   }
+  .navBarMiddle { font-size: 16px; border-width: 1px; }
+
+  input, .searchInput input { height: 40px; font-size: 16px; }
+
+  /* Cards */
+  .card { padding: 12px; border-radius: 10px; }
+  .text { padding: 4px 0; }
+  .totalPrice, .cardButtons { padding-right: 0; }
+
+  /* Lists expand; let the page scroll */
+  .items { max-height: none; overflow: visible; }
+
+  /* Buttons remain tappable */
+  .cancelButton,
+  .confirmCOD,
+  .confirmOrder,
+  .viewImage,
+  .confirmPayment,
+  .orderReceived,
+  .removeImage {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Modal imagery */
+  #myModal .middle-bottom img { width: 100px; height: 100px; }
+
+  /* Modal fit on smallest phones */
+  #myModal .modal-wrapper,
+  .modal-content,
+  .sessionModal-content,
+  .unique-modal-content,
+  .gcashReceipt-container,
+  .gcashReceipt-containerView {
+    width: 95%;
+    max-width: 95%;
+    max-height: 90vh;
+  }
+}
+
+/* ---------- Optional aesthetic: subtle scrollbar minimization on mobile ---------- */
+@media (max-width: 600px) {
+  .items::-webkit-scrollbar { width: 6px; }
+  .items::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 8px; }
 }

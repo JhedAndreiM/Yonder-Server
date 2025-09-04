@@ -259,14 +259,14 @@ button.active {
 .cardContainer {
   padding: 0px 1px 0px 1px;
   display: flex;
-  gap: 36px;
+  gap: 24px;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 .card-container {
     padding: 0px 1px 0px 1px;
     display: flex;
-    gap: 25px;
+    gap: 24px;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
@@ -331,6 +331,9 @@ button.active {
   flex-direction: column;
   border: 1px solid #eee;
   transition: transform 0.2s ease;
+  width: clamp(200px, 22vw, 240px);
+  height: clamp(260px, 28vw, 290px);
+  flex: 0 1 auto;
 }
 
 .floating img {
@@ -363,7 +366,7 @@ button.active {
 }
 
 .price p {
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 600;
   margin: 0;
   color: #000;
@@ -528,8 +531,12 @@ select {
 .profile-dropdown li {
   padding: 10px;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-
+.profile-dropdown li:hover {
+  background-color: #f5f5f5;
+}
 .profile-dropdown li a {
   text-decoration: none;
   color: #333;
@@ -591,28 +598,55 @@ select {
     align-items: stretch;
     max-width: 100%;
   }
+
   .filter {
     width: 100%;
     height: auto;
     margin-bottom: 20px;
     padding-right: 20px;
   }
+
   .content {
     width: 100%;
     margin-left: 0;
     margin-top: 0;
   }
+
   .cardContainer,
   .card-container {
+    display: flex;
+    flex-wrap: wrap;         /* allow multiple per row */
     justify-content: center;
-    gap: 18px;
+    gap: 16px;
   }
+
   .card {
-    width: 90vw;
-    max-width: 350px;
+    flex: 0 1 calc(50% - 20px); /* 2 cards per row */
+    max-width: 320px;
+    min-width: 200px;
     height: auto;
-    min-height: 320px;
+    min-height: 260px;
   }
+
+  .cardImg {
+    height: 52%;
+    object-fit: cover;
+  }
+
+  .info {
+    padding: 10px;
+  }
+
+  .productDesc {
+    font-size: 14px;
+    min-height: 48px;
+    -webkit-line-clamp: 2;
+  }
+
+  .price p { font-size: 16px; }
+  .rating img { width: 14px; height: 14px; }
+  .ratingScore { font-size: 13px; }
+  .numberOfReview { font-size: 12px; }
 }
 
 @media (max-width: 600px) {
@@ -620,6 +654,7 @@ select {
     background-size: auto 100vh;
     overflow-y: auto;
   }
+
   .navBar {
     flex-direction: column;
     height: auto;
@@ -627,58 +662,71 @@ select {
     gap: 10px;
     width: 98%;
     margin: 10px auto 20px auto;
-    border-radius: 10px; /* Changed from 100px */
+    border-radius: 10px;
   }
+
   .navBarMiddle {
     width: 100%;
     font-size: 18px;
     min-width: 0;
   }
+
   .searchBarForm {
     flex-direction: column;
     width: 100%;
     gap: 8px;
   }
+
   .navBarRight {
     gap: 16px;
     justify-content: center;
     width: 100%;
     position: relative;
   }
+
   .profileBtn {
     width: 40px;
     height: 40px;
   }
+
   .filter {
     width: 100%;
     min-width: 0;
     padding: 10px;
     height: auto;
   }
+
   .buttonForm {
     flex-direction: column;
     gap: 0.5rem;
   }
+
   .cardContainer,
   .card-container {
-    flex-direction: column;
-    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 14px;
   }
+
   .card {
-    width: 98vw;
-    max-width: 98vw;
-    min-width: 0;
+    flex: 0 1 calc(50% - 14px); /* 2 per row even on small phones */
+    max-width: 180px;
+    min-width: 140px;
     height: auto;
+    min-height: 240px;
   }
+
   .banner {
     height: 120px;
   }
+
   .floating {
     right: 10px;
     bottom: 10px;
     gap: 8px;
   }
+
   .notification-dropdown,
   .profile-dropdown {
     width: 95vw !important;
@@ -687,29 +735,30 @@ select {
     right: 0;
     left: 0;
   }
+
   .cropper-modal-content {
     max-width: 98vw;
     max-height: 98vh;
     margin: 10px auto;
     padding: 8px;
   }
-  h2 {
-    font-size: 20px;
-  }
-  h3 {
-    font-size: 16px;
-  }
+
+  h2 { font-size: 20px; }
+  h3 { font-size: 16px; }
+
   .priceInput {
     width: 60px;
     font-size: 16px;
     height: 32px;
   }
+
   button,
   #sort-by {
     font-size: 16px;
     padding: 8px 10px;
     height: 36px;
   }
+
   .sort {
     font-size: 14px;
   }

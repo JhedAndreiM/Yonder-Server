@@ -24,7 +24,7 @@
                 <img src="{{ asset('img/logo.svg') }}" alt="" />
             </div>
             <div class="navBarRight">
-                <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
+                <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
                 <div class="dropdown-container">
                     <img
                         class="hover notificationBtn"
@@ -83,9 +83,8 @@
                         style="display: none"
                     >
                         <ul>
-                            <li><a href="">My Profile</a></li>
-                            <li><a href=" ">Wishlist</a></li>
-                            <li><a href="">Logout</a></li>
+                            <li><a href="{{route('account.page')}}">Accounts</a></li>
+                            <li><a href="{{ route('logout') }}">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -117,7 +116,13 @@
                         <li>
                             <a href="{{ route('org.report') }}" 
                             class="{{ request()->routeIs('org.report') ? 'active' : '' }}">
-                                <i class="fa-solid fa-paperclip"></i> Sales Report
+                                <i class="fa-solid fa-paperclip"></i> Inventory
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('create.listing') }}" 
+                            class="{{ request()->routeIs('create.listing') ? 'active' : '' }}">
+                                <i class="fa-solid fa-plus"></i> Add Product
                             </a>
                         </li>
                     </ul>
@@ -140,6 +145,7 @@
                 const profileDropdown =
                     document.getElementById("profileDropdown");
                 const closeNotif = document.querySelector(".closeButton");
+                const faqsBtn = document.querySelectorAll('.faqsBtn');
                 let category = "featured";
 
                 document
@@ -184,6 +190,13 @@
                         profileDropdown.style.display = "none";
                     }
                 });
+
+                faqsBtn.forEach(button=>{
+                button.addEventListener('click', function(){
+                    window.location.href= "{{route('FAQs')}}";
+                    
+                })
+            });
             });
         </script>
 </body>

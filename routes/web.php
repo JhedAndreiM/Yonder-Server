@@ -101,6 +101,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
 
 // Middleware for Orgs and Studnts
 Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin'])->group(function () {
+    Route::get('/cart/{id}/card', [CartController::class, 'getCardPartial'])->name('cart.card');
     Route::get('/redirect-home', function () {
         if (Auth::check()) {
             $user = Auth::user();
@@ -244,7 +245,7 @@ Route::get('/', function () {
         }
     }
     return view('landing');
-});
+})->name('landing');
 
     
     

@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profile</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,6 +21,7 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @vite('resources/css/profile.css')
+    @vite('resources/js/profile.js')
   </head>
   <body>
     <!-- nav bar -->
@@ -69,9 +72,9 @@
     <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
     <div class="profile-dropdown" id="profileDropdown" style="display: none;">
       <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href="{{route('account.page')}}">Settings</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
+        <li data-url="{{ route('student.profile') }}">My Profile</li>
+        <li data-url="{{ route('account.page') }}">Settings</li>
+        <li data-url="{{ route('logout') }}">Logout</li>
       </ul>
     </div>
   </div>
@@ -167,73 +170,38 @@
 
     <!--  FOR MODALS  -->
       @if (session('error'))
-            <div id="sessionModalFailed" class="sessionModal">
+        <div id="errorBar" class="error-bar">
+            {{session('error')}} <img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
+        </div>
+        <script>
+            const errorbar = document.getElementById('errorBar');
+            errorbar.classList.add('show');
 
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/ErrorIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Failed!</h1>
-                    <h5>{{ session('error')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button class="button" onclick="closeFailedModal()">Okay!</button>
-                </div>
-                </div>
-
-            </div>
+            // Hide after 3 seconds
+            setTimeout(() => {
+                errorbar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
         @elseif (session('successfull'))
-            <div id="sessionModal" class="sessionModal">
+        <div id="successBar" class="success-bar">
+            {{session('successfull')}} <img src="{{ asset('imgModal/barCheckLogo.svg') }}" alt="success" class="success-icon">
+        </div>
+        <script>
+            const bar = document.getElementById('successBar');
+            bar.classList.add('show');
 
-                <!-- Modal content -->
-                <div class="sessionModal-content">
-                    <div class="top-success">
-                    <div class="errorIcon"><img src="{{ asset('img/SuccessIcon.svg') }}" alt="profile"></div>
-                </div>
-                <div class="middle-success">
-                    <h1>Success!</h1>
-                    <h5>{{session('successfull')}}</h5>
-                </div>
-                <div class="bottom-success">
-                    <button class="button" onclick="closeSuccessModal()">Okay!</button>
-                </div>
-                </div>
-
-            </div>
+            // Hide after 3 seconds
+            setTimeout(() => {
+                bar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
         @endif
         <!-- END NG MODALS -->
         <!-- For receipt modal -->
-                 <div id="myModal" class="modal">
+        <div id="myModal" class="modal">
             <div class="modal-wrapper">
-                <svg width="658" height="812" viewBox="0 0 578 732" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g filter="url(#filter0_d_802_127)">
-                        <mask id="path-1-inside-1_802_127" fill="white">
-                            <path
-                                d="M558 0C569.046 0 578 8.95431 578 20V351.006C577.845 351.002 577.69 351 577.535 351C565.988 351 556.627 361.074 556.627 373.5C556.627 385.926 565.988 396 577.535 396C577.69 396 577.845 395.997 578 395.993V708C578 719.046 569.046 728 558 728H20C8.95431 728 8.85911e-08 719.046 0 708V395.86C10.4537 394.616 18.585 385.081 18.585 373.5C18.585 361.919 10.4538 352.383 0 351.139V20C0 8.95431 8.95431 0 20 0H558Z" />
-                        </mask>
-                        <path
-                            d="M558 0C569.046 0 578 8.95431 578 20V351.006C577.845 351.002 577.69 351 577.535 351C565.988 351 556.627 361.074 556.627 373.5C556.627 385.926 565.988 396 577.535 396C577.69 396 577.845 395.997 578 395.993V708C578 719.046 569.046 728 558 728H20C8.95431 728 8.85911e-08 719.046 0 708V395.86C10.4537 394.616 18.585 385.081 18.585 373.5C18.585 361.919 10.4538 352.383 0 351.139V20C0 8.95431 8.95431 0 20 0H558Z"
-                            fill="white" />
-                        <path
-                            d="M578 20H580H578ZM578 351.006L577.953 353.005L580 353.053V351.006H578ZM577.535 351V349V351ZM577.535 396V398V396ZM578 395.993H580V393.946L577.953 393.994L578 395.993ZM558 728V730V728ZM0 708H-2H0ZM0 395.86L-0.236322 393.874L-2 394.084V395.86H0ZM0 351.139H-2V352.915L-0.23631 353.125L0 351.139ZM558 0V2C567.941 2 576 10.0589 576 20H578H580C580 7.84974 570.15 -2 558 -2V0ZM578 20H576V351.006H578H580V20H578ZM578 351.006L578.047 349.006C577.88 349.003 577.709 349 577.535 349V351V353C577.672 353 577.81 353.002 577.953 353.005L578 351.006ZM577.535 351V349C564.748 349 554.627 360.11 554.627 373.5H556.627H558.627C558.627 362.037 567.228 353 577.535 353V351ZM556.627 373.5H554.627C554.627 386.89 564.748 398 577.535 398V396V394C567.228 394 558.627 384.963 558.627 373.5H556.627ZM577.535 396V398C577.716 398 577.891 397.996 578.047 397.993L578 395.993L577.953 393.994C577.8 393.997 577.665 394 577.535 394V396ZM578 395.993H576V708H578H580V395.993H578ZM578 708H576C576 717.941 567.941 726 558 726V728V730C570.15 730 580 720.15 580 708H578ZM558 728V726H20V728V730H558V728ZM20 728V726C10.0589 726 2 717.941 2 708H0H-2C-2 720.15 7.84974 730 20 730V728ZM0 708H2V395.86H0H-2V708H0ZM0 395.86L0.236322 397.846C11.7969 396.471 20.585 385.989 20.585 373.5H18.585H16.585C16.585 384.173 9.11062 392.762 -0.236322 393.874L0 395.86ZM18.585 373.5H20.585C20.585 361.011 11.797 350.528 0.23631 349.153L0 351.139L-0.23631 353.125C9.11056 354.237 16.585 362.827 16.585 373.5H18.585ZM0 351.139H2V20H0H-2V351.139H0ZM0 20H2C2 10.0589 10.0589 2 20 2V0V-2C7.84974 -2 -2 7.84974 -2 20H0ZM20 0V2H558V0V-2H20V0Z"
-                            fill="#1D1D1D" mask="url(#path-1-inside-1_802_127)" />
-                    </g>
-                    <defs>
-                        <filter id="filter0_d_802_127" x="0" y="0" width="578" height="732"
-                            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                            <feColorMatrix in="SourceAlpha" type="matrix"
-                                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-                            <feOffset dy="4" />
-                            <feComposite in2="hardAlpha" operator="out" />
-                            <feColorMatrix type="matrix" values="0 0 0 0 0.1125 0 0 0 0 0.1125 0 0 0 0 0.1125 0 0 0 1 0" />
-                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_802_127" />
-                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_802_127" result="shape" />
-                        </filter>
-                    </defs>
-                </svg>
                 <div class="modal-content-overlay">
                     <div class="modal-top">
                         <span class="close"><img src="{{ asset('img/back-button.svg') }}" alt=""></span>
@@ -280,6 +248,24 @@
             </div>
         </div>
          <!-- End ng Receipt Modal -->
+
+        <!-- Unique modal container -->
+<div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+  <div class="unique-modal-content">
+    <div id="uniqueModalHeader" class="unique-modal-header">
+        <div class="imageWrapper" id="imageWrapper">
+            <img id="uniqueModalIcon" src="" alt="icon" />
+        </div>
+    </div>
+    <h3 id="uniqueHeaderMessage"></h3>
+    <p id="uniqueConfirmMessage"></p>
+    <div class="unique-modal-buttons">
+      <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
+      <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
+    </div>
+
+  </div>
+</div>
 
 
     <script>
@@ -493,15 +479,24 @@ function openProductModalSeller(button) {
 }
 
 // Close receipt modal
-var span = document.getElementsByClassName("close")[0];
-span.onclick = function() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
-};
+function closeReceiptModal() {
+  const modal = document.getElementById('myModal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  // UNLOCK SCROLL — remove any locks/classes/inline overrides
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
+// Wire up all "close" buttons inside the receipt modal
+document.querySelectorAll('#myModal .close').forEach(btn => {
+  btn.addEventListener('click', closeReceiptModal);
+});
 
 // Screenshot receipt modal
 function screenshot() {
-    const captureElement = document.querySelector(".modal-wrapper");
+    const captureElement = document.querySelector(".modal-content-overlay");
     html2canvas(captureElement).then(function(c) {
         const url = c.toDataURL();
         const linkEl = document.createElement("a");
@@ -598,6 +593,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });   
 });
+    document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
 //end
 </script>
   </body>

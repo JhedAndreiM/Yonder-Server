@@ -208,17 +208,16 @@ input:focus {
   flex-direction: row;
 }
 .containerLeft{
-  border: solid black 1px;
+  padding: 20px;
   border-radius: 20px;
   width: 450px;
-  height: 722px;
+  height: 300px;
   display: flex;
-  justify-content: center;
   align-items:center;
   background-color: white;
 }
 ul {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   list-style: none;
   padding: 0;
   margin: 0;

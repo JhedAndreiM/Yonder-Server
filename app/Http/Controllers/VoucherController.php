@@ -48,7 +48,7 @@ class VoucherController extends Controller
             DB::table('vouchers')->insert([
                 'user_id' => Auth::id(),
                 'seller_id' => $pbenUser->id,
-                'amount' => $request->voucherCost,
+                'amount' => $request->voucherAmount,
                 'status' => 'available',
                 'created_at' => now(),
                 'updated_at' => now()
