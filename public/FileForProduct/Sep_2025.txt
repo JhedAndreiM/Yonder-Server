@@ -1,0 +1,2 @@
+Product Name                                      Stock     Price     
+University Uniform                                150       P 350     
