@@ -1,27 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap");
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Raleway";
-}
-.raleway-normal {
-  font-family: "Raleway", sans-serif;
+body {
+  font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 400;
+  height: 100vh;
   font-style: normal;
-}
-body,
-html {
-  scrollbar-width: none;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-image: url("img/background.svg");
-  background-size: cover;
+  background-image: url("imgs/BACKGROUND.png");
   background-repeat: no-repeat;
-  background-position: top center;
+  background-size: contain;
+  background-size: cover;
+  background-attachment: fixed;
+  padding-bottom: 300px;
 }
+body::-webkit-scrollbar {
+  display: none;
+}
+
 /* NAV BAR */
 .navbar {
   border-radius: 50px;
@@ -43,312 +37,501 @@ html {
 .navbar-brand img {
   height: 50px;
 }
-.d-flex{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.d-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.btn{
-    background-color:  #ae0505 !important;
-    color: white !important;
+.btn {
+  background-color: #ae0505 !important;
+  color: white !important;
 }
 /* end navbar */
 
-.top {
-  position: relative;
-  width: 100%;
-}
-.gradient {
-  width: 100%;
-  height: auto;
-  position: relative;
-  z-index: 1;
-  margin-bottom: 50px;
-}
-h2 {
-  position: absolute !important;
-  top: 250px !important;
-  left: 39% !important;
-  color: white !important;
-  z-index: 2 !important;
-  font-size: 100px !important;
+/* ===== Snap Scrolling ===== */
+html,
+body {
+  height: 100%;
 }
 
-/* container */
+/* Container that handles the vertical snap */
+.snap-container {
+  height: 100vh; /* Viewport-height page */
+  overflow-y: auto; /* Scroll inside main */
+  scroll-snap-type: y mandatory; /* Snap on Y axis */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
 
-.container {
-  margin-top: 20px;
+/* Each section fills the screen and snaps to start */
+.section {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: grid; /* Easy centering */
+  place-items: center;
+  padding: 64px 5vw;
+  gap: 12px;
+}
+
+/* If sticky nav causes overlap, add top padding to first section */
+.section:first-of-type {
+  padding-top: 120px; /* adjust if your navbar is taller/shorter */
+}
+
+/* Hide scrollbar (you already hid webkit; add Firefox too) */
+.snap-container {
+  scrollbar-width: none; /* Firefox */
+}
+.snap-container::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* About Section */
+.about-section {
   display: flex;
-  padding: 40px;
-  gap: 20px;
-}
-
-.secondContainer {
-  display: flex;
-  padding: 40px;
-  gap: 20px;
-}
-
-/**/
-
-h3 {
-  font-size: 40px;
-}
-
-h5 {
-  font-size: 22px;
-  font-weight: 500;
-  color: #1d1d1d;
-  text-align: justify;
-}
-
-p {
-  text-align: center;
-  font-style: italic;
-}
-
-.img {
-  margin-left: 15%;
-}
-
-.portImg {
-  margin-right: 15%;
-}
-
-.leftContent {
-  margin-left: 15%;
-}
-
-.contents {
+  flex-direction: column;
+  justify-content: flex-start; /* stack items from top */
   align-items: center;
-  margin-right: 15%;
-  padding-top: 70px;
-  padding-bottom: 30px;
-}
-
-.contents h5 {
-  margin-top: 10px;
-}
-
-.contents p {
-  margin-top: 40px;
-}
-
-.secondContainer h3 {
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.team {
   text-align: center;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  padding: 40px 5vw 20px;
+  height: 100vh;
 }
 
-.solo {
+.about-heading {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 16px 0 24px;
+  line-height: 1.3;
+}
+
+.about-label {
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 8px;
+  color: #555;
+  letter-spacing: 1px;
+}
+
+.video-wrapper {
+  width: 70%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Section 2: Our Mission */
+.mission-section {
+  padding: 60px 5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.mission-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.mission-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.mission-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.mission-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 390px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mission-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mission-right {
+  margin-top: 150px;
+}
+
+.mission-right h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.mission-right p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* Bottom features */
+.mission-features {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.feature {
+  flex: 1;
+  text-align: left;
+}
+
+.feature-number {
+  font-size: 32px;
+  font-weight: 200;
+  color: #aaa;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.feature h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.feature p {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* Section 3: Our Vision */
+.vision-section {
+  padding: 60px 5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.vision-content {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr; /* left wide, right narrower */
+  gap: 40px;
+  align-items: stretch; /* make both columns equal height */
+}
+
+.vision-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.vision-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+/* Vision media boxes as video containers */
+.vision-box {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vision-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vision-box-wide {
+  aspect-ratio: 4 / 3;
+  max-height: 390px;
+}
+
+.vision-box-tall {
+  height: 100%; /* fill column height */
+}
+
+/* Right column */
+.vision-right {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+}
+
+/* Features */
+.vision-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.feature {
+  text-align: left;
+}
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #d9d9d9; /* fallback gray */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feature-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.feature h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.feature p {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* Section 3 layout: left fluid, right fixed width */
+/* Section 3 layout: left flexible, right fixed */
+.vision-content {
+  display: grid;
+  grid-template-columns: 1fr auto; /* left grows, right fixed */
+  gap: 40px;
+  align-items: stretch;
+}
+
+/* Right column container */
+.vision-right {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* Right tall video with larger fixed width */
+.vision-right video {
+  width: 800px; /* 🔑 adjust this number — closer to original look */
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.team-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+
+/* ===== Section 4: Our Team ===== */
+.team-section {
+  padding: 60px 5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.team-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  text-align: left;
+}
+
+/* Content: gallery + profile */
+.team-content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr minmax(360px, 420px);
+  column-gap: 80px;
+  align-items: start;
+}
+
+/* LEFT: team gallery */
+.team-gallery {
+  display: flex;
   gap: 20px;
+  height: 500px; /* consistent height */
+  align-items: stretch;
 }
 
-.end {
+.team-box {
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  flex: 1 1 0; /* base = small width */
+  min-width: 0;
+  transition: flex 0.35s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.team-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Featured (wide) card */
+.team-box.featured {
+  flex: 2.2 1 0; /* wide look */
+}
+
+/* Hover effect on any card */
+.team-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+/* Shrink non-featured when one is featured */
+.team-gallery:hover .team-box:not(.featured) {
+  flex: 0.9 1 0;
+}
+
+/* Featured badge follows featured card */
+.team-box.featured::after {
+  content: "Featured";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  padding: 4px 8px;
+  border-radius: 10px;
+}
+
+/* RIGHT: profile card */
+.team-profile {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  min-height: 400px; /* shorter than gallery */
+}
+
+.profile-header {
+  height: 92px;
+  background: #e85a5a;
+  position: relative;
+}
+
+/* Pills at top-right */
+.role-pills {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill {
+  background: #eef1ff;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  line-height: 1;
+  color: #4153b5;
+}
+.pill--green {
+  background: #e8f8ed;
+  color: #2e8b57;
+}
+
+/* Avatar circle */
+.profile-avatar {
+  position: absolute;
+  left: 22px;
+  top: 62px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #d9d9d9; /* fallback */
+  border: 4px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-body {
+  padding: 32px 20px 20px;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 28px 0 6px;
+}
+.profile-role {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 14px;
+}
+
+.skills {
+  margin: 12px 0 14px;
+}
+.skills > span {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  background: #e7efff;
+  color: #2e5cc9;
+  border-radius: 10px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.profile-quote {
+  font-style: italic;
+  font-size: 14px;
+  color: #333;
+  margin-top: 6px;
+}
+
+/* Bottom team quote */
+.team-quote {
+  width: 100%;
   text-align: center;
-  padding: 40px;
-  margin: 0 15% 0 15%;
-}
-
-img {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Media Queries for Responsive Design */
-
-/* Large devices (desktops, less than 1200px) */
-@media (max-width: 1199.98px) {
-  h2 {
-    top: 150px !important;
-    left: 35% !important;
-    font-size: 80px !important;
-  }
-  
-  .img, .portImg {
-    margin-left: 5%;
-    margin-right: 5%;
-  }
-  
-  .leftContent {
-    margin-left: 5%;
-  }
-  
-  .contents {
-    margin-right: 5%;
-  }
-  
-  .end {
-    margin: 0 10% 0 10%;
-  }
-}
-
-/* Medium devices (tablets, less than 992px) */
-@media (max-width: 991.98px) {
-  h2 {
-    top: 100px !important;
-    left: 32% !important;
-    font-size: 70px !important;
-  }
-  
-  .container, .secondContainer {
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .img, .portImg {
-    margin: 0;
-    text-align: center;
-  }
-  
-  .img img, .portImg img {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .leftContent {
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-  }
-  
-  .contents {
-    margin-right: 0;
-    padding-top: 30px;
-    width: 100%;
-  }
-  
-  h3 {
-    font-size: 36px;
-  }
-  
-  h5 {
-    font-size: 20px;
-  }
-}
-
-/* Small devices (landscape phones, less than 768px) */
-@media (max-width: 767.98px) {
-  h2 {
-    top: 100px !important;
-    left: 20% !important;
-    font-size: 60px !important;
-  }
-  
-  .gradient {
-    margin-bottom: 30px;
-  }
-  
-  .container, .secondContainer {
-    padding: 15px;
-  }
-  
-  .solo {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .solo img {
-    width: 45%;
-    margin-bottom: 15px;
-  }
-  
-  .end {
-    padding: 20px;
-    margin: 0 5% 0 5%;
-  }
-  
-  h3 {
-    font-size: 32px;
-  }
-  
-  h5 {
-    font-size: 18px;
-  }
-}
-
-/* Extra small devices (portrait phones, less than 576px) */
-@media (max-width: 575.98px) {
-  h2 {
-    top: 50px !important;
-    left: 30% !important;
-    font-size: 40px !important;
-  }
-  
-  .gradient {
-    margin-bottom: 20px;
-  }
-  
-  .container, .secondContainer {
-    padding: 10px;
-    gap: 10px;
-  }
-  
-  .solo {
-    gap: 10px;
-  }
-  
-  .solo img {
-    width: 80%;
-  }
-  
-  .end {
-    padding: 15px;
-    margin: 0;
-  }
-  
-  h3 {
-    font-size: 28px;
-    text-align: center;
-  }
-  
-  h5 {
-    font-size: 16px;
-  }
-  
-  .contents p {
-    margin-top: 20px;
-  }
-  
-  .secondContainer h3 {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-}
-
-/* Extra extra small devices (small portrait phones, less than 400px) */
-@media (max-width: 399.98px) {
-  h2 {
-    top: 30px !important;
-    left: 30% !important;
-    font-size: 36px !important;
-  }
-  
-  .navbar-brand img {
-    height: 40px;
-  }
-  
-  h3 {
-    font-size: 24px;
-  }
-  
-  h5 {
-    font-size: 15px;
-  }
-  
-  .solo img {
-    width: 90%;
-  }
+  font-size: 20px;
+  margin-top: 25px;
+  color: #444;
+  font-style: italic;
+  letter-spacing: 0.5px;
 }

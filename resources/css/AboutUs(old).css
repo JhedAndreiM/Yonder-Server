@@ -1,0 +1,354 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Raleway";
+}
+.raleway-normal {
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+body,
+html {
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-image: url("img/background.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+/* NAV BAR */
+.navbar {
+  border-radius: 50px;
+  margin: 20px auto;
+  max-width: 95%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  margin: 30px auto 40px auto !important;
+  width: 90% !important;
+}
+
+.navbar-nav .nav-link {
+  font-size: 24px;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--main-color) !important;
+}
+.navbar-brand img {
+  height: 50px;
+}
+.d-flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn{
+    background-color:  #ae0505 !important;
+    color: white !important;
+}
+/* end navbar */
+
+.top {
+  position: relative;
+  width: 100%;
+}
+.gradient {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 50px;
+}
+h2 {
+  position: absolute !important;
+  top: 250px !important;
+  left: 39% !important;
+  color: white !important;
+  z-index: 2 !important;
+  font-size: 100px !important;
+}
+
+/* container */
+
+.container {
+  margin-top: 20px;
+  display: flex;
+  padding: 40px;
+  gap: 20px;
+}
+
+.secondContainer {
+  display: flex;
+  padding: 40px;
+  gap: 20px;
+}
+
+/**/
+
+h3 {
+  font-size: 40px;
+}
+
+h5 {
+  font-size: 22px;
+  font-weight: 500;
+  color: #1d1d1d;
+  text-align: justify;
+}
+
+p {
+  text-align: center;
+  font-style: italic;
+}
+
+.img {
+  margin-left: 15%;
+}
+
+.portImg {
+  margin-right: 15%;
+}
+
+.leftContent {
+  margin-left: 15%;
+}
+
+.contents {
+  align-items: center;
+  margin-right: 15%;
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.contents h5 {
+  margin-top: 10px;
+}
+
+.contents p {
+  margin-top: 40px;
+}
+
+.secondContainer h3 {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.team {
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.solo {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.end {
+  text-align: center;
+  padding: 40px;
+  margin: 0 15% 0 15%;
+}
+
+img {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Media Queries for Responsive Design */
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+  h2 {
+    top: 150px !important;
+    left: 35% !important;
+    font-size: 80px !important;
+  }
+  
+  .img, .portImg {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  
+  .leftContent {
+    margin-left: 5%;
+  }
+  
+  .contents {
+    margin-right: 5%;
+  }
+  
+  .end {
+    margin: 0 10% 0 10%;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  h2 {
+    top: 100px !important;
+    left: 32% !important;
+    font-size: 70px !important;
+  }
+  
+  .container, .secondContainer {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .img, .portImg {
+    margin: 0;
+    text-align: center;
+  }
+  
+  .img img, .portImg img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .leftContent {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  
+  .contents {
+    margin-right: 0;
+    padding-top: 30px;
+    width: 100%;
+  }
+  
+  h3 {
+    font-size: 36px;
+  }
+  
+  h5 {
+    font-size: 20px;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  h2 {
+    top: 100px !important;
+    left: 20% !important;
+    font-size: 60px !important;
+  }
+  
+  .gradient {
+    margin-bottom: 30px;
+  }
+  
+  .container, .secondContainer {
+    padding: 15px;
+  }
+  
+  .solo {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .solo img {
+    width: 45%;
+    margin-bottom: 15px;
+  }
+  
+  .end {
+    padding: 20px;
+    margin: 0 5% 0 5%;
+  }
+  
+  h3 {
+    font-size: 32px;
+  }
+  
+  h5 {
+    font-size: 18px;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  h2 {
+    top: 50px !important;
+    left: 30% !important;
+    font-size: 40px !important;
+  }
+  
+  .gradient {
+    margin-bottom: 20px;
+  }
+  
+  .container, .secondContainer {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .solo {
+    gap: 10px;
+  }
+  
+  .solo img {
+    width: 80%;
+  }
+  
+  .end {
+    padding: 15px;
+    margin: 0;
+  }
+  
+  h3 {
+    font-size: 28px;
+    text-align: center;
+  }
+  
+  h5 {
+    font-size: 16px;
+  }
+  
+  .contents p {
+    margin-top: 20px;
+  }
+  
+  .secondContainer h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Extra extra small devices (small portrait phones, less than 400px) */
+@media (max-width: 399.98px) {
+  h2 {
+    top: 30px !important;
+    left: 30% !important;
+    font-size: 36px !important;
+  }
+  
+  .navbar-brand img {
+    height: 40px;
+  }
+  
+  h3 {
+    font-size: 24px;
+  }
+  
+  h5 {
+    font-size: 15px;
+  }
+  
+  .solo img {
+    width: 90%;
+  }
+}
