@@ -343,3 +343,27 @@ document.getElementById("tabBtnOther").addEventListener("click", function(){
     this.classList.add("active-tab");
     document.getElementById("tabBtnDetails").classList.remove("active-tab");
 });
+
+// FOR MODAL
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById("uniqueConfirmModal");
+    const yesBtn = document.getElementById("uniqueConfirmYes");
+    const noBtn = document.getElementById("uniqueConfirmNo");
+    const messageEl = document.getElementById("uniqueConfirmMessage");
+    const messageHead = document.getElementById("uniqueHeaderMessage");
+    const imageWrapper = document.getElementById("imageWrapper");
+    const ConfirmYes = document.getElementById("uniqueConfirmYes");
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      modal.style.display = "flex";
+    });
+
+    yesBtn.addEventListener('click', function(){
+      form.submit();
+    });
+    noBtn.addEventListener("click", function () {
+        console.log('clicked');
+        modal.style.display = "none";
+    });
+});

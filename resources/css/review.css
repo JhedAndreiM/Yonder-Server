@@ -379,6 +379,24 @@ ul li i {
     color: white;
     font-weight: 600;
 }
+.floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.floating img {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.floating img:hover {
+  transform: scale(1.1);
+}
 /* 📱 Mobile responsive */
 @media (max-width: 600px) {
   .review-card {

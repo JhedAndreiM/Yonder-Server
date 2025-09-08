@@ -98,9 +98,9 @@
       <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
       <div class="profile-dropdown" id="profileDropdown" style="display: none;">
         <ul>
-          <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-          <li><a href="{{route('account.page')}}">Settings</a></li>
-          <li><a href="{{ route('logout') }}">Logout</a></li>
+          <li data-url="{{ route('student.profile') }}">My Profile</li>
+          <li data-url="{{ route('account.page') }}">Settings</li>
+          <li data-url="{{ route('logout') }}">Logout</li>
         </ul>
       </div>
     </div>
@@ -227,14 +227,14 @@
       @endif
 
       <div class="section">
-        <h5>Item Name</h5>
+        <h5>Item Name<span class="required" title="Required">*</span></h5>
         <input name="name" id="product_name" class="boxes" type="text" placeholder="Item name" value="{{ old('name') }}" />
         @error('name')
             <div class="form-error">{{ $message }}</div>
         @enderror
       </div>
       <div class="section">
-        <h5>Item Description</h5>
+        <h5>Item Description<span class="required" title="Required">*</span></h5>
         <div id="editor" style="height: 300px;"></div>
         <input type="hidden" name="description" id="description" value="{{ old('description') }}">
         @error('description')
@@ -245,14 +245,14 @@
 
       <div class="section" id="priceStocks">
         <div class="priceContainer">
-          <h5>Price</h5>
+          <h5>Price<span class="required" title="Required">*</span></h5>
           <input name="price" class="boxes" type="number" placeholder="₱100" value="{{ old('price') }}"/>
           @error('price')
             <div class="form-error">{{ $message }}</div>
           @enderror
         </div>
         <div class="stocksContainer">
-          <h5>Stocks</h5>
+          <h5>Stocks<span class="required" title="Required">*</span></h5>
           <input id="stock-input"name="stock" class="boxes" type="number" placeholder="100" value="{{ old('stock') }}"/>
           @error('stock')
             <div class="form-error">{{ $message }}</div>
@@ -262,7 +262,7 @@
 
       {{-- File upload to --}}
       <div class="section">
-        <h5>Upload Product Images</h5>
+        <h5>Upload Product Images<span class="required" title="Required">*</span></h5>
 
         <input type="file" name="images[]" id="images" multiple>
 
@@ -303,7 +303,7 @@
 
       @if(auth()->user()->role === 'student')
       <div class="section" id="TradeOrSell">
-        <h5>Is this Item for Trade or for Sell?</h5>
+        <h5>Is this Item for Trade or for Sell?<span class="required" title="Required">*</span></h5>
         <div class="Trade-SellButtons">
             <button type="button" class="filter-btn button active" name="forSaleTrade"data-filter="sale"
               data-filter-type="forSaleTrade">Sale</button>
@@ -314,7 +314,7 @@
       </div>
 
       <div class="section" id="qualityOfProduct">
-        <h5>Quality of the Product</h5>
+        <h5>Quality of the Product<span class="required" title="Required">*</span></h5>
         <div class="Trade-SellButtons">
             <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
               data-filter-type="forSaleTrade">New</button>
@@ -377,7 +377,7 @@
       </div>
 
       <div class="section action-buttons">
-        <button class="button cancel-btn">Cancel</button>
+        <button id="cancelBtn" type="button" class="button cancel-btn">Cancel</button>
         <button class="button confirm-btn">Confirm</button>
       </div>
     </div>
@@ -399,7 +399,38 @@
         </div>
       </div>
     </div>
-  
+  @if($errors->any())
+      <div id="errorBar" class="error-bar">
+            All required fields must be filled out!<img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
+            </div>
+            <script>
+                const errorbar = document.getElementById('errorBar');
+                errorbar.classList.add('show');
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    errorbar.classList.remove("show");
+                    setTimeout(() => bar.remove(), 400);
+                }, 5000);
+        </script>
+  @endif
+<!-- Unique modal container -->
+<div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+  <div class="unique-modal-content">
+    <div id="uniqueModalHeader" class="unique-modal-header">
+        <div class="imageWrapper" id="imageWrapper">
+            <img id="uniqueModalIcon" src="{{asset('imgModal/createListingLogo.svg')}}" alt="icon" />
+        </div>
+    </div>
+    <h3 id="uniqueHeaderMessage">Ready to List?</h3>
+    <p id="uniqueConfirmMessage">Are you sure you want to confirm this listing? This action cannot be undone.</p>
+    <div class="unique-modal-buttons">
+      <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
+      <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
+    </div>
+
+  </div>
+</div>
   <script>
     const toolbarOptions = [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -535,6 +566,19 @@
           window.location.href = "{{ route('landing') }}";
       @endif
     });
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+      @if(auth()->check())
+        @if(auth()->user()->role === 'student')
+          window.location.href = "{{ route('student.dashboard') }}";
+        @elseif(auth()->user()->role === 'organization')
+          window.location.href = "{{ route('organization.dashboard') }}";
+        @elseif(auth()->user()->role === 'admin')
+          window.location.href = "{{ route('admin.dashboard') }}";
+        @endif
+      @else
+          window.location.href = "{{ route('landing') }}";
+      @endif
+    });
     // Optional: Close dropdowns if clicked outside
     window.addEventListener("click", function (e) {
       if (!e.target.closest(".dropdown-container")) {
@@ -558,6 +602,11 @@
         });
 
   });
+      document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
+    });
   </script>
 </body>
 

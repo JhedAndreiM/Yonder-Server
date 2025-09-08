@@ -1,6 +1,6 @@
 @if($cartItems->seller_id == Auth::id())
 <button
-    class="view-receipt cancelButton"
+    class="view-receipt receiptButton"
     data-bs-toggle="modal"
     data-bs-target="#myModal"
     data-names="{{ $cartItems->product_name }}"
@@ -12,9 +12,9 @@
     onclick="openProductModalSeller(this)">Receipt</button>
 @else
 
-<button class="btn btn-primary rate-btn cancelButton" data-itemid="{{ $cartItems->product_id}}">Review</button>
+<button class="btn btn-primary rate-btn reviewButton" data-itemid="{{ $cartItems->product_id}}">Review</button>
 <button
-    class="view-receipt cancelButton"
+    class="view-receipt receiptButton"
     data-bs-toggle="modal"
     data-bs-target="#myModal"
     data-name="{{ $cartItems->product_name }}"

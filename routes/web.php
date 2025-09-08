@@ -21,6 +21,7 @@ use App\Http\Controllers\FeaturedImageController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ProfileController;
 
 
 
@@ -140,6 +141,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
         return view('createListing');
     })->name('create.listing');
 
+    Route::get('/profile/id/{id}', [ProfileController::class, 'show'])->name('stalk.profile');
     // for products page
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');

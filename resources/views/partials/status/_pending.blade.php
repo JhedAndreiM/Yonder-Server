@@ -58,17 +58,40 @@
     data-image="{{ asset('gcash_receipts/' . $cartItems->gcash_receipt) }}">
     View Image
 </button>
-<div class="gcashReceiptModalView" id="gcashReceiptModalView">
-    <div class="gcashReceipt-ContentView" id="gcashReceipt-ContentView">
-        <div class="gcashReceipt-containerView" id="gcashReceipt-containerView">
+<div class="gcashReceiptModalView">
+    <div class="gcashReceipt-ContentView">
+        <div class="gcashReceipt-containerView">
             <h3>Uploaded GCash Receipt</h3>
-            <img id="receiptView" alt="Receipt Preview">
+            <img class="receiptView" alt="Receipt Preview">
             <div class="buttonGroup">
                 <form action="{{route('gcash.receiptRemove', $cartItems->cart_id)}}" method="POST">
                     @csrf
-                    <button class="removeImage" id="closeReceiptView">Remove Image</button>
+                    <button class="removeImage">Remove Image</button>
                 </form>
-                <button class="closeButton_ViewGcash" id="closeReceiptView">Close</button>
+                <button class="closeButton_ViewGcash">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@elseif(!$cartItems->gcash_receipt)
+<button class="viewImage viewSellerQRBtn">
+    View Seller QR
+</button>
+
+<div class="sellerQRModalView">
+    <div class="sellerQR-ContentView">
+        <div class="sellerQR-containerView">
+            <h3>Seller’s GCash QR</h3>
+
+            {{-- We set the image directly here (no JS injection needed) --}}
+            <img
+                class="sellerQRImage"
+                alt="Seller QR"
+                src="{{ asset('storage/users-qr/' . $cartItems->seller_qr_image) }}"
+            >
+
+            <div class="buttonGroup">
+                <button class="closeButton_ViewSellerQR">Close</button>
             </div>
         </div>
     </div>

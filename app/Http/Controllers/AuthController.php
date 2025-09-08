@@ -55,14 +55,18 @@ class AuthController extends Controller
         if (!Auth::attempt($credentials)) {
             return back()->withErrors(['error' => 'Email and password do not match.']);
         }
+        $user = Auth::user();
+        if ($user->role !== $selectedRole) {
+            Auth::logout();
+
+            return back()->withErrors(['error' => 'Your account is not authorized for this role.']);
+        }
 
         if(Auth::attempt($credentials)){
             $user=Auth::user();
             if($selectedRole==='admin'&& $user->role !=='admin'){
-                if ($user->email !== 'jacmagdato@bpsu.edu.ph'){
-                    Auth::logout();
-                    return back()->withErrors(['error' => 'Only the admin can access this page.']);
-                }
+                Auth::logout();
+                return back()->withErrors(['error' => 'Only the admin can access this page.']);
             }
         
 

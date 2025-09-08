@@ -161,13 +161,13 @@
 
                             <div class="form-group">
                                 <label for="comment">Your Comment</label>
-                                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                                <textarea class="form-control" id="comment" name="comment" rows="3" required placeholder="We'd love to hear more!"></textarea>
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary _close-modal"
                                     data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary _submit-modal">Submit Review</button>
+                                <button type="submit" class="btn btn-primary _submit-modal">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -425,7 +425,18 @@ document.addEventListener('click', function(e) {
         modal.show();
     }
 });
+document.getElementById('ratingModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('selectedRating').value = '';
 
+    stars.forEach(star => star.classList.remove('active'));
+
+    const commentField = document.getElementById('comment');
+    if (commentField) {
+        commentField.value = '';
+    }
+
+    document.getElementById('itemId').value = '';
+});
 // Handle star rating
 const stars = document.querySelectorAll('.rating-stars .stars i');
 stars.forEach(star => {
@@ -482,13 +493,11 @@ function closeReceiptModal() {
   const modal = document.getElementById('myModal');
   if (!modal) return;
   modal.style.display = 'none';
-  // UNLOCK SCROLL — remove any locks/classes/inline overrides
   document.body.classList.remove('modal-open');
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
 }
 
-// Wire up all "close" buttons inside the receipt modal
 document.querySelectorAll('#myModal .close').forEach(btn => {
   btn.addEventListener('click', closeReceiptModal);
 });
@@ -551,27 +560,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // for pop up ng view image button
-    document.body.addEventListener('click', function(e) {
+    document.body.addEventListener('click', function (e) {
         if (e.target && e.target.classList.contains('viewReceiptBtn')) {
             const imageUrl = e.target.getAttribute('data-image');
-            const modalView = document.getElementById('gcashReceiptModalView');
-            const receiptView = document.getElementById('receiptView');
-            
+            const modalView = e.target.nextElementSibling; 
+            const receiptView = modalView.querySelector('.receiptView');
+
             if (modalView && receiptView) {
                 receiptView.src = imageUrl;
                 modalView.style.display = 'flex';
             }
         }
 
-        // Close View Image modal
-        if (e.target && e.target.id === 'closeReceiptView') {
-            const modalView = document.getElementById('gcashReceiptModalView');
+        if (e.target && e.target.classList.contains('closeButton_ViewGcash')) {
+            const modalView = e.target.closest('.gcashReceiptModalView');
             if (modalView) {
                 modalView.style.display = 'none';
             }
         }
-    });
 
+        if (e.target && e.target.classList.contains('gcashReceiptModalView')) {
+            e.target.style.display = 'none';
+        }
+    });
+    document.body.addEventListener('click', function (e) {
+      // Open Seller QR modal 
+      if (e.target && e.target.classList.contains('viewSellerQRBtn')) {
+        const modalView = e.target.nextElementSibling; 
+        if (modalView && modalView.classList.contains('sellerQRModalView')) {
+          modalView.style.display = 'flex';
+        }
+      }
+
+      // Close via close button
+      if (e.target && e.target.classList.contains('closeButton_ViewSellerQR')) {
+        const modalView = e.target.closest('.sellerQRModalView');
+        if (modalView) {
+          modalView.style.display = 'none';
+        }
+      }
+
+      // Close by clicking the overlay
+      if (e.target && e.target.classList.contains('sellerQRModalView')) {
+        e.target.style.display = 'none';
+      }
+    });
     // for links
     const myListings = document.querySelectorAll('.myListings');
     myListings.forEach(button =>{

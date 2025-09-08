@@ -220,4 +220,11 @@ document.addEventListener("DOMContentLoaded", function () {
         currentForm = null;
         currentSubmitter = null;
     });
+    window.addEventListener("click", function (e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+            currentForm = null;
+            currentSubmitter = null;
+        }
+    });
 });

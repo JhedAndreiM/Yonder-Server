@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
-
+*{
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 body {
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
@@ -91,6 +95,9 @@ input:focus {
     display: flex;
     align-content: center;
     justify-content: center;
+}
+.profile{
+  width: 100%;
 }
 .hover,
 .searchBtn {
@@ -209,6 +216,7 @@ input:focus {
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   padding: 5px 20px 5px 20px;
+  display: flex; 
 }
 
 .mainContainer {
@@ -284,7 +292,6 @@ button {
   font-size: 22px;
   margin-top: 30px;
   margin-right: 30px;
-  opacity: 60%;
   cursor: pointer;
 }
 .button {
@@ -310,30 +317,33 @@ button {
 }
 
 .right {
+  flex: 1; 
   margin-left: 5%;
-  max-width: 1200px;
-  max-height: 80vh; 
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
 }
 
 .card {
+  margin: 1px;
   border-radius: 5px;
-  width: 1100px;
-  height: 190px;
+  width: 90%;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  padding: 0px 20px 0px 20px;
+  padding: 10px 20px;
   margin-bottom: 20px;
 }
 
 .text {
   display: flex;
   justify-content: space-between;
-  margin: 0px;
-  padding: 5px;
+  margin: 0;
   height: 1rem;
+}
+.text a{
+  text-decoration: none;
+  color: rgb(73, 73, 255);
 }
 
 .content {
@@ -341,46 +351,87 @@ button {
   justify-content: space-between;
 }
 
-.placeholder img{
+.placeholder img {
   border-radius: 5px;
   width: 170px;
-  height: 100px;
-  object-fit: cover;
+  aspect-ratio: 16 / 9; 
+  object-fit: cover;  
   display: block;
 }
 
 .leftPart {
+  height: 156px;
   gap: 20px;
   display: flex;
   align-items: center;
 }
-
+.rightPart{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
 .cardButtons {
   display: flex;
-  justify-content: end;
+  justify-content: end !important;
 }
 
 .status {
   color: #0d62ff;
+  margin: 0px;
 }
-
+.productName{
+  font-weight: bold;
+}
 .price {
   opacity: 100%;
-  font-weight: 500;
+  font-weight: 400;
+  opacity: 80%;
+  margin: 0px;
 }
 
 .cancelButton,
+.receiptButton,
 .confirmCOD,
 .confirmOrder,
 .viewImage,
 .confirmPayment,
 .orderReceived,
+.reviewButton,
 .removeImage {
   background-color: white;
+  border: 0px;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   padding: 10px 25px 10px 25px;
   border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.cancelButton:hover,
+.removeImage:hover{
+  background-color: #f2f2f2;
+  transform: translateY(-2px);
+}
+.reviewButton:hover,
+.receiptButton:hover,
+.lbl_gcash_receipt:hover,
+.confirmCOD:hover,
+.confirmOrder:hover,
+.viewImage:hover,
+.confirmPayment:hover,
+.orderReceived:hover {
+  background-color: #5196F0;
+  transform: translateY(-2px);
+  color: white;
+}
+
+.lbl_gcash_receipt{
+  display: flex;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.info *{
+  margin: 0px;
 }
 .confirmPayment:disabled {
     background-color: #ccc;
@@ -393,7 +444,8 @@ button {
 .cardButtons button {
   display: flex;
   justify-content: end;
-  margin-right: 0px;
+  align-items: center;
+  margin-right: 0;
 }
 
 .cardButtons button {
@@ -562,10 +614,12 @@ button {
   align-items: end;
 }
 .uploadGcashReceipt label{
-  opacity: 60%;
   color: #1d1d1d;
   margin-left: 10px;
-  font-weight:600;
+  font-weight:400;
+  font-size: 13px;
+  min-height: 35px;
+  height: auto;
 }
 
 /* ================= New Pending STYLING ================= */
@@ -682,7 +736,65 @@ label {
   margin: 15px 0;
   border-radius: 4px;
 }
+.sellerQRModalView {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
+.sellerQR-containerView {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.sellerQR-containerView h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.sellerQRImage {
+  flex: 1;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: calc(90vh - 140px);
+  margin: 15px 0;
+  border-radius: 4px;
+}
+
+.sellerQR-containerView .closeButton_ViewSellerQR {
+  background-color:#ad1f23;
+  opacity: 100%;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 10px 25px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Optional: keep buttons grouped nicely if you use .buttonGroup */
+.sellerQR-containerView .buttonGroup {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
 /* Button container */
 .modal-buttons {
   display: flex;
@@ -711,78 +823,168 @@ label {
 }
 /* ================= End New Pending STYLING ================= */
 /* modal */
-.modal-content{
-  background-color: white;
-  width: 500px;
-  height: 300px;
+#ratingModal.show .modal-dialog {
+  max-width: 362px;
+  margin: 0 auto;       
+  min-height: 100dvh;     
   display: flex;
+  align-items: center;     
   justify-content: center;
-  flex-direction: column;
-  padding: 1rem;
-  border-radius: 8px;
-  border: solid black 1px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  padding: 1rem;    
 }
-.modal-body{
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-.form-group{
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding-block: 1rem;
-}
-.rating-stars .stars {
-    font-size: 24px;
-    cursor: pointer;
-    padding-block: 1rem;
-    display: flex;
-    justify-content: center;
+#ratingModal .modal-content{
+  width: 100%;
+  max-width: 362px;
+  background: #fff;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 5px 20px rgba(0,0,0,.25);
+  overflow: hidden;
+  padding: 0;           
+  position: static;        
+  transform: none;
+  height: auto;
 }
 
-.rating-stars .stars i {
-    color: #ddd;
-}
+/* Dimmed backdrop like the new modal */
+.modal-backdrop.show{ opacity: .5; }
 
-.rating-stars .stars i.active {
-    color: #ffd700;
-}
-textarea {
-  resize: none;
-}
-.modal-footer{
+/* ===== Header (colored bar + floating white circle with star) ===== */
+#ratingModal .modal-header{
+  background-color: #FFC24B;    
+  border-bottom: none;
+  padding: 25px;
+  min-height: 60px;
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-}
-.modal-footer button{
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-right: 0px;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
-._close-modal,._submit-modal{
-  padding-inline: 1rem;
-  border-radius: 2rem;
-  height: 35px;
-  font-size: 1rem;
+#ratingModal .modal-header::after{
+  /* white circular badge with a star inside (Font Awesome) */
+  content: "\f005";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  color: #FFC24B;
+  background: #fff;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  line-height: 70px;
+  text-align: center;
+  font-size: 30px;
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 1px 0 rgba(255, 194, 75, .6);
+}
+
+/* Move the title below the header like the new design */
+#ratingModal .modal-title{
+  position: absolute;
+  bottom: -72px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #FFC24B;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ===== Body ===== */
+#ratingModal .modal-body{
+  text-align: center;
+  padding: 88px 20px 0 20px; /* room for icon/title overlap */
+}
+
+/* Stars row */
+#ratingModal .rating-stars .stars{
+  font-size: 24px;
   cursor: pointer;
-  border: #333 1px solid;
-  font-weight: bold;
+  padding: 12px 0 15px 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
-._submit-modal{
-  background-color: red;
-  color: white;
+#ratingModal .rating-stars .stars i{ color: #ddd; transition: color .15s ease; }
+#ratingModal .rating-stars .stars i.active{ color: #FFC24B; }
+
+/* Label + textarea */
+#ratingModal .form-group{
+  display: block;
+  text-align: left;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
 }
-.modal-title{
+#ratingModal label{
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-align: center;
+  border: none;
+  box-shadow: none;
+  height: auto;
+  color: #333;
+}
+#ratingModal textarea.form-control{
+  resize: none;
+  min-height: 92px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  outline: none;
+  width: 100%;
+}
+#ratingModal textarea.form-control::placeholder{
+  color: #777;
+}
+
+/* ===== Footer / Buttons ===== */
+#ratingModal .modal-footer{
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+  gap: 12px; 
+  padding: 1rem;
+}
+#ratingModal .modal-footer > *{ margin: 0 !important; }
+#ratingModal .modal-footer .btn + .btn{ margin-left: 0 !important; }
+#ratingModal .modal-footer .btn{
+  width: 146px;
+  height: 32px;
+  border-radius: 5px;
   font-size: 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s ease;
+  border: none;
+}
+
+/* Cancel */
+#ratingModal ._close-modal{
+  background: #f5f5f5;
+  color: #333;
+}
+#ratingModal ._close-modal:hover{ background: #e0e0e0; }
+
+/* Submit */
+#ratingModal ._submit-modal{
+  background: #FFC24B;
+  color: #fff;
+  font-weight: 600;
+}
+#ratingModal ._submit-modal:hover{ background: #f3a51f; }
+
+/* Tiny open/close animation */
+#ratingModal .modal-content{
+  animation: ratingFadeIn .2s ease-in-out;
+}
+@keyframes ratingFadeIn{
+  from{ opacity:0; transform: scale(.97); }
+  to{ opacity:1; transform: scale(1); }
 }
 .sessionModal {
   display: flex; 
@@ -1085,6 +1287,16 @@ textarea {
     height: 20px;
 }
 
+@media (max-width: 1745px) {
+  .top h3{
+    font-size: 1rem;
+  }
+}
+@media (max-width: 1550px) {
+  .right{
+    width: 100vw;
+  }
+}
 @media (max-width: 1200px) {
   body { overflow-y: auto; }
 }

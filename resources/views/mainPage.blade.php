@@ -192,6 +192,35 @@
         </div>
       </div>
     </div>
+          @if (session('error'))
+        <div id="errorBar" class="error-bar">
+                {{session('error')}} <img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
+            </div>
+            <script>
+                const errorbar = document.getElementById('errorBar');
+                errorbar.classList.add('show');
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    errorbar.classList.remove("show");
+                    setTimeout(() => bar.remove(), 400);
+                }, 5000);
+        </script>
+        @elseif (session('success'))
+        <div id="successBar" class="success-bar">
+            {{session('success')}} <img src="{{ asset('imgModal/barCheckLogo.svg') }}" alt="success" class="success-icon">
+        </div>
+        <script>
+            const bar = document.getElementById('successBar');
+            bar.classList.add('show');
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                bar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
+        @endif
     <script>
       
     

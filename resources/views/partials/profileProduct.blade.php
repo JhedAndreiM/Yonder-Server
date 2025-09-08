@@ -48,8 +48,11 @@
                     <!-- End For showing the first Image -->
                 </div>
                 <div class="info">
-                  <p>{{$cartItems->product_name}}</p>
+                  <p class="productName">{{$cartItems->product_name}}</p>
                   <p class="price">Price Per Item: P {{$cartItems->unit_price}}</p>
+                  @if($cartItems->selected_variant)
+                  <p class="variants">Variant: {{$cartItems->selected_variant}}</p>
+                  @endif
                   <p>
                     @if($cartItems->quantity <= 1)
                     {{$cartItems->quantity}} item

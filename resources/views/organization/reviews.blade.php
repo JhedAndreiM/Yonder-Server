@@ -18,6 +18,9 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+        <div class="floating">
+      <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message.png') }}" alt="" /></a>
+    </div>
      <!-- nav bar -->
         <div class="navBar">
             <div class="navBarLeft">
@@ -83,9 +86,8 @@
                         style="display: none"
                     >
                         <ul>
-                            <li><a href="">My Profile</a></li>
-                            <li><a href=" ">Wishlist</a></li>
-                            <li><a href="">Logout</a></li>
+                            <li><a href="{{route('account.page')}}">Accounts</a></li>
+                            <li><a href="{{ route('logout') }}">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -105,7 +107,7 @@
                         <li>
                             <a href="{{ route('order.page') }}" 
                             class="{{ request()->routeIs('order.page') ? 'active' : '' }}">
-                                <i class="fa-solid fa-pencil"></i> Buy Orders
+                                <i class="fa-solid fa-pencil"></i> Product Orders
                             </a>
                         </li>
                         <li>

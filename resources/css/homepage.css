@@ -590,6 +590,65 @@ select {
   justify-content: flex-end;
   gap: 10px;
 }
+/* for the banner */
+.success-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5196F0;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+    font-size: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+}
+.success-bar.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.success-bar img.success-icon {
+    width: 20px;
+    height: 20px;
+}
+.error-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #BE1A1A;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: sans-serif;
+    font-size: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+}
+.error-bar.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.error-bar img.error-icon {
+    width: 20px;
+    height: 20px;
+}
 
 /* MOBILE RESPONSIVE STYLES */
 @media (max-width: 900px) {

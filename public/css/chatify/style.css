@@ -1,23 +1,11 @@
-
 html,
 body {
   margin: 0;
   padding: 0;
-  font-family: "Raleway";
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
-::-webkit-scrollbar {
-  width: 5px;
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: red; 
-  border-radius: 10px;
-}
+
 :root {
   /*
     * --------------------------------------------------
@@ -67,54 +55,7 @@ body {
   border-top-color: var(--primary-color) !important;
   border-left-color: var(--primary-color) !important;
 }
-/* nav */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  height: 20px;
-  display: flex;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  justify-content: center;
-  align-items: center;
-  font-family: "Raleway", sans-serif;
-  background-color: white;
-  border-bottom: solid rgb(0, 0, 0) 2px;
-}
-.menu-button {
-  display: none;
-}
-.mobile-only {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-.filter-icon {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-}
-.vertical-line {
-  border-left: 1px solid grey;
-  height: 90px;
-  margin-left: -3px;
-  top: 0;
-}
-.left-nav {
-  position: fixed;
-  right: 0;
-  width: 25%;
-  display: flex;
-  justify-content: space-evenly;
-}
-/* end for nav*/
+
 /*internet connection*/
 .internet-connection {
   display: none;
@@ -160,12 +101,9 @@ header {
 }
 .messenger {
   display: inline-flex;
-  width: 90%;
-  height: calc(100% - 124px);
-  margin-top: 100px;
-  justify-content: center;
-  gap: 1rem;
-  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
 }
 .messenger-listView {
   display: flex;
@@ -180,9 +118,6 @@ header {
   width: 45%;
   min-width: 200px;
   overflow: auto;
-  border:solid black 1px;
-  overflow: hidden;
-  
 }
 .messenger-listView .m-header {
   height: var(--listView-header-height);
@@ -196,16 +131,16 @@ header {
   gap: 5px;
   overflow: hidden;
   width: 100%;
-  height: 100%;
 }
 .messenger-messagingView .m-header {
   padding: var(--headers-padding);
 }
 .messenger-messagingView .m-body {
   position: relative;
+  padding-top: 15px;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 93%;
+  height: 100%;
 }
 .m-header {
   font-weight: 600;
@@ -221,9 +156,6 @@ header {
   position: relative;
   background: #fff;
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.06);
-  border-bottom: 2px solid black;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
 }
 .m-header svg {
   color: var(--primary-color);
@@ -443,7 +375,6 @@ header {
   overflow: auto;
   width: 40%;
   min-width: 200px;
-  border: solid black 2px;
 }
 .messenger-infoView nav {
   display: flex;
@@ -910,7 +841,7 @@ header {
   width: auto;
   max-width: 400px;
   margin: auto;
-  padding: 1rem;
+  padding: 20px 40px;
   border-radius: 5px;
   text-align: center;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.27);
@@ -995,8 +926,6 @@ div.loadingPlaceholder-date {
   overflow: auto;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.9);
-  justify-content: center;
-  align-items: center;
 }
 .imageModal-content {
   margin: auto;
@@ -1029,7 +958,7 @@ div.loadingPlaceholder-date {
 
 .imageModal-close {
   position: absolute;
-  top: 10%;
+  top: 15px;
   right: 35px;
   color: #f1f1f1;
   font-size: 40px;
@@ -1092,29 +1021,15 @@ div.loadingPlaceholder-date {
 * Responsive Design
 *****************************************
 */
-@media (min-width: 1920px){
-.messenger-messagingView{
-    height: 100% !important;
-  }
-}
-@media (max-width: 1919px){
-.messenger-messagingView{
-    height: 100% !important;
-  }
-}
 @media (max-width: 1060px) {
-  .messenger-messagingView{
-    height: 100% !important;
+  .messenger-infoView {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    max-width: 334px;
   }
-  
-header {
-  display: none;
 }
-.app-modal-card{
-  padding: 0px;
-}
-}
-
 @media (max-width: 980px) {
   .messenger-listView.conversation-active {
     display: none;
@@ -1133,11 +1048,7 @@ header {
     display: inline-block;
   }
 }
-
 @media (max-width: 680px) {
-    header{
-    display: none !important;
-    }
   .messenger-messagingView {
     position: fixed;
     top: 0;
@@ -1175,11 +1086,10 @@ header {
   .messenger-listView {
     display: unset;
   }
- 
 }
 @media only screen and (max-width: 700px) {
   .imageModal-content {
-    width: 100%;
+    height: 500px;
   }
 }
 

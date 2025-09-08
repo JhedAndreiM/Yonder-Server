@@ -241,6 +241,7 @@ class OrganizationController extends Controller
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
                 'cart_items.payment_type',
+                'cart_items.selected_variant',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',

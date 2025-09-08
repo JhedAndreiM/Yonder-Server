@@ -24,7 +24,7 @@ const elements = {
     modalVoucherSelect: document.getElementById("modalVoucherSelect"),
     modalConfirmBtn: document.getElementById("modalConfirmBtn"),
     modalCloseBtn: document.querySelector(".modal-close-btn"),
-    
+    backdrop: document.querySelector(".modal-blur-background"),
     // Hidden inputs
     modalTotalPrice: document.getElementById("modalTotalPrice"),
     modalQuantity: document.getElementById("modalQuantity"),
@@ -259,6 +259,7 @@ function initializeEventListeners() {
     // Modal close
     if (elements.modalCloseBtn) {
         elements.modalCloseBtn.addEventListener("click", closeModal);
+        elements.backdrop.addEventListener("click", closeModal);
     }
 
     // Form submission
@@ -295,6 +296,7 @@ reviewLinks.forEach(link => {
     // Close modal when clicking outside
     elements.orderModal.addEventListener("click", (e) => {
         if (e.target === elements.orderModal) {
+            console.log('clicked');
             closeModal();
         }
     });
@@ -466,4 +468,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   });
 
+// for modal
+// document.addEventListener("DOMContentLoaded", function() {
+//     const yesBtn = document.getElementById("uniqueConfirmYes");
+//     const noBtn = document.getElementById("uniqueConfirmNo");
 
+//     noBtn.addEventListener("click", function () {
+//         document.getElementById("uniqueConfirmModal").style.display = "none";
+//     });
+// });

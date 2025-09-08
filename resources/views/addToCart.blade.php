@@ -123,7 +123,8 @@
         });
 
         increaseBtn.addEventListener('click', () => {
-            if (parseInt(input.value) < stock) {
+          const maxStock = parseInt(input.getAttribute('max'));
+            if (parseInt(input.value) < maxStock) {
                 input.value++;
                 debounceUpdateQuantity(id, input.value);
             }

@@ -87,7 +87,7 @@
             </div>
           </div>
           <div class="myPurchases">
-            <img class="notCurrent" src="{{asset('img/MyPurchases.svg')}}" alt=""/>
+            <img class="notCurrent" src="{{asset('img/MyPurchases.svg')}}" alt="" />
             <h2 class="notCurrent">My Purchases</h2>
           </div>
           <div class="myListings">

@@ -131,6 +131,7 @@ public function store(Request $request)
         return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');
         }
     }
+    
     // part ng act kay sir ross
     public function uploadFile(Request $request){
         $upload_folder="FileForProduct/";
@@ -316,7 +317,7 @@ public function store(Request $request)
         ->first();
 
 
-    return view('productDetails', compact('products','availableVouchers', 'reviews','sellerRating'));
+    return view('productDetails', compact('products','availableVouchers', 'reviews','sellerRating', 'sellerId'));
     }
 
     public function dashboardForUserSeller()

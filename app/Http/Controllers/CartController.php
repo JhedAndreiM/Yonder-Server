@@ -57,11 +57,11 @@ class CartController extends Controller
             ->where('selected_variant', $selectedVariantName)
             ->first();
 
-        if ($existingCartItem) {
+        if ($existingCartItem && $request['action_type']=== 'in_cart' && empty($validated['voucher_id'])) {
             $newQuantity = $existingCartItem->quantity + $request['quantity'];
 
             if ($newQuantity > $availableStock) {
-                return redirect()->back()->with('error', 'Not enough stock. Only ' . $availableStock . ' available.');
+                return redirect()->back()->with('error', 'Not enough stock. Only ' . $availableStock . ' available. Check your Cart');
             }
             DB::table('cart_items')
                 ->where('id', $existingCartItem->id)
@@ -173,6 +173,8 @@ class CartController extends Controller
                 'cart_items.quantity',
                 'cart_items.unit_price',
                 'cart_items.product_id',
+                'cart_items.selected_variant',
+                'product.variants',
                 'product.name as product_name',
                 'product.stock as product_stock',
                 'product.image_path',
@@ -181,14 +183,31 @@ class CartController extends Controller
             )
             ->get();
 
-                
+        $cartItems->transform(function ($item) {
+            $variantStock = null;
+
+            if ($item->selected_variant && $item->variants) {
+                $variants = json_decode($item->variants, true);
+
+                if (!empty($variants['options']) && !empty($variants['optionStocks'])) {
+                    // find index of selected variant
+                    $variantIndex = array_search($item->selected_variant, $variants['options']);
+                    if ($variantIndex !== false) {
+                        $variantStock = $variants['optionStocks'][$variantIndex] ?? null;
+                    }
+                }
+            }
+
+            // attach stock value to the item
+            $item->available_stock = $variantStock ?? $item->product_stock;
+
+            return $item;
+        });        
         $totalItems = $cartItems->sum('quantity');
 
         $totalAmount = $cartItems->reduce(function ($carry, $item) {
             return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
         }, 0);
-        //dd($totalItems);
-        //dd($totalAmount);
         return view('addToCart', compact('cartItems', 'totalItems', 'totalAmount'));
     }
 
@@ -245,11 +264,13 @@ class CartController extends Controller
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
                 'cart_items.payment_type',
+                'cart_items.selected_variant',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
+                'users.qr_image as seller_qr_image',
                 'buyers.id as buyer_id'
             );
         if ($filters == "all" || $filters == null) {
@@ -294,12 +315,14 @@ class CartController extends Controller
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
                 'cart_items.payment_type',
+                'cart_items.selected_variant',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
                 'buyers.id as buyer_id',
+                'users.qr_image as seller_qr_image',
                 'buyers.name as buyer_name'
             )
             ->first();
@@ -408,6 +431,7 @@ class CartController extends Controller
                 'cart_items.paymentConfirmation',
                 'cart_items.gcash_receipt',
                 'cart_items.payment_type',
+                'cart_items.selected_variant',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',

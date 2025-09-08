@@ -1,2 +1,2 @@
 Product Name                                      Stock     Price     
-University Uniform                                150       P 350     
+University Uniform                                150       P 350     Banner                                            10        P 500.00  Banner                                            2         P 350.00  Banner                                            1         P 150.00  

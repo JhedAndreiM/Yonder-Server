@@ -243,7 +243,9 @@ input:focus {
   justify-content: space-between;
   margin-bottom: 20px;
 }
-
+.profile{
+  width: 100%;
+}
 .name,
 .ratings {
   gap: 10px;
@@ -651,6 +653,11 @@ select {
 }
 .redeemBtn:hover:not(:disabled) {
   background: #0f55c4;
+}
+@media (max-width: 1745px) {
+  .top h3{
+    font-size: 1rem;
+  }
 }
 @media (max-width: 1200px) {
   html { overflow-y: auto; scrollbar-gutter: stable both-edges; }

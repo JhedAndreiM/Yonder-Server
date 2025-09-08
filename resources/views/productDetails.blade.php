@@ -199,7 +199,7 @@
             <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
           </div>
           <div class="detailsRight">
-            @if($products->forSaleTrade==='trade')
+            <!-- @if($products->forSaleTrade==='trade')
             @else
             <h3 class="qty">Quantity</h3>
             <div class="qtyButtons">
@@ -217,6 +217,28 @@
               <button class="addToCart" id="addToCart">Add to cart</button>
               <button class="buy" id="buyNow">Buy Now</button>
             </div>
+            @endif -->
+            @if($products->forSaleTrade==='trade')
+              @if($products->user_id=== Auth::id())
+                <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
+              @else
+                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Message Seller</a>
+              @endif
+            @else
+              @if($products->user_id=== Auth::id())
+                <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
+              @else
+                <h3 class="qty">Quantity</h3>
+                <div class="qtyButtons">
+                  <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
+                  <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
+                  <img src="{{ asset('img/plus.svg') }}" alt="" id="qtyPlus"/>
+                </div>
+                <div class="buttonCartAndBuy">
+                  <button class="addToCart" id="addToCart">Add to cart</button>
+                  <button class="buy" id="buyNow">Buy Now</button>
+                </div>
+              @endif
             @endif
           </div>
         </div>
@@ -226,7 +248,7 @@
           {{ session('error')}}
           <h3>Payment Method</h3>
           <select id="payment" name="payment">
-            <option value="onlinePayment">Online Payment</option>
+            <option value="onlinePayment">Gcash Payment</option>
             <option value="cashPayment">Cash Payment</option>
           </select>
         </div>
@@ -290,7 +312,7 @@
         <div class="sellerInfo">
           <div class="sellerTop">
             <h3>Seller Information</h3>
-            <a class="seeProfile" href="">see profile</a>
+            <a class="seeProfile" href="{{route('stalk.profile', $sellerId)}}">see profile</a>
           </div>
           <div class="profile">
             <img src="{{asset('storage/users-avatar/'. $seller->avatar)}}" alt="" class="sellerProfile"/>
@@ -313,7 +335,7 @@
         @csrf
         <div class="modal hidden" id="orderModal">
             <div class="modal-blur-background"></div>
-            <div class="modalContent">
+            <div class="unique-modal-content">
                 <!-- Hidden inputs for backend -->
                 <input type="hidden" name="product_id" value="{{ $products->product_id }}">
                 <input type="hidden" name="unit_price" value="{{ $products->price }}">
@@ -325,17 +347,19 @@
                 <input type="hidden" name="voucher_amount" id="modalVoucherAmount">
                 <input type="hidden" id="paymentType" name="paymentType">
 
-                <div class="img-placeholder">
-                    <img src="{{ asset('img/confirmation-logo.svg') }}" alt="" style="width: 179px;">
+                <div id="uniqueModalHeader" class="unique-modal-header" style="background-color: #5196F0;">
+                    <div class="imageWrapper" id="imageWrapper">
+                        <img id="uniqueModalIcon" src="{{asset('imgModal/confirmationLogo.svg')}}" alt="icon" />
+                    </div>
                 </div>
                 
-                <h2 class="productName">{{ $products->name }}</h2>
-                <p class="productPrice">Price per unit: ₱<span id="modalUnitPrice">{{ number_format($products->price, 2) }}</span></p>
+                <h3 id="uniqueHeaderMessage">Confirmation</h3>
                 
                 <!-- Variant Selection in Modal -->
+                <div class="content-wrapper">
                 @if ($hasVariants)
                     <div class="modal-variant-div">
-                        <label>{{ $variants['name'] ?? 'Variation' }}:</label>
+                        <label>{{ $variants['name'] ?? 'Variation' }}: <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $variants['optionStocks'][0] ?? 0 }}</span></p></label>
                         <select id="modalVariantSelect" name="variant_selection">
                             @foreach ($variants['options'] as $index => $option)
                                 <option value="{{ $index }}" data-stock="{{ $variants['optionStocks'][$index] ?? 0 }}" {{ $index === 0 ? 'selected' : '' }}>
@@ -343,12 +367,11 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $variants['optionStocks'][0] ?? 0 }}</span></p>
                     </div>
                 @endif
                 
                 <div class="quantity-div">
-                    <label>Quantity:</label>
+                    <label>Quantity: <p class="modal-stock-info">@if(!$hasVariants) Available: <span id="modalStockDisplay">{{ $products->stock }}</span>@endif</p></label>
                     <div class="modal-qty-controls">
                         <button type="button" id="modalQtyMinus">-</button>
                         <input type="number" id="modalQuantityInput" value="1" min="1" max="{{ $hasVariants ? ($variants['optionStocks'][0] ?? 0) : $products->stock }}">
@@ -358,7 +381,7 @@
 
                 @if ($isPBEN)
                     <div class="voucher-div">
-                        <label>Apply Voucher</label>
+                        <label>Apply Voucher: </label>
                         <select id="modalVoucherSelect" name="voucher_id">
                             <option value="">No Voucher</option>
                             @foreach ($availableVouchers as $voucher)
@@ -373,14 +396,42 @@
                 <p class="totalPrice">Total: ₱<span id="modalTotalDisplay">{{ number_format($products->price, 2) }}</span></p>
                 
                 <div class="btnGroup">
-                    <button type="submit" id="modalConfirmBtn">Confirm</button>
                     <button type="button" class="modal-close-btn">Close</button>
+                    <button type="submit" id="modalConfirmBtn">Confirm</button>
                 </div>
+            </div>
             </div>
         </div>
     </form>
+    @if (session('error'))
+        <div id="errorBar" class="error-bar">
+                {{session('error')}} <img src="{{ asset('imgModal/barCrossLogo.svg') }}" alt="error" class="error-icon">
+            </div>
+            <script>
+                const errorbar = document.getElementById('errorBar');
+                errorbar.classList.add('show');
 
-    <!-- Pass data to JavaScript -->
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    errorbar.classList.remove("show");
+                    setTimeout(() => bar.remove(), 400);
+                }, 5000);
+        </script>
+        @elseif (session('success'))
+        <div id="successBar" class="success-bar">
+            {{session('success')}} <img src="{{ asset('imgModal/barCheckLogo.svg') }}" alt="success" class="success-icon">
+        </div>
+        <script>
+            const bar = document.getElementById('successBar');
+            bar.classList.add('show');
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                bar.classList.remove("show");
+                setTimeout(() => bar.remove(), 400);
+            }, 5000);
+        </script>
+        @endif
     <script>
             // notifs
  document.addEventListener("DOMContentLoaded", function () {

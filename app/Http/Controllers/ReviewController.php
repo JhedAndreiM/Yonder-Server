@@ -10,19 +10,23 @@ use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
     public function store(Request $request)
-{
-     try{
-    $request->validate([
-        'item_id' => 'required|exists:product,product_id',
-        'rating' => 'required|integer|min:1|max:5',
-        'comment' => 'nullable|string|max:1000',
-    ]);
-    $existing = DB::table('reviews')
-            ->where('product_id', $request->item_id)
+    {
+    try{
+        $request->validate([
+            'item_id' => 'required|exists:product,product_id',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+        $purchases = DB::table('cart_items')
             ->where('user_id', Auth::id())
-            ->first();
-
-        if ($existing) {
+            ->where('product_id', $request->item_id)
+            ->where('status', 'completed')
+            ->count();
+        $reviews = DB::table('reviews')
+            ->where('user_id', Auth::id())
+            ->where('product_id', $request->item_id)
+            ->count();
+        if($reviews >= $purchases){
             return back()->with('error', 'You have already submitted a review for this product.');
         }
         DB::table('reviews')->insert([

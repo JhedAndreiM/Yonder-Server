@@ -26,7 +26,7 @@
             <div class="div-quantity">
                 <div class="quantity-controls">
     <button type="button" class="decrease">−</button>
-    <input type="number" class="quantity" value="{{ $items->quantity }}" min="1" max="{{ $items->product_stock }}">
+    <input type="number" class="quantity" value="{{ $items->quantity }}" min="1" max="{{ $items->available_stock }}">
     <button type="button" class="increase">+</button>
 </div>
             </div>
@@ -34,6 +34,12 @@
                 <h4>Total Price: </h4>
                 <p>P {{ ($items->unit_price*$items->quantity)-$items->voucher_applied }}</p>
             </div>
+            @if(!empty($items->selected_variant))
+            <div class="div-variant">
+                <h4>Variant: </h4>
+                <p>{{ $items->selected_variant }}</p>
+            </div>
+            @endif
             @if($items->voucher_applied==0)
             @else
             <div class="div-voucher">
@@ -41,7 +47,7 @@
                 <p>P {{ $items->voucher_applied }}</p>
             </div>
             @endif
-        
+
         </div>
         <div class="card-functions">
             <form action="{{ route('cart.buy', $items->cart_id) }}" method="POST">
@@ -51,7 +57,7 @@
             <form action="{{ route('cart.destroy', $items->cart_id) }}" method="POST" onsubmit="return confirm('Remove this item from cart?');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="remove-button">Remove From Cart</button>
+                <button type="submit" class="remove-button">Remove</button>
             </form>
         </div>
     </div>
