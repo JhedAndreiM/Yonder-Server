@@ -252,7 +252,11 @@ input:focus {
 body {
   margin: 0;
 }
-
+.imgContainer {
+  width: 100vw;
+  position: relative !important;
+  overflow: hidden;
+}
 .image-container {
   position: relative; /* lets us position text inside */
   width: 100vw; /* full width of viewport */
@@ -283,6 +287,7 @@ input {
   border-color: #d7d7d8;
   border-style: solid;
   padding-left: 13px;
+  
 }
 
 input::placeholder {
@@ -308,9 +313,9 @@ input:focus {
 
 .searchContainer {
   position: absolute;
-  top: 40%; /* vertically center */
-  left: 50%; /* horizontally center */
-  transform: translate(-50%, -50%);
+  top: 40%;
+  left: 50%; 
+  transform: translate(-50%, 0%);
 }
 
 .mainContainer {
@@ -424,4 +429,51 @@ p {
     transform: scale(1.05);
     background-color: #b30000; 
     cursor: pointer;
+}
+@media (max-width: 1580px) {
+  .searchButton{
+    display: none;
+  }
+  .searchContainer {
+    transform: translate(-50%, 10%);
+  }
+}
+@media(max-width: 1100px) {
+  .mainContainer {
+    margin-inline: 10px;
+    width: 100vw;
+  }
+}
+@media(max-width: 890px) {
+  .overlay-text {
+    font-size: 2rem;
+  }
+  input{
+    width: 500px;
+  }
+  .mainContainer {
+    flex-direction: column;
+  }
+  .navBarRight {
+    gap: 1rem;
+  }
+}
+@media(max-width: 650px) {
+  .overlay-text {
+    font-size: 1.5rem;
+  }
+  input{
+    width: 300px;
+  }
+}
+@media(max-width: 550px) {
+  .overlay-text {
+    font-size: 1.2rem;
+  }
+  input{
+    width: 200px;
+  }
+  .navBarLeft img{
+    width: 100px;
+  }
 }

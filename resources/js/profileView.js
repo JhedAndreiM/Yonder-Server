@@ -17,37 +17,23 @@ function debounceSearch() {
 
 function triggerFilter() {
   const searchInput = document.getElementById('searchInput').value.trim();
+  console.log(searchInput);
   fetchFilteredProducts(searchInput);
 }
 
 function fetchFilteredProducts(searchInput) {
   let url = baseUrl + '?';
 
-  // append search
-  if (searchInput) {
-    url += `searching=${encodeURIComponent(searchInput)}&`;
-  }
+  if (searchInput) url += `searching=${encodeURIComponent(searchInput)}&`;
 
-  // append stock filter
   const stock = document.getElementById('stockFilter').value;
-  if (stock) {
-    url += `stock=${stock}&`;
-  }
+  if (stock) url += `stock=${encodeURIComponent(stock)}&`;
 
-  // append sort filter
   const sort = document.getElementById('sortFilter').value;
-  if (sort) {
-    url += `sort=${sort}&`;
-  }
+  if (sort) url += `sort=${encodeURIComponent(sort)}&`;
 
-  fetch(url, {
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  })
-  .then(response => response.text())
-  .then(data => {
-    document.querySelector('.product-grid').innerHTML = data;
-  })
-  .catch(error => console.error('Error:', error));
+  fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+    .then(r => r.text())
+    .then(html => { document.querySelector('.product-grid').innerHTML = html; })
+    .catch(err => console.error('Error:', err));
 }

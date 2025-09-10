@@ -142,6 +142,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
     })->name('create.listing');
 
     Route::get('/profile/id/{id}', [ProfileController::class, 'show'])->name('stalk.profile');
+    Route::post('/user-reports', [ProfileController::class, 'storeUserReport'])->name('user-reports.store');
     // for products page
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');

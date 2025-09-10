@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\UserReport;
 
 class ProfileController extends Controller
 {
@@ -89,4 +90,37 @@ class ProfileController extends Controller
         return view('profileView', compact('user', 'items', 'ratings', 'reviews', 'products', 'images'));
     }
 
+public function storeUserReport(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'reported_user_id' => 'required|exists:users,id',
+            'reporter_id'      => 'required|exists:users,id',
+            'reason'           => 'required|string',
+            'details'          => 'required|string',
+            'evidence'         => 'nullable|file|mimes:png,jpg,jpeg,pdf|max:5120',
+        ]);
+
+        if ($request->hasFile('evidence')) {
+            $file     = $request->file('evidence');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            // Ensure directory exists
+            if (!file_exists(public_path('storage/user-reports'))) {
+                mkdir(public_path('storage/user-reports'), 0775, true);
+            }
+
+            $file->move(public_path('storage/user-reports'), $filename);
+
+            $validated['evidence'] = 'storage/user-reports/' . $filename;
+        }
+
+        $report = UserReport::create($validated);
+
+        return redirect()->back()->with('successfull', 'Report submitted successfully. ID: ' . $report->id);
+
+    } catch (\Throwable $e) {
+        return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+    }
+}
 }
