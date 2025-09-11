@@ -182,7 +182,17 @@
                 </div>
             </div>
             <div class="rightPart">
-                <img class="qr" id="currentQr" src="{{ asset('storage/users-qr/' . Auth::user()->qr_image) }}" alt="" />
+                <div class="qr-container">
+                @if (empty(Auth::user()->qr_image))
+                    <img class="qr" id="currentQr"
+                        src="{{ asset('img/default-qr.png') }}"
+                        alt="Default QR Code">
+                @else
+                    <img class="qr" id="currentQr"
+                        src="{{ asset('storage/users-qr/' . Auth::user()->qr_image) }}"
+                        alt="QR Code">
+                @endif
+                </div>
                 <div class="texts qr-controls">
                     <h3 id="uploadQr">Upload</h3>
                     <h3 id="deleteQr">Delete</h3>
@@ -215,9 +225,23 @@
                 <div class="formGroup mediumInput">
                     <label for="contact">Contact Number</label>
                     @if(session('otp_required'))
-                    <input type="text" name="phone_number" id="contact" placeholder="{{ Auth::user()->phone_number }}" value="{{ session('pending_phoneNumber') }}"/>
+                    <input type="tel" name="phone_number" id="contact"
+                    placeholder="{{ Auth::user()->phone_number }}"
+                    value="{{ session('pending_phoneNumber') }}"
+                    maxlength="11"
+                    pattern="^09\d{9}$"
+                    required
+                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('');"
+                    oninvalid="this.setCustomValidity('Enter a valid PH phone number starting with 09 (11 digits)')">
                     @else
-                    <input type="text" name="phone_number" id="contact" placeholder="{{ Auth::user()->phone_number }}" value="{{ Auth::user()->phone_number }}"/>
+                    <input type="tel" name="phone_number" id="contact"
+                    placeholder="{{ Auth::user()->phone_number }}"
+                    value="{{ Auth::user()->phone_number }}"
+                    pattern="^09\d{9}$"
+                    maxlength="11"
+                    required
+                    oninvalid="this.setCustomValidity('Please enter a valid 11-digit PH mobile number starting with 09')"
+                    oninput="this.setCustomValidity('')">
                     @endif
                 </div>
 
@@ -275,8 +299,21 @@
 <!-- Change Password Modal -->
 <div id="changePasswordModal" class="change-password-modal">
   <div class="change-password-modal-content">
+    @if(!session('force_password_change'))
     <span class="change-password-modal-close" id="closeChangePasswordModal">&times;</span>
-    <h2 class="change-password-modal-title">Change Password</h2>
+    @endif
+    <h2 class="change-password-modal-title">
+        @if(session('force_password_change'))
+        @else
+            Change Password
+        @endif
+    </h2>
+
+    @if(session('force_password_change'))
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+        <strong>Security Notice:</strong> You are using a default password. Please change it to a secure password for your account safety.
+    </div>
+    @endif
 
     <form method="POST" action="{{ route('profile.update-password') }}" class="change-password-form" id="changePasswordForm">
       @csrf
@@ -285,7 +322,12 @@
         <label for="current_password">Current Password</label>
         <div class="change-password-input-wrapper">
           <input type="password" name="current_password" id="current_password" required>
-          <span class="toggle-password-visibility" data-target="current_password">&#128065;</span>
+          <span class="toggle-password-visibility" data-target="current_password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
         </div>
         @error('current_password')
             <p class="change-password-error">{{ $message }}</p>
@@ -296,7 +338,21 @@
         <label for="new_password">New Password</label>
         <div class="change-password-input-wrapper">
           <input type="password" name="new_password" id="new_password" required>
-          <span class="toggle-password-visibility" data-target="new_password">&#128065;</span>
+          <span class="toggle-password-visibility" data-target="new_password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
+        </div>
+        <div class="password-requirements">
+          <small>Password must contain:</small>
+          <ul>
+            <li id="req-length">At least 8 characters</li>
+            <li id="req-letters">At least one letter</li>
+            <li id="req-mixed">Both uppercase and lowercase letters</li>
+            <li id="req-numbers">At least one number</li>
+          </ul>
         </div>
         @error('new_password')
             <p class="change-password-error">{{ $message }}</p>
@@ -307,7 +363,12 @@
         <label for="new_password_confirmation">Confirm New Password</label>
         <div class="change-password-input-wrapper">
           <input type="password" name="new_password_confirmation" id="new_password_confirmation" required>
-          <span class="toggle-password-visibility" data-target="new_password_confirmation">&#128065;</span>
+          <span class="toggle-password-visibility" data-target="new_password_confirmation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
         </div>
         @error('new_password_confirmation')
             <p class="change-password-error">{{ $message }}</p>
@@ -316,10 +377,16 @@
 
       <button type="submit" class="change-password-submit">Update Password</button>
     </form>
-    @if ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation'))
+    @if ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation') || session('force_password_change'))
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("changePasswordModal").style.display = "flex";
+                // Re-initialize password toggles when modal is forced open
+                setTimeout(function() {
+                    if (typeof initializePasswordToggles === 'function') {
+                        initializePasswordToggles();
+                    }
+                }, 100);
             });
         </script>
     @endif
@@ -419,7 +486,38 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 @endif
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
+    // Function to initialize password visibility toggles (global)
+    function initializePasswordToggles() {
+        document.querySelectorAll(".toggle-password-visibility").forEach(icon => {
+            // Remove any existing event listeners to prevent duplicates
+            icon.replaceWith(icon.cloneNode(true));
+        });
+        
+        // Re-query after cloning to get fresh elements
+        document.querySelectorAll(".toggle-password-visibility").forEach(icon => {
+            icon.addEventListener("click", () => {
+                const targetId = icon.getAttribute("data-target");
+                const input = document.getElementById(targetId);
+                const svg = icon.querySelector('svg');
+
+                if (input && svg) {
+                    if (input.type === "password") {
+                        input.type = "text";
+                        icon.style.color = "#4CAF50"; // green when active
+                        // Change to eye-off icon
+                        svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+                    } else {
+                        input.type = "password";
+                        icon.style.color = "#555";
+                        // Change back to eye icon
+                        svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+                    }
+                }
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
     const notifBtn = document.querySelector(".notificationBtn");
     const notifDropdown = document.getElementById("notificationDropdown");
     const profileBtn = document.querySelector(".profileBtn");
@@ -772,6 +870,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close modal + reset form
     function closeModal() {
+        // Check if modal is forced open (user needs to change password)
+        @if(session('force_password_change'))
+            // Don't allow closing if password change is forced
+            return;
+        @endif
+        
         modal.style.display = "none";
         form.reset(); // reset input fields
         // Reset password inputs to type "password"
@@ -788,21 +892,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Toggle password visibility
-    document.querySelectorAll(".toggle-password-visibility").forEach(icon => {
-        icon.addEventListener("click", () => {
-        const targetId = icon.getAttribute("data-target");
-        const input = document.getElementById(targetId);
+    // Initialize password toggles on page load
+    initializePasswordToggles();
 
-        if (input.type === "password") {
-            input.type = "text";
-            icon.style.color = "#4CAF50"; // green when active
-        } else {
-            input.type = "password";
-            icon.style.color = "#555";
-        }
+    // Real-time password validation
+    const newPasswordInput = document.getElementById('new_password');
+    if (newPasswordInput) {
+        newPasswordInput.addEventListener('input', function() {
+            const password = this.value;
+            const requirements = {
+                length: password.length >= 8,
+                letters: /[a-zA-Z]/.test(password),
+                mixed: /[a-z]/.test(password) && /[A-Z]/.test(password),
+                numbers: /\d/.test(password)
+            };
+
+            // Update requirement indicators
+            document.getElementById('req-length').style.color = requirements.length ? '#4CAF50' : '#ff4444';
+            document.getElementById('req-letters').style.color = requirements.letters ? '#4CAF50' : '#ff4444';
+            document.getElementById('req-mixed').style.color = requirements.mixed ? '#4CAF50' : '#ff4444';
+            document.getElementById('req-numbers').style.color = requirements.numbers ? '#4CAF50' : '#ff4444';
         });
-    });
+    }
 });
 
     </script>

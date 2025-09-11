@@ -11,6 +11,15 @@ body {
   overflow-y: hidden;
 }
 
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
 /* START OF NAVBAR */
 
 .navBar {
@@ -773,7 +782,7 @@ input:focus {
   padding: 20px;
   border-radius: 12px;
   width: 400px;
-  max-height: 450px;
+  min-height: 600px;
   max-width: 90%;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   animation: slideDown 0.3s ease;
@@ -818,15 +827,70 @@ input:focus {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 18px;
-  color: #555;
+  color: #6c757d;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle-password-visibility:hover {
-  color: #000;
+  color: #495057;
+}
+
+.toggle-password-visibility svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Password requirements styling */
+.password-requirements {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  border-left: 4px solid #007bff;
+}
+
+.password-requirements small {
+  font-weight: 600;
+  color: #495057;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.password-requirements ul {
+  margin: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.password-requirements li {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.password-requirements li::before {
+  content: "✕";
+  margin-right: 8px;
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.password-requirements li[style*="color: rgb(76, 175, 80)"]::before {
+  content: "✓";
+  color: #28a745;
 }
 .change-password-submit {
-  background: #4CAF50;
+  background: #007bff;
   color: #fff;
   padding: 10px 16px;
   border: none;
@@ -837,7 +901,7 @@ input:focus {
 }
 
 .change-password-submit:hover {
-  background: #45a049;
+  background: #3267a8;
 }
 
 @keyframes slideDown {
@@ -849,4 +913,68 @@ input:focus {
   color: #d9534f;
   font-size: 14px;
   margin-top: 5px;
+}
+@media(max-width: 1250px){
+  #profileForm{
+    width: 1100px;
+  }
+}
+@media(max-width: 1150px){
+  body{
+    overflow: auto;
+  }
+  #profileForm{
+    width: 800px;
+  }
+  .lowerRight{
+
+  }
+  .formRow{
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+    width: 800px;
+  }
+  .alignRight{
+    margin-left: 0px;
+  }
+  .formContainer{
+    display: flex;
+    flex-direction: column;
+    margin-top: 15%;
+    width: 800px;
+  }
+}
+@media(max-width: 850px){
+  #profileForm{
+    width: 500px;
+  }
+  .navBarRight{
+    gap: 1rem;
+  }
+  .name{
+    display: none;
+  }
+  .formRow{
+    width: 500px;
+  }
+  .formContainer{
+    margin-top: 35%;
+    width: 500px;
+  }
+}
+@media(max-width: 530px){
+  #profileForm{
+    width: 300px;
+  }
+  .avatar, .qr{
+    height: 80px;
+    width: 80px;
+  }
+  .formContainer{
+    margin-top: 50%;
+  }
+  .navBarLeft img{
+    width: 100px !important;
+  }
 }

@@ -14,7 +14,7 @@ class CropImageController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'gender' => 'required|in:Male,Female',
+            'gender' => 'nullable|in:Male,Female',
             'phone_number' => 'nullable|string|max:11',
             'cropped_avatar' => 'nullable|string',
             'cropped_qr' => 'nullable|string',

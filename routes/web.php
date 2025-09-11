@@ -27,7 +27,7 @@ use App\Http\Controllers\ProfileController;
 
 
 // Middleware for Student
-Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':student'])->group(function () {
     Route::get('/mainPage.php', [PageController::class, 'showMainPage']);
     Route::get('/load-products', [PageController::class, 'loadProducts']);
     Route::get('/student/dashboard', [PageController::class, 'showMainPage'])->name('student.dashboard');
@@ -49,7 +49,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':student'])->group(function 
 });
 
 // Middleware for Orgs
-Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':organization'])->group(function () {
     Route::get('/organization/dashboard', [OrganizationController::class, 'dashboard'])->name('organization.dashboard');
     Route::post('/products/update', [OrganizationController::class, 'update'])->name('products.update');
     //Route::get('/orgReport', function () {return view('organization/orgReport');})->name('org.report');
@@ -68,7 +68,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':organization'])->group(func
 });
 
 // Middleware for Admin
-Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
@@ -101,7 +101,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
 });
 
 // Middleware for Orgs and Studnts
-Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':student,organization,admin'])->group(function () {
     Route::get('/cart/{id}/card', [CartController::class, 'getCardPartial'])->name('cart.card');
     Route::get('/redirect-home', function () {
         if (Auth::check()) {
@@ -135,7 +135,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization,admin']
     
  });
 
-Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':student,organization'])->group(function () {
     // for creating listing 
     Route::get('/create-listing', function () {
         return view('createListing');
@@ -213,7 +213,7 @@ Route::middleware(['auth', RoleMiddleware::class .':student,organization'])->gro
    
 
 });
-Route::middleware(['auth', RoleMiddleware::class .':admin,organization'])->group(function () {
+Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':admin,organization'])->group(function () {
     Route::get('/accountsPage', function () {
     return view('admin/accountsPage');
     })->name('accounts.page');
@@ -231,6 +231,9 @@ Route::get('/login/{role}', [AuthController::class, 'showLoginForm'])->name('log
 
 // Login verification
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+// Modal form submission
+Route::post('/modal-submit', [AuthController::class, 'handleModalSubmit'])->name('modal.submit');
 
 Route::get('/', function () {
 

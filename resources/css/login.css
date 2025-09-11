@@ -4,45 +4,52 @@
     padding: 0;
     font-family: "Raleway";
 }
-body{
+
+body {
     overflow-y: hidden;
 }
+
 .raleway-normal {
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
 }
+
 /* NAV BAR */
 .navbar {
-  border-radius: 50px;
-  margin: 20px auto;
-  max-width: 95%;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
-  margin: 30px auto 40px auto !important;
-  width: 90% !important;
+    border-radius: 50px;
+    margin: 20px auto;
+    max-width: 95%;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+    margin: 30px auto 40px auto !important;
+    width: 90% !important;
 }
 
 .navbar-nav .nav-link {
-  font-size: 24px;
-  transition: color 0.2s ease;
+    font-size: 24px;
+    transition: color 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-  color: var(--main-color) !important;
+    color: var(--main-color) !important;
 }
+
 .navbar-brand img {
-  height: 50px;
+    height: 50px;
 }
-.d-flex{
+
+.d-flex {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.btn{
-    background-color:  #ae0505 !important;
+
+.btn {
+    background-color: #ae0505 !important;
     color: white !important;
 }
+
 .container {
     display: flex;
     justify-content: center;
@@ -53,11 +60,13 @@ body{
     font-weight: 400;
     font-style: normal;
 }
+
 h1 {
     font-size: 3rem !important;
     color: #ae0505 !important;
     font-weight: 600 !important;
 }
+
 h4 {
     font-size: 1.75rem;
     font-family: "Raleway", sans-serif;
@@ -65,10 +74,12 @@ h4 {
     font-weight: 600;
     font-style: normal;
 }
+
 h1,
 h4 {
     margin-bottom: 1rem;
 }
+
 h6 {
     margin-bottom: 3rem !important;
     font-size: 1.25rem;
@@ -77,9 +88,11 @@ h6 {
     font-weight: 400;
     font-style: normal;
 }
+
 form {
     width: 34.5rem;
 }
+
 form input {
     width: 100%;
     box-sizing: border-box;
@@ -88,6 +101,7 @@ form input {
     font-weight: 600;
     font-style: normal;
 }
+
 .input-container {
     background-color: white;
     display: flex;
@@ -102,30 +116,37 @@ form input {
     padding-inline: 13px;
     border: solid black 1.5px;
 }
+
 .input-container label {
     font-size: 14px;
 }
+
 .input-container input {
     font-size: 1.25rem;
     border: none;
 }
+
 input:focus {
     outline: none;
     border: none;
     box-shadow: none;
 }
+
 .otp-row {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .form-secondRow .otp {
     width: 55%;
     padding-right: 1rem;
 }
+
 .form-secondRow a {
     font-size: 14px;
 }
+
 .form-firstRow,
 .form-secondRow {
     display: flex;
@@ -137,15 +158,18 @@ input:focus {
 .fname {
     flex: 1.3;
 }
+
 .email {
     flex: 2;
 }
+
 .btnGroup {
     margin-top: 10%;
     display: flex;
     justify-content: space-between;
     font-family: "Raleway", sans-serif;
 }
+
 .submit {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
@@ -156,6 +180,7 @@ input:focus {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
 .cancel {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
@@ -165,6 +190,7 @@ input:focus {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
 .cancel,
 .submit {
     display: flex;
@@ -179,20 +205,24 @@ input:focus {
     font-style: normal;
     cursor: pointer;
 }
+
 .cancel {
     border: black solid 1px;
     background-color: white;
     text-decoration: none;
     color: black;
 }
+
 .submit {
     border: none;
     background-color: #0d62ff;
     color: white;
 }
+
 .password-container {
     position: relative;
 }
+
 .fa-eye {
     position: absolute;
     top: 30%;
@@ -200,6 +230,7 @@ input:focus {
     font-size: 24px;
     cursor: pointer;
 }
+
 .fa-eye-slash {
     position: absolute;
     top: 30%;
@@ -213,73 +244,388 @@ input:focus {
      Order: 1670px -> 1300px -> 1024px -> 768px -> 480px
      Fixes .webName stacking, header, form and right image
      ---------------------------------------- */
-@media (max-height: 730px){
-    body{
+@media (max-height: 730px) {
+    body {
         overflow-y: auto;
     }
-    .container{
+
+    .container {
         margin-top: 0px !important;
 
     }
-    h1{
+
+    h1 {
         font-size: 25px !important;
     }
-    h6{
+
+    h6 {
         display: none;
     }
 }
+
 @media (max-width: 1670px) {
+
     /* gentle adjustments for large laptops / small desktops */
     .container {
         margin-top: 100px;
         padding: 1rem 2rem;
     }
-    form { width: 30rem; }
-    h1 { font-size: 2.6rem !important; }
-    h4 { font-size: 1.5rem; }
-    .right img { max-width: 80%; height: auto; display: block; margin: 0 auto; }
-    .webName { font-size: 1.6rem; left: 4%; top: 26%; width: auto; }
-    .btnGroup { margin-top: 6%; }
+
+    form {
+        width: 30rem;
+    }
+
+    h1 {
+        font-size: 2.6rem !important;
+    }
+
+    h4 {
+        font-size: 1.5rem;
+    }
+
+    .right img {
+        max-width: 80%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .webName {
+        font-size: 1.6rem;
+        left: 4%;
+        top: 26%;
+        width: auto;
+    }
+
+    .btnGroup {
+        margin-top: 6%;
+    }
 }
 
 @media (max-width: 1300px) {
+
     /* medium screens */
-    form { width: 28rem; }
-    h1 { font-size: 2.4rem !important; }
-    .right img { max-width: 70%; }
-    .webName { font-size: 1.5rem; left: 4%; top: 25%; }
+    form {
+        width: 28rem;
+    }
+
+    h1 {
+        font-size: 2.4rem !important;
+    }
+
+    .right img {
+        max-width: 70%;
+    }
+
+    .webName {
+        font-size: 1.5rem;
+        left: 4%;
+        top: 25%;
+    }
 }
 
 @media (max-width: 1024px) {
+
     /* tablets and small laptops */
-    form { width: 24rem; }
-    h1 { font-size: 2.2rem !important; }
-    .right img { max-width: 60%; }
-    .webName { font-size: 1.4rem; left: 4%; top: 25%; }
+    form {
+        width: 24rem;
+    }
+
+    h1 {
+        font-size: 2.2rem !important;
+    }
+
+    .right img {
+        max-width: 60%;
+    }
+
+    .webName {
+        font-size: 1.4rem;
+        left: 4%;
+        top: 25%;
+    }
 }
 
 @media (max-width: 768px) {
+
     /* mobile: stack columns, full-width form, hide right image */
-    .container { display: flex; flex-direction: column; padding: 1rem; margin-top: 110px; align-items: stretch; }
-    .left { width: 100%; padding: 0 1rem; box-sizing: border-box; }
-    form { width: 100%; max-width: 720px; margin: 0 auto; }
-    .input-container { height: auto; padding: 0.75rem 0.9rem; }
-    .input-container input { font-size: 1.05rem; }
-    .btnGroup { flex-direction: column-reverse; gap: 0.75rem; align-items: center; margin-top: 4rem; }
-    .cancel, .submit { width: 100%; max-width: 420px; }
-    .right { display: none; }
-    header { height: 64px; padding-top: 0.6rem; padding-bottom: 0.6rem; }
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        margin-top: 110px;
+        align-items: stretch;
+    }
+
+    .left {
+        width: 100%;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+
+    form {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .input-container {
+        height: auto;
+        padding: 0.75rem 0.9rem;
+    }
+
+    .input-container input {
+        font-size: 1.05rem;
+    }
+
+    .btnGroup {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+        align-items: center;
+        margin-top: 4rem;
+    }
+
+    .cancel,
+    .submit {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .right {
+        display: none;
+    }
+
+    header {
+        height: 64px;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+    }
+
     /* center the logo horizontally and vertically in header area */
-    .webName { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; width: auto; }
-    .nav-container, .navLinks, .ovalHover { display: none !important; }
+    .webName {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.2rem;
+        width: auto;
+    }
+
+    .nav-container,
+    .navLinks,
+    .ovalHover {
+        display: none !important;
+    }
 }
 
 @media (max-width: 480px) {
+
     /* small phones: tighter spacing */
-    .container { margin-top: 0px !important; padding: 0.5rem; }
-    h1 { font-size: 1.9rem; }
-    h4 { font-size: 1.25rem; }
-    .webName { font-size: 1.05rem; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .container {
+        margin-top: 0px !important;
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.9rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
+
+    .webName {
+        font-size: 1.05rem;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
     /* hide the full nav on very small screens */
-    .nav-container, .navLinks, .ovalHover { display: none !important; }
+    .nav-container,
+    .navLinks,
+    .ovalHover {
+        display: none !important;
+    }
+}
+
+/* Modal background */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal content */
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Modal header */
+.header-warning {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 20px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    position: relative;
+}
+
+.header-warning::before {
+    content: '⚠️';
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+/* Modal body */
+.modal-body {
+    padding: 25px;
+}
+.modalForm input{
+    margin: 5px !important;
+}
+.modal-body form {
+    width: 100%;
+    max-width: none;
+}
+
+.modal-body input {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: "Raleway", sans-serif;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    box-sizing: border-box;
+}
+
+.modal-body input:focus {
+    outline: none;
+    border-color: #0d62ff;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(13, 98, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.modal-body span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Modal footer */
+.modal-footer {
+    padding: 20px 25px;
+    background: #f8f9fa;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Close buttons */
+.close {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: "Raleway", sans-serif;
+    min-width: 80px;
+}
+
+#closeBtn {
+    background: #6c757d;
+    color: white;
+}
+
+#closeBtn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+#submitBtn {
+    background: #0d62ff;
+    color: white;
+}
+
+#submitBtn:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 98, 255, 0.3);
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 20px;
+    }
+    
+    .header-warning {
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+    
+    .close {
+        width: 100%;
+        margin: 0;
+    }
 }

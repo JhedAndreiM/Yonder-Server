@@ -127,6 +127,49 @@
         <img src="{{ asset('img/login-image.svg') }}" alt="">
     </div>
 </div>
+<!-- Modal -->
+<div class="modal" id="myModal" style="display: none;">
+  <div class="modal-content">
+    <div class="header-warning">This is for system testing</div>
+
+    <div class="modal-body">
+
+      {{-- Success Message --}}
+      @if (session('success'))
+          <div class="alert alert-success">
+              {{ session('success') }}
+          </div>
+      @endif
+
+      {{-- Error Messages --}}
+      @if ($errors->any())
+          <div class="alert alert-danger">
+              @foreach ($errors->all() as $error)
+                  <div>{{ $error }}</div>
+              @endforeach
+          </div>
+      @endif
+
+      <form class="modalForm" id="modalForm" action="{{ route('modal.submit') }}" method="POST">
+        @csrf
+
+        <input type="text" name="name" id="firstName" placeholder="First Name" required>
+        <input type="text" name="middle_name" id="middleName" placeholder="Middle Name (optional)">
+        <input type="text" name="last_name" id="lastName" placeholder="Last Name" required>
+
+        <input type="email" name="email" id="modalEmail" placeholder="user@bpsu.edu.ph" required>
+        <input type="email" name="confirmemail" id="confirmmodalEmail" placeholder="Confirm Email" required>
+
+        <span>Only BPSU email addresses are allowed</span>
+
+        <div class="modal-footer">
+          <button type="button" class="close" id="closeBtn">Close</button>
+          <button type="submit" class="close" id="submitBtn">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
@@ -150,5 +193,33 @@
         passwordField.setAttribute("type",type);
     });
 </script>
+<!-- modal script -->
+<script>
+    // Get modal and close button
+    const modal = document.getElementById("myModal");
+    const closeBtn = document.getElementById("closeBtn");
+
+    window.onload = () => {
+        // Always show on first load
+        modal.style.display = "flex";
+
+        // Also reopen if errors or success exist
+        @if ($errors->any() || session('success'))
+            modal.style.display = "flex";
+        @endif
+    };
+
+    // Close when clicking the "Close" button
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+    };
+
+    // Close when clicking outside modal content
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+  </script>
 </body>
 </html>

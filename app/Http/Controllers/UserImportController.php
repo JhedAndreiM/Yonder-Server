@@ -51,6 +51,7 @@ class UserImportController extends Controller
                     'active_status' => 0,
                     'messenger_color' => '#2180f3',
                     'dark_mode' => 0,
+                    'password_changed' => false, // imported users need to change password
                 ]);
             }
 
@@ -80,6 +81,7 @@ class UserImportController extends Controller
         }
         $user->update([
             'password' => Hash::make($request->new_password),
+            'password_changed' => true,
         ]);
 
         return back()->with('successful', 'Password updated successfully!');
