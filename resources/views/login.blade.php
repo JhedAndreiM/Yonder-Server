@@ -151,6 +151,7 @@
           </div>
       @endif
       @if (session('success'))
+      <button type="button" class="close" id="closeBtn">Close</button>
       @else
       <form class="modalForm" id="modalForm" action="{{ route('modal.submit') }}" method="POST">
         @csrf
