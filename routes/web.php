@@ -68,7 +68,7 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':or
 });
 
 // Middleware for Admin
-Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':admin'])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
