@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Role</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
@@ -31,7 +32,7 @@
         <nav class="navbar navbar-expand-lg py-3">
           <div class="container-fluid px-4">
             <!-- Left: Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="{{url('/')}}">
               <img src="{{ asset('img/logo.svg') }}" alt="Logo" height="40" />
             </a>
 

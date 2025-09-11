@@ -9,6 +9,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
     </style>
     <title>Log in</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite('resources/css/login.css')
     <link
@@ -31,7 +32,7 @@
         <nav class="navbar navbar-expand-lg py-3">
           <div class="container-fluid px-4">
             <!-- Left: Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="{{url('/')}}">
               <img src="{{ asset('img/logo.svg') }}" alt="Logo" height="40" />
             </a>
 
@@ -149,7 +150,8 @@
               @endforeach
           </div>
       @endif
-
+      @if (session('success'))
+      @else
       <form class="modalForm" id="modalForm" action="{{ route('modal.submit') }}" method="POST">
         @csrf
 
@@ -167,6 +169,7 @@
           <button type="submit" class="close" id="submitBtn">Submit</button>
         </div>
       </form>
+      @endif
     </div>
   </div>
 </div>

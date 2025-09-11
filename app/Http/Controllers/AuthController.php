@@ -119,7 +119,7 @@ class AuthController extends Controller
             'password_changed' => false, // new users need to change password
         ]);
 
-        return redirect()->back()->with('success', 'Account created! Use your email and the default password: password123');
+        return redirect()->back()->with('success', 'Account created! Use your email and the default password: 12345678');
     }
 }
 

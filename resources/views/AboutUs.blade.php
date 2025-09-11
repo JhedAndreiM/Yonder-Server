@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>About Us</title>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,7 +37,7 @@
     <nav class="navbar navbar-expand-lg py-3">
       <div class="container-fluid px-4">
         <!-- Left: Logo -->
-        <a class="navbar-brand d-flex align-items-center" href="#">
+        <a class="navbar-brand d-flex align-items-center" href="{{url('/')}}">
               <img src="img/logo.svg" alt="Logo" height="40" />
             </a>
 
