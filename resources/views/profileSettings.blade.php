@@ -230,7 +230,6 @@
                     value="{{ session('pending_phoneNumber') }}"
                     maxlength="11"
                     pattern="^09\d{9}$"
-                    required
                     oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('');"
                     oninvalid="this.setCustomValidity('Enter a valid PH phone number starting with 09 (11 digits)')">
                     @else
