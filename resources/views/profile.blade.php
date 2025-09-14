@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+@extends('Front_layouts.app')
+
+@section('title', 'Profile')
+@section('head')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Profile</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,77 +19,10 @@
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @vite('resources/css/profile.css')
-    @vite('resources/js/profile.js')
-    <style>
-      body {
-      background-image: url("{{ asset('img/background.svg') }}");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top center;
-      }
-  </style>
-  </head>
-  <body>
-    <!-- nav bar -->
-
-    <div class="navBar">
-      <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
-
-      <div class="navBarRight">
-        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
-        <div class="dropdown-container">
-    <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
-    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-      <div class="notification-header">
-        <h3>Notifications</h3>
-      </div>
-      <div class="notification-list">
-        @if ($notifications->isEmpty())
-          <p style="padding-left:10px;">No notifications</p>
-        @else
-          @foreach ($notifications as $notification)
-            <div class="notification">
-              <div class="title">
-                <h1>
-                  @if($notification['title'] === "Product Approved")
-                    <span style="color:Green;">{{ $notification['title'] }}</span>
-                  @elseif($notification['title'] === "Product Rejected")
-                    <span style="color:red;">{{ $notification['title'] }}</span>
-                  @else
-                    {{ $notification['title'] }}
-                  @endif
-                </h1>
-              </div>
-              <div class="Message">{{ $notification['message'] }}</div>
-              <div class="time">{{ $notification['time_ago'] }}</div>
-            </div>
-          @endforeach
-        @endif
-      </div>
-    </div>
-  </div>
-        <a href="{{ route('show.wishlist') }}">
-            <img class="hover" src="{{ asset('img/wishlist.png') }}" alt="Wishlist"/>
-        </a>
-        <a href="{{ route('show.cart') }}">
-            <img class="hover" src="{{ asset('img/cart.png') }}" alt="Cart"/>
-        </a>
-          <div class="dropdown-container">
-    <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
-    <div class="profile-dropdown" id="profileDropdown" style="display: none;">
-      <ul>
-        <li data-url="{{ route('student.profile') }}">My Profile</li>
-        <li data-url="{{ route('account.page') }}">Settings</li>
-        <li data-url="{{ route('logout') }}">Logout</li>
-      </ul>
-    </div>
-  </div>
-      </div>
-    </div>
-
-    <!-- nav bar -->
-
-    <div class="mainContainer">
+    @vite('resources/js/profile.js')    
+@endsection
+@section('content')
+<div class="mainContainer">
       <div class="left">
         <div class="profile">
           <div class="top">
@@ -277,72 +208,6 @@
 
 
     <script>
-      // notifs
- document.addEventListener("DOMContentLoaded", function () {
-    const notifBtn = document.querySelector(".notificationBtn");
-    const notifDropdown = document.getElementById("notificationDropdown");
-    const profileBtn = document.querySelector(".profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const closeNotif = document.querySelector(".closeButton");
-    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-    const cartButton = document.querySelectorAll('.cartBtn');
-    let category = 'featured';
-
-    document.querySelectorAll(".mainFilterButtons").forEach(button => {
-    button.addEventListener("click", () => {
-        // Remove 'current' from all filter buttons
-        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
-            btn.classList.remove("current");
-        });
-        let url='?page=${page}';
-        button.classList.add("current");
-
-        category = button.dataset.category;
-        console.log('Clicked category:', category);
-        updateFilters();
-    });
-});
-    notifBtn.addEventListener("click", function () {
-      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
-      profileDropdown.style.display = "none"; 
-      console.log("clicked");
-    });
-
-    profileBtn.addEventListener("click", function () {
-      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
-      notifDropdown.style.display = "none"; // close notifications if open
-    });
-    if(closeNotif){
-    closeNotif.addEventListener("click", function () {
-      notifDropdown.style.display = "none";
-    });
-    }
-    document.getElementById('logoClick').addEventListener('click', function() {
-    window.location.href = "{{ route('student.dashboard') }}";
-    });
-    // Optional: Close dropdowns if clicked outside
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest(".dropdown-container")) {
-        notifDropdown.style.display = "none";
-        profileDropdown.style.display = "none";
-      }
-    });
-
-        // wishlist button
-        wishlistButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                window.location.href = "{{ route('show.wishlist') }}";
-            });
-        });
-         // cart button
-        cartButton.forEach(button=>{
-            button.addEventListener('click', function(){
-                window.location.href= "{{route('show.cart')}}";
-                
-            })
-        });
-
-  });
             const successModal = document.getElementById("sessionModal");
             function closeSuccessModal() {
             successModal.style.display = "none";
@@ -632,5 +497,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 //end
 </script>
-  </body>
-</html>
+@endsection

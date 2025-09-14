@@ -49,6 +49,9 @@
                 </div>
                 <div class="info">
                   <p class="productName">{{$cartItems->product_name}}</p>
+                  @if(!empty($cartItems->listing_update))
+                  <p>Order Date: {{ \Carbon\Carbon::parse($cartItems->listing_update)->format('F d, Y') }}</p>
+                  @endif
                   <p class="price">Price Per Item: P {{$cartItems->unit_price}}</p>
                   @if($cartItems->selected_variant)
                   <p class="variants">Variant: {{$cartItems->selected_variant}}</p>

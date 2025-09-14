@@ -86,6 +86,7 @@ class CartController extends Controller
                 'payment_type' => $request['paymentType'],
                 'created_at' => now(),
                 'updated_at' => now(),
+                'listing_update' => now(),
             ]);
             if ($status === 'pending') {
                 $buyer = Auth::user();
@@ -265,6 +266,7 @@ class CartController extends Controller
                 'cart_items.gcash_receipt',
                 'cart_items.payment_type',
                 'cart_items.selected_variant',
+                'cart_items.listing_update',
                 'product.name as product_name',
                 'product.image_path',
                 'product.description',
