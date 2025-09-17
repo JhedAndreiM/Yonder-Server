@@ -2,6 +2,10 @@
 <html lang="en">
 
 <head>
+    <script>
+        window.userId = {{ auth()->id() }};
+    </script>
+    @vite('resources/js/app.js')
     <style>
         body {
             background-image: url("{{ asset('img/background.svg') }}");
@@ -12,6 +16,19 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
+        }
+
+        /* Add this for notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+            display: none;
         }
 
         html {

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PageController;
@@ -22,9 +23,11 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProfileController;
+use App\Events\NewNotification;
+use App\Models\Notification;
 
-
-
+// Add Broadcast routes for authentication
+Broadcast::routes(['middleware' => ['web', 'auth']]);
 
 // Middleware for Student
 Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':student'])->group(function () {
@@ -132,7 +135,10 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':stu
     return view('profileSettings');
     })->name('account.page');
 
-    
+    Route::get('/notifications/load', [NotificationController::class, 'loadMore'])
+    ->name('notifications.load');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])
+    ->name('notifications.markAllRead');
  });
 
 Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':student,organization'])->group(function () {
@@ -254,7 +260,10 @@ Route::get('/', function () {
 })->name('landing');
 
     
-    
+Route::get('/test-broadcast', function () {
+    event(new NewNotification("Hello from Laravel! 🚀"));
+    return "Event sent!";
+});
 Route::get('/AboutUs', function () {
     return view('AboutUs');
 })->name('about.us');

@@ -1,12 +1,10 @@
 @php
   $activeTopFilter = request('topFilter') ?? session('topFilter') ?? 'featured';
 @endphp
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homepage</title>
+@extends('Front_layouts.app')
+
+@section('title', 'Homepage')
+@section('head')
     <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -20,75 +18,9 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/homepage.css')
     @vite('resources/js/homepage.js')
-    <style>
-      body {
-      background-image: url("{{ asset('img/background.svg') }}");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top center;
-      }
-  </style>
-  </head>
-  <body>
-    <!-- nav bar -->
-
-    <div class="navBar">
-      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
-
-      <div class="navBarMiddle">
-        <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
-        <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
-      </div>
-
-      <div class="navBarRight">
-        <img class="hover faqsBtn" src="{{ asset('img/help.png') }}" alt="" />
-        <div class="dropdown-container">
-    <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
-    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-      <div class="notification-header">
-        <h3>Notifications</h3>
-      </div>
-      <div class="notification-list">
-        @if ($notifications->isEmpty())
-          <p style="padding-left:10px;">No notifications</p>
-        @else
-          @foreach ($notifications as $notification)
-            <div class="notification">
-              <div class="title">
-                <h1>
-                  @if($notification['title'] === "Product Approved")
-                    <span style="color:Green;">{{ $notification['title'] }}</span>
-                  @elseif($notification['title'] === "Product Rejected")
-                    <span style="color:red;">{{ $notification['title'] }}</span>
-                  @else
-                    {{ $notification['title'] }}
-                  @endif
-                </h1>
-              </div>
-              <div class="Message">{{ $notification['message'] }}</div>
-              <div class="time">{{ $notification['time_ago'] }}</div>
-            </div>
-          @endforeach
-        @endif
-      </div>
-    </div>
-  </div>
-        <img class="hover wishlistBtn" src="{{ asset('img/wishlist.png') }}" alt=""/>
-        <img class="hover cartBtn" src="{{ asset('img/cart.png') }}" alt="" />
-          <div class="dropdown-container">
-    <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
-    <div class="profile-dropdown" id="profileDropdown" style="display: none;">
-      <ul>
-        <li data-url="{{ route('student.profile') }}">My Profile</li>
-        <li data-url="{{ route('account.page') }}">Settings</li>
-        <li data-url="{{ route('logout') }}">Logout</li>
-      </ul>
-    </div>
-  </div>
-      </div>
-    </div>
-
-    <!-- nav bar -->
+    @include('partials.common-scripts')
+@endsection
+@section('content')
     <div class="floating">
       <a class="listing_link"href="{{ route('create.listing') }}"><img src="{{ asset('img/add(2).svg') }}" alt="" /></a>
       <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message.png') }}" alt="" /></a>
@@ -97,7 +29,7 @@
     <div class="container">
       <div class="filter">
         <h2>Filter</h2>
-        <h3>Price</h3>
+        <h3>Price Range</h3>
         <div class="filterBtn">
           <input id="min"class="input-min priceInput" type="number" placeholder="Min" min="0" data-filter-type="condition">
           <input id="max"class="input-max priceInput" type="number" placeholder="Max" min="0" data-filter-type="condition">
@@ -175,6 +107,10 @@
         </div>
         <div class="items">
             <div class="slideshow-container">
+              <div class="navBarMiddle">
+        <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
+        <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
+      </div>
                 @foreach ($featuredImages as $image)
                     <img class="banner mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%;">
                 @endforeach
@@ -339,5 +275,4 @@
     });
 
     </script>
-  </body>
-</html>
+@endsection

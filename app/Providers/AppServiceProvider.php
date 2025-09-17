@@ -24,25 +24,49 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::share('unreadCount', 0);
+        View::share('notifications', collect());
+
+        // Composer for all views (you already had this, extended safely)
         View::composer('*', function ($view) {
-        if (Auth::check()) {
-            $rawNotifications = DB::table('notifications')
-                ->where('user_id', Auth::id())
-                ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
+            if (Auth::check()) {
+                $userId = Auth::id();
 
-            $notifications = $rawNotifications->map(function ($notification) {
-                return [
-                    'title' => $notification->title,
-                    'message' => $notification->message,
-                    'time_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
-                ];
-            });
+                // last 10 notifications for the dropdown (keeps limit)
+                $rawNotifications = DB::table('notifications')
+                    ->where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->limit(10)
+                    ->get();
 
-            $view->with('notifications', $notifications);
-        }
-    });
+                $notifications = $rawNotifications->map(function ($notification) {
+                    return [
+                        'id' => $notification->id,
+                        'title' => $notification->title,
+                        'message' => $notification->message,
+                        'is_read' => (bool) $notification->is_read,
+                        'time_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
+                    ];
+                });
+
+                // UNREAD COUNT: separate query (no limit)
+                $unreadCount = (int) DB::table('notifications')
+                    ->where('user_id', $userId)
+                    ->where(function ($q) {
+                        // support both boolean and integer storage
+                        $q->where('is_read', false)->orWhere('is_read', 0);
+                    })
+                    ->count();
+
+                // pass to all views
+                $view->with('notifications', $notifications)
+                     ->with('unreadCount', $unreadCount);
+            } else {
+                // ensure defaults for guests (redundant because of View::share, but explicit)
+                $view->with('notifications', collect())
+                     ->with('unreadCount', 0);
+            }
+        });
 
     View::composer('*', function ($view) {
         $view->with('colleges', DB::table('colleges')->orderBy('code')->get());

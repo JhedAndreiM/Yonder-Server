@@ -13,6 +13,8 @@ use App\Services\CheapGlobalSmsService;
 use App\Models\FaqQuestion;
 use Illuminate\Support\Facades\Log;
 use App\Models\Tag;
+use App\Models\Notification;
+use App\Events\NewNotification;
 
 class AdminController extends Controller
 {
@@ -93,7 +95,7 @@ class AdminController extends Controller
     public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $product->approved = 'yes';
+        $product->approved = 'not';
         $product->save();
 
         $tags = Tag::whereHas('products', function ($query) {
@@ -105,22 +107,24 @@ class AdminController extends Controller
         }
         Log::info('Parsed tags:', $tags->toArray());
 
-        $user = $product->user_id;
-        DB::table('notifications')->insert([
-            'user_id' => $user,
-            'title' => 'Product Approved',
-            'message' => 'Your product "'.$product->name.'" has been approved.',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         DB::table('sms_notifLogs')->insert([
         'from_id' => Auth::id(), 
-        'to_id' => $user,
+        'to_id' => $product->user_id,
         'message' => 'Your product "' . $product->name . '" has been approved and is now visible to other students.',
         'created_at' => now(),
         'updated_at' => now(),
         ]);
+
+        // Create notification and fire event at the end
+        $notification = Notification::create([
+            'user_id' => $product->user_id,
+            'title' => 'Product Approved',
+            'message' => 'Your product "' . $product->name . '" has been approved.',
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        event(new NewNotification($notification));
 
         // $smsService = app(\App\Services\IprogSmsService::class);
         // $response = $smsService->send('09484386078', 'Your verification code is wtf');
@@ -131,28 +135,28 @@ class AdminController extends Controller
 
     public function reject(Request $request, $id)
     {
-    $product = Product::findOrFail($id);
-    
-    $message = $request->input('message');
-    DB::table('product')
-        ->where('product_id', $id)
-        ->update(['approved' => 'rejected']);
-    
-    DB::table('product_rejections')->insert([
-        'product_id' => $id,
-        'message' => $message,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-    $user = $product->user_id;
-    DB::table('notifications')->insert([
-            'user_id' => $user,
-            'title' => 'Product Rejected',
-            'message' => 'Your product "'.$product->name.'" has been rejected. Reason: '.$message,
+        $product = Product::findOrFail($id);
+        $message = $request->input('message');
+        DB::table('product')
+            ->where('product_id', $id)
+            ->update(['approved' => 'rejected']);
+        DB::table('product_rejections')->insert([
+            'product_id' => $id,
+            'message' => $message,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    return response()->json(['success' => true]);
+        // Create notification and fire event at the end
+        $notification = Notification::create([
+            'user_id' => $product->user_id,
+            'title' => 'Product Rejected',
+            'message' => 'Your product "' . $product->name . '" has been rejected. Reason: ' . $message,
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        event(new NewNotification($notification));
+        return response()->json(['success' => true]);
     }
 
 public function changeUserRole(Request $request)
