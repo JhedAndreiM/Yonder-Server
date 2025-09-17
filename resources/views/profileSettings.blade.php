@@ -246,7 +246,7 @@
 
                 <div class="formGroup shortSelect">
                     <label for="gender">Gender</label>
-                    <select id="gender" name="gender">
+                    <select id="gender" name="gender" disabled>
                         <option value="" disabled {{ Auth::user()->gender ? '' : 'selected' }}>-- Select Gender --</option>
                         <option value="Male" {{ old('gender', Auth::user()->gender) == 'Male' ? 'selected' : '' }}>Male</option>
                         <option value="Female" {{ old('gender', Auth::user()->gender) == 'Female' ? 'selected' : '' }}>Female</option>
@@ -316,7 +316,9 @@
 
     <form method="POST" action="{{ route('profile.update-password') }}" class="change-password-form" id="changePasswordForm">
       @csrf
-
+      @if(session('force_password_change'))
+        <input type="hidden" name="force_password_change" value="1">
+      @endif
       <div class="change-password-form-group">
         <label for="current_password">Current Password</label>
         <div class="change-password-input-wrapper">
@@ -420,6 +422,7 @@
 
     </div>
 </div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -801,20 +804,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function deleteImage(type) {
-        const confirmMessage = `Are you sure you want to delete your ${type === 'avatar' ? 'avatar' : 'QR code'}?`;
-        
-        if (!confirm(confirmMessage)) return;
-        
-        if (type === 'avatar') {
-            elements.currentAvatar.src = '{{ asset("img/default-avatar.png") }}';
-            elements.croppedAvatarInput.value = 'delete';
-            showChanges('avatar');
-        } else {
-            elements.currentQr.src = '{{ asset("imgs/default-qr.png") }}';
-            elements.croppedQrInput.value = 'delete';
-            showChanges('qr');
-        }
+        const confirmModal = document.getElementById('uniqueConfirmModal'); // renamed
+        const confirmMessage = document.getElementById('uniqueConfirmMessage');
+        const modalIcon = document.getElementById('uniqueModalIcon');
+        const btnYes = document.getElementById('uniqueConfirmYes');
+        const btnNo = document.getElementById('uniqueConfirmNo');
+
+        confirmMessage.textContent = "Are you sure you want to delete your " + type + "? This action cannot be undone.";
+
+        confirmModal.style.display = 'flex';
+
+        btnYes.onclick = () => {
+            confirmModal.style.display = 'none';
+            if (type === 'avatar') {
+                elements.currentAvatar.src = '{{ asset("users-avatar/avatar.png") }}';
+                elements.croppedAvatarInput.value = 'delete';
+                showChanges('avatar');
+            } else {
+                elements.currentQr.src = '{{ asset("img/default-qr.png") }}';
+                elements.croppedQrInput.value = 'delete';
+                showChanges('qr');
+            }
+        };
+
+        btnNo.onclick = () => {
+            confirmModal.style.display = 'none';
+        };
     }
+
     
     function cancelChanges(type) {
         const confirmMessage = `Are you sure you want to cancel your ${type === 'avatar' ? 'avatar' : 'QR code'} changes?`;
@@ -882,9 +899,9 @@ document.addEventListener('DOMContentLoaded', function() {
         input.type = "password";
         });
     }
-
+    if(closeBtn){
     closeBtn.addEventListener("click", closeModal);
-
+    }
     window.addEventListener("click", (event) => {
         if (event.target === modal) {
         closeModal();
@@ -916,5 +933,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     </script>
+    
+<!-- Unique modal container -->
+<div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+  <div class="unique-modal-content">
+    <div id="uniqueModalHeader" class="unique-modal-header">
+        <div class="imageWrapper" id="imageWrapper">
+            <img id="uniqueModalIcon" src="{{asset('imgModal/cancelLogo.svg')}}" alt="icon" />
+        </div>
+    </div>
+    <h3 id="uniqueHeaderMessage">Confirm Delete?</h3>
+    <p id="uniqueConfirmMessage">Are you sure you want to delete this Photo?</p>
+    <div class="unique-modal-buttons">
+      <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
+      <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
+    </div>
+
+  </div>
+</div>
   </body>
 </html>

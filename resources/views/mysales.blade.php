@@ -48,7 +48,7 @@
           </div>
           <div class="mySales">
             <img class="cCurrent" src="{{asset('img/money-icon.svg')}}" alt="" />
-            <h2 class="current">My Sales</h2>
+            <h2 class="current">Seller Dashboard</h2>
           </div>
         </div>
       </div>

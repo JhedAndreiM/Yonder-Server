@@ -21,10 +21,18 @@ class CropImageController extends Controller
         ]);
         
         if($request->cropped_avatar){
-            $this->processImage($request->cropped_avatar, 'avatar', $user);
+            if ($request->cropped_avatar === 'delete') {
+                $user->avatar = 'avatar.png';
+            } else {
+                $this->processImage($request->cropped_avatar, 'avatar', $user);
+            }
         }
         if($request->cropped_qr){
-            $this->processImage($request->cropped_qr, 'qr_image', $user);
+            if ($request->cropped_qr === 'delete') {
+                $user->qr_image = null;
+            } else {
+                $this->processImage($request->cropped_qr, 'qr_image', $user);
+            }
         }
         if ($request->gender) {
             $user->gender = $request->gender;

@@ -66,25 +66,37 @@ class UserImportController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => ['required', 'confirmed',
-            Password::min(8)
-            ->letters()
-            ->mixedCase()
-            ->numbers()
-            ],[
-                'new_password.confirmed' => 'The new password and confirmation do not match.',
-            ]
+            'new_password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+            ],
+        ], [
+            'new_password.confirmed' => 'The new password and confirmation do not match.',
         ]);
+
         $user = Auth::user();
+
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'Your current password is incorrect.']);
         }
+
         $user->update([
             'password' => Hash::make($request->new_password),
             'password_changed' => true,
         ]);
 
-        return back()->with('successful', 'Password updated successfully!');
+        // Decide redirect based on "force password change"
+        if ($request->has('force_password_change')) {
+        return redirect()->route('student.dashboard')
+                         ->with('success', 'Password updated successfully!');
+        }
 
+        return redirect()->route('account.page')
+                        ->with('success', 'Password updated successfully!');
     }
+
 }

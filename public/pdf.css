@@ -6,6 +6,25 @@ h4 {
 }
 .w-half {
     width: 50%;
+    display: flex;
+    flex-direction: row;
+}
+.bpsuName{
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ae0505;
+}
+.yonderName{
+    font-size: 1rem;
+    font-weight: bold;
+}
+.page-break {
+    page-break-before: always;
+}
+.pbenName{
+    font-weight: 500;
+    font-size: 13px;
+    color: #ae0505;
 }
 .margin-top {
     margin-top: 1.25rem;

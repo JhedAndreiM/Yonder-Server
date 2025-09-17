@@ -9,80 +9,96 @@ use Illuminate\Support\Facades\Auth;
 
 class PDFController extends Controller
 {
-    public function generate(Request $request){
-        $request->validate([
-            'fromDate'=> 'required|date|before_or_equal:today',
-            'toDate' => 'required|date|after_or_equal:fromDate|before_or_equal:today',
-        ]);
-        $from = $request->input('fromDate');
-        $to = $request->input('toDate');
-        //dd($from,$to);
+public function generate(Request $request)
+{
+    $request->validate([
+        'fromDate'=> 'required|date|before_or_equal:today',
+        'toDate' => 'required|date|after_or_equal:fromDate|before_or_equal:today',
+    ]);
 
-        $pbenProducts=DB::table('cart_items')
-            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-            ->where('cart_items.seller_id', Auth::id())
-            ->where('cart_items.status', '=', 'completed')
-            ->where('product.supplier_type', '=', 'pben')
-            ->whereBetween('cart_items.updated_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
-            ->select(
-                'cart_items.id as cart_id',
-                'cart_items.quantity',
-                'cart_items.unit_price',
-                'cart_items.product_id',
-                'product.name as product_name',
-                'cart_items.voucher_applied'
-            )
-            ->get();
+    $from = $request->input('fromDate');
+    $to = $request->input('toDate');
 
-        $studentOrgProducts=DB::table('cart_items')
-            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
-            ->where('cart_items.seller_id', Auth::id())
-            ->where('cart_items.status', '=', 'completed')
-            ->where('product.supplier_type', '=', 'student-org')
-            ->whereBetween('cart_items.updated_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
-            ->select(
-                'cart_items.id as cart_id',
-                'cart_items.quantity',
-                'cart_items.unit_price',
-                'cart_items.product_id',
-                'product.name as product_name',
-                'cart_items.voucher_applied'
-            )
-            ->get();
+    // PBEN products
+    $pbenProducts = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        ->where('cart_items.seller_id', Auth::id())
+        ->where('cart_items.status', '=', 'completed')
+        ->where('product.supplier_type', '=', 'pben')
+        ->whereBetween('cart_items.updated_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
+        ->select(
+            'cart_items.id as cart_id',
+            'cart_items.quantity',
+            'cart_items.unit_price',
+            'cart_items.product_id',
+            'product.name as product_name',
+            'cart_items.voucher_applied'
+        )
+        ->get();
 
-        $total = $pbenProducts->sum(function($item) {
-            $subtotal = $item->quantity * $item->unit_price;
-            $voucher = floatval($item->voucher_applied); 
-            return $subtotal - $voucher;
-        });
+    // Student Org products
+    $studentOrgProducts = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        ->where('cart_items.seller_id', Auth::id())
+        ->where('cart_items.status', '=', 'completed')
+        ->where('product.supplier_type', '=', 'student-org')
+        ->whereBetween('cart_items.updated_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
+        ->select(
+            'cart_items.id as cart_id',
+            'cart_items.quantity',
+            'cart_items.unit_price',
+            'cart_items.product_id',
+            'product.name as product_name',
+            'cart_items.voucher_applied'
+        )
+        ->get();
 
-        $pbenGroup = $pbenProducts->groupBy('product_name');
-        $pbenSummary=$pbenGroup->map(function($items, $product_name){
-            $totalQuantity=$items->sum('quantity');
-            $totalVoucher = $items->sum(function($item) {
-                return floatval($item->voucher_applied);
-            });
-            $totalSold = $items->sum(function($item) {
-                return ($item->quantity * $item->unit_price) - floatval($item->voucher_applied);
-            });
-            return [
-                'product_name' => $product_name,
-                'quantity' => $totalQuantity,
-                'voucher_applied' => $totalVoucher,
-                'unit_price' => $items->first()->unit_price,
-                'total_sold' => $totalSold,
-            ];
-        });
-        $pbenSummary = $pbenSummary->values()->toArray();
-        $data= $pbenProducts->map(function($item){
-            return[
-                'product_name' => $item->product_name,
-                'quantity' => $item->quantity,
-                'voucher_applied' => $item->voucher_applied,
-                'unit_price' => $item->unit_price,
-            ];
-        })->toArray();
-        $pdf = Pdf::loadView('pdf',['data' => $data,'total'=>$total, 'pbenSummary'=>$pbenSummary]);
-        return $pdf->stream();
-    }
+    // PBEN Total
+    $pbenTotal = $pbenProducts->sum(fn($item) =>
+        ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
+    );
+
+    // Student Org Total
+    $studentOrgTotal = $studentOrgProducts->sum(fn($item) =>
+        ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
+    );
+
+    // PBEN Summary
+    $pbenSummary = $pbenProducts->groupBy('product_name')->map(function($items, $product_name){
+        return [
+            'product_name' => $product_name,
+            'quantity' => $items->sum('quantity'),
+            'voucher_applied' => $items->sum(fn($item) => floatval($item->voucher_applied)),
+            'unit_price' => $items->first()->unit_price,
+            'total_sold' => $items->sum(fn($item) =>
+                ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
+            ),
+        ];
+    })->values()->toArray();
+
+    // Student Org Summary
+    $studentOrgSummary = $studentOrgProducts->groupBy('product_name')->map(function($items, $product_name){
+        return [
+            'product_name' => $product_name,
+            'quantity' => $items->sum('quantity'),
+            'voucher_applied' => $items->sum(fn($item) => floatval($item->voucher_applied)),
+            'unit_price' => $items->first()->unit_price,
+            'total_sold' => $items->sum(fn($item) =>
+                ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
+            ),
+        ];
+    })->values()->toArray();
+
+    $pdf = Pdf::loadView('pdf', [
+        'pbenProducts' => $pbenProducts,
+        'pbenSummary' => $pbenSummary,
+        'pbenTotal' => $pbenTotal,
+        'studentOrgProducts' => $studentOrgProducts,
+        'studentOrgSummary' => $studentOrgSummary,
+        'studentOrgTotal' => $studentOrgTotal,
+    ]);
+
+    return $pdf->download();
+}
+
 }
