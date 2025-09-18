@@ -70,7 +70,9 @@ function initializeVariants() {
         });
         
         // Update main page quantity max
-        elements.qtyDisplay.setAttribute('max', currentStock);
+        if (elements.qtyDisplay) {
+            elements.qtyDisplay.setAttribute('max', currentStock);
+        }
         if (elements.modalQuantityInput) {
             elements.modalQuantityInput.setAttribute('max', currentStock);
         }
@@ -99,7 +101,9 @@ function selectVariant(index) {
     }
     
     // Update quantity limits
-    elements.qtyDisplay.setAttribute('max', currentStock);
+    if (elements.qtyDisplay) {
+            elements.qtyDisplay.setAttribute('max', currentStock);
+        }
     if (parseInt(elements.qtyDisplay.value) > currentStock) {
         elements.qtyDisplay.value = Math.min(currentStock, 1);
     }
