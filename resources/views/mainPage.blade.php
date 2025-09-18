@@ -31,8 +31,15 @@
         <h2>Filter</h2>
         <h3>Price Range</h3>
         <div class="filterBtn">
-          <input id="min"class="input-min priceInput" type="number" placeholder="Min" min="0" data-filter-type="condition">
-          <input id="max"class="input-max priceInput" type="number" placeholder="Max" min="0" data-filter-type="condition">
+          <div class="peso-input">
+            <span>₱</span>
+            <input id="min" class="input-min priceInput" type="number" placeholder="Min" min="0" data-filter-type="condition">
+          </div>
+
+          <div class="peso-input">
+            <span>₱</span>
+            <input id="max" class="input-max priceInput" type="number" placeholder="Max" min="0" data-filter-type="condition">
+          </div>
         </div>
         @if($activeTopFilter==='marketplace')
         <h3>For</h3>

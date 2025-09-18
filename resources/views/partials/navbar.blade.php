@@ -67,9 +67,21 @@
       <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="Profile" />
       <div class="profile-dropdown" id="profileDropdown" style="display: none;">
         <ul>
-          <li data-url="{{ route('student.profile') }}">My Profile</li>
-          <li data-url="{{ route('account.page') }}">Settings</li>
-          <li data-url="{{ route('logout') }}">Logout</li>
+          <li data-url="{{ route('student.profile') }}">
+            <span class="icon"><i class="fa-solid fa-user"></i></span>
+            <span class="label">My Profile</span>
+            <span class="chevron">›</span>
+          </li>
+          <li data-url="{{ route('account.page') }}">
+            <span class="icon"><i class="fa-solid fa-gear"></i></span>
+            <span class="label">Settings</span>
+            <span class="chevron">›</span>
+          </li>
+          <li data-url="{{ route('logout') }}">
+            <span class="icon"><i class="fa-solid fa-door-open"></i></span>
+            <span class="label">Logout</span>
+            <span class="chevron">›</span>
+          </li>
         </ul>
       </div>
     </div>

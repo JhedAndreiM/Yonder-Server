@@ -1,129 +1,129 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap");
 
 body {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  height: 100vh;
-  font-style: normal;
-  background-image: url("imgs/BACKGROUND.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    height: 100vh;
+    font-style: normal;
+    background-image: url("imgs/BACKGROUND.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
 }
 
 body::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 /* START OF NAVBAR */
 /* NAV BAR */
 .navbar {
-  border-radius: 50px;
-  margin: 20px auto;
-  max-width: 95%;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
-  margin: 30px auto 40px auto !important;
-  width: 90% !important;
+    border-radius: 50px;
+    margin: 20px auto;
+    max-width: 95%;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+    margin: 30px auto 40px auto !important;
+    width: 90% !important;
 }
 
 .navbar-nav .nav-link {
-  font-size: 24px;
-  transition: color 0.2s ease;
+    font-size: 24px;
+    transition: color 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-  color: var(--main-color) !important;
+    color: var(--main-color) !important;
 }
 .sectionOne {
-  height: 100dvh;
+    height: 100dvh;
 }
 .navbar-brand img {
-  height: 50px;
+    height: 50px;
 }
-.d-flex{
+.d-flex {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.btn{
-    background-color:  #ae0505 !important;
+.btn {
+    background-color: #ae0505 !important;
     color: white !important;
 }
 .navBar {
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  margin: 30px auto 40px auto;
-  width: 90%;
-  height: 85px;
-  border-radius: 100px;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  padding-left: 30px;
-  padding-right: 30px;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    margin: 30px auto 40px auto;
+    width: 90%;
+    height: 85px;
+    border-radius: 100px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 .navBarRight {
-  display: flex;
-  align-items: center;
-  gap: 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
 }
-.navBarMiddle{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 500px;
-  border-radius: 15px;
-  font-size: 24px;
-  border-color: #d7d7d8;
-  border-style: solid;
-  border-width: 2px;
+.navBarMiddle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    border-radius: 15px;
+    font-size: 24px;
+    border-color: #d7d7d8;
+    border-style: solid;
+    border-width: 2px;
 }
-.searchBtnImg{
-  flex: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+.searchBtnImg {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
-.searchInput{
-  flex: 10;
-  border: none;
+.searchInput {
+    flex: 10;
+    border: none;
 }
-.searchInput input{
-  border: none;
-  width: 97%;
+.searchInput input {
+    border: none;
+    width: 97%;
 }
 input {
-  height: 50px;
-  border-radius: 15px;
-  border-color: #d7d7d8;
-  border-style: solid;
-  font-size: 24px;
+    height: 50px;
+    border-radius: 15px;
+    border-color: #d7d7d8;
+    border-style: solid;
+    font-size: 24px;
 }
-.mainFilterButtons{
-  padding: 0px;
-  border: none;
-  box-shadow: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0px;
+.mainFilterButtons {
+    padding: 0px;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0px;
 }
 button.mainFilterButtons:hover {
-  animation: none !important;
-  transition: none !important;
+    animation: none !important;
+    transition: none !important;
 }
 input::placeholder {
-  font-weight: 100;
-  opacity: 50%;
+    font-weight: 100;
+    opacity: 50%;
 }
 
 textarea:focus,
 input:focus {
-  outline: none;
+    outline: none;
 }
-.profileBtn{
-  display: flex;
+.profileBtn {
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 60px;
@@ -135,273 +135,272 @@ input:focus {
 }
 .hover,
 .searchBtn {
-  transition: transform 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 @keyframes bounceTilt {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(-10deg);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(-10deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
 }
 
 .hover:hover,
 .searchBtn:hover {
-  cursor: pointer;
-  animation: bounceTilt 0.4s ease-in-out;
+    cursor: pointer;
+    animation: bounceTilt 0.4s ease-in-out;
 }
 
 .navBarRight {
-  display: flex;
-  align-items: center;
-  gap: 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
 }
 
 /* for notifs */
 
 .dropdown-container {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 
-.notification-dropdown{
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  width: 300px;
-  max-height: 300px;
-  overflow-y: auto;
-  z-index: 999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.notification .Message{
-  padding-bottom: 1rem;
+.notification .Message {
+    padding-bottom: 1rem;
 }
-.notification h1{
-  font-size: 1.5rem;
+.notification h1 {
+    font-size: 1.5rem;
 }
 .profile-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  width: 250px;
-  max-height: 300px;
-  overflow-y: auto;
-  z-index: 999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .notification-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  font-weight: bold;
-  background-color: #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #f1f1f1;
 }
-.wishlist-icon{
-  width: 20px;
-  height: 17px;
+.wishlist-icon {
+    width: 20px;
+    height: 17px;
 }
 .notification {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
 }
 
 .profile-dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .profile-dropdown li {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  margin: 0px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    margin: 0px;
 }
 
 .profile-dropdown li a {
-  text-decoration: none;
-  color: #333;
-  font-size: 1rem;
-  font-weight: normal;
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    font-weight: normal;
 }
-.navBarLeft{
-  cursor: pointer;
+.navBarLeft {
+    cursor: pointer;
 }
 /* END OF NAVBAR */
 
 .gradient {
-  margin: 0;
-  width: 100%;
+    margin: 0;
+    width: 100%;
 }
 
 .image-container {
-  position: relative; /* lets us position text inside */
-  width: 100%; /* full width of viewport */
+    position: relative; /* lets us position text inside */
+    width: 100%; /* full width of viewport */
 }
 
 body {
-  margin: 0;
+    margin: 0;
 }
 .imgContainer {
-  width: 100vw;
-  position: relative !important;
-  overflow: hidden;
+    width: 100vw;
+    position: relative !important;
+    overflow: hidden;
 }
 .image-container {
-  position: relative; /* lets us position text inside */
-  width: 100vw; /* full width of viewport */
+    position: relative; /* lets us position text inside */
+    width: 100vw; /* full width of viewport */
 }
 
 .image-container img {
-  display: block;
-  width: 100%;
-  height: auto;
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .overlay-text {
-  position: absolute;
-  top: 30%; /* vertically center */
-  left: 50%; /* horizontally center */
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 3rem;
-  font-weight: bold;
+    position: absolute;
+    top: 30%; /* vertically center */
+    left: 52%; /* horizontally center */
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
 }
 
 input {
-  height: 50px;
-  border-radius: 10px;
-  height: 50px;
-  width: 700px;
-  font-size: 24px;
-  border-color: #d7d7d8;
-  border-style: solid;
-  padding-left: 13px;
-  
+    height: 50px;
+    border-radius: 10px;
+    height: 54px;
+    width: 700px;
+    font-size: 24px;
+    border-color: #d7d7d8;
+    border-style: solid;
+    padding-left: 13px;
 }
 
 input::placeholder {
-  font-size: 25px;
-  color: #888;
-  opacity: 1;
+    font-size: 25px;
+    color: #888;
+    opacity: 1;
 }
 
 input:focus {
-  outline: none;
+    outline: none;
 }
 
 .searchButton {
-  border: none;
-  width: 70px;
-  height: 45px;
-  border-radius: 5px;
-  background-color: #9a0000;
-  position: relative;
-  left: -10%;
-  top: -3px;
+    border: none;
+    width: 70px;
+    height: 45px;
+    border-radius: 5px;
+    background-color: #9a0000;
+    position: relative;
+    left: -10%;
+    top: -3px;
 }
 
 .searchContainer {
-  position: absolute;
-  top: 40%;
-  left: 50%; 
-  transform: translate(-50%, 0%);
+    position: absolute;
+    top: 40%;
+    left: 53%;
+    transform: translate(-50%, 0%);
 }
 
 .mainContainer {
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  width: 80%;
-  gap: 8%;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    width: 80%;
+    gap: 8%;
 }
 
 .leftPart {
-  width: 35%;
+    width: 35%;
 }
 
 .rightPart {
-  width: 100%;
-  height: 50%;
+    width: 100%;
+    height: 50%;
 }
 
 .mainCatergory {
-  display: flex;
-  gap: 70px;
-  align-items: center;
+    display: flex;
+    gap: 70px;
+    align-items: center;
 }
 
 h2 {
-  margin-bottom: 10px;
-  font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
 }
 
 h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: black;
-  opacity: 100%;
-  font-weight: 500;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: black;
+    opacity: 100%;
+    font-weight: 500;
 }
 
 /**/
 
 .subQuestions {
-  display: none;
-  transition: all 0.3s ease;
+    display: none;
+    transition: all 0.3s ease;
 }
 
 .arrow {
-  transition: transform 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .arrow.rotate {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 .mainCatergory {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
 }
 
 .subQuestions {
-  display: none;
-  padding-left: 15px;
+    display: none;
+    padding-left: 15px;
 }
 
 h3 {
-  cursor: pointer;
-  margin: 5px 0;
-  color: #888;
-  font-size: 1.5rem;
+    cursor: pointer;
+    margin: 5px 0;
+    color: #888;
+    font-size: 1.5rem;
 }
 
 h3.active {
-  color: #771217;
-  font-weight: bold;
+    color: #771217;
+    font-weight: bold;
 }
 
 p {
-  font-size: 20px;
+    font-size: 20px;
 }
 .spinner-right {
     width: 40px;
     height: 40px;
-    border: 4px solid rgba(0,0,0,0.2);
-    border-top-color: rgba(0,0,0,0.7);
+    border: 4px solid rgba(0, 0, 0, 0.2);
+    border-top-color: rgba(0, 0, 0, 0.7);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     margin: 50px auto; /* centers horizontally */
@@ -409,7 +408,9 @@ p {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 /* Auth Buttons for navbar */
 .authBtn {
@@ -417,7 +418,7 @@ p {
     display: inline-block;
     padding: 10px 20px;
     border-radius: 25px;
-    background-color: #9a0000; 
+    background-color: #9a0000;
     color: white;
     font-weight: 500;
     font-size: 16px;
@@ -427,53 +428,82 @@ p {
 
 .authBtn:hover {
     transform: scale(1.05);
-    background-color: #b30000; 
+    background-color: #b30000;
     cursor: pointer;
 }
 @media (max-width: 1580px) {
-  .searchButton{
-    display: none;
-  }
-  .searchContainer {
-    transform: translate(-50%, 10%);
-  }
+    .searchButton {
+        display: none;
+    }
+    .searchContainer {
+        transform: translate(-50%, 10%);
+    }
 }
-@media(max-width: 1100px) {
-  .mainContainer {
-    margin-inline: 10px;
-    width: 100vw;
-  }
+@media (max-width: 1100px) {
+    .mainContainer {
+        margin-inline: 10px;
+        width: 100vw;
+    }
 }
-@media(max-width: 890px) {
-  .overlay-text {
-    font-size: 2rem;
-  }
-  input{
-    width: 500px;
-  }
-  .mainContainer {
-    flex-direction: column;
-  }
-  .navBarRight {
-    gap: 1rem;
-  }
+@media (max-width: 890px) {
+    .overlay-text {
+        font-size: 2rem;
+    }
+    input {
+        width: 500px;
+    }
+    .mainContainer {
+        flex-direction: column;
+    }
+    .navBarRight {
+        gap: 1rem;
+    }
 }
-@media(max-width: 650px) {
-  .overlay-text {
-    font-size: 1.5rem;
-  }
-  input{
-    width: 300px;
-  }
+@media (max-width: 650px) {
+    .overlay-text {
+        font-size: 1.5rem;
+    }
+    input {
+        width: 300px;
+    }
 }
-@media(max-width: 550px) {
-  .overlay-text {
-    font-size: 1.2rem;
-  }
-  input{
-    width: 200px;
-  }
-  .navBarLeft img{
-    width: 100px;
-  }
+@media (max-width: 550px) {
+    .overlay-text {
+        font-size: 1.2rem;
+    }
+    input {
+        width: 200px;
+    }
+    .navBarLeft img {
+        width: 100px;
+    }
+}
+section {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+section:last-of-type {
+    border-bottom: none;
+}
+
+.subQuestions h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #666;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+.subQuestions h3.active {
+    color: #771217;
+    font-weight: 500;
+}
+
+.subQuestions p.answer {
+    font-size: 0.95rem;
+    color: #777;
+    line-height: 1.5;
+    margin: 4px 0 12px 15px;
 }

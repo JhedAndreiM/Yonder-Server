@@ -95,7 +95,7 @@ class AdminController extends Controller
     public function approveProduct(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $product->approved = 'not';
+        $product->approved = 'yes';
         $product->save();
 
         $tags = Tag::whereHas('products', function ($query) {

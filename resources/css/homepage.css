@@ -124,7 +124,22 @@ h3 {
   -webkit-appearance: none;
   margin: 0;
 }
+.peso-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
 
+.peso-input span {
+  position: absolute;
+  left: 8px;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+.peso-input input {
+  padding-left: 20px; 
+}
 button {
   margin-bottom: 15px;
   cursor: pointer;
@@ -141,9 +156,6 @@ button {
   transition: all 0.2s ease;
 }
 
-button:hover {
-  animation: bounceTilt 0.4s ease-in-out;
-}
 
 button.active {
   background-color: #0d62ff;
@@ -300,8 +312,14 @@ button.active {
   padding: 12px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* distribute top + bottom */
 }
-
+.info-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
 .price {
   display: flex;
   justify-content: space-between;
@@ -329,9 +347,9 @@ button.active {
 .productDesc {
   font-size: 14px;
   color: #555;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
   line-height: 1.4;
-  min-height: 62px;
+  flex-grow: 1; 
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -428,7 +446,6 @@ select {
 
 .profile-dropdown li {
   padding: 10px;
-  border-bottom: 1px solid #eee;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -546,6 +563,34 @@ select {
 .error-bar img.error-icon {
     width: 20px;
     height: 20px;
+}
+.pills {
+  display: flex;
+  gap: 8px;
+  margin-top: auto; /* pushes pills to bottom if description grows */
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+/* Variations (you can expand later if needed) */
+.trade-pill {
+  background-color: #e6f0ff;
+  color: #0d62ff;
+}
+
+.condition-pill {
+  background-color: #fce8e6;
+  color: #ad1f23;
 }
 
 /* MOBILE RESPONSIVE STYLES */

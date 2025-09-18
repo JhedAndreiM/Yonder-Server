@@ -22,16 +22,26 @@
               <div class="info">
                 <div class="price">
                   <p>P {{ number_format($product->price, 2) }}</p>
+                  @if(Auth::check() && Auth::id() !== $product->user_id)
                   <img
                     src="{{ in_array($product->product_id, $wishlist) ? asset('img/wishlist-red.png') : asset('img/wishlist.png') }}"
                     alt="Wishlist"
                     class="wishlist-icon"
                     data-product-id="{{ $product->product_id }}"
                   />
+                  @endif
                 </div>
                 <p class="productDesc">
                   {{ $product->name }}
                 </p>
+                <div class="pills">
+                  @if($product->forSaleTrade)
+                  <span class="pill trade-pill">{{ $product->forSaleTrade }}</span>
+                  @endif
+                  @if($product->product_condition)
+                  <span class="pill condition-pill">{{ $product->product_condition }}</span>
+                  @endif
+                </div>
                 <div class="rating">
                   
                   <img src="{{ asset('img/rating.svg') }}" alt="Star" />
