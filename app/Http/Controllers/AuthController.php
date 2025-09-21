@@ -26,23 +26,18 @@ class AuthController extends Controller
         return view('select-role');
     }
 
-    public function showLoginForm($role){
-        if(auth()->user()){
-            if($role=='student'){
+    public function showLoginForm(){
+        if(auth()->check()){
+            $user = auth()->user();
+            if($user->role==='student'){
                 return redirect()->route('student.dashboard');
-            }
-            elseif($role=='organization'){
+            } elseif($user->role==='organization'){
                 return redirect()->route('organization.dashboard');
-            }
-            elseif($role=='admin'){
+            } elseif($user->role==='admin'){
                 return redirect()->route('admin.dashboard');
             }
         }
-        $validRoles=['admin','organization','student'];
-        if (!in_array($role, $validRoles)) {
-            abort(404);
-        }
-        return view('login', ['role' => $role]);
+        return view('login');
     }
 
     public function login(Request $request){
@@ -52,46 +47,26 @@ class AuthController extends Controller
         'email.regex' => 'Only BPSU email addresses are allowed.'
     ]);
         $credentials = $request->only('email', 'password');
-        $selectedRole = $request->input('role');
-
         if (!Auth::attempt($credentials)) {
             return back()->withErrors(['error' => 'Email and password do not match.']);
         }
         $user = Auth::user();
-        if ($user->role !== $selectedRole) {
-            Auth::logout();
-
-            return back()->withErrors(['error' => 'Your account is not authorized for this role.']);
-        }
-
-        if(Auth::attempt($credentials)){
-            $user=Auth::user();
-            if($selectedRole==='admin'&& $user->role !=='admin'){
-                Auth::logout();
-                return back()->withErrors(['error' => 'Only the admin can access this page.']);
-            }
         
-
-        if($selectedRole === 'organization' && !in_array($user->role,['organization', 'admin'])){
-            Auth::logout();
-            return back()->withErrors(['error' => 'You are not authorized to access organization view.']);
-        }
-
-        if ($selectedRole === 'student' && !in_array($user->role, ['student', 'organization', 'admin'])) {
-            Auth::logout();
-            return back()->withErrors(['error' => 'Unauthorized for student view.']);
-        }
-
         // Check if user needs to change password (for new accounts with default password)
         if (!$user->password_changed && Hash::check('12345678', $user->password)) {
             // Redirect to profile settings with force password change flag
             return redirect()->route('account.page')->with('force_password_change', true);
         }
 
-        return redirect()->route($selectedRole . '.dashboard');
+        // Redirect by role automatically
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'organization') {
+            return redirect()->route('organization.dashboard');
+        } else {
+            return redirect()->route('student.dashboard');
+        }
     }
-    return back()->withErrors(['error' => 'Invalid credentials']);
-}
 
     public function handleModalSubmit(Request $request)
     {

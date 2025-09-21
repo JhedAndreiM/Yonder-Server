@@ -72,7 +72,7 @@
               <!-- Right: Login -->
               <div class="d-flex">
                 <a
-                  href="{{ route('select.role') }}"
+                  href="{{ route('login.form') }}"
                   class="btn rounded-pill px-4"
                   >Login</a
                 >
@@ -85,7 +85,7 @@
             <div class="section-text" data-aos="fade-right"> 
                 <h1>Connecting students <br>through seamless buying, <br>selling, and trading</h1>
                 <h5>Welcome to Yonder – Your university-exclusive marketplace! Buy, sell, <br>and trade everything you need within your campus community. Safe, <br>easy, and made just for students like you. Start exploring today!</h5>
-                <a class="getStartedBtn"href="{{ route('select.role') }}">Get Started</a>
+                <a class="getStartedBtn"href="{{ route('login.form') }}">Get Started</a>
             </div>
             <div class="section-img" data-aos="fade-left">
                 <img class="header-img" src="{{ asset('img/ecommerce-campaign-animate.svg') }}" alt="" width="600" height="700">
@@ -197,7 +197,7 @@
             <p>Get started with Yonder today and enjoy a hassle-free way to buy, sell, and trade within your campus—saving money, finding great deals, and connecting with fellow students has never been this easy!</p>
         </div>
         <div class="pageThree-bottom">
-            <a href="{{route('select.role')}}" class="cardLinks" style="color:black"><h2>Get Started</h2></a>
+            <a href="{{route('login.form')}}" class="cardLinks" style="color:black"><h2>Get Started</h2></a>
             <img src="{{ asset('img/arrow-black.svg') }}" alt="">
         </div>
     </div>
@@ -226,7 +226,7 @@
         <div class="footerThree">
             <ul class="footerGetStarted">
                 <li><h3>Get Started</h3></li>
-                <li><a href="{{route('select.role')}}">Sign In</a></li>
+                <li><a href="{{route('login.form')}}">Sign In</a></li>
                 <li class="invisible-item"></li>
                 <li class="invisible-item"></li>
             </ul>

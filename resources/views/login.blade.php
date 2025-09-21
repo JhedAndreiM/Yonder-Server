@@ -72,7 +72,7 @@
               <!-- Right: Login -->
               <div class="d-flex">
                 <a
-                  href="{{ route('select.role') }}"
+                  href="{{ route('login.form') }}"
                   class="btn rounded-pill px-4"
                   >Login</a
                 >
@@ -92,7 +92,6 @@
 
         <form action="{{ route('login.submit') }}" method="POST" data-aos="fade-right">
             @csrf
-            <input type="hidden" name="role" value="{{ $role }}">
             <div class="form-firstRow">
                 <div class="email input-container">
                     <label for="email">Email</label>
@@ -117,7 +116,7 @@
             </div>
             @endif
             <div class="btnGroup">
-                <a class="cancel"href="{{ route('select.role') }}">Cancel</a>
+                <a class="cancel"href="{{ route('landing') }}">Cancel</a>
                 <button class="submit">Login</button>
             </div>
             

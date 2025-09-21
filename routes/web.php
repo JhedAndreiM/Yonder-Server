@@ -78,12 +78,17 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
     Route::post('/admin/product-policy/', [AdminController::class, 'productPolicy'])->name('admin.productPolicy');
     Route::post('/admin/voucher/', [AdminController::class, 'addVoucherList'])->name('admin.voucher');
+    Route::delete('/admin/voucher/{id}', [AdminController::class, 'deleteVoucher'])->name('admin.voucher.delete');
     Route::post('/admin/credit/', [AdminController::class, 'editCreditPercentage'])->name('admin.credit');
     Route::post('/admin/featured/upload', [FeaturedImageController::class, 'addFeaturedImage'])->name('admin.featured.upload');
     Route::delete('/admin/featured/{id}', [FeaturedImageController::class, 'destroy'])->name('admin.featured.delete');
     Route::get('/admin/import-users', [UserImportController::class, 'showForm'])->name('show.upload.form');
     Route::post('/admin/import-users', [UserImportController::class, 'upload'])->name('upload.users');
     Route::post('/admin/change-role', [AdminController::class, 'changeUserRole'])->name('admin.changeRole');
+    Route::post('/admin/users/{id}/update-name', [AdminController::class, 'updateUserName'])->name('admin.users.updateName');
+    Route::post('/admin/users/{id}/update-gender', [AdminController::class, 'updateUserGender'])->name('admin.users.updateGender');
+    Route::post('/admin/users/{id}/update-password', [AdminController::class, 'updateUserPassword'])->name('admin.users.updatePassword');
+    Route::post('/admin/users/{id}/update-details', [AdminController::class, 'updateUserDetails'])->name('admin.users.updateDetails');
     Route::delete('/admin/reports/{id}/allow', [AdminController::class, 'allowReport']);
     Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct']);
     Route::post('/admin/add-college', [AdminController::class, 'addCollege'])->name('admin.addCollege');
@@ -215,6 +220,9 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':stu
     Route::post('/update-password', [UserImportController::class, 'updatePassword'])->name('profile.update-password');
 
     Route::post('/chatify/send', [CustomMessageController::class, 'send'])->name('send.message');
+    Route::post('/chat/send', [App\Http\Controllers\ChatController::class, 'send'])->name('chat.send');
+    Route::get('/chat/contacts', [App\Http\Controllers\ChatController::class, 'getContacts'])->name('chat.contacts');
+    Route::get('/chat/conversation/{id}', [App\Http\Controllers\ChatController::class, 'getConversation'])->name('chat.conversation');
 
    
 
@@ -229,11 +237,8 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':adm
 
 
 // Role selection
-Route::get('/select-role', [AuthController::class, 'selectRole'])->name('select.role');
-Route::get('/select-role/Log-in_First!', [AuthController::class, 'selectRole'])->name('login');
-
-// Login page based on role
-Route::get('/login/{role}', [AuthController::class, 'showLoginForm'])->name('login.form');
+// Unified login page, redirects by role after authentication
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 
 // Login verification
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -242,19 +247,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/modal-submit', [AuthController::class, 'handleModalSubmit'])->name('modal.submit');
 
 Route::get('/', function () {
-
-    $studentInfo = Auth::user();
-
-    if(auth()->user()){
-        if($studentInfo->role=='student'){
-            return redirect()->route('student.dashboard');
-        }
-        elseif($studentInfo->role=='organization'){
-                return redirect()->route('organization.dashboard');
-        }
-        elseif($studentInfo->role=='admin'){
-                return redirect()->route('admin.dashboard');
-        }
+    if(Auth::check()){
+        $user = Auth::user();
+        if($user->role==='student') return redirect()->route('student.dashboard');
+        if($user->role==='organization') return redirect()->route('organization.dashboard');
+        if($user->role==='admin') return redirect()->route('admin.dashboard');
     }
     return view('landing');
 })->name('landing');

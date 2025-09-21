@@ -126,6 +126,131 @@
             </div>
         </section>
 
+        <style>
+            .btn-edit{padding:.4rem .75rem;border:none;border-radius:.5rem;background:#4f46e5;color:#fff;cursor:pointer}
+            .btn-edit:hover{background:#4338ca}
+            .btn-cancel{padding:.4rem .75rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#f3f4f6;color:#111827;cursor:pointer}
+            .btn-cancel:hover{background:#e5e7eb}
+            .user-modal-content{max-width:420px;margin:10% auto;background:#fff;border-radius:.75rem;padding:1rem 1.25rem;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+            .user-modal-content h3{margin-top:0;margin-bottom:.75rem}
+            .user-modal-content label{display:block;font-weight:600;margin-bottom:.25rem}
+            .user-modal-content input,.user-modal-content select{width:100%;padding:.5rem .6rem;border:1px solid #e5e7eb;border-radius:.5rem}
+            .user-modal-content .close{float:right;font-size:1.5rem;line-height:1;cursor:pointer}
+            .change-password-input-wrapper{position:relative;display:flex;align-items:center}
+            .change-password-input-wrapper input{padding-right:2.25rem}
+            .toggle-password-visibility{position:absolute;right:.5rem;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;color:#6b7280;cursor:pointer}
+            .toggle-password-visibility.eye-open{color:#10b981}
+            .password-requirements ul{margin:.25rem 0 0 .9rem;padding:0}
+            .password-requirements li{font-size:.85rem;color:#6b7280}
+            .password-valid{color:#10b981}
+            .password-invalid{color:#ef4444}
+            .match-valid{color:#10b981}
+            .match-invalid{color:#ef4444}
+        </style>
+
+        <script>
+            function openUserModal(id){
+                var modal=document.getElementById('user-modal-'+id);
+                if(modal){ 
+                    modal.style.display='block'; 
+                    if (typeof attachPasswordValidation==='function') attachPasswordValidation(id);
+                    if (typeof initializePasswordToggles==='function') initializePasswordToggles();
+                }
+            }
+            function closeUserModal(id){
+                var modal=document.getElementById('user-modal-'+id);
+                if(modal){ modal.style.display='none'; }
+            }
+            (function(){
+                document.addEventListener('keydown',function(e){
+                    if(e.key==='Escape'){
+                        document.querySelectorAll('[id^="user-modal-"]').forEach(function(m){ m.style.display='none'; });
+                    }
+                });
+                document.addEventListener('click',function(e){
+                    var modal=e.target.closest('[id^="user-modal-"]');
+                    if(modal && e.target===modal){ modal.style.display='none'; }
+                });
+                // Event delegation for eye toggle: switch input type and show visual indicator
+                function initializePasswordToggles(){
+                    if (window.__pwdToggleBound) return; // bind once
+                    document.addEventListener('click', function(e){
+                        var toggle = e.target.closest('.toggle-password-visibility');
+                        if(!toggle) return;
+                        e.preventDefault();
+                        var targetId = toggle.getAttribute('data-target');
+                        var input = document.getElementById(targetId);
+                        if(!input) return;
+                        var isOpen = input.type === 'password';
+                        input.type = isOpen ? 'text' : 'password';
+                        toggle.classList.toggle('eye-open', isOpen);
+                        toggle.setAttribute('aria-pressed', isOpen ? 'true' : 'false');
+                    });
+                    window.__pwdToggleBound = true;
+                }
+                function attachPasswordValidation(userId){
+                    var pwd = document.getElementById('password-'+userId);
+                    var conf = document.getElementById('password_confirmation-'+userId);
+                    var reqBox = document.getElementById('password-req-'+userId);
+                    var saveBtn = document.getElementById('save-user-'+userId);
+                    var matchMsg = document.getElementById('password-match-'+userId);
+                    if(!pwd || !conf) return;
+
+                    function validate(){
+                        var val = pwd.value || '';
+                        var hasLen = val.length >= 8;
+                        var hasLetter = /[A-Za-z]/.test(val);
+                        var hasUpper = /[A-Z]/.test(val);
+                        var hasLower = /[a-z]/.test(val);
+                        var hasMixed = hasUpper && hasLower;
+                        var hasNumber = /\d/.test(val);
+
+                        if (reqBox) reqBox.style.display = (document.activeElement===pwd || val) ? 'block' : 'none';
+                        function setState(id, ok){
+                            var el = document.getElementById(id+'-'+userId);
+                            if(!el) return;
+                            el.classList.toggle('password-valid', ok);
+                            el.classList.toggle('password-invalid', !ok);
+                        }
+                        setState('req-length', hasLen);
+                        setState('req-letters', hasLetter);
+                        setState('req-mixed', hasMixed);
+                        setState('req-numbers', hasNumber);
+
+                        var match = (conf.value || '') === val && val.length>0;
+                        if (matchMsg){
+                            matchMsg.style.display = (conf.value || val) ? 'block' : 'none';
+                            matchMsg.textContent = match ? 'Passwords match' : 'Passwords do not match';
+                            matchMsg.className = match ? 'match-valid' : 'match-invalid';
+                        }
+
+                        if(saveBtn){
+                            // Only restrict when password field has content; empty means optional
+                            if(val.length>0){
+                                saveBtn.disabled = !(hasLen && hasLetter && hasMixed && hasNumber && match);
+                            } else {
+                                saveBtn.disabled = false;
+                            }
+                        }
+                    }
+                    ['input','blur','focus'].forEach(function(evt){
+                        pwd.addEventListener(evt, validate);
+                        conf.addEventListener(evt, validate);
+                    });
+                    validate();
+                }
+                window.initializePasswordToggles = initializePasswordToggles;
+                window.attachPasswordValidation = attachPasswordValidation;
+
+                // Initialize on load (delegated, binds once)
+                initializePasswordToggles();
+                document.querySelectorAll('[id^="user-modal-"]').forEach(function(m){
+                    var id = m.id.replace('user-modal-','');
+                    attachPasswordValidation(id);
+                });
+            })();
+        </script>
+
         <!-- Excel Upload -->
         <section class="upload-section">
             <h2>Upload User Data (Excel)</h2>
@@ -531,8 +656,8 @@
                                 <a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">Details</a>
                             </td>
                             <td>
-                                <button type="button" onclick="approveProduct({{ $product->product_id }})">Approve</button>
-                                <button type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
+                                <button class="approveBtn"type="button" onclick="approveProduct({{ $product->product_id }})">Approve</button>
+                                <button class="rejectBtn"type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
                             </td>
                         </tr>
                         <div id="modal-{{ $product->product_id }}" class="modal" style="display:none; align-items:center; justify-content:center;">
@@ -594,7 +719,7 @@
                 </div>
                 <div class="creditLabel">
                     <label for="percentage">Credit Percentage: </label>
-                    <input type="number" step="0.01" name="percentage" value="{{ $creditPercentage->percentage }}">
+                    <input type="number" min="1" step="0.01" name="percentage" value="{{ $creditPercentage->percentage }}">
                 </div>
                 <button type="submit">Save</button>
             </form>
@@ -606,9 +731,9 @@
                 <h2>Add a Voucher</h2>
                 <div class="formAddingOfVoucher-input">
                     <label for="voucherAmount">Voucher Amount: </label>
-                    <input type="number" name="voucherAmount" id="voucherAmount" min="1">
+                    <input type="number" name="voucherAmount" id="voucherAmount" min="1" max="1000">
                     <label for="voucherPrice">Voucher Price: </label>
-                    <input type="number" name="voucherPrice" id="voucherPrice" min="1">
+                    <input type="number" name="voucherPrice" id="voucherPrice" min="1" max="1000">
                 </div>
                 <div class="formAddingOfVoucher-buttons">
                     <button class="btn">Submit</button>
@@ -618,16 +743,14 @@
             <div class="voucherList">
                 <h2>Current Redeemable Vouchers</h2>
                 @foreach($voucherList as $voucher)
-                <div class="voucherCard">
-                    <form class="voucherListForm"action="">
+                <div class="voucherCard" id="voucher-card-{{$voucher->id}}">
                     <div class="voucherInfo">
                         <h3>P {{$voucher->amount}}</h3>
                         <p class="voucherCost">Cost: {{$voucher->price}} Credits</p>
                     </div>
                     <div class="voucherDelete">
-                        <button class="btn">Delete</button>
+                        <button class="btn deleteVoucherBtn" data-id="{{$voucher->id}}">Delete</button>
                     </div>
-                    </form>
                 </div>
                 @endforeach
             </div>
@@ -635,14 +758,18 @@
 
         <!-- User Role Management -->
         <section class="user-role-management">
-            <h2>User Role Management</h2>
+            <h2>User Management</h2>
+            @if (session('user_success'))
+                <div class="alert alert-success">{{ session('user_success') }}</div>
+            @endif
             <table>
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Current Role</th>
-                        <th>Action</th>
+                        <th>Role Action</th>
+                        <th>Edit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -663,10 +790,78 @@
                                     <span>Already Organization</span>
                                 @endif
                             </td>
+                            <td>
+                                <button class="btn btn-edit" onclick="openUserModal({{ $user->id }})">Edit</button>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            @foreach ($users as $user)
+                <div id="user-modal-{{ $user->id }}" class="modal" style="display:none;">
+                    <div class="modal-content user-modal-content">
+                        <span class="close" onclick="closeUserModal({{ $user->id }})">&times;</span>
+                        <h3>Edit User</h3>
+                        <form action="{{ route('admin.users.updateDetails', $user->id) }}" method="POST">
+                            @csrf
+                            <div style="margin-bottom:.75rem;">
+                                <label for="name-{{ $user->id }}">Name</label>
+                                <input id="name-{{ $user->id }}" type="text" name="name" value="{{ $user->name }}" required>
+                                <label for="middle_name">Middle Name</label>
+                                <input id="middle_name-{{ $user->id }}" type="text" name="middle_name" value="{{ $user->middle_name }}">
+                                <label for="last_name">Last Name</label>
+                                <input id="last_name-{{ $user->id }}" type="text" name="last_name" value="{{ $user->last_name }}" required>
+                            </div>
+                            <div style="margin-bottom:.75rem;">
+                                <label for="gender-{{ $user->id }}">Sex</label>
+                                <select id="gender-{{ $user->id }}" name="gender">
+                                    <option value="" {{ empty($user->gender) ? 'selected' : '' }}>--</option>
+                                    <option value="male" {{ (isset($user->gender) && strcasecmp($user->gender, 'male')===0) ? 'selected' : '' }}>Male</option>
+                                    <option value="female" {{ (isset($user->gender) && strcasecmp($user->gender, 'female')===0) ? 'selected' : '' }}>Female</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom:.75rem;">
+                                <label for="password-{{ $user->id }}">New Password (optional)</label>
+                                <div class="change-password-input-wrapper">
+                                    <input id="password-{{ $user->id }}" type="password" name="password" placeholder="Leave blank to keep current">
+                                    <span class="toggle-password-visibility" data-target="password-{{ $user->id }}">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                          <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="password-requirements" id="password-req-{{ $user->id }}" style="display:none; margin-top:.5rem;">
+                                  <small>Password must contain:</small>
+                                  <ul>
+                                    <li id="req-length-{{ $user->id }}">At least 8 characters</li>
+                                    <li id="req-letters-{{ $user->id }}">At least one letter</li>
+                                    <li id="req-mixed-{{ $user->id }}">Both uppercase and lowercase letters</li>
+                                    <li id="req-numbers-{{ $user->id }}">At least one number</li>
+                                  </ul>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:1rem;">
+                                <label for="password_confirmation-{{ $user->id }}">Confirm Password</label>
+                                <div class="change-password-input-wrapper">
+                                    <input id="password_confirmation-{{ $user->id }}" type="password" name="password_confirmation" placeholder="Confirm new password">
+                                    <span class="toggle-password-visibility" data-target="password_confirmation-{{ $user->id }}">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                          <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <small id="password-match-{{ $user->id }}" style="display:none;"></small>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn" id="save-user-{{ $user->id }}">Save Changes</button>
+                                <button type="button" class="btn btn-cancel" onclick="closeUserModal({{ $user->id }})">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
         </section>
 
         <!-- Reports -->
@@ -892,10 +1087,10 @@
             },
             success: function () {
                 $('#report-row-' + reportId).remove();
-                alert('Report removed.');
+                showModal('Report removed.', "info");
             },
             error: function () {
-                alert('Something went wrong while removing the report.');
+                showModal('Something went wrong while removing the report.', "info");
             }
         });
     }
@@ -912,10 +1107,10 @@
             },
             success: function () {
                 $('#report-row-' + reportId).remove();
-                alert('Product deleted.');
+                showModal('Product deleted.', "info");
             },
             error: function () {
-                alert('Something went wrong while deleting the product.');
+                showModal('Something went wrong while deleting the product.', "info");
             }
         });
     }
@@ -1085,6 +1280,29 @@ function closeImageViewer() {
         if(e.target.value < 1){
             voucherPrice.value=1;
         }
+    });
+
+    // voucher delete handler
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.deleteVoucherBtn');
+        if(!btn) return;
+        e.preventDefault();
+        var id = btn.getAttribute('data-id');
+        if(!id) return;
+        if(!confirm('Delete this voucher?')) return;
+        fetch(`/admin/voucher/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            }
+        }).then(res => res.json())
+        .then(data => {
+            if(data.success){
+                var card = document.getElementById(`voucher-card-${id}`);
+                if(card) card.remove();
+            }
+        }).catch(err => console.error(err));
     });
 
 

@@ -1,6 +1,8 @@
 @foreach($reviews as $review)
 <div class="review-card" id="review-card">
-  <img src="{{ asset($review->first_image) }}" alt="Product image" class="review-img" />
+  <img src="{{ asset($review->first_image ? 'images/' . $review->first_image : 'img/default-product.png') }}" 
+     alt="Product image" 
+     class="review-img" />
   
   <div class="review-content">
     <div class="review-header">

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\CheapGlobalSmsService;
 use App\Models\FaqQuestion;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Tag;
 use App\Models\Notification;
 use App\Events\NewNotification;
@@ -223,6 +224,12 @@ public function addVoucherList(Request $request){
     return redirect()->back()->with('voucher_success', 'New Voucher uploaded successfully!');
 }
 
+public function deleteVoucher($id)
+{
+    DB::table('voucherList')->where('id', $id)->delete();
+    return response()->json(['success' => true, 'message' => 'Voucher deleted successfully.']);
+}
+
 public function editCreditPercentage(Request $request){
     $request->validate([
         'percentage' => 'required|min:1'
@@ -265,6 +272,74 @@ public function addCollege(Request $request){
     }
 
 }
+
+    public function updateUserName(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|min:2|max:255',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->name = $validated['name'];
+        $user->save();
+
+        return redirect()->back()->with('success', 'User name updated successfully.');
+    }
+
+    public function updateUserGender(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'gender' => 'nullable|string|in:male,female,other',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->gender = $validated['gender'] ?? null;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User gender updated successfully.');
+    }
+
+    public function updateUserPassword(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->password = Hash::make($validated['password']);
+        if (isset($user->password_changed)) {
+            $user->password_changed = true;
+        }
+        $user->save();
+
+        return redirect()->back()->with('success', 'User password updated successfully.');
+    }
+
+    public function updateUserDetails(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|min:2|max:255',
+            'middle_name' => 'nullable|string|min:2|max:255',
+            'last_name' => 'required|string|min:2|max:255',
+            'gender' => 'nullable|string|in:male,female,other',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->name = $validated['name'];
+        $user->middle_name = $validated['middle_name'];
+        $user->last_name = $validated['last_name'];
+        $user->gender = $validated['gender'] ?? null;
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+            if (isset($user->password_changed)) {
+                $user->password_changed = true;
+            }
+        }
+        $user->save();
+
+        return redirect()->back()->with('user_success', 'User details updated successfully.');
+    }
 public function updateCollege(Request $request, $id)
 {
     try {

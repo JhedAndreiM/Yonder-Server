@@ -18,13 +18,20 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/homepage.css')
     @vite('resources/js/homepage.js')
+    @vite('resources/js/app.js')
+    <script>
+        window.userId = {{ Auth::id() }};
+    </script>
     @include('partials.common-scripts')
 @endsection
 @section('content')
     <div class="floating">
       <a class="listing_link"href="{{ route('create.listing') }}"><img src="{{ asset('img/add(2).svg') }}" alt="" /></a>
-      <a href="{{ route('Yonder/Chat') }}"><img src="{{ asset('img/message.png') }}" alt="" /></a>
+      <a href="#" id="chatWidgetToggle"><img src="{{ asset('img/message.png') }}" alt="" /></a>
     </div>
+
+    <!-- Include Recent Chats Panel -->
+    @include('partials.chat-recent')
 
     <div class="container">
       <div class="filter">
@@ -280,6 +287,7 @@
             window.location.href = li.dataset.url;
         });
     });
+
 
     </script>
 @endsection
