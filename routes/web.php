@@ -23,6 +23,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TagController;
 use App\Events\NewNotification;
 use App\Models\Notification;
 
@@ -104,7 +105,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/faq', [FaqController::class, 'store'])->name('faq.store');
     Route::delete('/admin/faq/{faqQuestion}', [FaqController::class, 'destroy'])->name('faq.destroy');
     Route::put('/admin/faq/{faqQuestion}', [FaqController::class, 'update'])->name('faq.update');
-
+    Route::post('/tags', [TagController::class, 'store'])->name('admin.tags.store');
+    Route::post('/tags/{tag}', [TagController::class, 'update'])->name('admin.tags.update');
+    Route::delete('/tags/{tag}', [TagController::class, 'destroy'])->name('admin.tags.destroy');
 
 });
 

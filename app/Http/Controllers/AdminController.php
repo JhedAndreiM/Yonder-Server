@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Tag;
 use App\Models\Notification;
 use App\Events\NewNotification;
+use App\Models\UserReport;
 
 class AdminController extends Controller
 {
@@ -61,7 +62,9 @@ class AdminController extends Controller
         $categoryList = DB::table('faq_categories')->get();
         $questions = FaqQuestion::with('category')->get();
         $creditPercentage = DB::table('credit_settings')->first();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList', 'categoryList', 'questions'));
+        $userReports = UserReport::with(['reportedUser', 'reporter'])->get();
+        $tagss = Tag::orderBy('created_at', 'desc')->get();
+        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList', 'categoryList', 'questions', 'userReports', 'tagss'));
     }
 
     public function productPolicy(Request $request){

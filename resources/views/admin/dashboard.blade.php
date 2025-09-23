@@ -114,7 +114,6 @@
                             {{-- Delete Button --}}
                             <form action="{{ route('admin.featured.delete', $image->id) }}" 
                                 method="POST" 
-                                onsubmit="return confirm('Delete this image?')" 
                                 class="delete-form">
                                 @csrf
                                 @method('DELETE')
@@ -127,7 +126,7 @@
         </section>
 
         <style>
-            .btn-edit{padding:.4rem .75rem;border:none;border-radius:.5rem;background:#4f46e5;color:#fff;cursor:pointer}
+            .btn-edit{padding:.4rem .75rem;border:none;border-radius:.5rem;background:#4f46e5!important;color:#fff;cursor:pointer}
             .btn-edit:hover{background:#4338ca}
             .btn-cancel{padding:.4rem .75rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#f3f4f6;color:#111827;cursor:pointer}
             .btn-cancel:hover{background:#e5e7eb}
@@ -484,11 +483,11 @@
                 @csrf
                 <div>
                     <label for="code">College Code</label>
-                    <input type="text" id="code" name="code" placeholder="Ex. CCST" required>
+                    <input type="text" id="college_code" name="code" placeholder="Ex. CCST" required>
                 </div>
                 <div>
                     <label for="name">College Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter college name" required>
+                    <input type="text" id="college_name" name="name" placeholder="Enter college name" required>
                 </div>
                 <button type="submit">Add College</button>
             </form>
@@ -519,7 +518,7 @@
                             <form class="deleteForm" data-id="{{ $college->id }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                               <button type="submit" class="deleteBtn" onclick="return confirm('Are you sure?')">Delete</button>
+                               <button type="submit" class="deleteBtnCollege">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -569,11 +568,11 @@
                 @csrf
                 <div>
                     <label for="code">Student Organization Code</label>
-                    <input type="text" class="code" id="code" name="code" placeholder="Short Name" required>
+                    <input type="text" id="studOrg_code" name="code" placeholder="Short Name" required>
                 </div>
                 <div>
                     <label for="name">Student Organization Name</label>
-                    <input type="text" class="name" id="name" name="name" placeholder="Enter Student Organization Name" required>
+                   <input type="text" id="studOrg_name" name="name" placeholder="Enter Student Organization Name" required>
                 </div>
                 <button type="submit">Add Student Org</button>
             </form>
@@ -604,7 +603,7 @@
                             <form class="delFormStudOrg" data-id="{{ $studOrg->id }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="deleteBtnStudOrg" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="deleteBtnStudOrg">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -656,7 +655,11 @@
                                 <a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">Details</a>
                             </td>
                             <td>
-                                <button class="approveBtn"type="button" onclick="approveProduct({{ $product->product_id }})">Approve</button>
+                                <button class="approveBtn" 
+                                        type="button" 
+                                        onclick="confirmApproveProduct({{ $product->product_id }})">
+                                    Approve
+                                </button>
                                 <button class="rejectBtn"type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
                             </td>
                         </tr>
@@ -701,7 +704,6 @@
                 </tbody>
             </table>
         </section>
-
         <!-- Voucher Management -->
         <section class="addingOfVoucher">
             @if (session('credit_success'))
@@ -762,10 +764,12 @@
             @if (session('user_success'))
                 <div class="alert alert-success">{{ session('user_success') }}</div>
             @endif
+            <input type="text" id="userSearch" placeholder="Search User">
             <table>
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Last Name</th>
                         <th>Email</th>
                         <th>Current Role</th>
                         <th>Role Action</th>
@@ -776,6 +780,7 @@
                     @foreach ($users as $user)
                         <tr id="user-row-{{ $user->id }}">
                             <td>{{ $user->name }}</td>
+                            <td>{{ $user->last_name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role }}</td>
                             <td>
@@ -862,6 +867,125 @@
                     </div>
                 </div>
             @endforeach
+        </section>
+<section class="tags-section">
+    <h2>Tag Management</h2>
+
+    @if (session('tag_success'))
+        <div class="alert alert-success">{{ session('tag_success') }}</div>
+    @endif
+    @if ($errors->has('name'))
+        <div class="alert alert-danger">{{ $errors->first('name') }}</div>
+    @endif
+    
+    
+    <!-- Create Tag -->
+    <form id="tagForm" action="{{ route('admin.tags.store') }}" method="POST" style="margin-bottom:1rem;">
+        @csrf
+        <label for="tagName" style="display:block; font-weight:600;">New Tag</label>
+        <input id="tagName" type="text" name="name" placeholder="e.g. electronics" required>
+        <button type="submit">Add Tag</button>
+    </form>
+
+    <div id="ajaxMessagesTags"></div>
+
+    <!-- Tag List -->
+    <div class="tag-filters" style="display:flex; gap:.5rem; align-items:center; margin:.5rem 0 1rem;">
+    <input id="tagSearch" type="text" placeholder="Search tag name…" />
+    <select id="tagCreatedByFilter">
+        <option value="">All creators</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+    </select>
+    <button type="button" id="tagFilterReset">Reset</button>
+    </div>
+    <table class="collegeTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Usage</th>
+                <th>Created By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tagTableBody">
+        @foreach($tagss as $tag)
+        <tr id="tagRow{{ $tag->id }}" 
+            data-created-by="{{ $tag->is_admin ? 'admin' : 'user' }}">
+            <td class="tagName">{{ $tag->name }}</td>
+            <td>{{ $tag->usage_count }}</td>
+            <td>{{ $tag->is_admin ? 'Admin' : 'User' }}</td>
+            <td>
+            <button type="button" class="btn-edit editBtnTag" data-id="{{ $tag->id }}" data-name="{{ $tag->name }}">Edit</button>
+            <button type="button" class="rejectBtn deleteBtnTag" data-id="{{ $tag->id }}">Delete</button>
+            </td>
+        </tr>
+        @endforeach
+
+        <!-- No results row (hidden by default, shown via JS) -->
+        <tr id="tagNoResultsRow" style="display:none;">
+        <td colspan="4" style="text-align:center; color:#6b7280;">No matching tags</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Edit Tag Modal (mirrors your existing modal style) -->
+    <div id="editTagModal" class="collegeModal">
+        <div class="modal-wrapper">
+            <h3>Edit Tag</h3>
+            <div id="modalErrorTag" class="alert alert-danger" style="display:none;"></div>
+            <form id="editTagForm">
+                @csrf
+                <input type="hidden" id="editTagId">
+                <label for="editTagName">Name</label>
+                <input type="text" id="editTagName" required>
+                <button type="submit">Save Changes</button>
+                <button type="button" id="closeModalTag">Cancel</button>
+            </form>
+        </div>
+    </div>
+</section>
+        <!-- REPORTED USER -->
+        <section class="report-user">
+            <h2>Reported Users</h2>
+            <div id="ajaxMessagesReportedUser"></div>
+
+            <table class="collegeTable">
+                <thead>
+                    <tr>
+                        <th>Reported User</th>
+                        <th>Reporter</th>
+                        <th>Reason</th>
+                        <th>Details</th>
+                        <th>Evidence</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($userReports as $report)
+                        <tr id="user-report-row-{{ $report->id }}">
+                            <td>{{ $report->reportedUser->name ?? 'Unknown' }}</td>
+                            <td>{{ $report->reporter->name ?? 'Unknown' }}</td>
+                            <td>{{ $report->reason }}</td>
+                            <td>{{ $report->details }}</td>
+                            <td>
+                                @if($report->evidence)
+                                    <img src="{{ asset($report->evidence) }}"
+                                        alt="Evidence"
+                                        style="max-height:60px; border:1px solid #ccc; border-radius:5px; cursor:pointer;"
+                                        onclick="openImageViewer('{{ asset($report->evidence) }}')">
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn-edit approveUserReportBtn" data-id="{{ $report->id }}">Allow</button>
+                                <button class="btn deleteUserReportBtn" data-id="{{ $report->id }}">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </section>
 
         <!-- Reports -->
@@ -958,6 +1082,30 @@
          style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
 </div>
     <script>
+        function confirmAction(message, onConfirm, title = "Confirm Action") {
+            const overlay = document.getElementById("confirm-action-overlay");
+            const msg = document.getElementById("confirm-action-message");
+            const titleEl = document.getElementById("confirm-action-title");
+            const yesBtn = document.getElementById("confirm-action-yes");
+            const noBtn = document.getElementById("confirm-action-no");
+
+            titleEl.textContent = title;
+            msg.textContent = message;
+            overlay.style.display = "flex";
+
+            // Reset previous click listeners
+            const newYesBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+
+            newYesBtn.addEventListener("click", () => {
+                overlay.style.display = "none";
+                if (typeof onConfirm === "function") onConfirm();
+            });
+
+            noBtn.onclick = () => {
+                overlay.style.display = "none";
+            };
+        }
         // Function to save scroll position
         function saveScrollPosition() {
             sessionStorage.setItem('scrollPosition', window.scrollY);
@@ -1021,7 +1169,15 @@
             })
             .catch(err => console.error("Error:", err));
         }
-
+        function confirmApproveProduct(productId, tagsArray = []) {
+            confirmAction(
+                "Are you sure you want to approve this product?",
+                () => {
+                    approveProduct(productId, tagsArray);
+                },
+                "Approve Product"
+            );
+        }
         function showRejectModal(productId) {
             console.log('wtf');
             document.getElementById('rejectModal').style.display = 'flex';
@@ -1289,7 +1445,9 @@ function closeImageViewer() {
         e.preventDefault();
         var id = btn.getAttribute('data-id');
         if(!id) return;
-        if(!confirm('Delete this voucher?')) return;
+        confirmAction("Delete this voucher?", () => {
+    
+
         fetch(`/admin/voucher/${id}`, {
             method: 'DELETE',
             headers: {
@@ -1303,6 +1461,7 @@ function closeImageViewer() {
                 if(card) card.remove();
             }
         }).catch(err => console.error(err));
+        }, "Delete Voucher");
     });
 
 
@@ -1397,41 +1556,34 @@ document.querySelectorAll('.deleteForm').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        if (!confirm('Are you sure?')) return; // confirm before delete
+        confirmAction("Are you sure you want to delete this college?", () => {
+            const id = this.getAttribute('data-id');
+            const token = this.querySelector('input[name="_token"]').value;
 
-        const id = this.getAttribute('data-id');
-        const token = this.querySelector('input[name="_token"]').value;
-
-        fetch(`/admin/delete-college/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            const messageBox = document.getElementById('ajaxMessages');
-            if (data.status === 'success') {
-                messageBox.innerHTML = `
-                    <div class="alert alert-success">
-                        College deleted successfully!
-                    </div>
-                `;
-                // remove the row from the DOM
-                this.closest('tr').remove();
-            } else {
-                messageBox.innerHTML = `
-                    <div class="alert alert-danger">
-                        ${data.message || 'Error deleting college!'}
-                    </div>
-                `;
-            }
-        })
-        .catch(err => console.error(err));
+            fetch(`/admin/delete-college/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const messageBox = document.getElementById('ajaxMessages');
+                if (data.status === 'success') {
+                    messageBox.innerHTML = `<div class="alert alert-success">College deleted successfully!</div>`;
+                    this.closest('tr').remove();
+                } else {
+                    messageBox.innerHTML = `<div class="alert alert-danger">${data.message || 'Error deleting college!'}</div>`;
+                }
+            })
+            .catch(err => console.error(err));
+        }, "Delete College");
     });
 });
+
+
 });
 
 
@@ -1536,7 +1688,9 @@ document.querySelectorAll('.delFormStudOrg').forEach(form => {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        if (!confirm('Are you sure?')) return; // confirm before delete
+        confirmAction("Delete this Student Org?", () => {
+    // fetch delete code here
+ // confirm before delete
 
         const id = this.getAttribute('data-id');
         const token = this.querySelector('input[name="_token"]').value;
@@ -1569,6 +1723,7 @@ document.querySelectorAll('.delFormStudOrg').forEach(form => {
             }
         })
         .catch(err => console.error(err));
+        }, "Delete Student Org");
     });
 });
 
@@ -1665,32 +1820,31 @@ $(document).ready(function() {
     $('.deleteBtn').on('click', function(e) {
         e.preventDefault(); // Prevent the default form submission
         const categoryId = $(this).data('id');
-        if (confirm('Are you sure you want to delete this category?')) {
-            $.ajax({
-                url: '/faq-categories-delete/' + categoryId, // Adjust the URL as needed
-                type: 'DELETE', // Use DELETE method
-                data: {
-                    _token: $('input[name="_token"]').val()
-                },
-                success: function(response) {
-                    // Remove the category row from the table
-                    $('#collegeRow' + categoryId).remove();
-                    $('#ajaxMessagesCategoryList').html(`
-                    <div class="alert alert-success">
-                        ${response.message ?? 'Category deleted successfully!'}
-                    </div>
-                `);
-                },
-                error: function(xhr) {
-                    // Handle errors
-                    $('#ajaxMessagesCategoryList').html(`
-                    <div class="alert alert-danger">
-                        ${xhr.responseJSON.message ?? 'An error occurred while deleting the category.'}
-                    </div>
-                `);
-                }
-            });
+confirmAction("Are you sure you want to delete this category?", () => {
+    $.ajax({
+        url: '/faq-categories-delete/' + categoryId,
+        type: 'DELETE',
+        data: {
+            _token: $('input[name="_token"]').val()
+        },
+        success: function(response) {
+            $('#collegeRow' + categoryId).remove();
+            $('#ajaxMessagesCategoryList').html(`
+                <div class="alert alert-success">
+                    ${response.message ?? 'Category deleted successfully!'}
+                </div>
+            `);
+        },
+        error: function(xhr) {
+            $('#ajaxMessagesCategoryList').html(`
+                <div class="alert alert-danger">
+                    ${xhr.responseJSON.message ?? 'An error occurred while deleting the category.'}
+                </div>
+            `);
         }
+    });
+}, "Delete Category");
+
     });
 });
 
@@ -1727,19 +1881,275 @@ $(document).ready(function() {
             
             const faqId = btn.getAttribute('data-faq-id');
             
-            if (confirm('Are you sure you want to delete this FAQ?')) {
-                saveScrollPosition();
-                const form = document.querySelector('.faq-delete-form-' + faqId);
-                if (form) {
-                    // Submit directly without triggering other event listeners
-                    form.submit();
-                }
-            }
+            confirmAction("Are you sure you want to delete this FAQ?", () => {
+    saveScrollPosition();
+    const form = document.querySelector('.faq-delete-form-' + faqId);
+    if (form) {
+        // Submit directly without triggering other event listeners
+        form.submit();
+    }
+}, "Delete FAQ");
         });
     });
 
 });
     </script>
+<!-- Unique Confirmation Modal -->
+<div id="confirm-action-overlay" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(17,24,39,0.75); align-items:center; justify-content:center; 
+            z-index:10000; font-family:'Inter', sans-serif;">
+  <div style="background:#fff; padding:1.75rem; border-radius:.75rem; 
+              max-width:380px; width:90%; text-align:center; 
+              box-shadow:0 15px 35px rgba(0,0,0,0.2); animation:fadeInScale .2s ease;">
+    <h2 id="confirm-action-title" style="margin:0 0 1rem; font-size:1.25rem; font-weight:700; color:#111827;">
+      Confirm Action
+    </h2>
+    <p id="confirm-action-message" style="color:#374151; font-size:.95rem; margin-bottom:1.5rem;">
+      Are you sure you want to proceed?
+    </p>
+    <div style="display:flex; gap:.75rem; justify-content:center;">
+      <button id="confirm-action-yes" 
+              style="padding:.5rem 1.25rem; border:none; border-radius:.5rem; 
+                     background:#dc2626; color:#fff; font-weight:600; cursor:pointer;">
+        Yes, Proceed
+      </button>
+      <button id="confirm-action-no" 
+              style="padding:.5rem 1.25rem; border:1px solid #d1d5db; border-radius:.5rem; 
+                     background:#f9fafb; color:#111827; font-weight:600; cursor:pointer;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<style>
+@keyframes fadeInScale {
+  from { opacity:0; transform:scale(.9); }
+  to   { opacity:1; transform:scale(1); }
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".delete-form").forEach(form => {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault(); // stop normal submit
+
+            confirmAction("Are you sure you want to delete this image?", () => {
+                form.submit(); // proceed if confirmed
+            }, "Delete Image");
+        });
+    });
+});
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("userSearch");
+    const rows = document.querySelectorAll("table tbody tr");
+
+    searchInput.addEventListener("keyup", function () {
+        const query = this.value.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const firstName = row.querySelector("td:nth-child(1)")?.textContent.toLowerCase() || "";
+            const lastName = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
+            const fullName = (firstName + " " + lastName).trim();
+            const email = row.querySelector("td:nth-child(3)")?.textContent.toLowerCase() || "";
+            const role = row.querySelector("td:nth-child(4)")?.textContent.toLowerCase() || "";
+
+            if (
+                firstName.includes(query) ||
+                lastName.includes(query) ||
+                fullName.includes(query) || 
+                email.includes(query) ||
+                role.includes(query)
+            ) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+});
+function openImageViewer(src) {
+    document.getElementById('imageViewerImg').src = src;
+    document.getElementById('imageViewerModal').style.display = 'flex';
+}
+function closeImageViewer() {
+    document.getElementById('imageViewerModal').style.display = 'none';
+    document.getElementById('imageViewerImg').src = '';
+}
+
+// for tags
+document.addEventListener('DOMContentLoaded', () => {
+    const editButtonsTag = document.querySelectorAll('.editBtnTag');
+    const modalTag = document.getElementById('editTagModal');
+    const closeModalTag = document.getElementById('closeModalTag');
+    const editFormTag = document.getElementById('editTagForm');
+    const modalErrorTag = document.getElementById('modalErrorTag');
+    const ajaxMsgTags = document.getElementById('ajaxMessagesTags');
+
+    // Open edit modal
+    editButtonsTag.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            document.getElementById('editTagId').value = id;
+            document.getElementById('editTagName').value = name;
+            modalErrorTag.style.display = 'none';
+            modalTag.style.display = 'flex';
+        });
+    });
+
+    // Close edit modal
+    if (closeModalTag) {
+        closeModalTag.addEventListener('click', () => {
+            modalTag.style.display = 'none';
+            modalErrorTag.style.display = 'none';
+        });
+    }
+
+    // Save edit (AJAX)
+    editFormTag.addEventListener('submit', function(e){
+        e.preventDefault();
+        const id = document.getElementById('editTagId').value;
+        const name = document.getElementById('editTagName').value.trim();
+        const token = document.querySelector('input[name="_token"]').value;
+
+        fetch(`/tags/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json',
+                'X-CSRF-TOKEN': token,
+                'Accept':'application/json'
+            },
+            body: JSON.stringify({ name })
+        })
+        .then(res => {
+            if(!res.ok) throw res;
+            return res.json();
+        })
+        .then(data => {
+            const row = document.getElementById(`tagRow${id}`);
+            row.querySelector('.tagName').textContent = data.data.name;
+
+            // also update the data-name on the edit button for future edits
+            const editBtn = row.querySelector('.editBtnTag');
+            if (editBtn) editBtn.dataset.name = data.data.name;
+
+            if (ajaxMsgTags) {
+                ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                setTimeout(() => ajaxMsgTags.innerHTML = '', 5000);
+            }
+            modalTag.style.display = 'none';
+        })
+        .catch(async err => {
+            if (err.status === 422) {
+                const errorData = await err.json();
+                modalErrorTag.textContent = Object.values(errorData.errors).flat().join(' ');
+                modalErrorTag.style.display = 'block';
+            } else {
+                modalErrorTag.textContent = 'An error occurred while updating the tag.';
+                modalErrorTag.style.display = 'block';
+            }
+        });
+    });
+
+    // Delete tag (AJAX + confirmAction)
+    document.querySelectorAll('.deleteBtnTag').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const id = this.dataset.id;
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+
+            confirmAction("Delete this tag?", () => {
+                fetch(`/tags/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(async res => {
+                    const data = await res.json();
+                    if (res.ok && data.status === 'success') {
+                        const row = document.getElementById(`tagRow${id}`);
+                        if (row) row.remove();
+                        if (ajaxMsgTags) {
+                            ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                            setTimeout(() => ajaxMsgTags.innerHTML = '', 5000);
+                        }
+                    } else {
+                        if (ajaxMsgTags) {
+                            ajaxMsgTags.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to delete tag.'}</div>`;
+                            setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
+                        }
+                    }
+                })
+                .catch(() => {
+                    if (ajaxMsgTags) {
+                        ajaxMsgTags.innerHTML = `<div class="alert alert-danger">Something went wrong while deleting the tag.</div>`;
+                        setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
+                    }
+                });
+            }, "Delete Tag");
+        });
+    });
+});
+// tag filter
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('tagSearch');
+  const createdBySelect = document.getElementById('tagCreatedByFilter');
+  const resetBtn = document.getElementById('tagFilterReset');
+  const tbody = document.getElementById('tagTableBody');
+  const noResultsRow = document.getElementById('tagNoResultsRow');
+
+  if (!searchInput || !createdBySelect || !tbody) return;
+
+  const rows = Array.from(tbody.querySelectorAll('tr[id^="tagRow"]'));
+
+  const debounce = (fn, ms=150) => {
+    let t; 
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(null,args), ms); };
+  };
+
+  const applyFilters = () => {
+    const q = (searchInput.value || '').toLowerCase().trim();
+    const createdBy = (createdBySelect.value || '').toLowerCase().trim(); // '', 'admin', 'user'
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const nameCell = row.querySelector('.tagName');
+      const name = (nameCell?.textContent || '').toLowerCase();
+
+      const rowCreator = (row.getAttribute('data-created-by') || '').toLowerCase();
+
+      const matchesName = q === '' || name.includes(q);
+      const matchesCreator = createdBy === '' || rowCreator === createdBy;
+
+      const show = matchesName && matchesCreator;
+      row.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
+    });
+
+    if (noResultsRow) {
+      noResultsRow.style.display = visibleCount === 0 ? '' : 'none';
+    }
+  };
+
+  const applyFiltersDebounced = debounce(applyFilters, 150);
+
+  searchInput.addEventListener('input', applyFiltersDebounced);
+  createdBySelect.addEventListener('change', applyFilters);
+  resetBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    createdBySelect.value = '';
+    applyFilters();
+  });
+
+  // initial pass
+  applyFilters();
+});
+</script>
 </body>
 </html>
 
