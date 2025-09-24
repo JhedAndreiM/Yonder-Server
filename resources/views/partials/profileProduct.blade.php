@@ -56,6 +56,9 @@
                   @if($cartItems->selected_variant)
                   <p class="variants">Variant: {{$cartItems->selected_variant}}</p>
                   @endif
+                    @if($cartItems->voucher_applied != 0)
+                        <p class="voucher">Voucher Applied: P {{$cartItems->voucher_applied}}</p>
+                    @endif
                   <p>
                     @if($cartItems->quantity <= 1)
                     {{$cartItems->quantity}} item
@@ -63,10 +66,6 @@
                     {{$cartItems->quantity}} items
                     @endif
                   </p>
-                    @if($cartItems->voucher_applied==0)
-                    @else
-                        <p class="voucher">Voucher Applied: P {{$cartItems->voucher_applied}}</p>
-                    @endif
                 </div>
               </div>
               <div class="rightPart">

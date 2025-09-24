@@ -141,27 +141,87 @@
             <th>Action</th>
         </tr>
     </thead>
+
     <tbody>
-        @foreach($lowStockProducts as $product)
-            <tr @if($product->stock <= $product->critical_level) class="critical" @endif>
+    @foreach($lowStockProducts as $product)
+        @php
+            // prefer DB variants (product_variants)
+            $hasDbVariants = $product->relationLoaded('variantsData') && $product->variantsData->count() > 0;
+        @endphp
+
+        @if ($hasDbVariants)
+            {{-- Use product_variants rows --}}
+            @foreach ($product->variantsData as $variant)
+                @php
+                    $isCritical = (int) $variant->stock <= (int) $variant->critical_level;
+                @endphp
+                <tr @class(['critical' => $isCritical])>
+                    <td>{{ $product->name }} — {{ $variant->variant_name }}: {{ $variant->variant_option }}</td>
+                    <td>{{ $variant->stock }}</td>
+
+                    <form action="{{ route('update.stock') }}" method="POST">
+                        @csrf
+                        <td>
+                            <input name="lead_time" type="number" min="0" value="{{ $variant->lead_time }}" class="lead-time">
+                        </td>
+                        <td>
+                            <input name="safety_stock" type="number" min="0" value="{{ $variant->safety_stock }}" class="safety-stock">
+                        </td>
+                        <td>
+                            <input
+                                name="critical_level"
+                                type="number"
+                                min="0"
+                                value="{{ $variant->critical_level }}"
+                                class="critical-level"
+                                @if($variant->critical_mode !== 'manual') disabled @endif
+                            >
+                        </td>
+                        <td>
+                            <select name="critical_mode" class="critical-mode" onchange="toggleCriticalInput(this)">
+                                <option value="automatic" @selected($variant->critical_mode === 'automatic')>Automatic</option>
+                                <option value="manual" @selected($variant->critical_mode === 'manual')>Manual</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="hidden" name="variant_id" value="{{ $variant->id }}">
+                            <button type="submit">Save</button>
+                        </td>
+                    </form>
+                </tr>
+            @endforeach
+
+        @else
+            {{-- Fallback: product without DB variants --}}
+            @php
+                $isCritical = (int) $product->stock <= (int) $product->critical_level;
+            @endphp
+            <tr @class(['critical' => $isCritical])>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->stock }}</td>
+
                 <form action="{{ route('update.stock') }}" method="POST">
                     @csrf
                     <td>
-                        <input name="lead_time" type="number" value="{{ $product->lead_time }}" class="lead-time" min="0">
+                        <input name="lead_time" type="number" min="0" value="{{ $product->lead_time }}" class="lead-time">
                     </td>
                     <td>
-                        <input name="safety_stock" type="number" value="{{ $product->safety_stock }}" class="safety-stock" min="0">
+                        <input name="safety_stock" type="number" min="0" value="{{ $product->safety_stock }}" class="safety-stock">
                     </td>
                     <td>
-                        <input name="critical_level" type="number" value="{{ $product->critical_level }}" class="critical-level" 
-                               @if($product->critical_mode != 'manual') disabled @endif>
+                        <input
+                            name="critical_level"
+                            type="number"
+                            min="0"
+                            value="{{ $product->critical_level }}"
+                            class="critical-level"
+                            @if($product->critical_mode !== 'manual') disabled @endif
+                        >
                     </td>
                     <td>
                         <select name="critical_mode" class="critical-mode" onchange="toggleCriticalInput(this)">
-                            <option value="automatic" @if($product->critical_mode == 'automatic') selected @endif>Automatic</option>
-                            <option value="manual" @if($product->critical_mode == 'manual') selected @endif>Manual</option>
+                            <option value="automatic" @selected($product->critical_mode === 'automatic')>Automatic</option>
+                            <option value="manual" @selected($product->critical_mode === 'manual')>Manual</option>
                         </select>
                     </td>
                     <td>
@@ -170,7 +230,8 @@
                     </td>
                 </form>
             </tr>
-        @endforeach
+        @endif
+    @endforeach
     </tbody>
 </table>
   </div>

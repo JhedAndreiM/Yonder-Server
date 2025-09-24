@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnYes.onclick = () => {
             confirmModal.style.display = 'none';
             if (type === 'avatar') {
-                elements.currentAvatar.src = '{{ asset("users-avatar/avatar.png") }}';
+                elements.currentAvatar.src = '{{ asset("storage/users-avatar/avatar.png") }}';
                 elements.croppedAvatarInput.value = 'delete';
                 showChanges('avatar');
             } else {

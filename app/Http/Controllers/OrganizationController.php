@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -167,10 +168,10 @@ class OrganizationController extends Controller
         ->get();
         $mostWishlisted = $wishlistCounts->first();
 
-        $lowStockProducts = Product::where('user_id', Auth::id())
-            ->where('approved', 'yes')
-            ->orderBy('stock', 'asc')
-            ->get();
+        $lowStockProducts = Product::with('variantsData')
+        ->where('user_id', Auth::id())
+        ->where('approved', 'yes')
+        ->get();
         $lowStockFirst = $lowStockProducts->first();
 
         // Get top seller products
@@ -315,42 +316,97 @@ public function reviews(Request $request)
 }
 
 
-    public function updateStockSettings(Request $request)
-    {
-        $validated = $request->validate([
-            'product_id' => 'required|exists:product,product_id',
-            'lead_time' => 'required|integer|min:0|max:365',
-            'safety_stock' => 'required|integer|min:0|max:10000',
-            'critical_mode' => 'required|in:automatic,manual',
-            'critical_level' => 'required_if:critical_mode,manual|nullable|integer|min:0',
-        ]);
+public function updateStockSettings(Request $request)
+{
+    $rules = [
+        'lead_time'      => 'required|integer|min:0|max:365',
+        'safety_stock'   => 'required|integer|min:0|max:10000',
+        'critical_mode'  => 'required|in:automatic,manual',
+        'critical_level' => 'required_if:critical_mode,manual|nullable|integer|min:0',
+    ];
+
+    if ($request->filled('variant_id')) {
+        $rules['variant_id'] = 'required|exists:product_variants,id';
+    } else {
+        $rules['product_id'] = 'required|exists:product,product_id';
+    }
+
+    $validated = $request->validate($rules);
+
+    if ($request->filled('variant_id')) {
+        // Update a variant
+        $variant = ProductVariant::findOrFail($validated['variant_id']);
+        $variant->lead_time = $validated['lead_time'];
+        $variant->safety_stock = $validated['safety_stock'];
+        $variant->critical_mode = $validated['critical_mode'];
+
+        if ($validated['critical_mode'] === 'manual') {
+            $variant->critical_level = $validated['critical_level'];
+        } else {
+            $variant->critical_level = $this->calculateAutomaticCriticalLevel($variant);
+        }
+
+        $variant->save();
+
+    } else {
+        // Update a whole product (no variants)
         $product = Product::findOrFail($validated['product_id']);
         $product->lead_time = $validated['lead_time'];
         $product->safety_stock = $validated['safety_stock'];
         $product->critical_mode = $validated['critical_mode'];
+
         if ($validated['critical_mode'] === 'manual') {
             $product->critical_level = $validated['critical_level'];
         } else {
             $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
         }
-        $product->save();
-        return redirect()->back()->with('success', 'Stock settings updated successfully.');
-    }
-    private function calculateAutomaticCriticalLevel(Product $product): int
-    {
-        $daysSinceCreation = now()->diffInDays($product->created_at, false);
-        $daysSinceCreation = max(1, abs($daysSinceCreation)); 
 
-        $days = min(15, $daysSinceCreation); 
-        $startDate = now()->subDays($days);
-        $totalSold = DB::table('cart_items')
-            ->where('product_id', $product->product_id)
-            ->where('status', 'completed')
-            ->where('updated_at', '>=', $startDate)
-            ->sum('quantity');
-        $average_daily_usage = $days > 0 ? ($totalSold / $days) : 0;
-        return (int) round(($product->lead_time * $average_daily_usage) + $product->safety_stock);
+        $product->save();
     }
+
+    return redirect()->back()->with('success', 'Stock settings updated successfully.');
+}
+
+private function calculateAutomaticCriticalLevel(Product|ProductVariant $item): int
+{
+    // normalize values depending on whether it's a Product or a Variant
+    if ($item instanceof ProductVariant) {
+        $productId      = $item->product_id;
+        $leadTime       = $item->lead_time;
+        $safetyStock    = $item->safety_stock;
+        $createdAt      = $item->created_at;
+        $variantOption  = $item->variant_option; // e.g. "Medium"
+    } else {
+        $productId      = $item->product_id;
+        $leadTime       = $item->lead_time;
+        $safetyStock    = $item->safety_stock;
+        $createdAt      = $item->created_at;
+        $variantOption  = null;
+    }
+
+    // days since created
+    $daysSinceCreation = now()->diffInDays($createdAt, false);
+    $daysSinceCreation = max(1, abs($daysSinceCreation));
+
+    $days = min(15, $daysSinceCreation);
+    $startDate = now()->subDays($days);
+
+    // base query
+    $query = DB::table('cart_items')
+        ->where('product_id', $productId)
+        ->where('status', 'completed')
+        ->where('updated_at', '>=', $startDate);
+
+    // ✅ filter by selected_variant if it's a variant
+    if ($variantOption) {
+        $query->where('selected_variant', $variantOption);
+    }
+
+    $totalSold = $query->sum('quantity');
+    $averageDailyUsage = $days > 0 ? ($totalSold / $days) : 0;
+
+    return (int) round(($leadTime * $averageDailyUsage) + $safetyStock);
+}
 
     // delete product
     public function destroy($id)

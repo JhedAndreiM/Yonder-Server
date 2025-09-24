@@ -374,23 +374,112 @@ class CartController extends Controller
             ->with('successfull', 'GCash receipt Removed successfully.');
         }
 
-    public function cancel(Request $request, $id)
-    {
+public function cancel(Request $request, $id)
+{
+    DB::beginTransaction();
+
+    try {
+        $cartItem = DB::table('cart_items')->where('id', $id)->lockForUpdate()->first();
+        if (!$cartItem) {
+            DB::rollBack();
+            return back()->with('error', 'Cart item not found.');
+        }
+
+        $product = DB::table('product')->where('product_id', $cartItem->product_id)->lockForUpdate()->first();
+        if (!$product) {
+            DB::rollBack();
+            return back()->with('error', 'Product not found.');
+        }
+
+        $selectedOption = $cartItem->selected_variant;
+        $cancelQty      = $cartItem->quantity;
+        $hasVariants    = !empty($product->variants);
+
+        if ($cartItem->paymentConfirmation === 'yes') {
+            if ($hasVariants) {
+                // -------------------------------
+                // 1. Restore to JSON variants
+                // -------------------------------
+                $variantData = json_decode($product->variants, true);
+
+                if (
+                    isset($variantData['options'], $variantData['optionStocks']) &&
+                    is_array($variantData['options']) &&
+                    is_array($variantData['optionStocks'])
+                ) {
+                    $optionIndex = array_search($selectedOption, $variantData['options']);
+                    if ($optionIndex !== false) {
+                        $variantData['optionStocks'][$optionIndex] =
+                            (int) $variantData['optionStocks'][$optionIndex] + $cancelQty;
+
+                        // ✅ Also restore to product_variants table
+                        $variantRow = DB::table('product_variants')
+                            ->where('product_id', $product->product_id)
+                            ->where('variant_option', $selectedOption)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($variantRow) {
+                            $newStock = (int) $variantRow->stock + $cancelQty;
+                            DB::table('product_variants')
+                                ->where('id', $variantRow->id)
+                                ->update(['stock' => $newStock, 'updated_at' => now()]);
+                        }
+
+                        // Recalculate total stock from JSON
+                        $newTotalStock = array_sum(array_map('intval', $variantData['optionStocks']));
+
+                        DB::table('product')
+                            ->where('product_id', $product->product_id)
+                            ->update([
+                                'variants' => json_encode($variantData),
+                                'stock'    => $newTotalStock,
+                            ]);
+                    }
+                }
+            } else {
+                // -------------------------------
+                // No variants → restore to product.stock
+                // -------------------------------
+                $newStock = (int) $product->stock + $cancelQty;
+                DB::table('product')
+                    ->where('product_id', $product->product_id)
+                    ->update(['stock' => $newStock]);
+            }
+        }
+
+        // Restore voucher if applied
+        if (!empty($cartItem->voucher_applied) && $cartItem->voucher_applied > 0) {
+            DB::table('vouchers')
+                ->where('cart_item_id', $cartItem->id)
+                ->update([
+                    'status' => 'available',
+                    'updated_at' => now(),
+                ]);
+        }
+
+        // Mark item as cancelled
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
                 'status' => 'cancelled',
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
+
+        DB::commit();
+
         $filters = $request->input('filterValue');
-        //dd($filters);
         if ($request->ajax()) {
             return response()->json(['success' => true, 'id' => $id]);
         }
-        return redirect()->route('student.profile', ['filters' => $filters])
-            ->with('success', 'Item cancelled.');
-    }
 
+        return redirect()->route('student.profile', ['filters' => $filters])
+            ->with('success', 'Item cancelled successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'An error occurred while cancelling the order.');
+    }
+}
 
     public function cancelSales(Request $request, $id)
     {
@@ -473,24 +562,26 @@ public function confirmStudentSales(Request $request, $id)
             return back()->with('error', 'Buy order not found.');
         }
 
-        // Get the related product with a lock
+        // Lock the product row
         $product = DB::table('product')->where('product_id', $cartItem->product_id)->lockForUpdate()->first();
         if (!$product) {
             DB::rollBack();
             return back()->with('error', 'Product not found.');
         }
-        
+
         $selectedOption = $cartItem->selected_variant;
-        $requestedQty = $cartItem->quantity;
+        $requestedQty   = $cartItem->quantity;
 
         $hasVariants = !empty($product->variants);
-        $available = 0;
+
         if ($hasVariants) {
+            // -------------------------------
+            // 1. Handle JSON-based variants
+            // -------------------------------
             $variantData = json_decode($product->variants, true);
-            
+
             if (
-                !isset($variantData['options']) ||
-                !isset($variantData['optionStocks']) ||
+                !isset($variantData['options'], $variantData['optionStocks']) ||
                 !is_array($variantData['options']) ||
                 !is_array($variantData['optionStocks'])
             ) {
@@ -499,7 +590,6 @@ public function confirmStudentSales(Request $request, $id)
             }
 
             $optionIndex = array_search($selectedOption, $variantData['options']);
-            
             if ($optionIndex === false) {
                 DB::rollBack();
                 return back()->with('error', 'Selected variant not found.');
@@ -507,33 +597,53 @@ public function confirmStudentSales(Request $request, $id)
 
             $originalStock = (int) $variantData['optionStocks'][$optionIndex];
 
-            // Calculate reserved quantity (excluding current cart item)
+            // Exclude current cart item when calculating reserved qty
             $reservedQty = DB::table('cart_items')
                 ->where('product_id', $product->product_id)
                 ->where('selected_variant', $selectedOption)
                 ->whereIn('status', ['receive'])
                 ->where('id', '!=', $cartItem->id)
                 ->sum('quantity');
-            
-            $available = $originalStock - $reservedQty;
 
+            $available = $originalStock - $reservedQty;
             if ($available < $requestedQty) {
                 DB::rollBack();
                 return back()->with('error', "Not enough stock. Only $available left.");
             }
 
-            // SUBTRACT STOCK
+            // Subtract from JSON stock
             $variantData['optionStocks'][$optionIndex] = max(0, $originalStock - $requestedQty);
+
+            // ✅ Also subtract from product_variants table
+            $variantRow = DB::table('product_variants')
+                ->where('product_id', $product->product_id)
+                ->where('variant_option', $selectedOption)
+                ->lockForUpdate()
+                ->first();
+
+            if ($variantRow) {
+                $newStock = max(0, $variantRow->stock - $requestedQty);
+                DB::table('product_variants')
+                    ->where('id', $variantRow->id)
+                    ->update(['stock' => $newStock, 'updated_at' => now()]);
+            }
+
+            // Recalculate total stock from all JSON variant stocks
+            $newTotalStock = array_sum(array_map('intval', $variantData['optionStocks']));
 
             DB::table('product')
                 ->where('product_id', $product->product_id)
-                ->update(['variants' => json_encode($variantData)]);
-                
+                ->update([
+                    'variants' => json_encode($variantData),
+                    'stock'    => $newTotalStock,
+                ]);
 
         } else {
+            // -------------------------------
+            // No variants: subtract from product.stock
+            // -------------------------------
             $originalStock = (int) $product->stock;
 
-            // Calculate reserved quantity (excluding current cart item)
             $reservedQty = DB::table('cart_items')
                 ->where('product_id', $product->product_id)
                 ->where('status', 'receive')
@@ -543,29 +653,24 @@ public function confirmStudentSales(Request $request, $id)
             $available = $originalStock - $reservedQty;
             if ($available < $requestedQty) {
                 DB::rollBack();
-            //      dd([
-            //     'Original Stock' => $originalStock,
-            //     'Reserved Qty (excluding current)' => $reservedQty,
-            //     'Available Stock' => $available,
-            //     'Requested Qty' => $requestedQty,
-            // ]);
-                //dd('went here');
                 return back()->with('error', "Not enough stock. Only $available left.");
             }
-            //  dd([
-            //     'Original Stock' => $originalStock,
-            //     'Reserved Qty (excluding current)' => $reservedQty,
-            //     'Available Stock' => $available,
-            //     'Requested Qty' => $requestedQty,
-            // ]);
+
+            $newTotalStock = max(0, $originalStock - $requestedQty);
+
+            DB::table('product')
+                ->where('product_id', $product->product_id)
+                ->update(['stock' => $newTotalStock]);
         }
 
-        // Update cart item
+        // -------------------------------
+        // Mark cart item as confirmed
+        // -------------------------------
         DB::table('cart_items')
             ->where('id', $id)
             ->update([
                 'paymentConfirmation' => 'yes',
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         DB::commit();
@@ -574,6 +679,7 @@ public function confirmStudentSales(Request $request, $id)
         if ($request->ajax()) {
             return response()->json(['success' => true, 'id' => $id]);
         }
+
         if (Auth::check() && Auth::user()->role === 'student') {
             return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item Approved.');
@@ -581,11 +687,14 @@ public function confirmStudentSales(Request $request, $id)
             return redirect()->route('order.page', ['filters' => $filters])
                 ->with('success', 'Item Approved.');
         }
+
     } catch (\Exception $e) {
         DB::rollBack();
         return back()->with('error', 'An error occurred while processing the order.');
     }
 }
+
+
     public function confirmGcashPayment(Request $request, $id){
         DB::table('cart_items')
         ->where('id', $id)
@@ -609,142 +718,163 @@ public function confirmStudentSales(Request $request, $id)
         
     }    
 
-    public function orderReceivedDelivered(Request $request, $id)
-    {
-        $role = $request->input('role');
-        if ($role == 'buyer') {
+public function orderReceivedDelivered(Request $request, $id)
+{
+    $role = $request->input('role');
+
+    if ($role == 'buyer') {
+        DB::table('cart_items')
+            ->where('id', $id)
+            ->update([
+                'buyer_response' => 'yes',
+                'updated_at' => now()
+            ]);
+        $filters = $request->input('filterValue');
+
+        $confirm = DB::table('cart_items')->where('id', $id)->first();
+
+        if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
             DB::table('cart_items')
                 ->where('id', $id)
                 ->update([
-                    'buyer_response' => 'yes',
+                    'status' => 'completed',
                     'updated_at' => now()
                 ]);
-            $filters = $request->input('filterValue');
 
-            $confirm = DB::table('cart_items')
-                ->where('id', $id)
-                ->first();
-            if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
-                DB::table('cart_items')
-                    ->where('id', $id)
-                    ->update([
-                        'status' => 'completed',
-                        'updated_at' => now()
-                    ]);
-                $product = DB::table('product')->where('product_id', $confirm->product_id)->first();
-                if ($product) {
-                    DB::table('product')
-                        ->where('product_id', $confirm->product_id)
-                        ->update([
-                            'stock' => max(0, $product->stock - $confirm->quantity),
-                            'updated_at' => now()
-                        ]);
-                }
-                $pbenUser = User::getPBENUser();
-                $totalPrice = $confirm->unit_price * $confirm->quantity;
-                $percentage = DB::table('credit_settings')->value('percentage');
-                $creditsToAdd = ($totalPrice * $percentage) / 100;
-                if ($confirm->seller_id == $pbenUser->id) {
-                    DB::table('users')
-                        ->where('id', '=', Auth::id())
-                        ->increment('credits', $creditsToAdd);
-                }
+            $pbenUser = User::getPBENUser();
+            $totalPrice = $confirm->unit_price * $confirm->quantity;
+            $percentage = DB::table('credit_settings')->value('percentage');
+            $creditsToAdd = ($totalPrice * $percentage) / 100;
 
-                // for critical level
-                $product = Product::find($confirm->product_id);
-
-                // Recalculate critical level if in automatic mode
-                if ($product->critical_mode === 'automatic') {
-                    $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
-                }
-
-                $product->save();
-            }
-            if ($request->ajax()) {
-                return response()->json(['success' => true, 'id' => $id]);
+            if ($confirm->seller_id == $pbenUser->id) {
+                DB::table('users')
+                    ->where('id', '=', Auth::id())
+                    ->increment('credits', $creditsToAdd);
             }
 
-            return redirect()->route('student.profile', ['filters' => $filters])
-                ->with('success', 'Item received.');
+            // ✅ Update critical level
+            $this->recalculateCriticalLevel($confirm);
         }
-        if ($role == 'seller') {
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
+
+        return redirect()->route('student.profile', ['filters' => $filters])
+            ->with('success', 'Item received.');
+    }
+
+    if ($role == 'seller') {
+        DB::table('cart_items')
+            ->where('id', $id)
+            ->update([
+                'seller_response' => 'yes',
+                'updated_at' => now()
+            ]);
+        $filters = $request->input('filterValue');
+
+        $confirm = DB::table('cart_items')->where('id', $id)->first();
+
+        if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
             DB::table('cart_items')
                 ->where('id', $id)
                 ->update([
-                    'seller_response' => 'yes',
+                    'status' => 'completed',
                     'updated_at' => now()
                 ]);
-            $filters = $request->input('filterValue');
 
-            $confirm = DB::table('cart_items')
-                ->where('id', $id)
-                ->first();
-            if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
-                DB::table('cart_items')
-                    ->where('id', $id)
-                    ->update([
-                        'status' => 'completed',
-                        'updated_at' => now()
-                    ]);
-                $product = DB::table('product')->where('product_id', $confirm->product_id)->first();
-                if ($product) {
-                    DB::table('product')
-                        ->where('product_id', $confirm->product_id)
-                        ->update([
-                            'stock' => max(0, $product->stock - $confirm->quantity),
-                            'updated_at' => now()
-                        ]);
-                }
-                $pbenUser = User::getPBENUser();
-                $buyerId = $confirm->user_id;  
-                $totalPrice = $confirm->unit_price * $confirm->quantity;
-                $percentage = DB::table('credit_settings')->value('percentage');
-                $creditsToAdd = ($totalPrice * $percentage) / 100;
-                if ($confirm->seller_id == $pbenUser->id) {
-                    DB::table('users')
-                        ->where('id', '=', $buyerId)
-                        ->increment('credits', $creditsToAdd);
-                }
-                // for critical level
-                $product = Product::find($confirm->product_id);
+            $pbenUser = User::getPBENUser();
+            $buyerId = $confirm->user_id;  
+            $totalPrice = $confirm->unit_price * $confirm->quantity;
+            $percentage = DB::table('credit_settings')->value('percentage');
+            $creditsToAdd = ($totalPrice * $percentage) / 100;
 
-                // Recalculate critical level if in automatic mode
-                if ($product->critical_mode === 'automatic') {
-                    $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
-                }
-
-                $product->save();
+            if ($confirm->seller_id == $pbenUser->id) {
+                DB::table('users')
+                    ->where('id', '=', $buyerId)
+                    ->increment('credits', $creditsToAdd);
             }
 
-            if ($request->ajax()) {
-                return response()->json(['success' => true, 'id' => $id]);
-            }
+            // ✅ Update critical level
+            $this->recalculateCriticalLevel($confirm);
+        }
 
-            if(Auth::check() && Auth::user()->role === 'student'){
-                return redirect()->route('student.sales', ['filters' => $filters])
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'id' => $id]);
+        }
+
+        if (Auth::check() && Auth::user()->role === 'student') {
+            return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item delivered.');
-            }
-            elseif(Auth::check() && Auth::user()->role === 'organization'){
-                return redirect()->route('order.page', ['filters' => $filters])
-                    ->with('success', 'Item delivered.');
-            }
+        } elseif (Auth::check() && Auth::user()->role === 'organization') {
+            return redirect()->route('order.page', ['filters' => $filters])
+                ->with('success', 'Item delivered.');
         }
     }
-    private function calculateAutomaticCriticalLevel(Product $product): int
-    {
-        $daysSinceCreation = now()->diffInDays($product->created_at, false);
-        $daysSinceCreation = max(1, abs($daysSinceCreation)); 
+}
+private function recalculateCriticalLevel($cartItem): void
+{
+    // If a variant was purchased
+    if (!empty($cartItem->selected_variant)) {
+        $variant = DB::table('product_variants')
+            ->where('product_id', $cartItem->product_id)
+            ->where('variant_option', $cartItem->selected_variant)
+            ->first();
 
-        $days = min(15, $daysSinceCreation); 
-        $startDate = now()->subDays($days);
-        $totalSold = DB::table('cart_items')
-            ->where('product_id', $product->product_id)
-            ->where('status', 'completed')
-            ->where('updated_at', '>=', $startDate)
-            ->sum('quantity');
-        $average_daily_usage = $days > 0 ? ($totalSold / $days) : 0;
-        return (int) round(($product->lead_time * $average_daily_usage) + $product->safety_stock);
+        if ($variant && $variant->critical_mode === 'automatic') {
+            $newCritical = $this->calculateAutomaticCriticalLevelVariant($variant, $cartItem->product_id);
+            DB::table('product_variants')
+                ->where('id', $variant->id)
+                ->update(['critical_level' => $newCritical, 'updated_at' => now()]);
+        }
+    } else {
+        // Non-variant product
+        $product = Product::find($cartItem->product_id);
+        if ($product && $product->critical_mode === 'automatic') {
+            $product->critical_level = $this->calculateAutomaticCriticalLevel($product);
+            $product->save();
+        }
     }
+}
+
+private function calculateAutomaticCriticalLevel(Product $product): int
+{
+    $daysSinceCreation = now()->diffInDays($product->created_at, false);
+    $daysSinceCreation = max(1, abs($daysSinceCreation)); 
+
+    $days = min(15, $daysSinceCreation); 
+    $startDate = now()->subDays($days);
+
+    $totalSold = DB::table('cart_items')
+        ->where('product_id', $product->product_id)
+        ->where('status', 'completed')
+        ->where('updated_at', '>=', $startDate)
+        ->sum('quantity');
+
+    $averageDailyUsage = $days > 0 ? ($totalSold / $days) : 0;
+
+    return (int) round(($product->lead_time * $averageDailyUsage) + $product->safety_stock);
+}
+
+private function calculateAutomaticCriticalLevelVariant($variant, $productId): int
+{
+    $daysSinceCreation = now()->diffInDays($variant->created_at, false);
+    $daysSinceCreation = max(1, abs($daysSinceCreation)); 
+
+    $days = min(15, $daysSinceCreation); 
+    $startDate = now()->subDays($days);
+
+    $totalSold = DB::table('cart_items')
+        ->where('product_id', $productId)
+        ->where('selected_variant', $variant->variant_option)
+        ->where('status', 'completed')
+        ->where('updated_at', '>=', $startDate)
+        ->sum('quantity');
+
+    $averageDailyUsage = $days > 0 ? ($totalSold / $days) : 0;
+
+    return (int) round(($variant->lead_time * $averageDailyUsage) + $variant->safety_stock);
+}
     public function updateSeller(Request $request)
     {
         try {

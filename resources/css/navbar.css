@@ -285,6 +285,7 @@ input:focus {
   font-size: 0.95rem;
   color: #333;
   transition: background 0.2s ease;
+  margin-bottom: 0px !important;
 }
 .profile-dropdown li:hover {
   background-color: #f7f9fc !important;

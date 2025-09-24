@@ -61,6 +61,25 @@ public function store(Request $request)
     $product->user_id = Auth::id(); 
     $product->save();
 
+    if ($variantsData
+        && isset($variantsData['name'], $variantsData['options'])
+        && is_array($variantsData['options'])) {
+
+
+        $optionStocks = $variantsData['optionStocks'] ?? [];
+        foreach ($variantsData['options'] as $i => $option) {
+        \App\Models\ProductVariant::create([
+        'product_id' => $product->product_id,
+        'variant_name' => $variantsData['name'],
+        'variant_option' => $option,
+        'stock' => (int) ($optionStocks[$i] ?? 0),
+        'critical_level' => 0,
+        'lead_time' => 7,
+        'safety_stock' => 10,
+        'critical_mode' => 'automatic',
+        ]);
+        }
+    }
    // adding of image in product_image
    if ($request->hasFile('images')) {
         $imagePaths = [];

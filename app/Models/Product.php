@@ -40,7 +40,9 @@ class Product extends Model
     {
         return $this->belongsToMany(College::class, 'college_product');
     }
-
+    public function variantsData()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id', 'product_id');
+    }
     
-
 }
