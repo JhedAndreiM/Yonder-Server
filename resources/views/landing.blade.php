@@ -1,4 +1,12 @@
 
+@php
+    use Illuminate\Support\Facades\DB;
+
+    $faqs = DB::table('faq_questions')
+        ->orderBy('created_at', 'asc')
+        ->limit(4)
+        ->get();
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,23 +106,52 @@
             university. Our secure system ensures safe and verified transactions, connecting you with trusted buyers and sellers from your own campus. </p>
         </div>
             <div class="center">
+            
             <div class="card-container">
-                <div data-aos="fade-up">
-                <div class="card card1">
-                        <div class="cardOne-top">
-                            <h1>In-App Messaging</h1>
-                            <img src="{{ asset('img/message-icon.svg') }}" alt="">
-                        </div>
-                        <div class="cardOne-middle">
-                            <p>Built-in in-app messaging system enables communication between buyers and sellers. </p>
-                        </div>
-                        <div class="cardOne-bottom">
-                            <img src="{{ asset('img/arrow-white.svg') }}" alt="">
-                            <a href="{{ route('FAQs') }}" class="cardLinks" style="color:white"><h2>FAQ</h2></a>
-                        </div>
-                    </div>
-                </div>
-                <div data-aos="fade-up">
+@php
+    $cardNames = ['One', 'Two', 'Three', 'Four'];
+@endphp
+
+@foreach ($faqs as $faq)
+    @php
+        $index = ($loop->iteration - 1) % 4; // 0 → 3
+        $cardWord = $cardNames[$index];
+
+        // Pick arrow color
+        $arrow = in_array($index, [1, 2]) 
+            ? asset('img/arrow-black.svg') 
+            : asset('img/arrow-white.svg');
+
+        // Pick link color
+        $linkColor = in_array($index, [1, 2]) ? 'black' : 'white';
+    @endphp
+
+    <div data-aos="fade-up">
+        <div class="card card{{ $loop->iteration }}">
+            <div class="card{{ $cardWord }}-top">
+                <h1>{{ $faq->question }}</h1>
+            </div>
+
+            <div class="card{{ $cardWord }}-middle card-middle">
+                <p class="faq-answer" data-full="{{ $faq->answer }}">
+                    {{ $faq->answer }}
+                </p>
+                <span class="toggle-btn" style="display:none">See more</span>
+            </div>
+
+            <div class="card{{ $cardWord }}-bottom">
+                <img src="{{ $arrow }}" alt="">
+                <a href="{{ route('FAQs', ['faq_id' => $faq->id]) }}" 
+                class="cardLinks" 
+                style="color:{{ $linkColor }}">
+                    <h2>FAQ</h2>
+                </a>
+            </div>
+        </div>
+    </div>
+@endforeach
+                
+                <!-- <div data-aos="fade-up">
                     <div class="card card2">
                     <div class="cardTwo-top">
                             <h1>Buy and Sell</h1>
@@ -158,7 +195,7 @@
                             <a href="{{ route('FAQs') }}" class="cardLinks" style="color:white"><h2>FAQ</h2></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
                 
                 
@@ -203,39 +240,40 @@
     </div>
     </div>
     </section>
-    <footer>
-        <div class="footerOne">
-            
-            <ul class="footerUniTrade">
-                <li><h3>Yonder</h3></li>
-                <li><a href="{{ route('about.us') }}">About Us</a></li>
-                <li><a href="https://storyset.com/people">People illustrations by Storyset</a></li>
-                <li><a href="#">Privacy and Policy</a></li>
-            </ul>
+<footer>
+    <div class="footer-container">
+        <!-- Left Logo -->
+        <div class="footer-logo">
+            <img src="{{ asset('img/BPSU-logo.svg') }}" alt="BPSU Logo">
         </div>
 
-        <div class="footerTwo">
-            
-            <ul class="footerGetHelp">
-                <li><h3>Get Help</h3></li>
-                <li><a href="{{ route('FAQs') }}">FAQ</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">Send us an email</a></li>
-            </ul>
+        <!-- Navigation Links -->
+        <div class="footer-links">
+            <div class="footer-column">
+                <h3>Yonder</h3>
+                <ul>
+                    <li><a href="{{ route('about.us') }}">About Us</a></li>
+                    <li><a href="https://storyset.com/people" target="_blank">People illustrations</a></li>
+                    <li><a href="#">Privacy & Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Get Help</h3>
+                <ul>
+                    <li><a href="{{ route('FAQs') }}">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Send us an email</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="footerThree">
-            <ul class="footerGetStarted">
-                <li><h3>Get Started</h3></li>
-                <li><a href="{{route('login.form')}}">Sign In</a></li>
-                <li class="invisible-item"></li>
-                <li class="invisible-item"></li>
-            </ul>
+
+        <!-- Right Logo -->
+        <div class="footer-logo">
+            <img src="{{ asset('img/logo.svg') }}" alt="UniTrade Logo">
         </div>
-        <div class="footerFour">
-            <img src="{{ asset('img/BPSU-logo.svg') }}" alt="">
-            <h1>Yonder</h1>
-        </div>
-    </footer>
+    </div>
+</footer>
 
     <div class="slide-nav">
         <div class="nav-content">
@@ -270,5 +308,31 @@
         once: true        // animate only once
     });
     </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".card-middle").forEach(function (container) {
+        const answer = container.querySelector(".faq-answer");
+        const btn = container.querySelector(".toggle-btn");
+
+        const lineHeight = parseFloat(getComputedStyle(answer).lineHeight);
+        const twoLinesHeight = lineHeight * 2;
+
+        if (answer.scrollHeight > twoLinesHeight + 2) {
+            btn.style.display = "inline-block";
+        }
+
+        btn.addEventListener("click", function () {
+            answer.classList.toggle("expanded");
+
+            if (answer.classList.contains("expanded")) {
+                btn.textContent = "See less";
+            } else {
+                btn.textContent = "See more";
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>

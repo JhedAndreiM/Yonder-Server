@@ -166,7 +166,7 @@ section {
 
 .card {
     width: 35.56rem;
-    height: 15.87rem; 
+    min-height: 15.87rem; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -252,9 +252,11 @@ section {
 .cardOne-middle {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: start;
     color: white;
     font-size: 1.25rem;
+    flex-direction: column;
+    padding-bottom: 10px;
 }
 .cardOne-bottom {
     color: white;
@@ -284,9 +286,11 @@ section {
 .cardTwo-middle {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: start;
     color: black;
     font-size: 1.25rem;
+    flex-direction: column;
+    padding-bottom: 10px;
 }
 .cardTwo-bottom {
     color: black;
@@ -316,9 +320,11 @@ section {
 .cardThree-middle {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: start;
     color: black;
     font-size: 1.25rem;
+        flex-direction: column;
+    padding-bottom: 10px;
 }
 .cardThree-bottom {
     color: black;
@@ -333,6 +339,29 @@ section {
 .cardThree-bottom h2 {
     font-weight: normal;
 }
+.faq-answer {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* show only 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease;
+    max-height: 3.2em; /* ~2 lines */
+}
+
+.faq-answer.expanded {
+    -webkit-line-clamp: unset;
+    max-height: none;
+}
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
 /* card four */
 .cardFour-top {
     flex: 1;
@@ -350,9 +379,11 @@ section {
 .cardFour-middle {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: start;
     color: white;
     font-size: 1.25rem;
+        flex-direction: column;
+    padding-bottom: 10px;
 }
 .cardFour-bottom {
     color: white;
@@ -504,91 +535,67 @@ section {
     padding-right: 2rem;
     font-size: 1.5rem;
 }
-/* footer */
+/* Footer */
 footer {
-    height: 14.56rem;
-    background: rgb(154, 0, 0);
-    background: linear-gradient(
-        90deg,
-        rgba(154, 0, 0, 1) 49%,
-        rgba(52, 0, 0, 1) 100%
-    );
-    display: flex;
+    background: linear-gradient(90deg, rgba(154,0,0,1) 49%, rgba(52,0,0,1) 100%);
     color: white;
-    align-items: stretch;
     font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
+    padding: 2rem 0;
 }
-footer ul {
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 90%;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+/* Logos */
+.footer-logo {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.footer-logo img {
+    max-height: 80px;
+    width: auto;
+}
+
+/* Links Section */
+.footer-links {
+    flex: 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.footer-column h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.footer-column ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 1.3rem;
-}
-.footerUniTrade {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
+    font-size: 1.1rem;
 }
-.footerUniTrade h3 {
-    margin-bottom: 1rem;
-}
-footer a {
+
+.footer-column a {
     text-decoration: underline;
     color: inherit;
+    transition: color 0.2s ease-in-out;
 }
-
-.footerOne {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.footerTwo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.footerGetStarted {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-.footerGetStarted h3 {
-    margin-bottom: 1rem;
-}
-
-.footerThree {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.footerGetHelp {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-.footerGetHelp h3 {
-    margin-bottom: 1rem;
-}
-.invisible-item {
-    visibility: hidden;
-    height: 1.5rem;
-}
-.footerFour {
-    flex: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+.footer-column a:hover {
+    color: #ffcccc;
 }
 .slide-nav {
     display: none;
@@ -876,47 +883,40 @@ footer a {
 
     /* FOOTER */
     footer {
-        height: 8.25rem;
-    }
-    .footerThree {
-        display: none;
-    }
-    .footerGetStarted {
-        display: none;
-    }
-    .footerFour {
-        flex: 1;
-        flex-direction: column-reverse;
-        justify-content: center;
-        align-items: center;
-    }
-    .footerFour h1 {
-        font-size: 1rem;
-    }
-    .footerFour img {
-        height: 57px;
-        width: 43px;
-    }
-    .footerGetHelp {
-        flex: 1;
-        justify-content: center;
-    }
-    .footerOne {
-        flex: 1;
+        height: auto;
+        padding: 1.5rem 0;
     }
 
-    .footerUniTrade h3 {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .footer-logo img {
+        height: 57px;
+        width: auto;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .footer-column h3 {
         font-size: 13px;
     }
-    .footerGetHelp h3 {
-        font-size: 13px;
-    }
-    footer ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+
+    .footer-column ul {
         font-size: 12px;
     }
+
+    .footer-column a {
+        font-size: 12px;
+    }
+
     /* SLIDE NAV */
     .slide-nav {
         display: block;
@@ -1012,21 +1012,3 @@ footer a {
         z-index: 0;
     }
 }
-
-/* Mobile: Stack in a column 
-@media (max-width: 768px) {
-    .card-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    .card {
-        width: 25.56rem;
-    height: 10.87rem;
-    }
-    .card1, .card2, .card3, .card4 {
-        margin: 0; 
-    }
-}
-*/

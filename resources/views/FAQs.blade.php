@@ -1,5 +1,6 @@
 @php
     $converter = new League\CommonMark\CommonMarkConverter();
+    $selectedFaqId = request()->query('faq_id');
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -213,7 +214,7 @@
               <!-- Right: Login -->
               <div class="d-flex">
                 <a
-                  href="{{ route('select.role') }}"
+                  href="{{ route('login.form') }}"
                   class="btn rounded-pill px-4"
                   >Login</a
                 >
@@ -246,7 +247,8 @@
         </div>
         <div class="subQuestions" style="display: {{ $loop->first ? 'block' : 'none' }}">
             @foreach($category->faqs as $faq)
-            <div class="question" data-id="{{$faq->id}}">
+            <div class="question" data-id="{{ $faq->id }}"
+                @if($selectedFaqId == $faq->id) data-selected="true" @endif>
                 <h3 class="{{ $loop->parent->first && $loop->first ? 'active' : '' }}">
                     {{ $faq->question }}
                 </h3>
@@ -346,6 +348,33 @@
         });
 
   });
+  // ===========================
+// Auto-expand & highlight from ?faq_id=...
+// ===========================
+document.addEventListener("DOMContentLoaded", () => {
+    const selected = document.querySelector(".question[data-selected='true']");
+    if (selected) {
+        const h3 = selected.querySelector("h3");
+        const answer = selected.querySelector(".answer");
+
+        // Expand parent category
+        const subQuestions = selected.closest(".subQuestions");
+        subQuestions.style.display = "block";
+
+        const arrow = subQuestions.previousElementSibling.querySelector(".arrow");
+        arrow.classList.add("rotate");
+
+        // Highlight & show answer in right panel
+        document.querySelectorAll(".question h3").forEach(q => q.classList.remove("active"));
+        h3.classList.add("active");
+
+        const rightPart = document.querySelector(".rightPart");
+        rightPart.innerHTML = `<h2>${h3.textContent}</h2><p>${answer.innerHTML}</p>`;
+
+        // Smooth scroll to the question
+        h3.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+});
     </script>
   </body>
 </html>
