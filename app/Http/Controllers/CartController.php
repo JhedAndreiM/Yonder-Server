@@ -159,7 +159,54 @@ class CartController extends Controller
 
         return redirect()->back()->with('success', 'All items checked out successfully!');
     }
+    public function checkoutSelected(Request $request)
+    {
+        $userId = Auth::id();
+        $selectedIds = $request->input('selected_items', []);
 
+        if (empty($selectedIds)) {
+            return redirect()->back()->with('error', 'Please select at least one item to checkout.');
+        }
+
+        $cartItems = DB::table('cart_items')
+            ->where('user_id', $userId)
+            ->where('status', 'in_cart')
+            ->whereIn('id', $selectedIds)
+            ->get();
+
+        foreach ($cartItems as $item) {
+            // Check stock availability
+            $product = DB::table('product')->where('product_id', $item->product_id)->first();
+
+            $availableStock = $product->stock;
+            if ($item->selected_variant && $product->variants) {
+                $variants = json_decode($product->variants, true);
+                $variantIndex = array_search($item->selected_variant, $variants['options'] ?? []);
+                if ($variantIndex !== false) {
+                    $availableStock = $variants['optionStocks'][$variantIndex] ?? $product->stock;
+                }
+            }
+
+            if ($availableStock <= 0) {
+                continue; // skip out of stock item
+            }
+
+            // Mark as pending
+            DB::table('cart_items')->where('id', $item->id)->update([
+                'status' => 'pending',
+                'updated_at' => now(),
+            ]);
+
+            // Update voucher status if applicable
+            if ($item->voucher_applied && isset($item->voucher_id)) {
+                DB::table('vouchers')->where('id', $item->voucher_id)->update([
+                    'status' => 'pending',
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Selected items checked out successfully!');
+    }
     public function showCart()
     {
         $userId = Auth::id();

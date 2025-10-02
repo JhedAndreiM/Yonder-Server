@@ -178,17 +178,6 @@
             @endif
           </div>
         </div>
-        @if($products->forSaleTrade==='trade')
-        @else
-        <div class="paymentMethod">
-          {{ session('error')}}
-          <h3>Payment Method</h3>
-          <select id="payment" name="payment">
-            <option value="onlinePayment">Gcash Payment</option>
-            <option value="cashPayment">Cash Payment</option>
-          </select>
-        </div>
-        @endif
         @php
             $variants = $products->variants;
             $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
@@ -244,16 +233,21 @@
             {!! $products->description !!}
           </p>
         </div>
-
+        <div class="report-listing">
+          <button id="reportTriggerBtn" class="reportTriggerBtn" onclick="reportTriggerBtn()">Report This Product</button>
+        </div>
         <div class="sellerInfo">
           <div class="sellerTop">
             <h3>Seller Information</h3>
-            <a class="seeProfile" href="{{route('stalk.profile', $sellerId)}}">see profile</a>
           </div>
           <div class="profile">
-            <img src="{{asset('storage/users-avatar/'. $seller->avatar)}}" alt="" class="sellerProfile"/>
+            <a href="{{ route('stalk.profile', $sellerId) }}" class="profileLink">
+              <img src="{{ asset('storage/users-avatar/'. $seller->avatar) }}" alt="" class="sellerProfile"/>
+            </a>
             <div class="profileInfo">
-              <p class="name">{{ $seller->name }}</p>
+              <a href="{{ route('stalk.profile', $sellerId) }}" class="profileLink">
+                <p class="name">{{ $seller->name }} {{$seller->last_name}}</p>
+              </a>
               <p class="level">{{ ucfirst($role) }}</p>
             </div>
             <div class="rating">
@@ -328,7 +322,17 @@
                         </select>
                     </div>
                 @endif
-
+                @if($products->forSaleTrade==='trade')
+                @else
+                <div class="paymentMethod">
+                  {{ session('error')}}
+                  <label>Payment Method</label>
+                  <select id="payment" name="payment">
+                    <option value="onlinePayment">Gcash Payment</option>
+                    <option value="cashPayment">Cash Payment</option>
+                  </select>
+                </div>
+                @endif
                 <p class="totalPrice">Total: ₱<span id="modalTotalDisplay">{{ number_format($products->price, 2) }}</span></p>
                 
                 <div class="btnGroup">
@@ -368,6 +372,22 @@
             }, 5000);
         </script>
         @endif
+        <!-- MODAL FOR REPORTS -->
+    <div id="myModalReport" class="modalReport">
+        <div class="modal-contentReport">
+            <h3>Report This Product</h3>
+        <form action="{{ route('reports.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+            <input type="hidden" name="report_id" value="{{ $products->product_id }}" >
+            <textarea name="message" placeholder="Write your report message here..." rows="5" required></textarea>
+            <div class="report-buttons">
+                <button type="submit" class="submitReportBtn">Submit Report</button>
+                <button type="button" class="cancelReportBtn" onclick="closeReportModal()">Cancel</button>
+            </div>
+        </form>
+        </div>
+    </div>
     <script>
         window.productData = {
             price: {{ $products->price }},
@@ -381,6 +401,16 @@
             window.location.href = li.dataset.url;
         });
     });
+    // for report modal 
+        var modal = document.getElementById("myModalReport");
+        var btn = document.getElementById("reportTriggerBtn");
+        var span = document.getElementsByClassName("cancelReportBtn")[0];
+        function reportTriggerBtn() {
+            document.getElementById('myModalReport').style.display = 'flex';
+        }
+        function closeReportModal() {
+            document.getElementById('myModalReport').style.display = 'none';
+        }
     </script>
     
     <script src="productDetails.js"></script>

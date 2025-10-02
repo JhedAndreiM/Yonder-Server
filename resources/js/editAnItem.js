@@ -322,8 +322,10 @@ function loadPreloadedTags() {
     organizationSelect.style.display = "block";
     organizationField.required = true;
   } else {
+    if(organizationSelect){
     organizationSelect.style.display = "none";
     organizationField.required = false;
+    }
   }
 
   // --- Supplier Type: handle click ---

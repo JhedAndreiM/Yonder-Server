@@ -48,6 +48,11 @@ class PageController extends Controller
         }
         $query = Product::query();
 
+        // Exclude products from users who are banned or suspended
+        $query->whereHas('user', function($q){
+            $q->whereNotIn('role', ['banned', 'suspended']);
+        });
+
         // Filter by role 'approved'
         $query->where('approved', 'yes');
         if ($topFilter) {
@@ -166,7 +171,7 @@ class PageController extends Controller
 
         //dd($query);
         $wishlist = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
-        $featuredImages = FeaturedImage::latest()->take(5)->get();
+        $featuredImages = FeaturedImage::with('product')->latest()->take(5)->get();
         $products = $query->get();
         foreach ($products as $product) {
           $product->average_rating=DB::table('reviews')

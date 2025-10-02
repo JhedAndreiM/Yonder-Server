@@ -120,20 +120,36 @@
           </div>
         </div>
         <div class="items">
+          
             <div class="slideshow-container">
               <div class="navBarMiddle">
-        <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
-        <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
-      </div>
+                <div class="searchBtnImg"><img id="magnifying"class="searchBtn" src="{{ asset('img/search-icon.svg') }}" alt="" /></div>
+                <div class="searchInput"><input id="searchInput" class="search" type="text" placeholder="search" /></div>
+              </div>     
+              @if($featuredImages && $featuredImages->count())
                 @foreach ($featuredImages as $image)
-                    <img class="banner mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%;">
+                    @if($image->product && $image->product->approved === 'yes')
+                        <a href="{{ route('product.show', ['id' => $image->product->product_id]) }}" class="featured-image-link">
+                            <img class="banner mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%;">
+                            <div class="featured-product-overlay">
+                                <div class="featured-product-info">
+                                    <span class="featured-cta">View Product →</span>
+                                </div>
+                            </div>
+                        </a>
+                    @else
+                        <img class="banner mySlides" src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured" style="width: 100%;">
+                    @endif
                 @endforeach
-
-                <!-- Prev/Next Buttons -->
-                <a class="prev" onclick="plusDivs(-1)">&#10094;</a>
-                <a class="next" onclick="plusDivs(1)">&#10095;</a>
+                
+                @if($featuredImages->count() > 1)
+                    <!-- Prev/Next Buttons -->
+                    <a class="prev" onclick="plusDivs(-1)">&#10094;</a>
+                    <a class="next" onclick="plusDivs(1)">&#10095;</a>
+                @endif
+              @endif
             </div>
-
+          
             <div class="cardContainer">
                 <div class="card-container infinite-scroll" id="product-container">
                     @include('partials.productList', ['products' => $products])
@@ -226,6 +242,9 @@
     function showDivs(n) {
       var i;
       var x = document.getElementsByClassName("mySlides");
+      if (x.length === 0) {
+        return;
+      }
       if (n > x.length) {
         slideIndex = 1
     }

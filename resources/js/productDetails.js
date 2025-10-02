@@ -25,6 +25,7 @@ const elements = {
     modalConfirmBtn: document.getElementById("modalConfirmBtn"),
     modalCloseBtn: document.querySelector(".modal-close-btn"),
     backdrop: document.querySelector(".modal-blur-background"),
+    uniqueHeaderMessage: document.getElementById("uniqueHeaderMessage"),
     // Hidden inputs
     modalTotalPrice: document.getElementById("modalTotalPrice"),
     modalQuantity: document.getElementById("modalQuantity"),
@@ -320,7 +321,11 @@ function openModal(actionType) {
     // Set action type
     elements.modalActionType.value = actionType;
 
-    
+    if (actionType === "in_cart") {
+        elements.uniqueHeaderMessage.textContent = "Add To Cart";
+    } else if (actionType === "buy_now") {
+        elements.uniqueHeaderMessage.textContent = "Buy Now";
+    }    
     // Set initial quantity from main page
     const mainPageQty = parseInt(elements.qtyDisplay.value) || 1;
     elements.modalQuantityInput.value = mainPageQty;

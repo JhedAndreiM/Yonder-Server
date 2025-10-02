@@ -239,6 +239,7 @@ input:focus {
 .addingOfQuestion,
 .report-user,
 .tags-section,
+.report-user-unban,
 .disableStudOrgMarketplace {
     background: #fff;
     border-radius: var(--radius);
@@ -354,7 +355,10 @@ button[type="submit"] {
     transition: background 0.18s;
     box-shadow: 0 1px 4px rgba(119, 18, 23, 0.07);
 }
-
+.reportProdDelete{
+    padding: 6px 12px;
+    font-size: 14.4px;
+}
 .btn:hover,
 button[type="submit"]:hover {
     background: var(--theme-dark);
@@ -1305,4 +1309,400 @@ button.deleteBtn {
     table td {
         padding: 0.5rem 0.5rem;
     }
+}
+
+/* Status badges for banned/suspended users */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-banned {
+    background-color: #fecaca;
+    color: #991b1b;
+}
+
+.status-suspended {
+    background-color: #fed7aa;
+    color: #c2410c;
+}
+
+.expired-label {
+    color: #059669;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Banned & Suspended Users section styling */
+.report-user-unban {
+    margin-bottom: 2rem;
+}
+
+.report-user-unban h2 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.report-user-unban table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.report-user-unban th {
+    background-color: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.report-user-unban td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+
+.report-user-unban tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Search functionality styling */
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.search-input {
+    flex: 1;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-results-count {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+/* Enhanced table styling for search results */
+.report-user-unban tbody tr {
+    transition: all 0.2s ease;
+}
+
+.report-user-unban tbody tr[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Responsive search */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .search-input {
+        max-width: none;
+    }
+    
+    .search-results-count {
+        text-align: center;
+    }
+}
+
+/* User Management section styling to match banned users */
+.user-role-management {
+    margin-bottom: 2rem;
+}
+
+.user-role-management h2 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.user-role-management table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-role-management th {
+    background-color: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.user-role-management td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+
+.user-role-management tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Enhanced table styling for user management search results */
+.user-role-management tbody tr {
+    transition: all 0.2s ease;
+}
+
+.user-role-management tbody tr[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Featured Image Product Linking Styles */
+.image-card {
+    position: relative;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.product-link-info {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.linked-product {
+    color: #059669;
+    font-weight: 600;
+    background-color: #ecfdf5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+}
+
+.no-link {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.product-selection {
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    background-color: #f9fafb;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* Searchable Dropdown Styles */
+.searchable-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.dropdown-search {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    background-color: white;
+    cursor: text;
+}
+
+.dropdown-search:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-top: none;
+    border-radius: 0 0 0.25rem 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s;
+}
+
+.dropdown-option:hover {
+    background-color: #f9fafb;
+}
+
+.dropdown-option.selected {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.dropdown-option:last-child {
+    border-bottom: none;
+}
+
+.product-name {
+    font-weight: 500;
+    flex: 1;
+}
+
+.product-price {
+    font-weight: 600;
+    color: #059669;
+    margin-left: 0.5rem;
+}
+
+.dropdown-option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f3f4f6;
+}
+
+.dropdown-option.disabled:hover {
+    background-color: #f3f4f6;
+}
+
+.already-linked {
+    font-size: 0.75rem;
+    color: #dc2626;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+/* Legacy dropdown styles for compatibility */
+.product-dropdown {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    background-color: white;
+}
+
+.product-dropdown:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-link-product {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.btn-link-product:hover {
+    background-color: #2563eb;
+}
+
+.btn-unlink-product {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-unlink-product:hover {
+    background-color: #b91c1c;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* Image preview grid */
+.image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-card img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    background-color: #f9fafb;
 }

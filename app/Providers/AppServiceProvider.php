@@ -73,11 +73,21 @@ class AppServiceProvider extends ServiceProvider
     });
 
     View::composer('*', function ($view) {
-        $tags = Tag::whereHas('products', function ($query) {
-            $query->where('approved', 'yes');
-        })
-        ->orderBy('name')
-        ->get();
+        // Get all admin tags (no product requirement)
+        $adminTags = Tag::where('is_admin', 1)
+            ->orderBy('name')
+            ->get();
+
+        // Get user tags that must have at least one approved product
+        $userTags = Tag::where('is_admin', 0)
+            ->whereHas('products', function ($query) {
+                $query->where('approved', 'yes');
+            })
+            ->orderBy('name')
+            ->get();
+
+        // Merge collections together
+        $tags = $adminTags->merge($userTags)->sortBy('name');
 
         $view->with('tags', $tags);
     });

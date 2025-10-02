@@ -15,7 +15,7 @@ class TagController extends Controller
 
         $tag = Tag::create([
             'name' => trim($validated['name']),
-            'usage_count' => 0,
+            'usage_count' => 1,
             'is_admin' => 1, // admin-created
         ]);
 

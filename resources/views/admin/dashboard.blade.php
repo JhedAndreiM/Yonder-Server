@@ -95,6 +95,9 @@
             @if (session('image_success'))
                 <div class="alert alert-success">{{ session('image_success') }}</div>
             @endif
+            @if (session('link_success'))
+                <div class="alert alert-success">{{ session('link_success') }}</div>
+            @endif
             <form action="{{ route('admin.featured.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
@@ -110,6 +113,55 @@
                     @foreach ($featuredImages as $image)
                         <div class="image-card">
                             <img src="{{ asset('Featured/' . $image->image_path) }}" alt="Featured">
+
+                            {{-- Product Link Info --}}
+                            <div class="product-link-info">
+                                @if($image->product)
+                                    <span class="linked-product">🔗 {{ $image->product->name }}</span>
+                                @else
+                                    <span class="no-link">No product linked</span>
+                                @endif
+                            </div>
+
+                            {{-- Product Selection --}}
+                            <div class="product-selection">
+                                <div class="searchable-dropdown" data-image-id="{{ $image->id }}">
+                                    <input type="text" 
+                                           class="dropdown-search" 
+                                           placeholder="Search products..." 
+                                           data-image-id="{{ $image->id }}"
+                                           value="{{ $image->product ? $image->product->name . ' - ₱' . number_format($image->product->price, 2) : '' }}">
+                                    <div class="dropdown-options" id="dropdown-{{ $image->id }}" style="display: none;">
+                                        <div class="dropdown-option" data-value="">
+                                            <span>Select Product</span>
+                                        </div>
+                                        @foreach($approvedProducts as $product)
+                                            @php
+                                                $isLinkedToOtherImage = $featuredImages->where('product_id', $product->product_id)->where('id', '!=', $image->id)->count() > 0;
+                                            @endphp
+                                            <div class="dropdown-option {{ $isLinkedToOtherImage ? 'disabled' : '' }}" 
+                                                 data-value="{{ $product->product_id }}"
+                                                 data-search="{{ strtolower($product->name . ' ' . $product->price) }}"
+                                                 data-linked-elsewhere="{{ $isLinkedToOtherImage ? 'true' : 'false' }}"
+                                                 {{ $image->product_id == $product->product_id ? 'data-selected="true"' : '' }}>
+                                                <span class="product-name">{{ $product->name }}</span>
+                                                <span class="product-price">₱{{ number_format($product->price, 2) }}</span>
+                                                @if($isLinkedToOtherImage)
+                                                    <span class="already-linked">(Already linked)</span>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <button class="btn-link-product" onclick="linkProduct({{ $image->id }})">
+                                    {{ $image->product ? 'Update Link' : 'Link Product' }}
+                                </button>
+                                @if($image->product)
+                                    <button class="btn-unlink-product" onclick="unlinkProduct({{ $image->id }})">
+                                        Unlink
+                                    </button>
+                                @endif
+                            </div>
 
                             {{-- Delete Button --}}
                             <form action="{{ route('admin.featured.delete', $image->id) }}" 
@@ -764,8 +816,19 @@
             @if (session('user_success'))
                 <div class="alert alert-success">{{ session('user_success') }}</div>
             @endif
-            <input type="text" id="userSearch" placeholder="Search User">
-            <table>
+            
+            <!-- Search Input -->
+            <div class="search-container">
+                <input type="text" 
+                       id="userSearch" 
+                       placeholder="Search by name, email, or role..." 
+                       class="search-input">
+                <div class="search-results-count">
+                    <span id="userSearchResultsCount"></span>
+                </div>
+            </div>
+            
+            <table id="userManagementTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -980,60 +1043,121 @@
                             </td>
                             <td>
                                 <button class="btn-edit approveUserReportBtn" data-id="{{ $report->id }}">Allow</button>
-                                <button class="btn deleteUserReportBtn" data-id="{{ $report->id }}">Delete</button>
+                                <button class="btn banUserReportBtn" data-id="{{ $report->id }}">Ban User</button>
+                                <button class="btn suspendUserReportBtn" data-id="{{ $report->id }}">Suspend User</button>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </section>
+<section class="report-user-unban">
+    <h2>Banned & Suspended Users</h2>
+    
+    <!-- Search Input -->
+    <div class="search-container">
+        <input type="text" 
+               id="bannedUsersSearch" 
+               placeholder="Search by name, email, or status..." 
+               class="search-input">
+        <div class="search-results-count">
+            <span id="searchResultsCount"></span>
+        </div>
+    </div>
+    
+    <table id="bannedUsersTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Suspension Until</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($users as $user)
+                @if($user->role == 'suspended' || $user->role == 'banned')
+                <tr id="banned-user-row-{{ $user->id }}">
+                    <td>{{ $user->name }} {{ $user->last_name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>
+                        <span class="status-badge status-{{ $user->role }}">
+                            {{ ucfirst($user->role) }}
+                        </span>
+                    </td>
+                    <td>
+                        @if($user->role == 'suspended' && $user->suspension_until)
+                            {{ $user->suspension_until->format('M j, Y g:i A') }}
+                            @if($user->suspension_until->isPast())
+                                <span class="expired-label">(Expired)</span>
+                            @endif
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        @if($user->role == 'banned')
+                            <button class="btn-edit" onclick="unbanUser({{ $user->id }})">Unban</button>
+                        @elseif($user->role == 'suspended')
+                            <button class="btn-edit" onclick="unsuspendUser({{ $user->id }})">Unsuspend</button>
+                        @endif
+                    </td>
+                </tr>
+                @endif
+            @endforeach
+        </tbody>
+    </table>
+</section>
+<!-- Reports -->
+<section class="report-show">
+    <h2>Reported Products</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Report ID</th>
+                <th>Product Name</th>
+                <th>Reported By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($reports as $report)
+                <tr class="perRow" id="report-row-{{ $report->report_id }}">
+                    <td>{{ $report->report_id }}</td>
+                    <td>{{ $report->product_name }}</td>
+                    <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
+                    <td>
+                        <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View</a>
+                        <button class="btn-edit" onclick="allowReport({{ $report->report_id }})">Allow</button>
+                        <button class="btn reportProdDelete" onclick="deleteProduct({{ $report->product_id }}, {{ $report->report_id }})">Delete</button>
+                    </td>
+                </tr>
 
-        <!-- Reports -->
-        <section class="report-show">
-            <h2>Reported Products</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Report ID</th>
-                        <th>Product Name</th>
-                        <th>Reported By</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($reports as $report)
-                        <tr class="perRow" id="report-row-{{ $report->report_id }}">
-                            <td>{{ $report->report_id }}</td>
-                            <td>{{ $report->product_name }}</td>
-                            <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
-                            <td>
-                                <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View</a>
-                                <button onclick="allowReport({{ $report->report_id }})">Allow</button>
-                                <button onclick="deleteProduct({{ $report->report_id_item }}, {{ $report->report_id }})">Delete</button>
-                            </td>
-                        </tr>
-                        <div id="modal-{{ $report->report_id }}" class="modal">
-                            <div class="modal-content">
-                                <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
-                                <h2>{{ $report->product_name }}</h2>
-                                <p>{{ $report->description }}</p>
-                                <div style="max-height: 200px; overflow-y: auto; word-wrap: break-word; white-space: pre-wrap; border: 1px solid #eee; border-radius: 8px; margin-bottom: 1rem;">
-                                    {{ $report->message }}
-                                </div>
-                                <div class="image-gallery">
-                                    @php
-                                        $images = explode(',', $report->image_path);
-                                    @endphp
-                                    @foreach ($images as $img)
-                                        <img src="{{ asset('images/' . trim($img)) }}" alt="Product Image">
-                                    @endforeach
-                                </div>
-                            </div>
+                <!-- Modal -->
+                <div id="modal-{{ $report->report_id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
+                        <h2>{{ $report->product_name }}</h2>
+                        <p>{!! $report->description !!}</p>
+                        <h3 style="margin-bottom: 0px;">Comment</h3>
+                        <p style="margin-top: 5px;">{{ $report->message}}</p>
+
+                        <div class="image-gallery">
+                            @php
+                                $images = $report->images ? explode(',', $report->images) : [];
+                            @endphp
+                            @foreach ($images as $img)
+                                <img src="{{ asset('images/' . trim($img)) }}" alt="Product Image" onclick="openImageViewer('{{ asset('images/' . trim($img)) }}')">
+                                
+                            @endforeach
                         </div>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
+                    </div>
+                </div>
+            @endforeach
+        </tbody>
+    </table>
+</section>
 
     </div>
 
@@ -1049,6 +1173,34 @@
                 <div style="margin-top:1rem;">
                     <button type="submit" class="btn">Send Rejection</button>
                     <button type="button" onclick="hideRejectModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Suspension Duration Modal -->
+    <div id="suspensionModal" class="rejectModal" style="display: none;">
+        <div class="modal-contents">
+            <h3>Suspend User</h3>
+            <form id="suspensionForm">
+                @csrf
+                <input type="hidden" name="report_id" id="suspensionReportId">
+                <label for="suspensionDuration">Suspension Duration:</label>
+                <select name="duration" id="suspensionDuration" required>
+                    <option value="">Select Duration</option>
+                    <option value="1">1 Hour</option>
+                    <option value="6">6 Hours</option>
+                    <option value="12">12 Hours</option>
+                    <option value="24">1 Day</option>
+                    <option value="72">3 Days</option>
+                    <option value="168">1 Week</option>
+                    <option value="336">2 Weeks</option>
+                    <option value="720">1 Month</option>
+                    <option value="2160">3 Months</option>
+                </select>
+                <div style="margin-top:1rem;">
+                    <button type="submit" class="btn">Suspend User</button>
+                    <button type="button" onclick="hideSuspensionModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1214,6 +1366,57 @@
                 });
         });
 
+        // Suspension Modal Functions
+        function showSuspensionModal(reportId) {
+            document.getElementById('suspensionModal').style.display = 'flex';
+            document.getElementById('suspensionReportId').value = reportId;
+        }
+
+        function hideSuspensionModal() {
+            document.getElementById('suspensionModal').style.display = 'none';
+            document.getElementById('suspensionDuration').value = '';
+        }
+
+        document.getElementById('suspensionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const reportId = document.getElementById('suspensionReportId').value;
+            const duration = document.getElementById('suspensionDuration').value;
+
+            if (!duration) {
+                alert('Please select a suspension duration.');
+                return;
+            }
+
+            fetch(`/admin/user-reports/${reportId}/suspend`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    duration: parseInt(duration)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.getElementById('user-report-row-' + reportId);
+                    if (row) row.remove();
+                    document.getElementById('ajaxMessagesReportedUser').innerHTML = 
+                        '<div class="alert alert-success">' + data.message + '</div>';
+                    hideSuspensionModal();
+                } else {
+                    alert(data.message || 'Failed to suspend user');
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Failed to suspend user');
+                });
+        });
+
         // reports
         function openModal(id) {
             document.getElementById('modal-' + id).style.display = 'flex';
@@ -1233,8 +1436,9 @@
 
     // ajax to para i allow saka delete product
     function allowReport(reportId) {
-        if (!confirm('Are you sure you want to allow this product and remove the report?')) return;
-
+        confirmAction(
+            'Are you sure you want to allow this product and remove the report?',
+            () => {
         $.ajax({
             url: '/admin/reports/' + reportId + '/allow',
             type: 'DELETE',
@@ -1249,12 +1453,218 @@
                 showModal('Something went wrong while removing the report.', "info");
             }
         });
+            },
+            'Allow Report'
+        );
     }
+
+    // Reported Users: Allow
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.approveUserReportBtn');
+        if(!btn) return;
+        var id = btn.getAttribute('data-id');
+        confirmActionViaModal('Confirm Allow', 'Allow this report (no action on user) and remove it?')
+            .then(function(ok){
+                if(!ok) return;
+                $.ajax({
+                    url: '/admin/user-reports/' + id + '/allow',
+                    type: 'DELETE',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function(){
+                        $('#user-report-row-' + id).remove();
+                        $('#ajaxMessagesReportedUser').html('<div class="alert alert-success">Report allowed and removed.</div>');
+                    },
+                    error: function(xhr){
+                        alert((xhr.responseJSON && xhr.responseJSON.message) || 'Failed to allow report');
+                    }
+                });
+            });
+    });
+
+    // Universal confirm modal helper
+    function confirmActionViaModal(title, message){
+        return new Promise(function(resolve){
+            var overlay = document.getElementById('confirm-action-overlay');
+            var titleEl = document.getElementById('confirm-action-title');
+            var messageEl = document.getElementById('confirm-action-message');
+            var yesBtn = document.getElementById('confirm-action-yes');
+            var noBtn = document.getElementById('confirm-action-no');
+
+            if(titleEl) titleEl.textContent = title || 'Confirm Action';
+            if(messageEl) messageEl.textContent = message || 'Are you sure you want to proceed?';
+            overlay.style.display = 'flex';
+
+            function cleanup(){
+                overlay.style.display = 'none';
+                yesBtn.removeEventListener('click', onYes);
+                noBtn.removeEventListener('click', onNo);
+            }
+            function onYes(){ cleanup(); resolve(true); }
+            function onNo(){ cleanup(); resolve(false); }
+            yesBtn.addEventListener('click', onYes, { once: true });
+            noBtn.addEventListener('click', onNo, { once: true });
+        });
+    }
+
+    // Reported Users: Ban
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.banUserReportBtn');
+        if(!btn) return;
+        var id = btn.getAttribute('data-id');
+        confirmActionViaModal('Confirm Ban', 'Ban this user and remove the report?')
+            .then(function(ok){
+                if(!ok) return;
+                fetch('/admin/user-reports/' + id + '/ban', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                }).then(function(r){ return r.ok ? r.json() : r.json().then(function(j){ throw j; }); })
+                .then(function(){
+                    var row = document.getElementById('user-report-row-' + id);
+                    if(row) row.remove();
+                    document.getElementById('ajaxMessagesReportedUser').innerHTML = '<div class="alert alert-success">User banned and report removed.</div>';
+                }).catch(function(err){
+                    alert((err && err.message) || 'Failed to ban user');
+                });
+            });
+    });
+
+    // Reported Users: Suspend
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.suspendUserReportBtn');
+        if(!btn) return;
+        var id = btn.getAttribute('data-id');
+        showSuspensionModal(id);
+    });
+
+    // User Management: Unban User
+    function unbanUser(userId) {
+        confirmAction(
+            'Are you sure you want to unban this user? They will regain access to the platform.',
+            () => {
+                fetch(`/admin/users/${userId}/unban`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById('banned-user-row-' + userId);
+                        if (row) row.remove();
+                        showModal(data.message, "success");
+                    } else {
+                        showModal(data.message || 'Failed to unban user', "error");
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    showModal('Failed to unban user', "error");
+                });
+            },
+            'Unban User'
+        );
+    }
+
+    // User Management: Unsuspend User
+    function unsuspendUser(userId) {
+        confirmAction(
+            'Are you sure you want to lift this user\'s suspension? They will regain access to the platform immediately.',
+            () => {
+                fetch(`/admin/users/${userId}/unsuspend`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById('banned-user-row-' + userId);
+                        if (row) row.remove();
+                        showModal(data.message, "success");
+                    } else {
+                        showModal(data.message || 'Failed to unsuspend user', "error");
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    showModal('Failed to unsuspend user', "error");
+                });
+            },
+            'Unsuspend User'
+        );
+    }
+
+    // Search functionality for banned/suspended users
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('bannedUsersSearch');
+        const table = document.getElementById('bannedUsersTable');
+        const resultsCount = document.getElementById('searchResultsCount');
+        
+        if (searchInput && table) {
+            // Initial count
+            updateResultsCount();
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const rows = table.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    const name = row.cells[0].textContent.toLowerCase();
+                    const email = row.cells[1].textContent.toLowerCase();
+                    const status = row.cells[2].textContent.toLowerCase();
+                    const suspensionUntil = row.cells[3].textContent.toLowerCase();
+                    
+                    const matchesSearch = name.includes(searchTerm) || 
+                                        email.includes(searchTerm) || 
+                                        status.includes(searchTerm) ||
+                                        suspensionUntil.includes(searchTerm);
+                    
+                    if (matchesSearch) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                updateResultsCount(visibleCount, searchTerm);
+            });
+        }
+        
+        function updateResultsCount(visible = null, searchTerm = '') {
+            const table = document.getElementById('bannedUsersTable');
+            const resultsCount = document.getElementById('searchResultsCount');
+            
+            if (!table || !resultsCount) return;
+            
+            const totalRows = table.querySelectorAll('tbody tr').length;
+            
+            if (visible === null) {
+                visible = totalRows;
+            }
+            
+            if (searchTerm) {
+                resultsCount.textContent = `Showing ${visible} of ${totalRows} users`;
+                resultsCount.style.color = visible === 0 ? '#dc2626' : '#059669';
+            } else {
+                resultsCount.textContent = `${totalRows} total users`;
+                resultsCount.style.color = '#6b7280';
+            }
+        }
+    });
 
     function deleteProduct(productId, reportId) {
         console.log('went here');
-        if (!confirm('Are you sure you want to delete this product? This cannot be undone.')) return;
-
+        confirmAction(
+            'Are you sure you want to delete this product? This cannot be undone.',
+            () => {
         $.ajax({
             url: '/admin/products/' + productId,
             type: 'DELETE',
@@ -1269,6 +1679,9 @@
                 showModal('Something went wrong while deleting the product.', "info");
             }
         });
+            },
+            'Delete Product'
+        );
     }
 
     // FOR PRODUCT POLICY
@@ -1944,10 +2357,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("userSearch");
-    const rows = document.querySelectorAll("table tbody tr");
+    const table = document.getElementById("userManagementTable");
+    const resultsCount = document.getElementById("userSearchResultsCount");
+    
+    if (searchInput && table) {
+        const rows = table.querySelectorAll("tbody tr");
+        
+        // Initial count
+        updateUserResultsCount(rows.length, '');
 
-    searchInput.addEventListener("keyup", function () {
+        searchInput.addEventListener("input", function () {
         const query = this.value.toLowerCase().trim();
+            let visibleCount = 0;
 
         rows.forEach(row => {
             const firstName = row.querySelector("td:nth-child(1)")?.textContent.toLowerCase() || "";
@@ -1956,19 +2377,43 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = row.querySelector("td:nth-child(3)")?.textContent.toLowerCase() || "";
             const role = row.querySelector("td:nth-child(4)")?.textContent.toLowerCase() || "";
 
-            if (
-                firstName.includes(query) ||
+                const matchesSearch = firstName.includes(query) ||
                 lastName.includes(query) ||
                 fullName.includes(query) || 
                 email.includes(query) ||
-                role.includes(query)
-            ) {
+                                    role.includes(query);
+
+                if (matchesSearch) {
                 row.style.display = "";
+                    visibleCount++;
             } else {
                 row.style.display = "none";
             }
         });
-    });
+            
+            updateUserResultsCount(visibleCount, query, rows.length);
+        });
+    }
+    
+    function updateUserResultsCount(visible, searchTerm, total = null) {
+        const resultsCount = document.getElementById("userSearchResultsCount");
+        if (!resultsCount) return;
+        
+        const table = document.getElementById("userManagementTable");
+        if (!table) return;
+        
+        if (total === null) {
+            total = table.querySelectorAll("tbody tr").length;
+        }
+        
+        if (searchTerm) {
+            resultsCount.textContent = `Showing ${visible} of ${total} users`;
+            resultsCount.style.color = visible === 0 ? '#dc2626' : '#059669';
+        } else {
+            resultsCount.textContent = `${total} total users`;
+            resultsCount.style.color = '#6b7280';
+        }
+    }
 });
 function openImageViewer(src) {
     document.getElementById('imageViewerImg').src = src;
@@ -2149,6 +2594,288 @@ document.addEventListener('DOMContentLoaded', () => {
   // initial pass
   applyFilters();
 });
+
+// Searchable Dropdown Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all searchable dropdowns
+    document.querySelectorAll('.dropdown-search').forEach(input => {
+        const imageId = input.getAttribute('data-image-id');
+        const dropdown = document.getElementById(`dropdown-${imageId}`);
+        
+        // Set initial selected product if exists
+        const selectedOption = dropdown.querySelector('.dropdown-option[data-selected="true"]');
+        if (selectedOption) {
+            const value = selectedOption.getAttribute('data-value');
+            input.setAttribute('data-selected-id', value);
+            selectedOption.classList.add('selected');
+        }
+        
+        // Show dropdown on focus
+        input.addEventListener('focus', function() {
+            dropdown.style.display = 'block';
+            filterOptions(imageId, '');
+        });
+        
+        // Filter options on input
+        input.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filterOptions(imageId, searchTerm);
+        });
+        
+        // Handle option selection
+        dropdown.addEventListener('click', function(e) {
+            const option = e.target.closest('.dropdown-option');
+            if (option) {
+                // Check if option is disabled (already linked elsewhere)
+                if (option.classList.contains('disabled')) {
+                    showModal('This product is already linked to another featured image.', "error");
+                    return;
+                }
+                
+                const value = option.getAttribute('data-value');
+                const text = option.querySelector('.product-name')?.textContent || 'Select Product';
+                const price = option.querySelector('.product-price')?.textContent || '';
+                
+                input.value = value ? `${text} - ${price}` : '';
+                input.setAttribute('data-selected-id', value);
+                
+                // Update selected state
+                dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                option.classList.add('selected');
+                
+                dropdown.style.display = 'none';
+            }
+        });
+    });
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.searchable-dropdown')) {
+            document.querySelectorAll('.dropdown-options').forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
+});
+
+function filterOptions(imageId, searchTerm) {
+    const dropdown = document.getElementById(`dropdown-${imageId}`);
+    const options = dropdown.querySelectorAll('.dropdown-option');
+    
+    options.forEach(option => {
+        const searchData = option.getAttribute('data-search') || '';
+        const productName = option.querySelector('.product-name')?.textContent.toLowerCase() || '';
+        
+        if (searchTerm === '' || searchData.includes(searchTerm) || productName.includes(searchTerm)) {
+            option.style.display = 'flex';
+        } else {
+            option.style.display = 'none';
+        }
+    });
+}
+
+// Featured Image Product Linking Functions
+function linkProduct(imageId) {
+    const input = document.querySelector(`.dropdown-search[data-image-id="${imageId}"]`);
+    const productId = input.getAttribute('data-selected-id');
+    
+    if (!productId) {
+        showModal('Please select a product to link.', "error");
+        return;
+    }
+    
+    // Check if product is already linked elsewhere
+    const allDropdowns = document.querySelectorAll('.dropdown-options');
+    let isLinkedElsewhere = false;
+    
+    allDropdowns.forEach(dropdown => {
+        if (dropdown.id !== `dropdown-${imageId}`) {
+            const linkedOption = dropdown.querySelector(`[data-value="${productId}"][data-linked-elsewhere="true"]`);
+            if (linkedOption) {
+                isLinkedElsewhere = true;
+            }
+        }
+    });
+    
+    if (isLinkedElsewhere) {
+        showModal('This product is already linked to another featured image.', "error");
+        return;
+    }
+    
+    console.log('Linking product:', productId, 'to image:', imageId); // Debug log
+    
+    confirmAction(
+        'Are you sure you want to link this product to the featured image?',
+        () => {
+            fetch(`/admin/featured-images/${imageId}/link-product`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: parseInt(productId)
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status); // Debug log
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data); // Debug log
+                if (data.success) {
+                    // Update UI dynamically without page refresh
+                    updateImageCardUI(imageId, data.product_name, productId);
+                    updateAllDropdowns(productId, true); // Mark as linked
+                    showSuccessAlert(`Featured image successfully linked to '${data.product_name}'`);
+                    showModal(data.message, "success");
+                } else {
+                    showModal(data.message || 'Failed to link product', "error");
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                showModal('Failed to link product', "error");
+            });
+        },
+        'Link Product'
+    );
+}
+
+function unlinkProduct(imageId) {
+    const productLinkInfo = document.querySelector(`#image-card-${imageId} .product-link-info .linked-product`);
+    const productName = productLinkInfo ? productLinkInfo.textContent.replace('🔗 ', '') : 'product';
+    
+    // Get the currently linked product ID
+    const input = document.querySelector(`.dropdown-search[data-image-id="${imageId}"]`);
+    const currentProductId = input.getAttribute('data-selected-id');
+    
+    confirmAction(
+        'Are you sure you want to unlink the product from this featured image?',
+        () => {
+            fetch(`/admin/featured-images/${imageId}/unlink-product`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI dynamically without page refresh
+                    updateImageCardUI(imageId, null, null);
+                    if (currentProductId) {
+                        updateAllDropdowns(currentProductId, false); // Mark as available
+                    }
+                    showSuccessAlert(`Featured image successfully unlinked from '${productName}'`);
+                    showModal(data.message, "success");
+                } else {
+                    showModal(data.message || 'Failed to unlink product', "error");
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                showModal('Failed to unlink product', "error");
+            });
+        },
+        'Unlink Product'
+    );
+}
+
+// Helper function to update image card UI
+function updateImageCardUI(imageId, productName, productId) {
+    const imageCard = document.querySelector(`[data-image-id="${imageId}"]`).closest('.image-card');
+    const productLinkInfo = imageCard.querySelector('.product-link-info');
+    const linkButton = imageCard.querySelector('.btn-link-product');
+    const unlinkButton = imageCard.querySelector('.btn-unlink-product');
+    const input = imageCard.querySelector('.dropdown-search');
+    
+    if (productName && productId) {
+        // Linking a product
+        productLinkInfo.innerHTML = `<span class="linked-product">🔗 ${productName}</span>`;
+        linkButton.textContent = 'Update Link';
+        
+        if (!unlinkButton) {
+            const newUnlinkButton = document.createElement('button');
+            newUnlinkButton.className = 'btn-unlink-product';
+            newUnlinkButton.textContent = 'Unlink';
+            newUnlinkButton.onclick = () => unlinkProduct(imageId);
+            linkButton.parentNode.appendChild(newUnlinkButton);
+        }
+        
+        input.setAttribute('data-selected-id', productId);
+    } else {
+        // Unlinking a product
+        productLinkInfo.innerHTML = '<span class="no-link">No product linked</span>';
+        linkButton.textContent = 'Link Product';
+        
+        if (unlinkButton) {
+            unlinkButton.remove();
+        }
+        
+        input.value = '';
+        input.removeAttribute('data-selected-id');
+        
+        // Clear selection in dropdown
+        const dropdown = imageCard.querySelector('.dropdown-options');
+        dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+    }
+}
+
+// Helper function to update all dropdowns to show/hide already linked products
+function updateAllDropdowns(productId, isLinked) {
+    document.querySelectorAll('.dropdown-options').forEach(dropdown => {
+        const option = dropdown.querySelector(`[data-value="${productId}"]`);
+        if (option) {
+            if (isLinked) {
+                option.classList.add('disabled');
+                option.setAttribute('data-linked-elsewhere', 'true');
+                if (!option.querySelector('.already-linked')) {
+                    const alreadyLinkedSpan = document.createElement('span');
+                    alreadyLinkedSpan.className = 'already-linked';
+                    alreadyLinkedSpan.textContent = '(Already linked)';
+                    option.appendChild(alreadyLinkedSpan);
+                }
+            } else {
+                option.classList.remove('disabled');
+                option.setAttribute('data-linked-elsewhere', 'false');
+                const alreadyLinkedSpan = option.querySelector('.already-linked');
+                if (alreadyLinkedSpan) {
+                    alreadyLinkedSpan.remove();
+                }
+            }
+        }
+    });
+}
+
+// Helper function to show success alert
+function showSuccessAlert(message) {
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll('.alert-success');
+    existingAlerts.forEach(alert => alert.remove());
+    
+    // Create new alert
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success';
+    alert.textContent = message;
+    
+    // Insert after the h2 in upload section
+    const uploadSection = document.querySelector('.upload-section');
+    const h2 = uploadSection.querySelector('h2');
+    h2.insertAdjacentElement('afterend', alert);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
 </script>
 </body>
 </html>

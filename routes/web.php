@@ -91,6 +91,14 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/users/{id}/update-password', [AdminController::class, 'updateUserPassword'])->name('admin.users.updatePassword');
     Route::post('/admin/users/{id}/update-details', [AdminController::class, 'updateUserDetails'])->name('admin.users.updateDetails');
     Route::delete('/admin/reports/{id}/allow', [AdminController::class, 'allowReport']);
+    // User report actions
+    Route::delete('/admin/user-reports/{id}/allow', [AdminController::class, 'allowUserReport'])->name('admin.userReports.allow');
+    Route::post('/admin/user-reports/{id}/ban', [AdminController::class, 'banUserFromReport'])->name('admin.userReports.ban');
+    Route::post('/admin/user-reports/{id}/suspend', [AdminController::class, 'suspendUserFromReport'])->name('admin.userReports.suspend');
+    Route::post('/admin/users/{id}/unban', [AdminController::class, 'unbanUser'])->name('admin.users.unban');
+    Route::post('/admin/users/{id}/unsuspend', [AdminController::class, 'unsuspendUser'])->name('admin.users.unsuspend');
+    Route::post('/admin/featured-images/{id}/link-product', [AdminController::class, 'linkFeaturedImageToProduct'])->name('admin.featured.link');
+    Route::post('/admin/featured-images/{id}/unlink-product', [AdminController::class, 'unlinkFeaturedImageFromProduct'])->name('admin.featured.unlink');
     Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct']);
     Route::post('/admin/add-college', [AdminController::class, 'addCollege'])->name('admin.addCollege');
     Route::post('/admin/update-college/{id}', [AdminController::class, 'updateCollege'])->name('admin.updateCollege');
@@ -185,6 +193,7 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':stu
     Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
     //check out all
     Route::post('/cart/checkout-all', [CartController::class, 'checkoutAll'])->name('cart.checkoutAll');
+    Route::post('/cart/checkout-selected', [CartController::class, 'checkoutSelected'])->name('cart.checkoutSelected');
     // add to cart
     Route::get('/Cart', [CartController::class, 'showCart'])->name('show.cart');
    // remove from cart

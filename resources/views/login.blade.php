@@ -128,7 +128,7 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal" id="myModal" style="display: none;">
+<!-- <div class="modal" id="myModal" style="display: none;">
   <div class="modal-content">
     <div class="header-warning">This is for system testing</div>
 
@@ -172,7 +172,7 @@
       @endif
     </div>
   </div>
-</div>
+</div> -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
@@ -197,7 +197,7 @@
     });
 </script>
 <!-- modal script -->
-<script>
+<!-- <script>
     // Get modal and close button
     const modal = document.getElementById("myModal");
     const closeBtn = document.getElementById("closeBtn");
@@ -223,6 +223,6 @@
             modal.style.display = "none";
         }
     };
-  </script>
+  </script> -->
 </body>
 </html>

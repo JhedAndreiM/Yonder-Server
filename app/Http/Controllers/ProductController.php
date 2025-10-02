@@ -341,18 +341,25 @@ public function store(Request $request)
 
     public function dashboardForUserSeller()
     {
-        $products = Product::where('user_id', Auth::id())->where('approved', '!=' , 'rejected')->get();
+        $products = Product::where('user_id', Auth::id())->get();
         $productIds = $products->pluck('product_id');
         $images = DB::table('product_images')
             ->whereIn('product_id', $productIds)
             ->get();
+        
+        // Get rejection messages for rejected products
+        $rejections = DB::table('product_rejections')
+            ->whereIn('product_id', $productIds)
+            ->get()
+            ->keyBy('product_id');
+        
         $sellerId = Auth::id();
         $sellerRating = DB::table('reviews')
             ->join('product', 'reviews.product_id', '=', 'product.product_id')
             ->where('product.user_id', $sellerId)
             ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
             ->first();
-        return view('listings', compact('products', 'sellerRating', 'images'));
+        return view('listings', compact('products', 'sellerRating', 'images', 'rejections'));
     }
 
     public function destroyListing(Request $request)

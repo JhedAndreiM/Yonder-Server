@@ -21,11 +21,12 @@ use App\Models\UserReport;
 class AdminController extends Controller
 {
     public function dashboard(){
-        $featuredImages = DB::table('featured_images')
+        $featuredImages = FeaturedImage::with('product')
         ->limit(5)
         ->orderBy('created_at', 'desc')
         ->get();
         $products = Product::where('approved', 'not')->get();
+        $approvedProducts = Product::where('approved', 'yes')->get();
         $notifications = DB::table('notifications')
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
@@ -42,19 +43,29 @@ class AdminController extends Controller
         $users = User::where('role', '!=', 'admin')->get();
 
         $reports = DB::table('reports')
-        ->join('product', 'reports.report_id', '=', 'product.product_id')
-        ->join('users', 'product.user_id', '=', 'users.id')
-        ->select(
-            'reports.id as report_id',
-            'reports.report_id as report_id_item',
-            'reports.message',
-            'product.name as product_name',
-            'product.description',
-            'product.image_path',
-            'users.name as reporter_name',
-            'users.last_name as reporter_last_name'
-        )
-        ->get();
+            ->join('product', 'reports.report_id', '=', 'product.product_id')
+            ->join('users', 'product.user_id', '=', 'users.id')
+            ->leftJoin('product_images', 'product.product_id', '=', 'product_images.product_id')
+            ->select(
+                'reports.report_id as report_id',
+                'reports.message',
+                'product.product_id',
+                'product.name as product_name',
+                'product.description',
+                'users.name as reporter_name',
+                'users.last_name as reporter_last_name',
+                DB::raw('GROUP_CONCAT(product_images.image_path) as images') // all images as one string
+            )
+            ->groupBy(
+                'reports.report_id',
+                'reports.message',
+                'product.product_id',
+                'product.name',
+                'product.description',
+                'users.name',
+                'users.last_name'
+            )
+            ->get();
         $productPolicies = DB::table('product_policies')->get();
         $voucherList = DB::table('voucherList')->get();
         $collegeList = DB::table('colleges')->get();
@@ -64,7 +75,7 @@ class AdminController extends Controller
         $creditPercentage = DB::table('credit_settings')->first();
         $userReports = UserReport::with(['reportedUser', 'reporter'])->get();
         $tagss = Tag::orderBy('created_at', 'desc')->get();
-        return view('admin.dashboard', compact('featuredImages', 'products','notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList', 'categoryList', 'questions', 'userReports', 'tagss'));
+        return view('admin.dashboard', compact('featuredImages', 'products', 'approvedProducts', 'notifications', 'users','reports','productPolicies', 'voucherList', 'creditPercentage', 'collegeList', 'studOrgList', 'categoryList', 'questions', 'userReports', 'tagss'));
     }
 
     public function productPolicy(Request $request){
@@ -465,4 +476,231 @@ public function deleteStudOrg($id)
         ], 500);
     }
 }
+
+    // ========== Reported Users Actions ==========
+    public function allowUserReport(int $id)
+    {
+        $report = UserReport::find($id);
+        if (!$report) {
+            return response()->json(['success' => false, 'message' => 'Report not found'], 404);
+        }
+        $report->delete();
+        return response()->json(['success' => true, 'message' => 'Report removed']);
+    }
+
+    public function banUserFromReport(int $id)
+    {
+        $report = UserReport::find($id);
+        if (!$report) {
+            return response()->json(['success' => false, 'message' => 'Report not found'], 404);
+        }
+
+        $user = User::find($report->reported_user_id);
+        if ($user) {
+            $user->role = 'banned';
+            $user->save();
+
+            // Notify user
+            $notification = Notification::create([
+                'user_id' => $user->id,
+                'title' => 'Account Banned',
+                'message' => 'Your account has been banned due to reported policy violations.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new NewNotification($notification));
+        }
+
+        $report->delete();
+        return response()->json(['success' => true, 'message' => 'User banned and report removed']);
+    }
+
+    public function suspendUserFromReport(Request $request, int $id)
+    {
+        $request->validate([
+            'duration' => 'required|integer|min:1|max:8760' // 1 hour to 1 year
+        ]);
+
+        $report = UserReport::find($id);
+        if (!$report) {
+            return response()->json(['success' => false, 'message' => 'Report not found'], 404);
+        }
+
+        $user = User::find($report->reported_user_id);
+        if ($user) {
+            // Use the new suspend method with duration
+            $user->suspend($request->duration);
+
+            $durationText = $this->formatDuration($request->duration);
+
+            // Notify user with suspension duration
+            $notification = Notification::create([
+                'user_id' => $user->id,
+                'title' => 'Account Suspended',
+                'message' => "Your account has been suspended for {$durationText} due to reported policy violations. Your account will be automatically reactivated on " . $user->suspension_until->format('M j, Y \a\t g:i A'),
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new NewNotification($notification));
+        }
+
+        $report->delete();
+        return response()->json([
+            'success' => true, 
+            'message' => "User suspended for {$durationText} and report removed"
+        ]);
+    }
+
+    private function formatDuration(int $hours): string
+    {
+        if ($hours < 24) {
+            return $hours . ' hour' . ($hours > 1 ? 's' : '');
+        } elseif ($hours < 168) { // Less than a week
+            $days = intval($hours / 24);
+            return $days . ' day' . ($days > 1 ? 's' : '');
+        } elseif ($hours < 720) { // Less than a month
+            $weeks = intval($hours / 168);
+            return $weeks . ' week' . ($weeks > 1 ? 's' : '');
+        } else {
+            $months = intval($hours / 720);
+            return $months . ' month' . ($months > 1 ? 's' : '');
+        }
+    }
+
+    // ========== User Management Actions ==========
+    public function unbanUser(int $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+
+        if ($user->role !== 'banned') {
+            return response()->json(['success' => false, 'message' => 'User is not banned'], 400);
+        }
+
+        $user->role = 'student'; // Reset to default role
+        $user->save();
+
+        // Notify user
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'title' => 'Account Unbanned',
+            'message' => 'Your account has been unbanned. You can now access the platform again.',
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        event(new NewNotification($notification));
+
+        return response()->json(['success' => true, 'message' => 'User has been unbanned successfully']);
+    }
+
+    public function unsuspendUser(int $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+
+        if ($user->role !== 'suspended') {
+            return response()->json(['success' => false, 'message' => 'User is not suspended'], 400);
+        }
+
+        $user->role = 'student'; // Reset to default role
+        $user->suspension_until = null; // Clear suspension timestamp
+        $user->save();
+
+        // Notify user
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'title' => 'Suspension Lifted',
+            'message' => 'Your account suspension has been lifted early. You can now access the platform again.',
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        event(new NewNotification($notification));
+
+        return response()->json(['success' => true, 'message' => 'User suspension has been lifted successfully']);
+    }
+
+    // ========== Featured Image Product Linking ==========
+    public function linkFeaturedImageToProduct(Request $request, int $imageId)
+    {
+        \Log::info('Link product request', [
+            'image_id' => $imageId,
+            'product_id' => $request->product_id,
+            'request_data' => $request->all()
+        ]);
+
+        $request->validate([
+            'product_id' => 'required|exists:product,product_id'
+        ]);
+
+        $featuredImage = FeaturedImage::find($imageId);
+        if (!$featuredImage) {
+            \Log::error('Featured image not found', ['image_id' => $imageId]);
+            return response()->json(['success' => false, 'message' => 'Featured image not found'], 404);
+        }
+
+        // Check if product is already linked to another featured image
+        $existingLink = FeaturedImage::where('product_id', $request->product_id)
+                                   ->where('id', '!=', $imageId)
+                                   ->first();
+        
+        if ($existingLink) {
+            \Log::error('Product already linked to another image', [
+                'product_id' => $request->product_id,
+                'existing_image_id' => $existingLink->id,
+                'current_image_id' => $imageId
+            ]);
+            return response()->json(['success' => false, 'message' => 'This product is already linked to another featured image'], 400);
+        }
+
+        $product = Product::where('product_id', $request->product_id)
+                         ->where('approved', 'yes')
+                         ->first();
+        
+        if (!$product) {
+            \Log::error('Product not found or not approved', ['product_id' => $request->product_id]);
+            return response()->json(['success' => false, 'message' => 'Product not found or not approved'], 404);
+        }
+
+        $featuredImage->product_id = $request->product_id;
+        $saved = $featuredImage->save();
+
+        \Log::info('Featured image save result', [
+            'saved' => $saved,
+            'image_id' => $imageId,
+            'product_id' => $request->product_id,
+            'featured_image' => $featuredImage->toArray()
+        ]);
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Featured image linked to product successfully',
+            'product_name' => $product->name
+        ]);
+    }
+
+    public function unlinkFeaturedImageFromProduct(int $imageId)
+    {
+        $featuredImage = FeaturedImage::find($imageId);
+        if (!$featuredImage) {
+            return response()->json(['success' => false, 'message' => 'Featured image not found'], 404);
+        }
+
+        $productName = $featuredImage->product ? $featuredImage->product->name : 'product';
+        
+        $featuredImage->product_id = null;
+        $featuredImage->save();
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Featured image unlinked from product successfully'
+        ]);
+    }
 }

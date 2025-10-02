@@ -51,6 +51,29 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Email and password do not match.']);
         }
         $user = Auth::user();
+
+        // Check if suspension has expired and lift it
+        if ($user->role === 'suspended') {
+            $user->liftExpiredSuspension();
+            $user->refresh(); // Reload the user to get updated data
+        }
+
+        // Block banned accounts
+        if ($user->role === 'banned') {
+            Auth::logout();
+            return redirect()->route('login.form')->withErrors([
+                'error' => 'Your account has been banned. Contact support if you believe this is a mistake.'
+            ]);
+        }
+
+        // Block currently suspended accounts
+        if ($user->isSuspended()) {
+            Auth::logout();
+            $suspensionEnd = $user->suspension_until->format('M j, Y \a\t g:i A');
+            return redirect()->route('login.form')->withErrors([
+                'error' => "Your account is suspended until {$suspensionEnd}. Please check your email for details or contact support."
+            ]);
+        }
         
         // Check if user needs to change password (for new accounts with default password)
         if (!$user->password_changed && Hash::check('12345678', $user->password)) {
