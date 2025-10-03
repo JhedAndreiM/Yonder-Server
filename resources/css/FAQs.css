@@ -39,7 +39,10 @@ body::-webkit-scrollbar {
     height: 100dvh;
 }
 .navbar-brand img {
-    height: 50px;
+    padding-left: 2rem !important;
+    height: 48px !important;
+    width: auto;
+    display: block;
 }
 .d-flex {
     display: flex;
@@ -237,6 +240,7 @@ input:focus {
 .navBarLeft {
     cursor: pointer;
 }
+
 /* END OF NAVBAR */
 
 .gradient {

@@ -40,7 +40,7 @@
       <!-- nav bar -->
 
       <div class="navBar">
-        <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+        <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/YonderLogo.svg') }}" alt="" /></div>
 
         <div class="navBarRight">
           <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
@@ -99,7 +99,7 @@
        <!-- nav bar -->
         <div class="navBar">
             <div class="navBarLeft">
-                <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
+                <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/YonderLogo.svg') }}" alt="" /></div>
             </div>
             <div class="navBarRight">
                 <div class="dropdown-container">
@@ -175,7 +175,7 @@
           <div class="container-fluid px-4">
             <!-- Left: Logo -->
             <a class="navbar-brand d-flex align-items-center" href="{{url('/')}}">
-              <img src="img/logo.svg" alt="Logo" height="40" />
+              <img src="img/YonderLogo.svg" alt="Logo" height="40" />
             </a>
 
             <!-- Hamburger for mobile -->

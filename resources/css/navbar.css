@@ -326,6 +326,13 @@ input:focus {
   cursor: pointer;
 }
 
+.navBarLeft img {
+  padding-left: 2rem;
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
 /* END OF NAVBAR */
 .notif-bell {
   position: relative;
@@ -356,5 +363,8 @@ input:focus {
     right: 0 !important;
     left: 50% !important;
     transform: translateX(-35%) !important;
+  }
+  .navBarLeft img {
+    height: 36px;
   }
 }

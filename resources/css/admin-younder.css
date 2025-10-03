@@ -356,8 +356,9 @@ button[type="submit"] {
     box-shadow: 0 1px 4px rgba(119, 18, 23, 0.07);
 }
 .reportProdDelete{
-    padding: 6px 12px;
-    font-size: 14.4px;
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 .btn:hover,
 button[type="submit"]:hover {
@@ -968,24 +969,39 @@ button[type="reset"]:hover {
 }
 
 .collegeTable button {
-    padding: 6px 12px;
     margin-right: 6px;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
-    font-size: 0.9rem;
     color: #fff;
     transition: background-color 0.2s;
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 
 .collegeTable .editBtn {
     background-color: #4d90cc;
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 .collegeTable .editBtnStudOrg {
     background-color: #4d90cc;
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
+}
+.collegeTable .deleteBtnStudOrg {
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 .collegeTable .editBtnCategory {
     background-color: #4d90cc;
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 
 .collegeTable .editBtn:hover {
@@ -999,7 +1015,10 @@ button[type="reset"]:hover {
 }
 
 .collegeTable .deleteBtn,.approveBtn {
-    background-color: #d9534f;
+    background-color: var(--theme);
+    font-size: 1rem;
+    padding: 0.7rem 2rem;
+    font-weight: 600;
 }
 
 .collegeTable .deleteBtn:hover {
@@ -1647,13 +1666,12 @@ button.deleteBtn {
     margin-right: 0.5rem;
     transition: background-color 0.2s;
 }
-
 .btn-link-product:hover {
     background-color: #2563eb;
 }
 
 .btn-unlink-product {
-    background-color: #dc2626;
+    background-color: var(--theme);
     color: white;
     border: none;
     padding: 0.5rem 1rem;

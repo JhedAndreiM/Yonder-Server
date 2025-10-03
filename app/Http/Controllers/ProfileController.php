@@ -48,7 +48,7 @@ class ProfileController extends Controller
 
         // Products 
         $productsQuery = Product::where('user_id', $id)
-            ->where('approved', '!=', 'rejected');
+        ->where('approved', '=', 'yes');
 
         if ($request->filled('searching')) {
             $search = $request->searching;

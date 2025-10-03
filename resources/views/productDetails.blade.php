@@ -158,7 +158,7 @@
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
-                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Message Seller</a>
+                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Message</a>
               @endif
             @else
               @if($products->user_id=== Auth::id())

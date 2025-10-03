@@ -178,7 +178,10 @@
         </section>
 
         <style>
-            .btn-edit{padding:.4rem .75rem;border:none;border-radius:.5rem;background:#4f46e5!important;color:#fff;cursor:pointer}
+            .btn-edit{border:none;border-radius:.5rem;background:#4f46e5!important;color:#fff;cursor:pointer
+                font-size: 1rem;
+                padding: 0.7rem 2rem;
+                font-weight: 600;}
             .btn-edit:hover{background:#4338ca}
             .btn-cancel{padding:.4rem .75rem;border:1px solid #e5e7eb;border-radius:.5rem;background:#f3f4f6;color:#111827;cursor:pointer}
             .btn-cancel:hover{background:#e5e7eb}
