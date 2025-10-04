@@ -221,6 +221,98 @@ class OrganizationController extends Controller
             return view('organization/orgReport', compact('statusCounts', 'monthlySalesData', 'totalAmount', 'wishlistCounts', 'mostWishlisted', 'lowStockProducts','lowStockFirst', 'topSellerProduct','salesData', 'cartData'));
     }
 
+    public function filterChartData(Request $request)
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $userId = Auth::id();
+
+        // Build date filter
+        $dateFilter = '';
+        if ($year && $month) {
+            $dateFilter = "AND YEAR(cart_items.updated_at) = {$year} AND MONTH(cart_items.updated_at) = {$month}";
+        } elseif ($year) {
+            $dateFilter = "AND YEAR(cart_items.updated_at) = {$year}";
+        }
+
+        // Get filtered sales data
+        $salesQuery = DB::table('cart_items')
+            ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+            ->where('cart_items.seller_id', $userId)
+            ->where('cart_items.status', 'completed');
+
+        if ($year && $month) {
+            $salesQuery->whereYear('cart_items.updated_at', $year)
+                      ->whereMonth('cart_items.updated_at', $month);
+        } elseif ($year) {
+            $salesQuery->whereYear('cart_items.updated_at', $year);
+        }
+
+        $salesData = $salesQuery->select(
+            'product.name as product_name',
+            DB::raw('SUM(cart_items.quantity) as total_quantity')
+        )
+        ->groupBy('product.product_id', 'product.name')
+        ->orderByDesc('total_quantity')
+        ->limit(10)
+        ->get();
+
+        // Get filtered wishlist data
+        $wishlistQuery = DB::table('product')
+            ->leftJoin('wishlists', 'product.product_id', '=', 'wishlists.product_id')
+            ->where('product.user_id', $userId);
+
+        if ($year && $month) {
+            $wishlistQuery->whereYear('wishlists.created_at', $year)
+                         ->whereMonth('wishlists.created_at', $month);
+        } elseif ($year) {
+            $wishlistQuery->whereYear('wishlists.created_at', $year);
+        }
+
+        $wishlistData = $wishlistQuery->select(
+            'product.name',
+            DB::raw('COUNT(wishlists.product_id) as wishlist_count')
+        )
+        ->groupBy('product.product_id', 'product.name')
+        ->orderByDesc('wishlist_count')
+        ->limit(10)
+        ->get();
+
+        // Get filtered stock data
+        $stockQuery = Product::where('user_id', $userId)
+            ->where('approved', 'yes');
+
+        $stockData = $stockQuery->select('name', 'stock')
+            ->orderBy('stock')
+            ->limit(10)
+            ->get();
+
+        // Format data for charts
+        $salesLabels = $salesData->pluck('product_name')->toArray();
+        $salesValues = $salesData->pluck('total_quantity')->toArray();
+
+        $wishlistLabels = $wishlistData->pluck('name')->toArray();
+        $wishlistValues = $wishlistData->pluck('wishlist_count')->toArray();
+
+        $stockLabels = $stockData->pluck('name')->toArray();
+        $stockValues = $stockData->pluck('stock')->toArray();
+
+        return response()->json([
+            'sales' => [
+                'labels' => $salesLabels,
+                'data' => $salesValues
+            ],
+            'wishlist' => [
+                'labels' => $wishlistLabels,
+                'data' => $wishlistValues
+            ],
+            'stock' => [
+                'labels' => $stockLabels,
+                'data' => $stockValues
+            ]
+        ]);
+    }
+
     public function orggetAllNotCartItems(Request $request){
         $userId = Auth::id();
         $filters = $request->get('filter');

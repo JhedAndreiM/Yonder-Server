@@ -2,6 +2,7 @@
 
 @section('title', 'Inventory')
 @section('head')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,6 +33,11 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <!-- FONT AWESOME -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+  
   @vite('resources/css/orgReport.css')
 @endsection
 @section('content')
@@ -82,6 +88,63 @@
       <p>Here's your sales report</p>
     </div>
     <button class="generate-btn" id="generatePdfBtn">Generate Sales Report</button>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label for="yearFilter">Year:</label>
+        <select id="yearFilter" class="filter-select">
+          @php
+            $currentYear = date('Y');
+            $startYear = 2025;
+          @endphp
+          @for($year = $currentYear; $year >= $startYear; $year--)
+            <option value="{{ $year }}" @if($year == $currentYear) selected @endif>{{ $year }}</option>
+          @endfor
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="monthFilter">Month:</label>
+        <select id="monthFilter" class="filter-select">
+          <option value="">All Months</option>
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+      <button id="applyFilters" class="filter-btn">Apply Filters</button>
+      <button id="resetFilters" class="filter-btn reset">Reset</button>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Product Sales Performance</h3>
+        <div class="chart-controls">
+          <button class="chart-toggle active" data-chart="sales">Items Sold</button>
+          <button class="chart-toggle" data-chart="wishlist">Wishlist</button>
+          <button class="chart-toggle" data-chart="stock">Stock Levels</button>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="salesChart" class="chart-canvas"></canvas>
+        <canvas id="wishlistChart" class="chart-canvas" style="display: none;"></canvas>
+        <canvas id="stockChart" class="chart-canvas" style="display: none;"></canvas>
+      </div>
+    </div>
   </div>
 
   <div class="cards-row">
@@ -346,21 +409,50 @@
 </div>
 
 <!-- Generate PDF Modal -->
-<div class="modal" id="generatePdfModal" >
-  <div class="modal-content">
-    <span class="close">&times;</span>
+<div class="modal" id="generatePdfModal">
+  <div class="modal-content pdf-modal">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <i class="fa-solid fa-file-pdf"></i>
+      </div>
+      <div class="modal-title-section">
+        <h3>Generate Sales Report</h3>
+        <p>Select date range to generate your comprehensive sales report</p>
+      </div>
+      <span class="close">&times;</span>
+    </div>
+    
     <form id="pdfForm" action="{{ route('generate.pdf') }}" method="POST" target="_blank">
       @csrf
-      <h3>Generate PDF</h3>
+      <div class="form-content">
+        <div class="date-inputs">
+          <div class="input-group">
+            <label for="fromDate">
+              <i class="fa-solid fa-calendar-days"></i>
+              From Date
+            </label>
+            <input type="date" id="fromDate" name="fromDate" required min="2025-01-01" max="" placeholder="Select start date">
+          </div>
+          
+          <div class="input-group">
+            <label for="toDate">
+              <i class="fa-solid fa-calendar-days"></i>
+              To Date
+            </label>
+            <input type="date" id="toDate" name="toDate" required min="2025-01-01" max="" placeholder="Select end date">
+          </div>
+        </div>
+      </div>
       
-      <label for="fromDate">From:</label>
-      <input type="date" id="fromDate" name="fromDate" required max="">
-      
-      <label for="toDate">To:</label>
-      <input type="date" id="toDate" name="toDate" required max="">
-      
-      <div class="buttonSubmit">
-        <button type="submit" class="generate-btn">Generate</button>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="document.getElementById('generatePdfModal').style.display='none'">
+          <i class="fa-solid fa-times"></i>
+          Cancel
+        </button>
+        <button type="submit" class="btn-generate">
+          <i class="fa-solid fa-download"></i>
+          Generate Report
+        </button>
       </div>
     </form>
   </div>
@@ -428,8 +520,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('pdfForm');
 
     const today = new Date().toISOString().split('T')[0];
+    const minDate = '2025-01-01';
+    
     fromDate.max = today;
     toDate.max = today;
+    fromDate.min = minDate;
+    toDate.min = minDate;
 
     fromDate.addEventListener('change', () => {
       if(fromDate.value) {
@@ -438,7 +534,7 @@ document.addEventListener("DOMContentLoaded", function () {
           toDate.value = '';
         }
       } else {
-        toDate.min = '';
+        toDate.min = minDate;
       }
     });
     toDate.addEventListener('change', () => {
@@ -452,6 +548,321 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+});
+
+// Chart and Filter Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart instances
+    let salesChart = null;
+    let wishlistChart = null;
+    let stockChart = null;
+    
+    // Sample data - replace with actual data from your controller
+    const salesData = {
+        labels: @json($salesData->pluck('product_name')->take(10)),
+        datasets: [{
+            label: 'Items Sold',
+            data: @json($salesData->pluck('total_quantity')->take(10)),
+            backgroundColor: 'rgba(163, 0, 0, 0.8)',
+            borderColor: '#a30000',
+            borderWidth: 1
+        }]
+    };
+
+    const wishlistData = {
+        labels: @json($wishlistCounts->pluck('name')->take(10)),
+        datasets: [{
+            label: 'Wishlist Count',
+            data: @json($wishlistCounts->pluck('wishlist_count')->take(10)),
+            backgroundColor: [
+                '#a30000',
+                '#dc3545',
+                '#fd7e14',
+                '#ffc107',
+                '#28a745',
+                '#20c997',
+                '#17a2b8',
+                '#6f42c1',
+                '#e83e8c',
+                '#6c757d'
+            ],
+            borderWidth: 0
+        }]
+    };
+
+    const stockData = {
+        labels: @json($lowStockProducts->pluck('name')->take(10)),
+        datasets: [{
+            label: 'Stock Level',
+            data: @json($lowStockProducts->pluck('stock')->take(10)),
+            backgroundColor: 'rgba(163, 0, 0, 0.8)',
+            borderColor: '#a30000',
+            borderWidth: 1
+        }]
+    };
+
+    // Chart configuration
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            }
+        }
+    };
+
+    // Initialize charts
+    function initCharts() {
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        salesChart = new Chart(salesCtx, {
+            type: 'bar',
+            data: salesData,
+            options: {
+                ...chartOptions,
+                indexAxis: 'y', // This makes it horizontal
+                plugins: {
+                    ...chartOptions.plugins,
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Wishlist Chart
+        const wishlistCtx = document.getElementById('wishlistChart').getContext('2d');
+        wishlistChart = new Chart(wishlistCtx, {
+            type: 'doughnut',
+            data: wishlistData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Stock Chart
+        const stockCtx = document.getElementById('stockChart').getContext('2d');
+        stockChart = new Chart(stockCtx, {
+            type: 'bar',
+            data: stockData,
+            options: chartOptions
+        });
+    }
+
+    // Chart toggle functionality
+    document.querySelectorAll('.chart-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+            const chartType = this.dataset.chart;
+            
+            // Update active button
+            document.querySelectorAll('.chart-toggle').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Hide all charts
+            document.querySelectorAll('.chart-canvas').forEach(canvas => {
+                canvas.style.display = 'none';
+            });
+            
+            // Show selected chart
+            document.getElementById(chartType + 'Chart').style.display = 'block';
+        });
+    });
+
+    // Filter functionality
+    document.getElementById('applyFilters').addEventListener('click', function() {
+        const year = document.getElementById('yearFilter').value;
+        const month = document.getElementById('monthFilter').value;
+        
+        console.log('Applying filters:', { year, month });
+        
+        // Update charts with filtered data
+        updateChartsWithFilters(year, month);
+    });
+
+    document.getElementById('resetFilters').addEventListener('click', function() {
+        const currentYear = new Date().getFullYear();
+        document.getElementById('yearFilter').value = currentYear;
+        document.getElementById('monthFilter').value = '';
+        
+        // Reset charts to original data
+        resetCharts();
+    });
+
+    function updateChartsWithFilters(year, month) {
+        console.log('Updating charts with filters:', { year, month });
+        
+        // Show loading state
+        showLoadingState();
+        
+        // Make AJAX request to get filtered data
+        fetch('/organization/filter-chart-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                year: year,
+                month: month
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Filtered data received:', data);
+            
+            // Update sales chart
+            if (salesChart && data.sales) {
+                salesChart.data.labels = data.sales.labels;
+                salesChart.data.datasets[0].data = data.sales.data;
+                salesChart.update();
+            }
+            
+            // Update wishlist chart
+            if (wishlistChart && data.wishlist) {
+                wishlistChart.data.labels = data.wishlist.labels;
+                wishlistChart.data.datasets[0].data = data.wishlist.data;
+                wishlistChart.update();
+            }
+            
+            // Update stock chart
+            if (stockChart && data.stock) {
+                stockChart.data.labels = data.stock.labels;
+                stockChart.data.datasets[0].data = data.stock.data;
+                stockChart.update();
+            }
+            
+            // Update chart title
+            let title = 'Product Sales Performance';
+            if (year && month) {
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+                title = `Product Sales - ${months[parseInt(month) - 1]} ${year}`;
+            } else if (year) {
+                title = `Product Sales - ${year}`;
+            }
+            updateChartTitle(title);
+            
+            hideLoadingState();
+        })
+        .catch(error => {
+            console.error('Error fetching filtered data:', error);
+            hideLoadingState();
+            
+            // Fallback to client-side filtering
+            fallbackFiltering(year, month);
+        });
+    }
+    
+    function fallbackFiltering(year, month) {
+        // Fallback filtering when AJAX fails
+        if (year && month) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            if (salesChart) {
+                // For fallback, just show all products (no real filtering)
+                salesChart.data.labels = salesData.labels;
+                salesChart.data.datasets[0].data = salesData.datasets[0].data;
+                salesChart.update();
+            }
+            
+            updateChartTitle('Product Sales - ' + months[parseInt(month) - 1] + ' ' + year);
+        } else if (year) {
+            if (salesChart) {
+                salesChart.data.labels = salesData.labels;
+                salesChart.data.datasets[0].data = salesData.datasets[0].data;
+                salesChart.update();
+            }
+            updateChartTitle('Product Sales - ' + year);
+        } else {
+            resetCharts();
+            updateChartTitle('Product Sales Performance');
+        }
+    }
+    
+    function showLoadingState() {
+        const chartWrapper = document.querySelector('.chart-wrapper');
+        if (chartWrapper) {
+            chartWrapper.style.opacity = '0.5';
+            chartWrapper.style.pointerEvents = 'none';
+        }
+    }
+    
+    function hideLoadingState() {
+        const chartWrapper = document.querySelector('.chart-wrapper');
+        if (chartWrapper) {
+            chartWrapper.style.opacity = '1';
+            chartWrapper.style.pointerEvents = 'auto';
+        }
+    }
+
+    function resetCharts() {
+        // Reset to original data
+        if (salesChart) {
+            salesChart.data = salesData;
+            salesChart.update();
+        }
+        if (wishlistChart) {
+            wishlistChart.data = wishlistData;
+            wishlistChart.update();
+        }
+        if (stockChart) {
+            stockChart.data = stockData;
+            stockChart.update();
+        }
+        updateChartTitle('Product Sales Performance');
+    }
+
+    function updateChartTitle(title) {
+        const chartHeader = document.querySelector('.chart-header h3');
+        if (chartHeader) {
+            chartHeader.textContent = title;
+        }
+    }
+
+    // Initialize everything
+    initCharts();
 });
 </script>
 @endsection
