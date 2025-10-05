@@ -736,7 +736,7 @@ public function confirmStudentSales(Request $request, $id)
             if (!empty($buyer->phone_number)) {
                 try {
                     $smsService = app(\App\Services\IprogSmsService::class);
-                    $text = 'Your payment for "' . $product->name . '" has been confirmed by the seller.';
+                    $text = 'Your buy order for "' . $product->name . '" has been confirmed by the seller.';
                     $smsService->send($buyer->phone_number, $text);
                 } catch (\Exception $e) {
                     Log::error('Failed to send SMS', ['error' => $e->getMessage()]);
