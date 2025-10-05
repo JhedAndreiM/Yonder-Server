@@ -36,7 +36,10 @@ body {
 }
 
 .navbar-brand img {
-    height: 50px;
+    padding-left: 2rem !important;
+    height: 48px !important;
+    width: auto;
+    display: block;
 }
 
 .d-flex {
