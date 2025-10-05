@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification;
 
 class CartController extends Controller
 {
@@ -721,7 +722,27 @@ public function confirmStudentSales(Request $request, $id)
             ]);
 
         DB::commit();
-
+        $buyer = DB::table('users')->where('id', $cartItem->user_id)->first();
+        if($buyer){
+            $notification = Notification::create([
+                'user_id' => $buyer->id,
+                'title' => 'Order Accepted',
+                'message' => 'Your order for "' . $product->name . '" has been confirmed by the seller.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new \App\Events\NewNotification($notification));
+            if (!empty($buyer->phone_number)) {
+                try {
+                    $smsService = app(\App\Services\IprogSmsService::class);
+                    $text = 'Your payment for "' . $product->name . '" has been confirmed by the seller.';
+                    $smsService->send($buyer->phone_number, $text);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send SMS', ['error' => $e->getMessage()]);
+                }
+            }
+        }
         $filters = $request->input('filterValue');
         if ($request->ajax()) {
             return response()->json(['success' => true, 'id' => $id]);
@@ -749,6 +770,31 @@ public function confirmStudentSales(Request $request, $id)
             'status' => 'receive',
             'updated_at' => now()
         ]);
+        $order = DB::table('cart_items')->where('id', $id)->first();
+        if ($order) {
+            $buyer = DB::table('users')->where('id', $order->user_id)->first();
+            $notification = Notification::create([
+                'user_id' => $buyer->user_id,
+                'title' => 'Buy Order Confirmed',
+                'message' => 'Your buy order for "'.$order->product_name.'" has been confirmed and ready to be received.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new \App\Events\NewNotification($notification));
+            if($buyer->phone_number){
+                try {
+                    $smsService = app(\App\Services\IprogSmsService::class);
+                    $message = 'Your buy order for "'.$order->product_name.'" has been confirmed.';
+                    $response = $smsService->send($buyer->phone_number, $message);
+                } catch (\Throwable $th) {
+                    Log::error('Failed to send SMS to buyer', [
+                        'error' => $e->getMessage(),
+                        'order_id' => $id,
+                    ]);
+                }
+            }
+        }
         if ($request->ajax()) {
             return response()->json(['success' => true, 'id' => $id]);
         }
@@ -801,6 +847,24 @@ public function orderReceivedDelivered(Request $request, $id)
 
             // ✅ Update critical level
             $this->recalculateCriticalLevel($confirm);
+            $buyer = DB::table('users')->where('id', $confirm->user_id)->first();
+            if($buyer){
+                $notification = Notification::create([
+                    'user_id' => $buyer->id,
+                    'title' => 'Order Delivered',
+                    'message' => 'Your order for "'.$confirm->product_name.'" has been delivered.',
+                    'is_read' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                event(new \App\Events\NewNotification($notification));
+                if($buyer->phone_number){
+                    $smsService = app(\App\Services\IprogSmsService::class);
+                    $message = 'Your order for "'.$confirm->product_name.'" has been completed.';
+                    $response = $smsService->send($buyer->phone_number, $message);
+                }
+            }
+            
         }
 
         if ($request->ajax()) {
@@ -844,6 +908,23 @@ public function orderReceivedDelivered(Request $request, $id)
 
             // ✅ Update critical level
             $this->recalculateCriticalLevel($confirm);
+            $buyer = DB::table('users')->where('id', $confirm->user_id)->first();
+            if($buyer){
+                $notification = Notification::create([
+                    'user_id' => $buyer->id,
+                    'title' => 'Order Delivered',
+                    'message' => 'Your order for "'.$confirm->product_name.'" has been delivered.',
+                    'is_read' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                event(new \App\Events\NewNotification($notification));
+                if($buyer->phone_number){
+                    $smsService = app(\App\Services\IprogSmsService::class);
+                    $message = 'Your order for "'.$confirm->product_name.'" has been completed.';
+                    $response = $smsService->send($buyer->phone_number, $message);
+                }
+            }
         }
 
         if ($request->ajax()) {
