@@ -2,13 +2,11 @@
     $converter = new League\CommonMark\CommonMarkConverter();
     $selectedFaqId = request()->query('faq_id');
 @endphp
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FAQS</title>
-    <link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
+@extends('Front_layouts.app')
+
+@section('title', 'FAQS')
+@section('head')
+<link rel="icon" type="image/png" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,206 +23,8 @@
     />
     @vite('resources/css/FAQs.css')
     @vite('resources/js/FAQs.js')
-    <style>
-      body {
-      background-image: url("{{ asset('img/background.svg') }}");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: top center;
-      }
-  </style>
-  </head>
-  <body>
-    @auth
-      @if(auth()->user()->role === 'student')
-      <!-- nav bar -->
-
-      <div class="navBar">
-        <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/YonderLogo.svg') }}" alt="" /></div>
-
-        <div class="navBarRight">
-          <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
-          <div class="dropdown-container">
-      <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
-      <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-        <div class="notification-header">
-          <h3>Notifications</h3>
-        </div>
-        <div class="notification-list">
-          @if ($notifications->isEmpty())
-            <p style="padding-left:10px;">No notifications</p>
-          @else
-            @foreach ($notifications as $notification)
-              <div class="notification">
-                <div class="title">
-                  <h1>
-                    @if($notification['title'] === "Product Approved")
-                      <span style="color:Green;">{{ $notification['title'] }}</span>
-                    @elseif($notification['title'] === "Product Rejected")
-                      <span style="color:red;">{{ $notification['title'] }}</span>
-                    @else
-                      {{ $notification['title'] }}
-                    @endif
-                  </h1>
-                </div>
-                <div class="Message">{{ $notification['message'] }}</div>
-                <div class="time">{{ $notification['time_ago'] }}</div>
-              </div>
-            @endforeach
-          @endif
-        </div>
-      </div>
-    </div>
-          <a href="{{ route('show.wishlist') }}">
-              <img class="hover" src="{{ asset('img/wishlist.png') }}" alt="Wishlist"/>
-          </a>
-          <a href="{{ route('show.cart') }}">
-              <img class="hover" src="{{ asset('img/cart.png') }}" alt="Cart"/>
-          </a>
-            <div class="dropdown-container">
-      <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
-      <div class="profile-dropdown" id="profileDropdown" style="display: none;">
-        <ul>
-          <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-          <li><a href="{{route('account.page')}}">Settings</a></li>
-          <li><a href="{{ route('logout') }}">Logout</a></li>
-        </ul>
-      </div>
-    </div>
-        </div>
-      </div>
-
-      <!-- nav bar -->
-      @elseif(auth()->user()->role === 'organization')
-       <!-- nav bar -->
-        <div class="navBar">
-            <div class="navBarLeft">
-                <div class="navBarLeft" id="logoClick"><img src="{{ asset('img/YonderLogo.svg') }}" alt="" /></div>
-            </div>
-            <div class="navBarRight">
-                <div class="dropdown-container">
-                    <img
-                        class="hover notificationBtn"
-                        src="{{ asset('img/notif.png') }}"
-                        alt=""
-                    />
-                    <div
-                        class="notification-dropdown"
-                        id="notificationDropdown"
-                        style="display: none"
-                    >
-                        <div class="notification-header">
-                            <h3>Notifications</h3>
-                        </div>
-                        <div class="notification-list">
-                            @if ($notifications->isEmpty())
-                            <p style="padding-left: 10px">No notifications</p>
-                            @else @foreach ($notifications as $notification)
-                            <div class="notification">
-                                <div class="title">
-                                    <h1>
-                                        @if($notification['title'] === "Product
-                                        Approved")
-                                        <span style="color: Green"
-                                            >{{ $notification['title'] }}</span
-                                        >
-                                        @elseif($notification['title'] ===
-                                        "Product Rejected")
-                                        <span style="color: red"
-                                            >{{ $notification['title'] }}</span
-                                        >
-                                        @else {{ $notification['title'] }}
-                                        @endif
-                                    </h1>
-                                </div>
-                                <div class="Message">
-                                    {{ $notification['message'] }}
-                                </div>
-                                <div class="time">
-                                    {{ $notification['time_ago'] }}
-                                </div>
-                            </div>
-                            @endforeach @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="dropdown-container">
-                    <img
-                        class="hover profileBtn"
-                        src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}"
-                        alt=""
-                    />
-                    <div
-                        class="profile-dropdown"
-                        id="profileDropdown"
-                        style="display: none"
-                    >
-                        <ul>
-                            <li><a href="{{route('account.page')}}">Accounts</a></li>
-                            <li><a href="{{ route('logout') }}">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- nav bar -->
-      @endif
-    @endauth
-    @guest
- <nav class="navbar navbar-expand-lg py-3">
-          <div class="container-fluid px-4">
-            <!-- Left: Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="{{url('/')}}">
-              <img src="img/YonderLogo.svg" alt="Logo" height="40" />
-            </a>
-
-            <!-- Hamburger for mobile -->
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#mainNavbar"
-              aria-controls="mainNavbar"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar content -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
-              <!-- Middle: Nav links -->
-              <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4 text-center">
-                <li class="nav-item">
-                  <a
-                    class="nav-link fw-semibold"
-                    aria-current="page"
-                    href="{{ route('landing') }}"
-                    >Home</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link fw-semibold" href="{{ route('about.us') }}">About</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link fw-semibold active" href="{{ route('FAQs') }}">FAQs</a>
-                </li>
-              </ul>
-
-              <!-- Right: Login -->
-              <div class="d-flex">
-                <a
-                  href="{{ route('login.form') }}"
-                  class="btn rounded-pill px-4"
-                  >Login</a
-                >
-              </div>
-            </div>
-          </div>
-        </nav>
-    @endguest
-
-
+@endsection
+@section('content')
     <div class="imgContainer">
       <img class="gradient" src="{{ asset('img/footer.svg') }}" alt="" />
       <div class="overlay-text">Hi, how can we help?</div>
@@ -272,82 +72,6 @@
 
     <script src="FAQS.js"></script>
     <script>
-            // notifs
- document.addEventListener("DOMContentLoaded", function () {
-    const notifBtn = document.querySelector(".notificationBtn");
-    const notifDropdown = document.getElementById("notificationDropdown");
-    const profileBtn = document.querySelector(".profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const closeNotif = document.querySelector(".closeButton");
-    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-    const cartButton = document.querySelectorAll('.cartBtn');
-    let category = 'featured';
-
-    document.querySelectorAll(".mainFilterButtons").forEach(button => {
-    button.addEventListener("click", () => {
-        // Remove 'current' from all filter buttons
-        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
-            btn.classList.remove("current");
-        });
-        let url='?page=${page}';
-        button.classList.add("current");
-
-        category = button.dataset.category;
-        console.log('Clicked category:', category);
-        updateFilters();
-    });
-});
-    notifBtn.addEventListener("click", function () {
-      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
-      profileDropdown.style.display = "none"; 
-      console.log("clicked");
-    });
-
-    profileBtn.addEventListener("click", function () {
-      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
-      notifDropdown.style.display = "none"; // close notifications if open
-    });
-    if(closeNotif){
-    closeNotif.addEventListener("click", function () {
-      notifDropdown.style.display = "none";
-    });
-    }
-    document.getElementById('logoClick').addEventListener('click', function() {
-      @if(auth()->check())
-          @if(auth()->user()->role === 'student')
-              window.location.href = "{{ route('student.dashboard') }}";
-          @elseif(auth()->user()->role === 'organization')
-              window.location.href = "{{ route('organization.dashboard') }}";
-          @elseif(auth()->user()->role === 'admin')
-              window.location.href = "{{ route('admin.dashboard') }}";
-          @endif
-      @else
-          window.location.href = "{{ route('landing') }}";
-      @endif
-    });
-    // Optional: Close dropdowns if clicked outside
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest(".dropdown-container")) {
-        notifDropdown.style.display = "none";
-        profileDropdown.style.display = "none";
-      }
-    });
-
-        // wishlist button
-        wishlistButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                window.location.href = "{{ route('show.wishlist') }}";
-            });
-        });
-         // cart button
-        cartButton.forEach(button=>{
-            button.addEventListener('click', function(){
-                window.location.href= "{{route('show.cart')}}";
-                
-            })
-        });
-
-  });
   // ===========================
 // Auto-expand & highlight from ?faq_id=...
 // ===========================
@@ -376,5 +100,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
     </script>
-  </body>
-</html>
+@endsection

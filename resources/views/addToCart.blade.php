@@ -22,7 +22,7 @@
     <div class="bottom-container" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
       <div>
         <p class="items-count" style="font-weight: bold;">Items: {{ $totalItems }}</p>
-        <p class="cart-total" style="font-weight: bold;">Total: P {{ number_format($totalAmount, 2) }}</p>
+        <p class="cart-total" style="font-weight: bold; display:none;">Total: <span id="selectedTotalAmount"></span></p>
       </div>
 
       <div style="display:flex; gap:1rem; align-items:center;">
@@ -38,6 +38,59 @@
       </div>
     </div>
   </div>
+
+  <script>
+    (function(){
+      const totalEl = document.querySelector('.cart-total');
+      const totalAmtEl = document.getElementById('selectedTotalAmount');
+
+      function getItemCheckboxes(){
+        return Array.from(document.querySelectorAll('input[name="selected_items[]"]'));
+      }
+
+      function parsePrice(text){
+        if(!text) return 0;
+        // remove currency symbol and commas
+        const n = text.replace(/[^0-9.]/g, '');
+        const v = parseFloat(n);
+        return isNaN(v) ? 0 : v;
+      }
+
+      function computeSelectedTotal(){
+        const checked = getItemCheckboxes().filter(cb => cb.checked && !cb.disabled);
+        if(checked.length === 0){
+          totalEl.style.display = 'none';
+          totalAmtEl.textContent = '';
+          return;
+        }
+
+        let sum = 0;
+        checked.forEach(cb => {
+          const cartItem = cb.closest('.cart-item');
+          const priceEl = cartItem ? cartItem.querySelector('.div-price p') : null;
+          if(priceEl){
+            sum += parsePrice(priceEl.textContent);
+          }
+        });
+
+        totalEl.style.display = '';
+        totalAmtEl.textContent = `P ${sum.toFixed(2)}`;
+      }
+
+      // Listen to any checkbox change (items and select all)
+      document.addEventListener('change', function(e){
+        if(e.target && e.target.matches('input[type="checkbox"]')){
+          computeSelectedTotal();
+        }
+      });
+
+      // Initialize state on load
+      computeSelectedTotal();
+
+      // Expose recompute to window so other scripts (e.g., quantity updates) can trigger it
+      window.__recomputeCartSelectedTotal = computeSelectedTotal;
+    })();
+  </script>
 </div>
         <!-- Unique modal container -->
 <div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
@@ -60,8 +113,12 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("uniqueConfirmModal");
+    const modalHeader = document.getElementById("uniqueModalHeader");
     const confirmYes = document.getElementById("uniqueConfirmYes");
     const confirmNo = document.getElementById("uniqueConfirmNo");
+    const modalIcon = document.getElementById("uniqueModalIcon");
+    const modalTitle = document.getElementById("uniqueHeaderMessage");
+    const modalMessage = document.getElementById("uniqueConfirmMessage");
 
     let currentForm = null; // store which form triggered the modal
 
@@ -70,8 +127,51 @@ document.addEventListener("DOMContentLoaded", function () {
         form.addEventListener("submit", function (e) {
             e.preventDefault(); // stop normal submission
             currentForm = form;
+            // Set remove visuals
+            if (modalIcon) modalIcon.src = "{{ asset('imgModal/cancelLogo.svg') }}";
+            if (modalTitle) modalTitle.textContent = "Remove Item?";
+            if (modalMessage) modalMessage.textContent = "Are you sure you want to remove this item?";
+            if (confirmYes) {
+              confirmYes.textContent = 'Remove';
+              confirmYes.style.backgroundColor = '';
+              confirmYes.style.color = '';
+              confirmYes.style.border = '';
+            }
             modal.style.display = "flex"; // show modal
         });
+    });
+
+    // Intercept checkout selected form to confirm total amount
+    const checkoutForm = document.getElementById("cartCheckoutForm");
+    checkoutForm?.addEventListener("submit", function(e){
+        e.preventDefault();
+
+        // Verify any item selected
+        const selected = Array.from(document.querySelectorAll('input[name="selected_items[]"]'))
+            .filter(cb => cb.checked && !cb.disabled);
+        if (selected.length === 0) {
+            alert('Please select at least one item to checkout.');
+            return;
+        }
+
+        // Use already computed total displayed at the bottom
+        const totalTextNode = document.getElementById('selectedTotalAmount');
+        const amountText = (totalTextNode?.textContent || '').trim();
+
+        currentForm = checkoutForm;
+        if (modalIcon) modalIcon.src = "{{ asset('imgModal/confirmationLogo.svg') }}";
+        if (modalTitle) modalTitle.textContent = "Proceed to Checkout?";
+        if (modalMessage) modalMessage.textContent = amountText ? `You are about to checkout items totaling ${amountText}. Continue?` : `You are about to checkout selected items. Continue?`;
+        if (confirmYes) {
+          confirmYes.textContent = 'Confirm';
+          modalHeader.style.backgroundColor = '#5196F0';
+          imageWrapper.style.boxShadow = "0 1px 0 rgba(81, 150, 240, 0.6)";
+          confirmYes.style.backgroundColor = '#5196F0';
+          confirmYes.style.color = '#ffffff';
+          modalTitle.style.color = '#5196F0';
+          confirmYes.style.border = 'none';
+        }
+        modal.style.display = "flex";
     });
 
     // Cancel button
@@ -191,6 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.cartTotal !== undefined) cartTotalEl.textContent = `Total: P ${data.cartTotal}`;
       else if (data.cart_total !== undefined) cartTotalEl.textContent = `Total: P ${data.cart_total}`;
+      // Recompute selected total if quantities changed may affect per-item totals
+      if (window.__recomputeCartSelectedTotal) {
+        window.__recomputeCartSelectedTotal();
+      }
     })
     .catch(error => {
       console.error('Error:', error);

@@ -24,6 +24,20 @@ body {
   background-color: white;
   border-style: solid;
   border-width: 2px;
+  position: sticky; /* keep search visible while scrolling inside .content */
+  top: 0;
+  z-index: 50;
+}
+
+/* Ultra-wide screens: prevent layout from over-stretching */
+@media (min-width: 1951px) {
+  .container {
+    max-width: 1500px !important; /* cap total width on very large displays */
+  }
+  .content {
+    overflow-x: hidden; /* guard against horizontal scroll on wide screens */
+    padding-right: 16px; /* minor breathing room at right edge */
+  }
 }
 .searchBtnImg{
   max-width: 50px;
@@ -80,7 +94,7 @@ input:focus {
 
 .filter {
   border-radius: 15px;
-  width: 400px;
+  width: 300px;
   height: 700px;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
@@ -165,9 +179,12 @@ button.active {
 
 .content {
   overflow-y: auto;
-  width: 70%;
+  flex: 1;
+  min-width: 0; 
   margin-top: 20px;
   margin-left: 40px;
+  height: 100vh;
+  padding-bottom: 140px; 
 }
 
 .content::-webkit-scrollbar {

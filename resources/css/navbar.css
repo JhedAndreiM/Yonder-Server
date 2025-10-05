@@ -18,6 +18,13 @@
   align-items: center;
   gap: 40px;
 }
+
+/* Ultra-wide screens: match main container cap */
+@media (min-width: 1951px) {
+  .navBar {
+    max-width: 1500px !important;
+  }
+}
 .navBarMiddle {
   display: flex;
   justify-content: center;

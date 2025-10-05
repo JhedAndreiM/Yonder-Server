@@ -207,7 +207,7 @@
               <!-- Right: Login -->
               <div class="d-flex">
                 <a
-                  href="{{ route('select.role') }}"
+                  href="{{ route('login.form') }}"
                   class="btn rounded-pill px-4"
                   >Login</a
                 >

@@ -140,9 +140,22 @@ class AdminController extends Controller
             'updated_at' => now(),
         ]);
         event(new NewNotification($notification));
-
-        // $smsService = app(\App\Services\IprogSmsService::class);
-        // $response = $smsService->send('09484386078', 'Your verification code is wtf');
+        $user = User::find($product->user_id);
+        if($user && $user->phone_number){
+            try {
+                $smsService = app(\App\Services\IprogSmsService::class);
+                $message = 'Your product "' . $product->name . '" has been approved and is now visible in the marketplace.';
+                $response = $smsService->send($user->phone_number, $message);
+            } catch (\Exception $e) {
+                Log::error('SMS sending failed', [
+                    'to' => $user->phone_number,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        else {
+            Log::warning('No phone number found for user', ['user_id' => $product->user_id]);
+        }
         return response()->json(['message' => 'Tags received and product approved']);
     }
 

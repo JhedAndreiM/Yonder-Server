@@ -83,13 +83,15 @@
         <div class="sellerQR-containerView">
             <h3>Seller’s GCash QR</h3>
 
-            {{-- We set the image directly here (no JS injection needed) --}}
+            @if($cartItems->seller_qr_image)
             <img
                 class="sellerQRImage"
                 alt="Seller QR"
                 src="{{ asset('storage/users-qr/' . $cartItems->seller_qr_image) }}"
             >
-
+            @else
+            <p>No QR image found. Contact seller to upload QR image.</p>
+            @endif
             <div class="buttonGroup">
                 <button class="closeButton_ViewSellerQR">Close</button>
             </div>

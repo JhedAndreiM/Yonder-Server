@@ -64,7 +64,11 @@ body {
   height: 100vh;
   gap: 5%;
 }
-
+@media (min-width: 1951px) {
+  .container {
+    max-width: 1700px !important;
+  }
+}
 .productPictures {
   border-radius: 15px;
   width: 50%;
@@ -239,7 +243,10 @@ h3 {
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
-
+.addToCart{
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
 #active {
   background-color: #0d62ff;
   color: white;
