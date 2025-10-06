@@ -9,7 +9,7 @@
     data-vouchers="{{ $cartItems->voucher_applied }}"
     data-id="{{ $cartItems->cart_id }}"
     data-date="{{ $cartItems->formatted_updated_at ?? $cartItems->updated_at}}"
-    onclick="openProductModalSeller(this)">Receipt</button>
+    onclick="openProductModalSeller(this)">Invoice</button>
 @else
 
 <button class="btn btn-primary rate-btn reviewButton" data-itemid="{{ $cartItems->product_id}}">Review</button>
@@ -23,5 +23,5 @@
     data-voucher="{{ $cartItems->voucher_applied }}"
     data-id="{{ $cartItems->cart_id }}"
     data-date="{{ $cartItems->formatted_updated_at }}"
-    onclick="openProductModal(this)">Receipt</button>
+    onclick="openProductModal(this)">Invoice</button>
 @endif
