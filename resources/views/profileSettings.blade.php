@@ -149,10 +149,6 @@
         <p>Change password</p>
         <img src="{{asset('img/lock.svg')}}" alt="" />
       </div>
-      <div class="signOut" id="signOut">
-        <p>Sign Out</p>
-        <img src="{{asset('img/signout.svg')}}" alt="" />
-      </div>
     </div>
 <!-- Change Password Modal -->
 <div id="changePasswordModal" class="change-password-modal">

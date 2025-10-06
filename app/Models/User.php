@@ -21,9 +21,14 @@ class User extends Authenticatable
         'name',
         'last_name',
         'middle_name',
+        'gender',
         'email',
         'password',
         'phone_number',
+        'role',
+        'active_status',
+        'messenger_color',
+        'dark_mode',
         'password_changed',
     ];
 
@@ -48,6 +53,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'password_changed' => 'boolean',
+            'active_status' => 'boolean',
+            'dark_mode' => 'boolean',
             'suspension_until' => 'datetime',
         ];
     }

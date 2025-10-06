@@ -14,7 +14,6 @@
   </div>
 
   <div class="container">
-    {{-- partial renders cards. checkboxes inside each card use form="cartCheckoutForm" --}}
     @include('partials.productCart', ['cartItems' => $cartItems])
   </div>
 
@@ -74,7 +73,7 @@
         });
 
         totalEl.style.display = '';
-        totalAmtEl.textContent = `P ${sum.toFixed(2)}`;
+        totalAmtEl.textContent = `P\u00A0${sum.toFixed(2)}`;
       }
 
       // Listen to any checkbox change (items and select all)
@@ -137,6 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
               confirmYes.style.color = '';
               confirmYes.style.border = '';
             }
+            // Reset theme back to default crimson
+            if (modalHeader) modalHeader.style.backgroundColor = '#ae0505';
+            if (typeof imageWrapper !== 'undefined' && imageWrapper) imageWrapper.style.boxShadow = '0 1px 0 rgba(165, 0, 0, 0.6)';
+            if (modalTitle) modalTitle.style.color = '#ae0505';
             modal.style.display = "flex"; // show modal
         });
     });
@@ -154,9 +157,31 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Recompute total just-in-time to ensure latest quantities are reflected
+        if (window.__recomputeCartSelectedTotal) {
+          window.__recomputeCartSelectedTotal();
+        }
+
         // Use already computed total displayed at the bottom
         const totalTextNode = document.getElementById('selectedTotalAmount');
-        const amountText = (totalTextNode?.textContent || '').trim();
+        let amountText = (totalTextNode?.textContent || '').trim();
+
+        // Fallback: if amountText is empty for any reason, compute from selected item rows
+        if (!amountText) {
+          let sum = 0;
+          selected.forEach(cb => {
+            const cartItem = cb.closest('.cart-item');
+            const priceEl = cartItem ? cartItem.querySelector('.div-price p') : null;
+            if (priceEl) {
+              const n = priceEl.textContent.replace(/[^0-9.]/g, '');
+              const v = parseFloat(n);
+              if (!isNaN(v)) sum += v;
+            }
+          });
+          if (sum > 0) {
+            amountText = `P\u00A0${sum.toFixed(2)}`;
+          }
+        }
 
         currentForm = checkoutForm;
         if (modalIcon) modalIcon.src = "{{ asset('imgModal/confirmationLogo.svg') }}";

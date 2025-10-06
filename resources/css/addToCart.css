@@ -377,6 +377,7 @@ h1 {
   color: var(--brand);
   font-weight: 700;
 }
+.cart-total { white-space: nowrap; }
 .total-bottom {
     background-color: white;
     height: 100px;

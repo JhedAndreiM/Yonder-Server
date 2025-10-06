@@ -99,35 +99,42 @@
                     </div>
                     <div class="modal-middle">
                         <div class="middle-top">
-                            <h3>Order ID # <span id="productID"></span></h3>
-                            <h6><span id="receiptDate"></span></h6>
-                        </div>
-                        <div class="middle-bottom">
-                            <h2>Here's your receipt</h2>
-                            <img src="{{ asset('img/image 9.svg') }}" alt="">
+                            <h2 style="margin:0;">Invoice</h2>
+                            <h3 style="margin:4px 0 0;">Order ID # <span id="productID"></span></h3>
+                            <h6 style="margin:6px 0 0;"><span id="receiptDate"></span></h6>
                         </div>
                     </div>
                     <div class="modal-bottom">
                         <div class="bottom-top">
-                            <h1>Details:</h1>
+                            <h1>Details</h1>
                         </div>
                         <div class="bottom-bottom">
                             <table>
-                                <tr>
-                                    <td class="dotted-bottom"><span id="productName"></span></td>
-                                    <td class="dotted-bottom center-align">x <span id="productQuantity"></span></td>
-                                    <td class="dotted-bottom center-align">P <span id="productPrice"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="dotted-bottom">Voucher Used</td>
-                                    <td class="dotted-bottom"></td>
-                                    <td class="dotted-bottom center-align"><span id="productVoucherPrice"></span></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td class="total center-align">Total: </td>
-                                    <td class="total center-align">P <span id="productTotal"></span></td>
-                                </tr>
+                                <thead>
+                                    <tr>
+                                        <th class="left-align" style="text-align:left;">Item</th>
+                                        <th class="center-align">Qty</th>
+                                        <th class="center-align">Unit Price</th>
+                                        <th class="right-align">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="dotted-bottom"><span id="productName"></span></td>
+                                        <td class="dotted-bottom center-align"><span id="productQuantity"></span></td>
+                                        <td class="dotted-bottom center-align">P <span id="productPrice"></span></td>
+                                        <td class="dotted-bottom right-align">P <span id="productLineSubtotal"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="dotted-bottom" colspan="3">Voucher Used</td>
+                                        <td class="dotted-bottom right-align">P <span id="productVoucherPrice"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td class="total center-align" colspan="2">Total</td>
+                                        <td class="total right-align">P <span id="productTotal"></span></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -279,16 +286,22 @@
         // modal opem
         function openProductModalSeller(button) {
             var modal = document.getElementById("myModal");
-            modal.style.display = "block";
+            modal.style.display = "flex";
             document.getElementById('productName').textContent = button.dataset.names;
             document.getElementById('productQuantity').textContent = button.dataset.qtys;
-            document.getElementById('productPrice').textContent = button.dataset.prices;
-            document.getElementById('productVoucherPrice').textContent = button.dataset.vouchers;
+            document.getElementById('productPrice').textContent = Number(button.dataset.prices || 0).toFixed(2);
+            document.getElementById('productVoucherPrice').textContent = Number(button.dataset.vouchers || 0).toFixed(2);
             document.getElementById('productID').textContent = button.dataset.id;
             document.getElementById('receiptDate').textContent = button.dataset.date;
-            document.getElementById('productTotal').textContent = ((button.dataset.prices * button.dataset.qtys) - button
-                .dataset.vouchers);
-            console.log('wtf');
+
+            const unitPrice = parseFloat(button.dataset.prices) || 0;
+            const qty = parseInt(button.dataset.qtys) || 0;
+            const voucher = parseFloat(button.dataset.vouchers) || 0;
+            const lineSubtotal = unitPrice * qty;
+            const total = lineSubtotal - voucher;
+            const lineSubtotalEl = document.getElementById('productLineSubtotal');
+            if (lineSubtotalEl) lineSubtotalEl.textContent = lineSubtotal.toFixed(2);
+            document.getElementById('productTotal').textContent = total.toFixed(2);
         }
         // modal close
         var span = document.getElementsByClassName("close")[0];
@@ -296,9 +309,13 @@
             var modal = document.getElementById("myModal");
             modal.style.display = "none";
         }
-        // screenshot
+        // screenshot (hide close/download controls during capture)
         function screenshot() {
-            const captureElement = document.querySelector(".modal-wrapper");
+            const captureElement = document.querySelector(".modal-content-overlay");
+            if (!captureElement) return;
+            const controls = Array.from(captureElement.querySelectorAll('.modal-top .close, .modal-top .downloadBtn'));
+            const previousDisplay = controls.map(el => el.style.display);
+            controls.forEach(el => { el.style.display = 'none'; });
             html2canvas(captureElement).then(function(c) {
                 const url = c.toDataURL();
                 const linkEl = document.createElement("a");
@@ -306,6 +323,8 @@
                 linkEl.setAttribute("download", "receipt.png");
                 linkEl.click();
                 linkEl.remove();
+            }).finally(() => {
+                controls.forEach((el, i) => { el.style.display = previousDisplay[i] || ''; });
             });
         }
 

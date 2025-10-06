@@ -194,9 +194,12 @@ body {
 }
 
 .lowerRight {
-  margin-top: 70px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   display: grid;
   justify-content: end;
+  z-index: 1100;
 }
 /* Modal Styles */
 .modal {

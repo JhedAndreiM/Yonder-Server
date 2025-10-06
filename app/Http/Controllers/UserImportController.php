@@ -21,7 +21,6 @@ class UserImportController extends Controller
     // Handle file upload
     public function upload(Request $request)
     {
-        // 1. Validate the uploaded file
         $request->validate([
             'excel_file' => 'required|mimes:xlsx,xls'
         ]);
@@ -29,51 +28,44 @@ class UserImportController extends Controller
         try {
             $file = $request->file('excel_file');
             $spreadsheet = IOFactory::load($file->getPathname());
-            
             $worksheet = $spreadsheet->getActiveSheet();
-            
-            $rows = $worksheet->toArray();
-            
-            $headers = array_shift($rows);
-            
-            foreach ($rows as $row) {
 
-                $birthdayCell  = $row[6] ?? null;
-                $passwordPlain = null;
-                if (empty($birthdayCell) && $birthdayCell !== 0) {
-                    $passwordPlain = 'BPSU12345678';
-                } else {
-                    // 2) If it's numeric, treat as Excel date serial
+            $rows = $worksheet->toArray(null, true, true, true);
+
+            // Get header row (1st row)
+            $headers = array_shift($rows);
+
+            // Convert headers to lowercase for flexible matching
+            $headers = array_map(fn($h) => strtolower(trim($h)), $headers);
+
+            foreach ($rows as $row) {
+                // Map row values by header name
+                $data = array_combine($headers, $row);
+
+                $birthdayCell = $data['birthday'] ?? null;
+                $passwordPlain = 'BPSU12345678';
+
+                if (!empty($birthdayCell)) {
                     if (is_numeric($birthdayCell)) {
                         try {
-                            // Convert Excel serial to PHP DateTime
                             $dt = PhpSpreadsheetDate::excelToDateTimeObject($birthdayCell);
-                            $passwordPlain = $dt->format('d-m-Y'); // e.g., 06-06-2004
-                        } catch (\Exception $e) {
-                            // fallback if conversion fails
-                            $passwordPlain = '01-01-2000';
-                        }
+                            $passwordPlain = $dt->format('d-m-Y');
+                        } catch (\Exception $e) {}
                     } else {
-                        // 3) Try parsing string dates using Carbon (covers 'YYYY-MM-DD', 'MM/DD/YYYY', etc.)
                         try {
-                            // Carbon is flexible with many formats
                             $dt = Carbon::parse($birthdayCell);
                             $passwordPlain = $dt->format('d-m-Y');
-                        } catch (\Exception $e) {
-                            // Last attempt: if PhpSpreadsheet gave a formatted string already, try common formats
-                            // or fallback to default
-                            $passwordPlain = '01-01-2000';
-                        }
+                        } catch (\Exception $e) {}
                     }
                 }
-                // Create new user
+
                 User::create([
-                    'name' => $row[0] ?? null,
-                    'middle_name' => $row[1] ?? null,
-                    'last_name' => $row[2] ?? null,
-                    'gender' => $row[3] ?? null,
-                    'email' => $row[4] ?? null,
-                    'phone_number' => $row[5] ?? null,
+                    'name' => $data['name'] ?? null,
+                    'middle_name' => $data['middle_name'] ?? null,
+                    'last_name' => $data['last_name'] ?? null,
+                    'gender' => $data['gender'] ?? null,
+                    'email' => $data['email'] ?? null,
+                    'phone_number' => $data['phone_number'] ?? null,
                     'password' => Hash::make($passwordPlain),
                     'role' => 'student',
                     'active_status' => 0,
@@ -86,7 +78,7 @@ class UserImportController extends Controller
             return back()->with('excel_success', 'Users imported successfully!');
 
         } catch (\Exception $e) {
-            return back()->with('excel_success', 'Error: ' . $e->getMessage());
+            return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
