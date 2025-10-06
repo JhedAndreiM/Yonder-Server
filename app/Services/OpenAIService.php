@@ -57,6 +57,7 @@ class OpenAIService
 
             If any related FAQs exist, add them under 'Related FAQs' at the end(ONLY SAY THE RELATED QUESTION, NOT THE ANSWER, if no related FAQs show nothing not even the 'Related FAQs'.
             BOLD the QUESTION
+            IF NO RELEVANT FAQs, SAY 'No relevant FAQs found.'
             ";
         try {
         $response = $this->client->chat()->create([
