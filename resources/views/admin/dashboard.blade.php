@@ -35,55 +35,64 @@
 </head>
 <body>
     <!-- nav bar -->
-
     <div class="navBar">
-      <div class="navBarLeft"><img src="{{ asset('img/logo.svg') }}" alt="" /></div>
-      <div class="navBarRight">
-        <img class="hover" src="{{ asset('img/help.png') }}" alt="" />
-        <div class="dropdown-container">
-    <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="" />
-    <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-      <div class="notification-header">
-        <h3>Notifications</h3>
-      </div>
-      <div class="notification-list">
-        @if ($notifications->isEmpty())
-          <p style="padding-left:10px;">No notifications</p>
-        @else
-          @foreach ($notifications as $notification)
-            <div class="notification">
-              <div class="title">
-                <h1>
-                  @if($notification['title'] === "Product Approved")
-                    <span style="color:Green;">{{ $notification['title'] }}</span>
-                  @elseif($notification['title'] === "Product Rejected")
-                    <span style="color:red;">{{ $notification['title'] }}</span>
-                  @else
-                    {{ $notification['title'] }}
-                  @endif
-                </h1>
-              </div>
-              <div class="Message">{{ $notification['message'] }}</div>
-              <div class="time">{{ $notification['time_ago'] }}</div>
-            </div>
-          @endforeach
-        @endif
-      </div>
-    </div>
+  <div class="navBarLeft" id="logoClick">
+  <img src="{{ asset('img/YonderLogo.svg') }}" alt="" />
   </div>
-          <div class="dropdown-container">
-    <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
-    <div class="profile-dropdown" id="profileDropdown" style="display: none;">
-      <ul>
-        <li><a href="{{ route('student.profile') }}">My Profile</a></li>
-        <li><a href=" ">Wishlist</a></li>
-        <li><a href="{{ route('logout') }}">Logout</a></li>
-      </ul>
-    </div>
-  </div>
-      </div>
-    </div>
 
+  <div class="navBarRight">
+    <!-- Notifications -->
+    <div class="dropdown-container">
+
+      <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+        <div class="notification-header">
+          <h3>Notifications</h3>
+        </div>
+
+        <div class="notification-list">
+          @if ($notifications->isEmpty())
+            <p style="padding-left:10px;">No notifications</p>
+          @else
+            @foreach ($notifications as $notification)
+              <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
+                <div class="notification-content">
+                  <h1>
+                    @if($notification['title'] === "Product Approved")
+                      <span style="color:Green;">{{ $notification['title'] }}</span>
+                    @elseif($notification['title'] === "Product Rejected")
+                      <span style="color:red;">{{ $notification['title'] }}</span>
+                    @else
+                      {{ $notification['title'] }}
+                    @endif
+                  </h1>
+                  <div class="Message">{{ $notification['message'] }}</div>
+                </div>
+                <div class="notification-time">{{ $notification['time_ago'] }}</div>
+              </div>
+
+              @if($loop->iteration == 10)
+                <div class="see-more-btn" id="see-more-btn" data-offset="10">See More</div>
+              @endif
+            @endforeach
+          @endif
+        </div>
+      </div>
+    </div>
+    <!-- Profile -->
+    <div class="dropdown-container">
+      <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="Profile" />
+      <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+        <ul>
+          <li data-url="{{ route('logout') }}">
+            <span class="icon"><i class="fa-solid fa-door-open"></i></span>
+            <span class="label">Logout</span>
+            <span class="chevron">›</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
     <!-- nav bar -->
 <div class="container">
 
@@ -326,6 +335,9 @@
 
         <!-- Product Policy -->
         <section class="productPolicy">
+            @if (session('product_policy_success'))
+                <div class="alert alert-success">{{ session('product_policy_success') }}</div>
+            @endif
             <form id="policyForm" action="{{ route('admin.productPolicy') }}" method="POST">
                 @csrf
                 <div class="section">
@@ -1814,11 +1826,6 @@ function closeImageViewer() {
         updateFilters();
     });
 });
-    notifBtn.addEventListener("click", function () {
-      notifDropdown.style.display = notifDropdown.style.display === "none" ? "block" : "none";
-      profileDropdown.style.display = "none"; 
-      console.log("clicked");
-    });
 
     profileBtn.addEventListener("click", function () {
       profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
@@ -1835,6 +1842,11 @@ function closeImageViewer() {
         notifDropdown.style.display = "none";
         profileDropdown.style.display = "none";
       }
+    });
+    document.querySelectorAll('#profileDropdown li').forEach(li => {
+        li.addEventListener('click', () => {
+            window.location.href = li.dataset.url;
+        });
     });
   });
 

@@ -91,6 +91,11 @@
         
 
         <form action="{{ route('login.submit') }}" method="POST" data-aos="fade-right">
+        @if (session('auth_required'))
+                <div class="alert alert-danger">
+                    <p>{{ session('auth_required') }}</p>
+                </div>
+            @endif
             @csrf
             <div class="form-firstRow">
                 <div class="email input-container">
@@ -119,7 +124,7 @@
                 <a class="cancel"href="{{ route('landing') }}">Cancel</a>
                 <button class="submit">Login</button>
             </div>
-            
+
         </form>
         
     </div>

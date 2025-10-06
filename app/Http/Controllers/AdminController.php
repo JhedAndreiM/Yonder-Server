@@ -104,7 +104,7 @@ class AdminController extends Controller
                 'updated_at'=> now()
             ]
         );
-        return redirect()->back()->with('success', 'Product policies updated successfully!');
+        return redirect()->back()->with('product_policy_success', 'Product policies updated successfully!');
 
     }
     public function approveProduct(Request $request, $id)

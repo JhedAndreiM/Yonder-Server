@@ -252,7 +252,9 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':adm
 // Role selection
 // Unified login page, redirects by role after authentication
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
-
+Route::get('/login-redirect', function () {
+    return redirect()->route('login.form')->with('auth_required', 'Please log in first to continue.');
+})->name('login');
 // Login verification
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 

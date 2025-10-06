@@ -78,7 +78,13 @@ class UserImportController extends Controller
             return back()->with('excel_success', 'Users imported successfully!');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            $message = $e->getMessage();
+
+            if (str_contains($message, 'Duplicate entry') && str_contains($message, 'users_email_unique')) {
+                return back()->with('excel_error', 'Some users were not imported because their email already exists.');
+            }
+
+            return back()->with('excel_error', 'Import failed: ' . $message);
         }
     }
 
