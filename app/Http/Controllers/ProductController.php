@@ -54,8 +54,8 @@ public function store(Request $request)
     $product->stock = $validated['stock'];
     $product->price = $validated['price'];
     $product->colleges = $collegesString;
-    $product->forSaleTrade = $validated['tradeOrSell'] ?? null;
-    $product->product_condition = $validated['productQuality'] ?? null;
+    $product->forSaleTrade = $validated['tradeOrSell'] ?? 'sale';
+    $product->product_condition = $validated['productQuality'] ?? 'new';
     $product->approved = "not";
     $product->organization_id = $validated['organization_id'] ?? null;
     $product->user_id = Auth::id(); 
