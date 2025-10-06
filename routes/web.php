@@ -65,7 +65,7 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':or
     Route::get('/chart', [OrganizationController::class, 'showChart'])->name('org.report');
     Route::get('/ListOfProduct', function () {
         return view('viewListedItems');})->name('viewListedItems.page');
-    Route::POST('/generate-pdf', [PDFController::class, 'generate'])->name('generate.pdf');
+    Route::GET('/generate-pdf', [PDFController::class, 'generate'])->name('generate.pdf');
     Route::POST('/products/update-stock-settings', [OrganizationController::class, 'updateStockSettings'])->name('update.stock');
     Route::delete('/products/{id}', [OrganizationController::class, 'destroy'])->name('products.destroy');
     Route::POST('/organization/filter-chart-data', [OrganizationController::class, 'filterChartData'])->name('organization.filter.chart');

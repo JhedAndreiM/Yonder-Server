@@ -422,7 +422,7 @@
       <span class="close">&times;</span>
     </div>
     
-    <form id="pdfForm" action="{{ route('generate.pdf') }}" method="POST" target="_blank">
+    <form id="pdfForm" action="{{ route('generate.pdf') }}" method="GET" target="_blank">
       @csrf
       <div class="form-content">
         <div class="date-inputs">

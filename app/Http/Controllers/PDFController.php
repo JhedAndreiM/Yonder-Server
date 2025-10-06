@@ -89,16 +89,19 @@ public function generate(Request $request)
         ];
     })->values()->toArray();
 
-    $pdf = Pdf::loadView('pdf', [
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf', [
         'pbenProducts' => $pbenProducts,
         'pbenSummary' => $pbenSummary,
         'pbenTotal' => $pbenTotal,
         'studentOrgProducts' => $studentOrgProducts,
         'studentOrgSummary' => $studentOrgSummary,
         'studentOrgTotal' => $studentOrgTotal,
+        'from' => $from,
+        'to' => $to,
     ]);
 
-    return $pdf->download();
+    $fileName = 'sales_report_' . $from . '_to_' . $to . '.pdf';
+    return $pdf->stream($fileName, ['Attachment' => false]);
 }
 
 }

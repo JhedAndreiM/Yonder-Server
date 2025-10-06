@@ -9,21 +9,18 @@
 </head>
 <body>
 <table class="w-full">
-    <!-- Row 1: University headings -->
+    <!-- Header with logos and text -->
     <tr>
-        <td style="text-align: center;">
+        <td style="width: 20%; text-align: left; vertical-align: top; padding-top: 10px;">
+            <img src="{{ public_path('img/bpsulogo.png') }}" alt="BPSU Logo" width="90" style="vertical-align: middle;" />
+        </td>
+        <td style="width: 60%; text-align: center; vertical-align: top; padding-top: 10px;">
             <h3 class="bpsuName" style="margin: 0;">BATAAN PENINSULA STATE UNIVERSITY</h3>
             <h5 class="pbenName" style="margin: 0;">PRODUCTION AND BUSINESS ENTERPRISE - MAIN CAMPUS</h5>
             <h6 class="bpsuLocation" style="margin: 0;">Capitol Compound, Tenejero, Balanga City Bataan 2101, PHILIPPINES</h6>
         </td>
-    </tr>
-
-    <!-- Row 2: Logos (closer together) -->
-    <tr>
-        <td style="text-align: center; padding-top: 10px;">
-            <img src="{{ public_path('img/pbenLogo.svg') }}" alt="Left Logo" width="100" style="margin: 0 10px; vertical-align: middle;" />
-            <img src="{{ public_path('img/pbenLogo.svg') }}" alt="Center Logo" width="100" style="margin: 0 10px; vertical-align: middle;" />
-            <img src="{{ public_path('img/logo.svg') }}" alt="Right Logo" width="100" style="margin: 0 10px; vertical-align: middle;" />
+        <td style="width: 20%; text-align: right; vertical-align: middle; padding-top: 10px;">
+            <img src="{{ public_path('img/pbenLogo.svg') }}" alt="PBEN Logo" width="100" style="vertical-align: middle;" />
         </td>
     </tr>
 </table>
