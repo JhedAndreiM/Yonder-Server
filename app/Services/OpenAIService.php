@@ -29,10 +29,12 @@ class OpenAIService
     public function askFAQ(string $question): array
     {
         // Fetch all FAQs with id and question
-        $faqs = FaqQuestion::all(['id', 'question']);
+        $faqs = FaqQuestion::all(['id', 'question', 'answer']);
         $faqListText = "Here are the existing FAQs:\n";
         foreach ($faqs as $faq) {
-            $faqListText .= "{$faq->id}. {$faq->question}\n";
+            $faqListText .= "FAQ ID: {$faq->id}\n";
+            $faqListText .= "Question: {$faq->question}\n";
+            $faqListText .= "Answer: {$faq->answer}\n\n";
         }
         $systemPrompt = "You are a Yonder FAQ assistant for the university marketplace. Your job is to respond **only using the FAQs in the database**. 
             - Use the provided FAQ list below as your source. 
@@ -57,7 +59,8 @@ class OpenAIService
 
             If any related FAQs exist, add them under 'Related FAQs' at the end(ONLY SAY THE RELATED QUESTION, NOT THE ANSWER, if no related FAQs show nothing not even the 'Related FAQs'.
             BOLD the QUESTION
-            IF NO RELEVANT FAQs, SAY 'No relevant FAQs found.'
+            IF NO RELEVANT FAQs, SAY 'No relevant FAQs found'!importantdont output this text if atleast one relevant FAQ is found).'
+            IF the question matches a question in the FAQs, SAY the Question in bold and the answer
             ";
         try {
         $response = $this->client->chat()->create([
