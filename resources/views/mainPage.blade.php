@@ -267,38 +267,41 @@
         autoStart();
     }
     
-    document.querySelectorAll('.wishlist-icon').forEach(img => {
-      img.addEventListener('click', function (event){
-        event.stopPropagation();
-        isHeartClicked = true;
+    // Use event delegation to handle heart icons (including dynamically loaded ones)
+    document.addEventListener('click', function(event) {
+        // Check if the clicked element is a wishlist icon
+        if (event.target.classList.contains('wishlist-icon')) {
+            event.stopPropagation();
+            isHeartClicked = true;
 
-      const currentSrc = img.getAttribute('src');
-      const grayHeart = "{{ asset('img/wishlist.png') }}";
-      const redHeart = "{{ asset('img/wishlist-red.png') }}";
+            const img = event.target;
+            const currentSrc = img.getAttribute('src');
+            const grayHeart = "{{ asset('img/wishlist.png') }}";
+            const redHeart = "{{ asset('img/wishlist-red.png') }}";
 
-      img.setAttribute(
-        'src',
-        currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
-      );
+            img.setAttribute(
+                'src',
+                currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
+            );
 
-      event.preventDefault();     
-        event.stopPropagation();
-        console.log("clicked");
-        var productId = $(this).data('product-id');
-        var heart = $(this);
-        
-        $.ajax({
-            url: "{{ route('wishlist.toggle') }}", 
-            method: 'POST',
-            data: {
-                product_id: productId,
-                _token: "{{ csrf_token() }}"
-            },
-            success: function (response) {
-                console.log("worked");
-            }
-        });
-      });
+            event.preventDefault();     
+            event.stopPropagation();
+            console.log("clicked");
+            var productId = $(img).data('product-id');
+            var heart = $(img);
+            
+            $.ajax({
+                url: "{{ route('wishlist.toggle') }}", 
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (response) {
+                    console.log("worked");
+                }
+            });
+        }
     });
     document.querySelectorAll('#profileDropdown li').forEach(li => {
         li.addEventListener('click', () => {
