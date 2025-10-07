@@ -25,6 +25,7 @@ class IprogSmsService
             'api_token'    => $this->apiToken,
             'message'      => $message,
             'phone_number' => $phoneNumber,
+            'sms_provider' => 2,
         ];
 
         $ch = curl_init($this->apiUrl);
