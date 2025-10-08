@@ -13,6 +13,9 @@ use App\Models\ProductImage;
 use App\Models\Tag;
 use App\Models\College;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Notification;
+use App\Events\NewNotification;
+use App\Models\User;
 
 class ProductController extends Controller
 {
@@ -60,7 +63,16 @@ public function store(Request $request)
     $product->organization_id = $validated['organization_id'] ?? null;
     $product->user_id = Auth::id(); 
     $product->save();
-
+    $adminUserId=User::where('role', 'admin')->first();
+    $notification = Notification::create([
+        'user_id' => $adminUserId->id,
+        'title' => 'Product Approval',
+        'message' => 'Product "' . $product->name . '" is ready for approval.',
+        'is_read' => false,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    event(new NewNotification($notification));
     if ($variantsData
         && isset($variantsData['name'], $variantsData['options'])
         && is_array($variantsData['options'])) {

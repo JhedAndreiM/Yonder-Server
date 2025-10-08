@@ -8,6 +8,8 @@ use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\UserReport;
+use App\Models\Notification;
+use App\Events\NewNotification;
 
 class ProfileController extends Controller
 {
@@ -116,8 +118,21 @@ public function storeUserReport(Request $request)
         }
 
         $report = UserReport::create($validated);
-
-        return redirect()->back()->with('successfull', 'Report submitted successfully. ID: ' . $report->id);
+        $adminUserId = User::where('role', 'admin')->first();
+        
+        // Get the user names for the notification
+        $reportedUser = User::find($validated['reported_user_id']);
+        $reporter = User::find($validated['reporter_id']);
+        
+        $notification = Notification::create([
+            'user_id' => $adminUserId->id,
+            'title' => 'User Report',
+            'message' => 'User "' . $reportedUser->name . " " . $reportedUser->last_name . '" is reported by "' . $reporter->name . " " . $reporter->last_name . '".',
+            'is_read' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return redirect()->back()->with('successfull', 'Report submitted successfully');
 
     } catch (\Throwable $e) {
         return redirect()->back()->with('error', 'Error: ' . $e->getMessage());

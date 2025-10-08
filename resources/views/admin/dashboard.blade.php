@@ -48,8 +48,14 @@
   </div>
 
   <div class="navBarRight">
-    <!-- Notifications -->
+        <!-- Notifications -->
     <div class="dropdown-container">
+      <div id="notif-icon" class="notif-bell">
+        <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="Notifications" />
+        @if(!empty($unreadCount) && $unreadCount > 0)
+          <span class="notif-badge">{{ $unreadCount }}</span>
+        @endif
+      </div>
 
       <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
         <div class="notification-header">
@@ -60,22 +66,109 @@
           @if ($notifications->isEmpty())
             <p style="padding-left:10px;">No notifications</p>
           @else
-            @foreach ($notifications as $notification)
-              <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
-                <div class="notification-content">
-                  <h1>
-                    @if($notification['title'] === "Product Approved")
-                      <span style="color:Green;">{{ $notification['title'] }}</span>
-                    @elseif($notification['title'] === "Product Rejected")
-                      <span style="color:red;">{{ $notification['title'] }}</span>
-                    @else
-                      {{ $notification['title'] }}
-                    @endif
-                  </h1>
-                  <div class="Message">{{ $notification['message'] }}</div>
+            @php
+              $groupedNotifs = [];
+              $consecutiveGroup = [];
+              $currentTitle = null;
+
+              foreach ($notifications as $index => $notif) {
+                  $groupableTitle = in_array($notif['title'], ["Product Approval", "User Report", "Product Report"]);
+                  
+                  // If this is a groupable notification and it's unread
+                  if ($groupableTitle && !$notif['is_read']) {
+                      // If we have a previous notification and it matches the current one
+                      if ($currentTitle === $notif['title'] && !empty($consecutiveGroup)) {
+                          $consecutiveGroup[] = $notif;
+                      } else {
+                          // If we had a previous group, add it to results
+                          if (!empty($consecutiveGroup)) {
+                              if (count($consecutiveGroup) > 1) {
+                                  $groupedNotifs[] = [
+                                      'type' => 'group',
+                                      'title' => $currentTitle,
+                                      'count' => count($consecutiveGroup),
+                                      'time_ago' => $consecutiveGroup[0]['time_ago']
+                                  ];
+                              } else {
+                                  // If only one notification, add it as single
+                                  $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                              }
+                          }
+                          // Start new group
+                          $consecutiveGroup = [$notif];
+                          $currentTitle = $notif['title'];
+                      }
+                  } else {
+                      // If we had a previous group, add it to results
+                      if (!empty($consecutiveGroup)) {
+                          if (count($consecutiveGroup) > 1) {
+                              $groupedNotifs[] = [
+                                  'type' => 'group',
+                                  'title' => $currentTitle,
+                                  'count' => count($consecutiveGroup),
+                                  'time_ago' => $consecutiveGroup[0]['time_ago']
+                              ];
+                          } else {
+                              // If only one notification, add it as single
+                              $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                          }
+                          $consecutiveGroup = [];
+                      }
+                      // Add current notification as single
+                      $groupedNotifs[] = array_merge($notif, ['type' => 'single']);
+                      $currentTitle = null;
+                  }
+              }
+              
+              // Handle any remaining group
+              if (!empty($consecutiveGroup)) {
+                  if (count($consecutiveGroup) > 1) {
+                      $groupedNotifs[] = [
+                          'type' => 'group',
+                          'title' => $currentTitle,
+                          'count' => count($consecutiveGroup),
+                          'time_ago' => $consecutiveGroup[0]['time_ago']
+                      ];
+                  } else {
+                      $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                  }
+              }
+            @endphp
+
+            @foreach ($groupedNotifs as $index => $notification)
+              @if($notification['type'] === 'group')
+                <div class="notification unread">
+                  <div class="notification-content">
+                    <h1>{{ $notification['title'] }}</h1>
+                    <div class="Message">
+                      @if($notification['title'] === 'Product Approval')
+                        {{ $notification['count'] }} products are currently waiting for approval.
+                      @elseif($notification['title'] === 'User Report')
+                        {{ $notification['count'] }} new user reports awaiting for review.
+                      @elseif($notification['title'] === 'Product Report')
+                        {{ $notification['count'] }} new product reports awaiting for review.
+                      @endif
+                    </div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
                 </div>
-                <div class="notification-time">{{ $notification['time_ago'] }}</div>
-              </div>
+              @else
+                <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
+                  <div class="notification-content">
+                    <h1>
+                      @if($notification['title'] === "Product Approved")
+                        <span style="color:Green;">{{ $notification['title'] }}</span>
+                      @elseif($notification['title'] === "Product Rejected")
+                        <span style="color:red;">{{ $notification['title'] }}</span>
+                      @else
+                        {{ $notification['title'] }}
+                      @endif
+                    </h1>
+                    <div class="Message">{{ $notification['message'] }}</div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
+                </div>
+              @endif
 
               @if($loop->iteration == 10)
                 <div class="see-more-btn" id="see-more-btn" data-offset="10">See More</div>
@@ -107,6 +200,9 @@
                 <!-- Product Approval -->
         <section class="approval-product">
             <h2>Unapproved Products</h2>
+            <div class="search-results-count" style="margin-bottom:10px;">
+        <span id="approvalProductCount">{{ $products->count() }} unapproved product{{ $products->count() !== 1 ? 's' : '' }}</span>
+    </div>
             <table>
                 <thead>
                     <tr>
@@ -1035,7 +1131,9 @@
         <!-- REPORTED USER -->
         <section class="report-user">
             <h2>Reported Users</h2>
-            <div id="ajaxMessagesReportedUser"></div>
+            <div class="search-results-count" style="margin-bottom:10px;">
+                <span id="reportedUserCount">{{ $userReports->count() }} reported user{{ $userReports->count() !== 1 ? 's' : '' }}</span>
+            </div>
 
             <table class="collegeTable">
                 <thead>
@@ -1077,6 +1175,9 @@
         </section>
 <section class="report-user-unban">
     <h2>Banned & Suspended Users</h2>
+    <div class="search-results-count" style="margin-bottom:10px;">
+        <span id="bannedSuspendedCount">{{ $users->whereIn('role', ['banned','suspended'])->count() }} banned/suspended user{{ $users->whereIn('role', ['banned','suspended'])->count() !== 1 ? 's' : '' }}</span>
+    </div>
     
     <!-- Search Input -->
     <div class="search-container">
@@ -1136,6 +1237,9 @@
 <!-- Reports -->
 <section class="report-show">
     <h2>Reported Products</h2>
+    <div class="search-results-count" style="margin-bottom:10px;">
+        <span id="reportedProductCount">{{ $reports->count() }} reported product{{ $reports->count() !== 1 ? 's' : '' }}</span>
+    </div>
     <table>
         <thead>
             <tr>
@@ -1164,7 +1268,7 @@
                         <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
                         <h2>{{ $report->product_name }}</h2>
                         <p>{!! $report->description !!}</p>
-                        <h3 style="margin-bottom: 0px;">Comment</h3>
+                        <h3 style="margin-bottom: 0px;">Reason for Reporting</h3>
                         <p style="margin-top: 5px;">{{ $report->message}}</p>
 
                         <div class="image-gallery">
@@ -1182,8 +1286,6 @@
         </tbody>
     </table>
 </section>
-
-    </div>
 
     <!-- Reject Modal -->
     <div id="rejectModal" class="rejectModal">
@@ -1857,6 +1959,47 @@ function closeImageViewer() {
         updateFilters();
     });
 });
+notifBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // toggle dropdown
+  const isOpen = notifDropdown.style.display === "block";
+  notifDropdown.style.display = isOpen ? "none" : "block";
+  profileDropdown.style.display = "none"; 
+
+  if (!isOpen) {
+    // If dropdown just opened, wait 1 second before marking as read
+    setTimeout(() => {
+      // remove badge
+      const badge = document.querySelector('.notif-badge');
+      if (badge) {
+        badge.remove();
+      }
+
+      // mark all as read (frontend only)
+      document.querySelectorAll('.notification.unread').forEach(notif => {
+        notif.classList.remove('unread');
+      });
+
+      // 🔥 send to backend (AJAX)
+      fetch("{{ route('notifications.markAllRead') }}", {
+        method: "POST",
+        headers: {
+          "X-CSRF-TOKEN": document.querySelector("meta[name='csrf-token']")?.content,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then(res => res.json())
+        .then(data => {
+        })
+        .catch(err => {
+          console.error("❌ Failed to sync with backend:", err);
+        });
+
+    }, 1000);
+  }
+});
 
     profileBtn.addEventListener("click", function () {
       profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
@@ -2045,8 +2188,6 @@ document.querySelectorAll('.deleteForm').forEach(form => {
 
 });
 
-
-
 // for student Org
 document.addEventListener('DOMContentLoaded', () => {
     const editButtonsStudOrg = document.querySelectorAll('.editBtnStudOrg');
@@ -2185,8 +2326,6 @@ document.querySelectorAll('.delFormStudOrg').forEach(form => {
         }, "Delete Student Org");
     });
 });
-
-
 
 
 document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
@@ -2564,22 +2703,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (res.ok && data.status === 'success') {
                         const row = document.getElementById(`tagRow${id}`);
                         if (row) row.remove();
-                        if (ajaxMsgTags) {
-                            ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                            setTimeout(() => ajaxMsgTags.innerHTML = '', 5000);
-                        }
+                        ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
                     } else {
-                        if (ajaxMsgTags) {
-                            ajaxMsgTags.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to delete tag.'}</div>`;
-                            setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
-                        }
+                        ajaxMsgTags.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to delete tag.'}</div>`;
                     }
                 })
                 .catch(() => {
-                    if (ajaxMsgTags) {
-                        ajaxMsgTags.innerHTML = `<div class="alert alert-danger">Something went wrong while deleting the tag.</div>`;
-                        setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
-                    }
+                    ajaxMsgTags.innerHTML = `<div class="alert alert-danger">Something went wrong while deleting the tag.</div>`;
                 });
             }, "Delete Tag");
         });
@@ -2923,84 +3053,28 @@ function showSuccessAlert(message) {
     }, 5000);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const rejectOption = document.getElementById('messageRejection');
-    const rejectMessage = document.getElementById('rejectMessage');
-
-    rejectOption.addEventListener("change", function(){
-        if(rejectOption.value == "others"){
-            rejectMessage.hidden = false;
-            rejectMessage.value="";
-            rejectMessage.setAttribute('required', 'required');
-        }
-        else{
-            rejectMessage.hidden = true;
-            if (rejectOption.value === "poor_image_quality") {
-                rejectMessage.value = "Rejected due to poor image quality. Please upload clearer and well-lit photos.";
-            } 
-            else if (rejectOption.value === "incorrect_category") {
-                rejectMessage.value = "Rejected because the product is listed in the wrong category.";
-            } 
-            else if (rejectOption.value === "prohibited_item") {
-                rejectMessage.value = "Rejected as it appears to be a prohibited item under our policies.";
-            } 
-            else if (rejectOption.value === "duplicate_listing") {
-                rejectMessage.value = "Rejected due to duplicate listing. Please keep only one active listing per item.";
-            } 
-            else if (rejectOption.value === "pricing_error") {
-                rejectMessage.value = "Rejected because of a pricing error. Please review and correct the price.";
-            } 
-            else if (rejectOption.value === "misleading_description") {
-                rejectMessage.value = "Rejected due to misleading or inaccurate description. Please revise your listing.";
-            } 
-            else if (rejectOption.value === "policy_violation") {
-                rejectMessage.value = "Rejected because the listing violates marketplace policies.";
-            } 
-            else{
-                rejectMessage.value = "Item Rejected";
-            }  
-        }
-    }); 
-
-    document.querySelectorAll('.formAddingOfVoucher').forEach(form => {
-        form.addEventListener("submit", function (e){
-            e.preventDefault();
-            confirmAction("Are you want to upload this voucher?", () => {
-                form.submit();
-            }, "Upload Voucher");
-        });
-    });
-    document.querySelectorAll('.importUserData').forEach(form => {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            // Get the selected file name
-            const fileInput = form.querySelector('#excel_file');
-            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : null;
-
-            if (!fileName) {
-                alert("Please select an Excel file before uploading.");
-                return;
-            }
-
-            confirmAction(
-                `Are you sure you want to upload "${fileName}"?`,
-                () => {
-                    form.submit();
-                },
-                "Upload Excel File"
-            );
-        });
-    });
-    document.querySelectorAll('.suspensionForm').forEach(form => {
-        form.addEventListener("submit", function (e){
-            e.preventDefault();
-            confirmAction("Are you want to suspend this user?", () => {
-                form.submit();
-            }, "Suspend User");
-        });
-    });
-});
+// Auto-update reported product count when a report row is removed
+function updateReportedProductCount() {
+    const table = document.querySelector('.report-show table tbody');
+    const count = table ? table.querySelectorAll('tr.perRow').length : 0;
+    const countSpan = document.getElementById('reportedProductCount');
+    if (countSpan) {
+        countSpan.textContent = `${count} reported product${count !== 1 ? 's' : ''}`;
+    }
+}
+// Patch allowReport and deleteProduct to update count
+(function() {
+    const origAllowReport = window.allowReport;
+    window.allowReport = function(reportId) {
+        if (typeof origAllowReport === 'function') origAllowReport(reportId);
+        setTimeout(updateReportedProductCount, 200);
+    };
+    const origDeleteProduct = window.deleteProduct;
+    window.deleteProduct = function(productId, reportId) {
+        if (typeof origDeleteProduct === 'function') origDeleteProduct(productId, reportId);
+        setTimeout(updateReportedProductCount, 200);
+    };
+})();
 </script>
 </body>
 </html>
