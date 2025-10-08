@@ -1042,8 +1042,15 @@
         <!-- REPORTED USER -->
         <section class="report-user">
             <h2>Reported Users</h2>
-            <div class="search-results-count" style="margin-bottom:10px;">
-                <span id="reportedUsersCount"></span>
+            <!-- Search Input -->
+            <div class="search-container">
+                <input type="text" 
+                       id="reportedUsersSearch" 
+                       placeholder="Search by reported user, reporter, or reason..." 
+                       class="search-input">
+                <div class="search-results-count">
+                    <span id="reportedUsersCount"></span>
+                </div>
             </div>
             <div id="ajaxMessagesReportedUser"></div>
 
@@ -1146,8 +1153,15 @@
 <!-- Reports -->
 <section class="report-show">
     <h2>Reported Products</h2>
-    <div class="search-results-count" style="margin-bottom:10px;">
-        <span id="reportedProductsCount"></span>
+    <!-- Search Input -->
+    <div class="search-container">
+        <input type="text" 
+               id="reportedProductsSearch" 
+               placeholder="Search by product name, reporter, or report ID..." 
+               class="search-input">
+        <div class="search-results-count">
+            <span id="reportedProductsCount"></span>
+        </div>
     </div>
     <table id="reportedProductsTable">
         <thead>
@@ -1311,6 +1325,36 @@
             updateUnapprovedProductsCount();
             updateReportedUsersCount();
             updateReportedProductsCount();
+
+            // Reported Users Search
+            const ruSearchInput = document.getElementById("reportedUsersSearch");
+            const ruTable = document.getElementById("reportedUsersTable");
+            if (ruSearchInput && ruTable) {
+                const ruRows = Array.from(ruTable.querySelectorAll("tbody tr"));
+                ruSearchInput.addEventListener("input", function() {
+                    const searchTerm = ruSearchInput.value.trim().toLowerCase();
+                    ruRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? "" : "none";
+                    });
+                    updateReportedUsersCount();
+                });
+            }
+
+            // Reported Products Search
+            const rpSearchInput = document.getElementById("reportedProductsSearch");
+            const rpTable = document.getElementById("reportedProductsTable");
+            if (rpSearchInput && rpTable) {
+                const rpRows = Array.from(rpTable.querySelectorAll("tbody tr"));
+                rpSearchInput.addEventListener("input", function() {
+                    const searchTerm = rpSearchInput.value.trim().toLowerCase();
+                    rpRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? "" : "none";
+                    });
+                    updateReportedProductsCount();
+                });
+            }
         });
         // When a reported user row is deleted, update the count
         function removeReportedUserRow(userReportId) {
@@ -1534,6 +1578,7 @@
 
     // ajax to para i allow saka delete product
     function allowReport(reportId) {
+        console.log(reportId);
         confirmAction(
             'Are you sure you want to allow this product and remove the report?',
             () => {

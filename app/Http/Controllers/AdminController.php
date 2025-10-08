@@ -213,7 +213,7 @@ public function changeUserRole(Request $request)
 }
 public function allowReport($id)
 {
-    DB::table('reports')->where('id', $id)->delete();
+    DB::table('reports')->where('report_id', $id)->delete();
     return response()->json(['success' => true]);
 }
 
