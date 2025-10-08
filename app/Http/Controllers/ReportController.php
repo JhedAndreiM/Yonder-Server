@@ -41,6 +41,7 @@ class ReportController extends Controller
         'created_at' => now(),
         'updated_at' => now(),
     ]);
+    event(new NewNotification($notification));
     return back()->with('success', 'Report submitted successfully.');
 }
 }

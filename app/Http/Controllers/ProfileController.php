@@ -132,6 +132,7 @@ public function storeUserReport(Request $request)
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        event(new NewNotification($notification));
         return redirect()->back()->with('successfull', 'Report submitted successfully');
 
     } catch (\Throwable $e) {
