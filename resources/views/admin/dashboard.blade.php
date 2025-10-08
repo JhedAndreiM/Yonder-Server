@@ -200,9 +200,6 @@
                 <!-- Product Approval -->
         <section class="approval-product">
             <h2>Unapproved Products</h2>
-            <div class="search-results-count" style="margin-bottom:10px;">
-        <span id="approvalProductCount">{{ $products->count() }} unapproved product{{ $products->count() !== 1 ? 's' : '' }}</span>
-    </div>
             <table>
                 <thead>
                     <tr>
@@ -1131,9 +1128,7 @@
         <!-- REPORTED USER -->
         <section class="report-user">
             <h2>Reported Users</h2>
-            <div class="search-results-count" style="margin-bottom:10px;">
-                <span id="reportedUserCount">{{ $userReports->count() }} reported user{{ $userReports->count() !== 1 ? 's' : '' }}</span>
-            </div>
+            <div id="ajaxMessagesReportedUser"></div>
 
             <table class="collegeTable">
                 <thead>
@@ -1175,9 +1170,6 @@
         </section>
 <section class="report-user-unban">
     <h2>Banned & Suspended Users</h2>
-    <div class="search-results-count" style="margin-bottom:10px;">
-        <span id="bannedSuspendedCount">{{ $users->whereIn('role', ['banned','suspended'])->count() }} banned/suspended user{{ $users->whereIn('role', ['banned','suspended'])->count() !== 1 ? 's' : '' }}</span>
-    </div>
     
     <!-- Search Input -->
     <div class="search-container">
@@ -1237,9 +1229,6 @@
 <!-- Reports -->
 <section class="report-show">
     <h2>Reported Products</h2>
-    <div class="search-results-count" style="margin-bottom:10px;">
-        <span id="reportedProductCount">{{ $reports->count() }} reported product{{ $reports->count() !== 1 ? 's' : '' }}</span>
-    </div>
     <table>
         <thead>
             <tr>
@@ -1286,6 +1275,8 @@
         </tbody>
     </table>
 </section>
+
+    </div>
 
     <!-- Reject Modal -->
     <div id="rejectModal" class="rejectModal">
@@ -2188,6 +2179,8 @@ document.querySelectorAll('.deleteForm').forEach(form => {
 
 });
 
+
+
 // for student Org
 document.addEventListener('DOMContentLoaded', () => {
     const editButtonsStudOrg = document.querySelectorAll('.editBtnStudOrg');
@@ -2326,6 +2319,8 @@ document.querySelectorAll('.delFormStudOrg').forEach(form => {
         }, "Delete Student Org");
     });
 });
+
+
 
 
 document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
@@ -2703,13 +2698,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (res.ok && data.status === 'success') {
                         const row = document.getElementById(`tagRow${id}`);
                         if (row) row.remove();
-                        ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        if (ajaxMsgTags) {
+                            ajaxMsgTags.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                            setTimeout(() => ajaxMsgTags.innerHTML = '', 5000);
+                        }
                     } else {
-                        ajaxMsgTags.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to delete tag.'}</div>`;
+                        if (ajaxMsgTags) {
+                            ajaxMsgTags.innerHTML = `<div class="alert alert-danger">${data.message || 'Failed to delete tag.'}</div>`;
+                            setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
+                        }
                     }
                 })
                 .catch(() => {
-                    ajaxMsgTags.innerHTML = `<div class="alert alert-danger">Something went wrong while deleting the tag.</div>`;
+                    if (ajaxMsgTags) {
+                        ajaxMsgTags.innerHTML = `<div class="alert alert-danger">Something went wrong while deleting the tag.</div>`;
+                        setTimeout(() => ajaxMsgTags.innerHTML = '', 7000);
+                    }
                 });
             }, "Delete Tag");
         });
@@ -3053,28 +3057,84 @@ function showSuccessAlert(message) {
     }, 5000);
 }
 
-// Auto-update reported product count when a report row is removed
-function updateReportedProductCount() {
-    const table = document.querySelector('.report-show table tbody');
-    const count = table ? table.querySelectorAll('tr.perRow').length : 0;
-    const countSpan = document.getElementById('reportedProductCount');
-    if (countSpan) {
-        countSpan.textContent = `${count} reported product${count !== 1 ? 's' : ''}`;
-    }
-}
-// Patch allowReport and deleteProduct to update count
-(function() {
-    const origAllowReport = window.allowReport;
-    window.allowReport = function(reportId) {
-        if (typeof origAllowReport === 'function') origAllowReport(reportId);
-        setTimeout(updateReportedProductCount, 200);
-    };
-    const origDeleteProduct = window.deleteProduct;
-    window.deleteProduct = function(productId, reportId) {
-        if (typeof origDeleteProduct === 'function') origDeleteProduct(productId, reportId);
-        setTimeout(updateReportedProductCount, 200);
-    };
-})();
+document.addEventListener('DOMContentLoaded', function() {
+    const rejectOption = document.getElementById('messageRejection');
+    const rejectMessage = document.getElementById('rejectMessage');
+
+    rejectOption.addEventListener("change", function(){
+        if(rejectOption.value == "others"){
+            rejectMessage.hidden = false;
+            rejectMessage.value="";
+            rejectMessage.setAttribute('required', 'required');
+        }
+        else{
+            rejectMessage.hidden = true;
+            if (rejectOption.value === "poor_image_quality") {
+                rejectMessage.value = "Rejected due to poor image quality. Please upload clearer and well-lit photos.";
+            } 
+            else if (rejectOption.value === "incorrect_category") {
+                rejectMessage.value = "Rejected because the product is listed in the wrong category.";
+            } 
+            else if (rejectOption.value === "prohibited_item") {
+                rejectMessage.value = "Rejected as it appears to be a prohibited item under our policies.";
+            } 
+            else if (rejectOption.value === "duplicate_listing") {
+                rejectMessage.value = "Rejected due to duplicate listing. Please keep only one active listing per item.";
+            } 
+            else if (rejectOption.value === "pricing_error") {
+                rejectMessage.value = "Rejected because of a pricing error. Please review and correct the price.";
+            } 
+            else if (rejectOption.value === "misleading_description") {
+                rejectMessage.value = "Rejected due to misleading or inaccurate description. Please revise your listing.";
+            } 
+            else if (rejectOption.value === "policy_violation") {
+                rejectMessage.value = "Rejected because the listing violates marketplace policies.";
+            } 
+            else{
+                rejectMessage.value = "Item Rejected";
+            }  
+        }
+    }); 
+
+    document.querySelectorAll('.formAddingOfVoucher').forEach(form => {
+        form.addEventListener("submit", function (e){
+            e.preventDefault();
+            confirmAction("Are you want to upload this voucher?", () => {
+                form.submit();
+            }, "Upload Voucher");
+        });
+    });
+    document.querySelectorAll('.importUserData').forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get the selected file name
+            const fileInput = form.querySelector('#excel_file');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : null;
+
+            if (!fileName) {
+                alert("Please select an Excel file before uploading.");
+                return;
+            }
+
+            confirmAction(
+                `Are you sure you want to upload "${fileName}"?`,
+                () => {
+                    form.submit();
+                },
+                "Upload Excel File"
+            );
+        });
+    });
+    document.querySelectorAll('.suspensionForm').forEach(form => {
+        form.addEventListener("submit", function (e){
+            e.preventDefault();
+            confirmAction("Are you want to suspend this user?", () => {
+                form.submit();
+            }, "Suspend User");
+        });
+    });
+});
 </script>
 </body>
 </html>
