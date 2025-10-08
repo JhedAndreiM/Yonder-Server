@@ -45,7 +45,10 @@
                 <!-- Product Approval -->
         <section class="approval-product">
             <h2>Unapproved Products</h2>
-            <table>
+            <div class="search-results-count" style="margin-bottom:10px;">
+                <span id="unapprovedProductsCount"></span>
+            </div>
+            <table id="unapprovedProductsTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -229,6 +232,72 @@
         </style>
 
         <script>
+        // Unapproved Products Count
+        function updateUnapprovedProductsCount() {
+            const table = document.getElementById('unapprovedProductsTable');
+            if (!table) return;
+            const countSpan = document.getElementById('unapprovedProductsCount');
+            // Count rows in tbody (excluding those with display:none)
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            countSpan.textContent = visibleRows.length + ' unapproved product' + (visibleRows.length === 1 ? '' : 's');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUnapprovedProductsCount();
+        });
+        // When a product row is deleted, update the count
+        function removeUnapprovedProductRow(productId) {
+            const row = document.getElementById('product-row-' + productId);
+            if (row) row.remove();
+            updateUnapprovedProductsCount();
+        }
+        // Patch approveProduct to update count
+        function approveProduct(productId, tagsArray) {
+            fetch(`/admin/approve/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tags: tagsArray
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Approval failed");
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message);
+                removeUnapprovedProductRow(productId);
+            })
+            .catch(err => console.error("Error:", err));
+        }
+        // Patch deleteProduct to update count
+        function deleteProduct(productId, reportId) {
+            console.log('went here');
+            confirmAction(
+                'Are you sure you want to delete this product?',
+                () => {
+                    $.ajax({
+                        url: '/admin/delete-product/' + productId + '/' + reportId,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function () {
+                            removeUnapprovedProductRow(productId);
+                            showModal('Product deleted.', "info");
+                        },
+                        error: function () {
+                            showModal('Something went wrong while deleting the product.', "info");
+                        }
+                    });
+                },
+                'Delete Product'
+            );
+        }
             function openUserModal(id){
                 var modal=document.getElementById('user-modal-'+id);
                 if(modal){ 
@@ -973,9 +1042,12 @@
         <!-- REPORTED USER -->
         <section class="report-user">
             <h2>Reported Users</h2>
+            <div class="search-results-count" style="margin-bottom:10px;">
+                <span id="reportedUsersCount"></span>
+            </div>
             <div id="ajaxMessagesReportedUser"></div>
 
-            <table class="collegeTable">
+            <table class="collegeTable" id="reportedUsersTable">
                 <thead>
                     <tr>
                         <th>Reported User</th>
@@ -1074,7 +1146,10 @@
 <!-- Reports -->
 <section class="report-show">
     <h2>Reported Products</h2>
-    <table>
+    <div class="search-results-count" style="margin-bottom:10px;">
+        <span id="reportedProductsCount"></span>
+    </div>
+    <table id="reportedProductsTable">
         <thead>
             <tr>
                 <th>Report ID</th>
@@ -1090,9 +1165,13 @@
                     <td>{{ $report->product_name }}</td>
                     <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
                     <td>
-                        <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})">View</a>
-                        <button class="btn-edit" onclick="allowReport({{ $report->report_id }})">Allow</button>
-                        <button class="btn reportProdDelete" onclick="deleteProduct({{ $report->product_id }}, {{ $report->report_id }})">Delete</button>
+                        <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})" style="margin-right: 50px;">View</a>
+                        <span style="display:inline-block; margin-right: 5px;">
+                            <button class="btn-edit" onclick="allowReport({{ $report->report_id }})">Allow</button>
+                        </span>
+                        <span style="display:inline-block;">
+                            <button class="btn reportProdDelete" onclick="deleteProduct({{ $report->product_id }}, {{ $report->report_id }})">Delete</button>
+                        </span>
                     </td>
                 </tr>
 
@@ -1209,7 +1288,42 @@
     <img id="imageViewerImg" src="" 
          style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.5);">
 </div>
-    <script>
+        <script>
+        // Reported Users Count
+        function updateReportedUsersCount() {
+            const table = document.getElementById('reportedUsersTable');
+            if (!table) return;
+            const countSpan = document.getElementById('reportedUsersCount');
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            countSpan.textContent = visibleRows.length + ' reported user' + (visibleRows.length === 1 ? '' : 's');
+        }
+        // Reported Products Count
+        function updateReportedProductsCount() {
+            const table = document.getElementById('reportedProductsTable');
+            if (!table) return;
+            const countSpan = document.getElementById('reportedProductsCount');
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            countSpan.textContent = visibleRows.length + ' reported product' + (visibleRows.length === 1 ? '' : 's');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUnapprovedProductsCount();
+            updateReportedUsersCount();
+            updateReportedProductsCount();
+        });
+        // When a reported user row is deleted, update the count
+        function removeReportedUserRow(userReportId) {
+            const row = document.getElementById('user-report-row-' + userReportId);
+            if (row) row.remove();
+            updateReportedUsersCount();
+        }
+        // When a reported product row is deleted, update the count
+        function removeReportedProductRow(reportId) {
+            const row = document.getElementById('report-row-' + reportId);
+            if (row) row.remove();
+            updateReportedProductsCount();
+        }
         function confirmAction(message, onConfirm, title = "Confirm Action") {
             const overlay = document.getElementById("confirm-action-overlay");
             const msg = document.getElementById("confirm-action-message");
