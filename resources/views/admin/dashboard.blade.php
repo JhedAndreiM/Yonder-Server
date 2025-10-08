@@ -39,6 +39,7 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     @vite('resources/css/admin-younder.css')
+    @include('partials.common-scripts')
 </head>
 <body>
     <!-- nav bar -->
@@ -3056,7 +3057,56 @@ function showSuccessAlert(message) {
         alert.remove();
     }, 5000);
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const seeMoreBtn = document.getElementById("see-more-btn");
+    const notificationList = document.querySelector(".notification-list");
 
+    if (seeMoreBtn) {
+        seeMoreBtn.addEventListener("click", async function () {
+            const offset = parseInt(this.dataset.offset, 10);
+
+            try {
+                const response = await fetch(`/notifications/load?offset=${offset}`);
+                const newNotifications = await response.json();
+
+                if (newNotifications.length > 0) {
+                    newNotifications.forEach(n => {
+                        const titleHtml =
+                            n.title === "Product Approved"
+                                ? `<span style="color:Green;">${n.title}</span>`
+                                : n.title === "Product Rejected"
+                                ? `<span style="color:red;">${n.title}</span>`
+                                : n.title;
+
+                        const html = `
+                            <div class="notification ${n.is_read ? '' : 'unread'}">
+                                <div class="notification-content">
+                                    <h1>${titleHtml}</h1>
+                                    <div class="Message">${n.message}</div>
+                                </div>
+                                <div class="notification-time">${n.time_ago}</div>
+                            </div>
+                        `;
+
+                        this.insertAdjacentHTML('beforebegin', html);
+                    });
+
+                    // update offset for next load
+                    this.dataset.offset = offset + newNotifications.length;
+
+                    // hide if no more
+                    if (newNotifications.length < 10) {
+                        this.style.display = "none";
+                    }
+                } else {
+                    this.style.display = "none";
+                }
+            } catch (err) {
+                console.error("Failed to load more notifications:", err);
+            }
+        });
+    }
+});
 document.addEventListener('DOMContentLoaded', function() {
     const rejectOption = document.getElementById('messageRejection');
     const rejectMessage = document.getElementById('rejectMessage');
