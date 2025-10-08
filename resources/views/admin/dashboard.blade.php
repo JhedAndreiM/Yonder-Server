@@ -31,6 +31,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+    <!-- Development -->
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+
+    <!-- Production -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
     @vite('resources/css/admin-younder.css')
 </head>
 <body>
@@ -97,7 +104,79 @@
 <div class="container">
 
     <div class="upload-container">
-
+                <!-- Product Approval -->
+        <section class="approval-product">
+            <h2>Unapproved Products</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>View</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($products as $product)
+                        <tr class="perRow" id="product-row-{{ $product->product_id }}">
+                            <td>{{ $product->name }}</td>
+                            <td>{!! $product->description !!}</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">Details</a>
+                            </td>
+                            <td>
+                                <button class="approveBtn" 
+                                        type="button" 
+                                        onclick="confirmApproveProduct({{ $product->product_id }})">
+                                    Approve
+                                </button>
+                                <button class="rejectBtn"type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
+                            </td>
+                        </tr>
+                        <div id="modal-{{ $product->product_id }}" class="modal" style="display:none; align-items:center; justify-content:center;">
+                            <div class="modal-content" style="position:relative;">
+                                <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
+                                <h2 style="margin-bottom:0.5rem; margin-top:0.2rem !important;">{{ $product->name }}</h2>
+                                <div style="color:#771217; font-weight:600; margin-bottom:1rem;">₱ {{ $product->price }}</div>
+                                <p style="margin-bottom:0.2rem;">{!! $product->description !!}</p>
+                                <span class="badge-pill {{ $product->forSaleTrade }}">
+                                    {{ ucfirst($product->forSaleTrade) }}
+                                </span>
+                                @php
+                                    $tags = DB::table('product_tag')
+                                        ->join('tags', 'product_tag.tag_id', '=', 'tags.id')
+                                        ->where('product_tag.product_id', $product->product_id)
+                                        ->select('tags.name')
+                                        ->get();
+                                @endphp
+                                @if($tags->count() > 0)
+                                    <div class="product-tags" style="margin-top:1rem;">
+                                        <strong>Tags:</strong>
+                                        @foreach ($tags as $tag)
+                                            <span style="background:#eee; padding:4px 8px; margin:2px; border-radius:5px; display:inline-block;">
+                                                {{ $tag->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                <div class="image-gallery">
+                                    @php
+                                        $images = \Illuminate\Support\Facades\DB::table('product_images')
+                                                    ->where('product_id', $product->product_id)
+                                                    ->get();
+                                    @endphp
+                                    @foreach ($images as $img)
+                                        <img src="{{ asset('images/' . $img->image_path) }}" alt="Product Image"
+                                             style="cursor:pointer;"
+                                             onclick="openImageViewer('{{ asset('images/' . $img->image_path) }}')">
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
         <!-- Featured Image Upload -->
         <section class="upload-section">
             <h2>Featured Images</h2>
@@ -316,20 +395,20 @@
 
         <!-- Excel Upload -->
         <section class="upload-section">
-            <h2>Upload User Data (Excel)</h2>
+            <h2>Import User Data (Excel)</h2>
             @if (session('excel_success'))
                 <div class="alert alert-success">{{ session('excel_success') }}</div>
             @endif
             @if (session('excel_error'))
                 <div class="alert alert-danger">{{ session('excel_error') }}</div>
             @endif
-            <form action="{{ route('upload.users') }}" method="POST" enctype="multipart/form-data">
+            <form class="importUserData" action="{{ route('upload.users') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="excel_file">Choose Excel File</label>
                     <input type="file" name="excel_file" id="excel_file" accept=".xlsx, .xls">
                 </div>
-                <button type="submit" class="btn">Upload Excel</button>
+                <button type="submit" class="btn">Import Excel</button>
             </form>
         </section>
 
@@ -701,76 +780,6 @@
             </div>
         </div>
         </section>
-        <!-- Product Approval -->
-        <section class="approval-product">
-            <h2>Unapproved Products</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>View</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($products as $product)
-                        <tr class="perRow" id="product-row-{{ $product->product_id }}">
-                            <td>{{ $product->name }}</td>
-                            <td>{!! $product->description !!}</td>
-                            <td>
-                                <a href="javascript:void(0);" onclick="openModal({{ $product->product_id }})">Details</a>
-                            </td>
-                            <td>
-                                <button class="approveBtn" 
-                                        type="button" 
-                                        onclick="confirmApproveProduct({{ $product->product_id }})">
-                                    Approve
-                                </button>
-                                <button class="rejectBtn"type="button" onclick="showRejectModal({{ $product->product_id }})">Reject</button>
-                            </td>
-                        </tr>
-                        <div id="modal-{{ $product->product_id }}" class="modal" style="display:none; align-items:center; justify-content:center;">
-                            <div class="modal-content" style="position:relative;">
-                                <span class="close" onclick="closeModal({{ $product->product_id }})">&times;</span>
-                                <h2 style="margin-bottom:0.5rem;">{{ $product->name }}</h2>
-                                <div style="color:#771217; font-weight:600; margin-bottom:1rem;">₱ {{ $product->price }}</div>
-                                <p style="margin-bottom:1.5rem;">{!! $product->description !!}</p>
-                                @php
-                                    $tags = DB::table('product_tag')
-                                        ->join('tags', 'product_tag.tag_id', '=', 'tags.id')
-                                        ->where('product_tag.product_id', $product->product_id)
-                                        ->select('tags.name')
-                                        ->get();
-                                @endphp
-                                @if($tags->count() > 0)
-                                    <div class="product-tags" style="margin-top:1rem;">
-                                        <strong>Tags:</strong>
-                                        @foreach ($tags as $tag)
-                                            <span style="background:#eee; padding:4px 8px; margin:2px; border-radius:5px; display:inline-block;">
-                                                {{ $tag->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                @endif
-                                <div class="image-gallery">
-                                    @php
-                                        $images = \Illuminate\Support\Facades\DB::table('product_images')
-                                                    ->where('product_id', $product->product_id)
-                                                    ->get();
-                                    @endphp
-                                    @foreach ($images as $img)
-                                        <img src="{{ asset('images/' . $img->image_path) }}" alt="Product Image"
-                                             style="cursor:pointer;"
-                                             onclick="openImageViewer('{{ asset('images/' . $img->image_path) }}')">
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
         <!-- Voucher Management -->
         <section class="addingOfVoucher">
             @if (session('credit_success'))
@@ -778,31 +787,31 @@
             @endif
             <form class="creditPercentageForm" method="POST" action="{{route('admin.credit')}}">
                 @csrf
-                <h2>Credit Percentage</h2>
+                <h2>Points Percentage</h2>
                 <span>Current Exchange Rate: {{ $creditPercentage->percentage }}%</span>
                 <div class="example">
                     <small>
                         Example: 100 pesos = 
-                        {{ 100 * ($creditPercentage->percentage / 100) }} credits
+                        {{ 100 * ($creditPercentage->percentage / 100) }} points
                     </small>
                 </div>
                 <div class="creditLabel">
-                    <label for="percentage">Credit Percentage: </label>
+                    <label for="percentage">Points Percentage: </label>
                     <input type="number" min="1" step="0.01" name="percentage" value="{{ $creditPercentage->percentage }}">
                 </div>
                 <button type="submit">Save</button>
             </form>
             @if (session('voucher_success'))
-                <div class="alert alert-success">{{ session('voucher_success') }}</div>
+                <div class="alert alert-success" style="margin-top:1rem;">{{ session('voucher_success') }}</div>
             @endif
             <form class="formAddingOfVoucher" action="{{route('admin.voucher')}}" method="POST">
             @csrf
                 <h2>Add a Voucher</h2>
                 <div class="formAddingOfVoucher-input">
                     <label for="voucherAmount">Voucher Amount: </label>
-                    <input type="number" name="voucherAmount" id="voucherAmount" min="1" max="1000">
-                    <label for="voucherPrice">Voucher Price: </label>
-                    <input type="number" name="voucherPrice" id="voucherPrice" min="1" max="1000">
+                    <input type="number" name="voucherAmount" id="voucherAmount" min="1" max="1000" required>
+                    <label for="voucherPrice">Points to Redeem: </label>
+                    <input type="number" name="voucherPrice" id="voucherPrice" min="1" max="1000" required>
                 </div>
                 <div class="formAddingOfVoucher-buttons">
                     <button class="btn">Submit</button>
@@ -815,7 +824,7 @@
                 <div class="voucherCard" id="voucher-card-{{$voucher->id}}">
                     <div class="voucherInfo">
                         <h3>P {{$voucher->amount}}</h3>
-                        <p class="voucherCost">Cost: {{$voucher->price}} Credits</p>
+                        <p class="voucherCost">Cost: {{$voucher->price}} Points</p>
                     </div>
                     <div class="voucherDelete">
                         <button class="btn deleteVoucherBtn" data-id="{{$voucher->id}}">Delete</button>
@@ -1183,11 +1192,23 @@
             <form id="rejectForm">
                 @csrf
                 <input type="hidden" name="product_id" id="rejectProductId">
-                <label for="message">Reason:</label>
-                <textarea name="message" id="rejectMessage" required></textarea>
-                <div style="margin-top:1rem;">
-                    <button type="submit" class="btn">Send Rejection</button>
-                    <button type="button" onclick="hideRejectModal()">Cancel</button>
+                <div class="selectRejectionReason">
+                <label for="messageRejection">Reason For Rejecting:</label>
+                <select name="message" id="messageRejection">
+                    <option value="poor_image_quality">Poor Image Quality</option>
+                    <option value="incorrect_category">Incorrect Category</option>
+                    <option value="prohibited_item">Prohibited Item</option>
+                    <option value="duplicate_listing">Duplicate Listing</option>
+                    <option value="pricing_error">Pricing Error</option>
+                    <option value="misleading_description">Misleading Description</option>
+                    <option value="policy_violation">Violation of Policies</option>
+                    <option value="others">Others</option>
+                </select>
+                </div>
+                <textarea hidden name="message" id="rejectMessage"></textarea>
+                <div>
+                    <button type="submit" class="btn">Send</button>
+                    <button type="button" class="btn" onclick="hideRejectModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1197,9 +1218,10 @@
     <div id="suspensionModal" class="rejectModal" style="display: none;">
         <div class="modal-contents">
             <h3>Suspend User</h3>
-            <form id="suspensionForm">
+            <form id="suspensionForm" class="suspensionForm">
                 @csrf
                 <input type="hidden" name="report_id" id="suspensionReportId">
+                <div class="suspendUserDiv">
                 <label for="suspensionDuration">Suspension Duration:</label>
                 <select name="duration" id="suspensionDuration" required>
                     <option value="">Select Duration</option>
@@ -1213,9 +1235,10 @@
                     <option value="720">1 Month</option>
                     <option value="2160">3 Months</option>
                 </select>
+                </div>
                 <div style="margin-top:1rem;">
                     <button type="submit" class="btn">Suspend User</button>
-                    <button type="button" onclick="hideSuspensionModal()">Cancel</button>
+                    <button type="button" class="btn" onclick="hideSuspensionModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1361,24 +1384,32 @@
 
             const productId = document.getElementById('rejectProductId').value;
             const message = document.getElementById('rejectMessage').value;
-
-            fetch(`/admin/reject/${productId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message
+            
+            confirmAction(
+                "Are you sure you want to reject this product?",
+                () => {
+                    // Proceed only if confirmed
+                    fetch(`/admin/reject/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
                     })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById(`product-row-${productId}`).remove();
-                        hideRejectModal();
-                    }
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            // Remove product row & close modal
+                            const row = document.getElementById(`product-row-${productId}`);
+                            if (row) row.remove();
+                            hideRejectModal();
+                        }
+                    })
+                    .catch(error => console.error('Reject error:', error));
+                },
+                "Reject Product"
+            );
         });
 
         // Suspension Modal Functions
@@ -2891,6 +2922,85 @@ function showSuccessAlert(message) {
         alert.remove();
     }, 5000);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const rejectOption = document.getElementById('messageRejection');
+    const rejectMessage = document.getElementById('rejectMessage');
+
+    rejectOption.addEventListener("change", function(){
+        if(rejectOption.value == "others"){
+            rejectMessage.hidden = false;
+            rejectMessage.value="";
+            rejectMessage.setAttribute('required', 'required');
+        }
+        else{
+            rejectMessage.hidden = true;
+            if (rejectOption.value === "poor_image_quality") {
+                rejectMessage.value = "Rejected due to poor image quality. Please upload clearer and well-lit photos.";
+            } 
+            else if (rejectOption.value === "incorrect_category") {
+                rejectMessage.value = "Rejected because the product is listed in the wrong category.";
+            } 
+            else if (rejectOption.value === "prohibited_item") {
+                rejectMessage.value = "Rejected as it appears to be a prohibited item under our policies.";
+            } 
+            else if (rejectOption.value === "duplicate_listing") {
+                rejectMessage.value = "Rejected due to duplicate listing. Please keep only one active listing per item.";
+            } 
+            else if (rejectOption.value === "pricing_error") {
+                rejectMessage.value = "Rejected because of a pricing error. Please review and correct the price.";
+            } 
+            else if (rejectOption.value === "misleading_description") {
+                rejectMessage.value = "Rejected due to misleading or inaccurate description. Please revise your listing.";
+            } 
+            else if (rejectOption.value === "policy_violation") {
+                rejectMessage.value = "Rejected because the listing violates marketplace policies.";
+            } 
+            else{
+                rejectMessage.value = "Item Rejected";
+            }  
+        }
+    }); 
+
+    document.querySelectorAll('.formAddingOfVoucher').forEach(form => {
+        form.addEventListener("submit", function (e){
+            e.preventDefault();
+            confirmAction("Are you want to upload this voucher?", () => {
+                form.submit();
+            }, "Upload Voucher");
+        });
+    });
+    document.querySelectorAll('.importUserData').forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Get the selected file name
+            const fileInput = form.querySelector('#excel_file');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : null;
+
+            if (!fileName) {
+                alert("Please select an Excel file before uploading.");
+                return;
+            }
+
+            confirmAction(
+                `Are you sure you want to upload "${fileName}"?`,
+                () => {
+                    form.submit();
+                },
+                "Upload Excel File"
+            );
+        });
+    });
+    document.querySelectorAll('.suspensionForm').forEach(form => {
+        form.addEventListener("submit", function (e){
+            e.preventDefault();
+            confirmAction("Are you want to suspend this user?", () => {
+                form.submit();
+            }, "Suspend User");
+        });
+    });
+});
 </script>
 </body>
 </html>

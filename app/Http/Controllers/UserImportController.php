@@ -81,10 +81,10 @@ class UserImportController extends Controller
             $message = $e->getMessage();
 
             if (str_contains($message, 'Duplicate entry') && str_contains($message, 'users_email_unique')) {
-                return back()->with('excel_error', 'Some users were not imported because their email already exists.');
+                return back()->with('excel_error', 'Import Error: One or more email addresses already exist in the system.');
             }
 
-            return back()->with('excel_error', 'Import failed: ' . $message);
+            return back()->with('excel_error', 'Import failed');
         }
     }
 
