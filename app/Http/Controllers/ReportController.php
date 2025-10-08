@@ -31,7 +31,7 @@ class ReportController extends Controller
     $product = DB::table('product')->where('product_id', $validated['report_id'])->first();
     $productName = $product ? $product->name : 'Unknown Product';
     $productId = $validated['report_id'];
-    $notificationMessage = "A product has been reported. Product: {$productName} (ID: {$productId})";
+    $notificationMessage = "A product has been reported. Product: {$productName}";
 
     $notification = Notification::create([
         'user_id' => $adminUserId->id,

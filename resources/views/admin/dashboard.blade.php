@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin Page</title>
+@extends('Front_layouts.app')
+
+@section('title', 'Admin Page')
+@section('head')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,162 +36,9 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     @vite('resources/css/admin-younder.css')
-    @include('partials.common-scripts')
-</head>
-<body>
-    <!-- nav bar -->
-    <div class="navBar">
-  <div class="navBarLeft" id="logoClick">
-  <img src="{{ asset('img/YonderLogo.svg') }}" alt="" />
-  </div>
+@endsection
+@section('content')
 
-  <div class="navBarRight">
-        <!-- Notifications -->
-    <div class="dropdown-container">
-      <div id="notif-icon" class="notif-bell">
-        <img class="hover notificationBtn" src="{{ asset('img/notif.png') }}" alt="Notifications" />
-        @if(!empty($unreadCount) && $unreadCount > 0)
-          <span class="notif-badge">{{ $unreadCount }}</span>
-        @endif
-      </div>
-
-      <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
-        <div class="notification-header">
-          <h3>Notifications</h3>
-        </div>
-
-        <div class="notification-list">
-          @if ($notifications->isEmpty())
-            <p style="padding-left:10px;">No notifications</p>
-          @else
-            @php
-              $groupedNotifs = [];
-              $consecutiveGroup = [];
-              $currentTitle = null;
-
-              foreach ($notifications as $index => $notif) {
-                  $groupableTitle = in_array($notif['title'], ["Product Approval", "User Report", "Product Report"]);
-                  
-                  // If this is a groupable notification and it's unread
-                  if ($groupableTitle && !$notif['is_read']) {
-                      // If we have a previous notification and it matches the current one
-                      if ($currentTitle === $notif['title'] && !empty($consecutiveGroup)) {
-                          $consecutiveGroup[] = $notif;
-                      } else {
-                          // If we had a previous group, add it to results
-                          if (!empty($consecutiveGroup)) {
-                              if (count($consecutiveGroup) > 1) {
-                                  $groupedNotifs[] = [
-                                      'type' => 'group',
-                                      'title' => $currentTitle,
-                                      'count' => count($consecutiveGroup),
-                                      'time_ago' => $consecutiveGroup[0]['time_ago']
-                                  ];
-                              } else {
-                                  // If only one notification, add it as single
-                                  $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
-                              }
-                          }
-                          // Start new group
-                          $consecutiveGroup = [$notif];
-                          $currentTitle = $notif['title'];
-                      }
-                  } else {
-                      // If we had a previous group, add it to results
-                      if (!empty($consecutiveGroup)) {
-                          if (count($consecutiveGroup) > 1) {
-                              $groupedNotifs[] = [
-                                  'type' => 'group',
-                                  'title' => $currentTitle,
-                                  'count' => count($consecutiveGroup),
-                                  'time_ago' => $consecutiveGroup[0]['time_ago']
-                              ];
-                          } else {
-                              // If only one notification, add it as single
-                              $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
-                          }
-                          $consecutiveGroup = [];
-                      }
-                      // Add current notification as single
-                      $groupedNotifs[] = array_merge($notif, ['type' => 'single']);
-                      $currentTitle = null;
-                  }
-              }
-              
-              // Handle any remaining group
-              if (!empty($consecutiveGroup)) {
-                  if (count($consecutiveGroup) > 1) {
-                      $groupedNotifs[] = [
-                          'type' => 'group',
-                          'title' => $currentTitle,
-                          'count' => count($consecutiveGroup),
-                          'time_ago' => $consecutiveGroup[0]['time_ago']
-                      ];
-                  } else {
-                      $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
-                  }
-              }
-            @endphp
-
-            @foreach ($groupedNotifs as $index => $notification)
-              @if($notification['type'] === 'group')
-                <div class="notification unread">
-                  <div class="notification-content">
-                    <h1>{{ $notification['title'] }}</h1>
-                    <div class="Message">
-                      @if($notification['title'] === 'Product Approval')
-                        {{ $notification['count'] }} products are currently waiting for approval.
-                      @elseif($notification['title'] === 'User Report')
-                        {{ $notification['count'] }} new user reports awaiting for review.
-                      @elseif($notification['title'] === 'Product Report')
-                        {{ $notification['count'] }} new product reports awaiting for review.
-                      @endif
-                    </div>
-                  </div>
-                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
-                </div>
-              @else
-                <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
-                  <div class="notification-content">
-                    <h1>
-                      @if($notification['title'] === "Product Approved")
-                        <span style="color:Green;">{{ $notification['title'] }}</span>
-                      @elseif($notification['title'] === "Product Rejected")
-                        <span style="color:red;">{{ $notification['title'] }}</span>
-                      @else
-                        {{ $notification['title'] }}
-                      @endif
-                    </h1>
-                    <div class="Message">{{ $notification['message'] }}</div>
-                  </div>
-                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
-                </div>
-              @endif
-
-              @if($loop->iteration == 10)
-                <div class="see-more-btn" id="see-more-btn" data-offset="10">See More</div>
-              @endif
-            @endforeach
-          @endif
-        </div>
-      </div>
-    </div>
-    <!-- Profile -->
-    <div class="dropdown-container">
-      <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="Profile" />
-      <div class="profile-dropdown" id="profileDropdown" style="display: none;">
-        <ul>
-          <li data-url="{{ route('logout') }}">
-            <span class="icon"><i class="fa-solid fa-door-open"></i></span>
-            <span class="label">Logout</span>
-            <span class="chevron">›</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-    <!-- nav bar -->
 <div class="container">
 
     <div class="upload-container">
@@ -1926,97 +1770,6 @@ function closeImageViewer() {
       updateImageOrder();
     });
 
-
-    // FOR NOTIFS
-     document.addEventListener("DOMContentLoaded", function () {
-    const notifBtn = document.querySelector(".notificationBtn");
-    const notifDropdown = document.getElementById("notificationDropdown");
-    const profileBtn = document.querySelector(".profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const closeNotif = document.querySelector(".closeButton");
-    const wishlistButtons = document.querySelectorAll('.wishlistBtn');
-    const cartButton = document.querySelectorAll('.cartBtn');
-    let category = 'featured';
-
-    document.querySelectorAll(".mainFilterButtons").forEach(button => {
-    button.addEventListener("click", () => {
-        document.querySelectorAll(".mainFilterButtons").forEach(btn => {
-            btn.classList.remove("current");
-        });
-        let url='?page=${page}';
-        button.classList.add("current");
-
-        category = button.dataset.category;
-        console.log('Clicked category:', category);
-        updateFilters();
-    });
-});
-notifBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  // toggle dropdown
-  const isOpen = notifDropdown.style.display === "block";
-  notifDropdown.style.display = isOpen ? "none" : "block";
-  profileDropdown.style.display = "none"; 
-
-  if (!isOpen) {
-    // If dropdown just opened, wait 1 second before marking as read
-    setTimeout(() => {
-      // remove badge
-      const badge = document.querySelector('.notif-badge');
-      if (badge) {
-        badge.remove();
-      }
-
-      // mark all as read (frontend only)
-      document.querySelectorAll('.notification.unread').forEach(notif => {
-        notif.classList.remove('unread');
-      });
-
-      // 🔥 send to backend (AJAX)
-      fetch("{{ route('notifications.markAllRead') }}", {
-        method: "POST",
-        headers: {
-          "X-CSRF-TOKEN": document.querySelector("meta[name='csrf-token']")?.content,
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      })
-        .then(res => res.json())
-        .then(data => {
-        })
-        .catch(err => {
-          console.error("❌ Failed to sync with backend:", err);
-        });
-
-    }, 1000);
-  }
-});
-
-    profileBtn.addEventListener("click", function () {
-      profileDropdown.style.display = profileDropdown.style.display === "none" ? "block" : "none";
-      notifDropdown.style.display = "none"; 
-    });
-    if(closeNotif){
-    closeNotif.addEventListener("click", function () {
-      notifDropdown.style.display = "none";
-    });
-    }
-    // close dropdowns if clicked outside
-    window.addEventListener("click", function (e) {
-      if (!e.target.closest(".dropdown-container")) {
-        notifDropdown.style.display = "none";
-        profileDropdown.style.display = "none";
-      }
-    });
-    document.querySelectorAll('#profileDropdown li').forEach(li => {
-        li.addEventListener('click', () => {
-            window.location.href = li.dataset.url;
-        });
-    });
-  });
-
-
   // for voucher input handler
   const voucherAmount = document.getElementById('voucherAmount');
   const voucherPrice = document.getElementById('voucherPrice');
@@ -3057,56 +2810,6 @@ function showSuccessAlert(message) {
         alert.remove();
     }, 5000);
 }
-document.addEventListener("DOMContentLoaded", function () {
-    const seeMoreBtn = document.getElementById("see-more-btn");
-    const notificationList = document.querySelector(".notification-list");
-
-    if (seeMoreBtn) {
-        seeMoreBtn.addEventListener("click", async function () {
-            const offset = parseInt(this.dataset.offset, 10);
-
-            try {
-                const response = await fetch(`/notifications/load?offset=${offset}`);
-                const newNotifications = await response.json();
-
-                if (newNotifications.length > 0) {
-                    newNotifications.forEach(n => {
-                        const titleHtml =
-                            n.title === "Product Approved"
-                                ? `<span style="color:Green;">${n.title}</span>`
-                                : n.title === "Product Rejected"
-                                ? `<span style="color:red;">${n.title}</span>`
-                                : n.title;
-
-                        const html = `
-                            <div class="notification ${n.is_read ? '' : 'unread'}">
-                                <div class="notification-content">
-                                    <h1>${titleHtml}</h1>
-                                    <div class="Message">${n.message}</div>
-                                </div>
-                                <div class="notification-time">${n.time_ago}</div>
-                            </div>
-                        `;
-
-                        this.insertAdjacentHTML('beforebegin', html);
-                    });
-
-                    // update offset for next load
-                    this.dataset.offset = offset + newNotifications.length;
-
-                    // hide if no more
-                    if (newNotifications.length < 10) {
-                        this.style.display = "none";
-                    }
-                } else {
-                    this.style.display = "none";
-                }
-            } catch (err) {
-                console.error("Failed to load more notifications:", err);
-            }
-        });
-    }
-});
 document.addEventListener('DOMContentLoaded', function() {
     const rejectOption = document.getElementById('messageRejection');
     const rejectMessage = document.getElementById('rejectMessage');
@@ -3186,6 +2889,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-</body>
-</html>
+@endsection
 
