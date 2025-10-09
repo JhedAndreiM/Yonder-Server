@@ -4,7 +4,7 @@
     @csrf
     <input type="hidden" value="buyer" name="role">
     <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-    <button class="orderReceived">Order Received</button>
+    <button class="orderReceived">Completed</button>
 </form>
 @else
 <button class="cancelButton" style="background-color:#4CAF50; color:white;">checked</button>
@@ -16,7 +16,7 @@
     @csrf
     <input type="hidden" value="seller" name="role">
     <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
-    <button class="orderReceived">Order Delivered</button>
+    <button class="orderReceived">Completed</button>
 </form>
 @else
 <button class="orderReceived" style="background-color:#4CAF50; color:white;">checked</button>

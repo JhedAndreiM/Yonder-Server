@@ -42,16 +42,20 @@ table.products {
     font-size: 0.875rem;
 }
 table.products tr {
-    background-color: rgb(96 165 250);
+    background-color: #003c53ff;
 }
 table.products th {
     color: #ffffff;
     padding: 0.5rem;
 }
-table tr.items {
-    background-color: rgb(241 245 249);
+/* individual row styles are handled by tbody striping */
+table.products tbody tr:nth-child(odd) {
+    background-color: #f7fafc; /* light */
 }
-table tr.items td {
+table.products tbody tr:nth-child(even) {
+    background-color: #e6eef8; /* slightly darker */
+}
+table.products tbody tr td {
     padding: 0.5rem;
     text-align: center;
 }
@@ -64,4 +68,11 @@ td.name {
     text-align: right;
     margin-top: 1rem;
     font-size: 0.875rem;
+}
+table.products {
+    border-collapse: collapse;
+    width: 100%;
+}
+.products tr.last-of-date td {
+    border-bottom: 1px solid #6e6e6e !important;
 }

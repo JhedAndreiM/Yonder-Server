@@ -425,6 +425,14 @@
     <form id="pdfForm" action="{{ route('generate.pdf') }}" method="GET" target="_blank">
       @csrf
       <div class="form-content">
+        <div class="input-group" style="margin-bottom: 1rem;">
+          <label for="reportType" style="font-weight: 600; margin-bottom: 0.25rem; display: block;">Report to Generate</label>
+          <select id="reportType" name="reportType" required style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
+            <option value="all" selected>All Sections</option>
+            <option value="pben">PBEN Section Only</option>
+            <option value="student_org">Student Org Section Only</option>
+          </select>
+        </div>
         <div class="date-inputs">
           <div class="input-group">
             <label for="fromDate">

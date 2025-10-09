@@ -341,6 +341,7 @@ class OrganizationController extends Controller
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as buyer_name',
+                'users.last_name as buyer_lastname',
                 'buyers.id as buyer_id'
             );
         if ($filters == "all" || $filters == null) {

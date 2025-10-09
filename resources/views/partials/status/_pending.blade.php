@@ -2,7 +2,7 @@
 <form action="{{ route('cart.confirmPayment', $cartItems->cart_id) }}" method="POST">
     @csrf
     <input id="filterValue" name="filterValue" type="hidden" value="{{ $filters }}">
-    <button class="confirmCOD" type="submit">Confirm COD</button>
+    <button class="confirmCOD" type="submit">Confirm Order</button>
 </form>
 @else
 <!-- For Seller to Confirm an Order -->
@@ -101,8 +101,9 @@
 @endif
 <form class="uploadGcashReceipt" action="{{route('gcash.receipt', $cartItems->cart_id)}}" method="POST" enctype="multipart/form-data">
     @csrf
+    <input id="realCartId" type="text" name="idCart" value="{{ $cartItems->cart_id }}">
     <input id="receiptInput" type="file" class="gcash_receipt" name="gcash_receipt" accept="image/*" required>
-    <label class="lbl_gcash_receipt" for="receiptInput">Upload GCash Receipt</label>
+    <label class="lbl_gcash_receipt" for="receiptInput">Upload GCash Receipt {{$cartItems->cart_id}}</label>
 </form>
 <!-- Modal -->
 <div class="gcashReceiptModal" id="gcashReceiptModal">

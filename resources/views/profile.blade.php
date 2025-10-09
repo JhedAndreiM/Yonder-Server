@@ -409,6 +409,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event delegation for dynamically loaded elements
     document.body.addEventListener('change', function(e) {
       console.log('hello');
+      const realCartId = document.getElementById('realCartId').value;
+        console.log(realCartId);
         if (e.target && e.target.id === 'receiptInput') {
             const file = e.target.files[0];
             if (file) {
@@ -443,7 +445,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (e.target && e.target.id === 'submitReceipt') {
             const form = document.querySelector('.uploadGcashReceipt');
-            if (form) form.submit();
+            const realCartId = document.getElementById('realCartId').value;
+            console.log(realCartId);
+            // if (form) form.submit();
         }
     });
 

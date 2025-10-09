@@ -230,6 +230,8 @@ class CartController extends Controller
                 'product.description',
                 'cart_items.voucher_applied'
             )
+            ->orderByRaw('CASE WHEN product.stock > 0 THEN 0 ELSE 1 END')
+            ->orderByDesc('cart_items.updated_at')
             ->get();
 
         $cartItems->transform(function ($item) {
@@ -252,7 +254,11 @@ class CartController extends Controller
 
             return $item;
         });        
-        $totalItems = $cartItems->sum('quantity');
+        $totalItems = $cartItems
+        ->filter(function ($item) {
+            return ($item->available_stock ?? $item->product_stock ?? 0) > 0;
+        })
+        ->sum('quantity');
 
         $totalAmount = $cartItems->reduce(function ($carry, $item) {
             return $carry + (($item->unit_price * $item->quantity) - $item->voucher_applied);
@@ -320,6 +326,7 @@ class CartController extends Controller
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
+                'users.last_name as seller_lastname',
                 'users.qr_image as seller_qr_image',
                 'buyers.id as buyer_id'
             );
@@ -390,6 +397,7 @@ class CartController extends Controller
     }
 
     public function saveGcashReceipt(Request $request, $id){
+        dd($request->idCart);
         $request->validate([
             'gcash_receipt' => 'required|image|mimes:jpeg,png,jpg'
         ]);
@@ -576,6 +584,7 @@ public function cancel(Request $request, $id)
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
+                'users.last_name as seller_lastname',
                 'buyers.id as buyer_id'
             );
         if ($filters == "all" || $filters == null) {

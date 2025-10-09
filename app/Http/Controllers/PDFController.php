@@ -18,8 +18,9 @@ public function generate(Request $request)
 
     $from = $request->input('fromDate');
     $to = $request->input('toDate');
+    $reportType = $request->input('reportType', 'all');
 
-    // PBEN products
+    // Always fetch both, but only pass what is needed to the view
     $pbenProducts = DB::table('cart_items')
         ->join('product', 'cart_items.product_id', '=', 'product.product_id')
         ->where('cart_items.seller_id', Auth::id())
@@ -31,12 +32,13 @@ public function generate(Request $request)
             'cart_items.quantity',
             'cart_items.unit_price',
             'cart_items.product_id',
+            'cart_items.updated_at',
             'product.name as product_name',
             'cart_items.voucher_applied'
         )
+        ->orderBy('cart_items.updated_at', 'asc')
         ->get();
 
-    // Student Org products
     $studentOrgProducts = DB::table('cart_items')
         ->join('product', 'cart_items.product_id', '=', 'product.product_id')
         ->where('cart_items.seller_id', Auth::id())
@@ -48,22 +50,19 @@ public function generate(Request $request)
             'cart_items.quantity',
             'cart_items.unit_price',
             'cart_items.product_id',
+            'cart_items.updated_at',
             'product.name as product_name',
             'cart_items.voucher_applied'
         )
         ->get();
 
-    // PBEN Total
     $pbenTotal = $pbenProducts->sum(fn($item) =>
         ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
     );
-
-    // Student Org Total
     $studentOrgTotal = $studentOrgProducts->sum(fn($item) =>
         ($item->quantity * $item->unit_price) - floatval($item->voucher_applied)
     );
 
-    // PBEN Summary
     $pbenSummary = $pbenProducts->groupBy('product_name')->map(function($items, $product_name){
         return [
             'product_name' => $product_name,
@@ -75,8 +74,6 @@ public function generate(Request $request)
             ),
         ];
     })->values()->toArray();
-
-    // Student Org Summary
     $studentOrgSummary = $studentOrgProducts->groupBy('product_name')->map(function($items, $product_name){
         return [
             'product_name' => $product_name,
@@ -89,17 +86,24 @@ public function generate(Request $request)
         ];
     })->values()->toArray();
 
-    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf', [
-        'pbenProducts' => $pbenProducts,
-        'pbenSummary' => $pbenSummary,
-        'pbenTotal' => $pbenTotal,
-        'studentOrgProducts' => $studentOrgProducts,
-        'studentOrgSummary' => $studentOrgSummary,
-        'studentOrgTotal' => $studentOrgTotal,
+    // Only pass the requested section(s)
+    $viewData = [
         'from' => $from,
         'to' => $to,
-    ]);
+        'reportType' => $reportType,
+    ];
+    if ($reportType === 'all' || $reportType === 'pben') {
+        $viewData['pbenProducts'] = $pbenProducts;
+        $viewData['pbenSummary'] = $pbenSummary;
+        $viewData['pbenTotal'] = $pbenTotal;
+    }
+    if ($reportType === 'all' || $reportType === 'student_org') {
+        $viewData['studentOrgProducts'] = $studentOrgProducts;
+        $viewData['studentOrgSummary'] = $studentOrgSummary;
+        $viewData['studentOrgTotal'] = $studentOrgTotal;
+    }
 
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf', $viewData);
     $fileName = 'sales_report_' . $from . '_to_' . $to . '.pdf';
     return $pdf->stream($fileName, ['Attachment' => false]);
 }

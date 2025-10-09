@@ -25,51 +25,94 @@
     </tr>
 </table>
 
- 
+@if (!empty($pbenProducts) && isset($pbenProducts))
 {{-- PBEN Section --}}
 <div class="margin-top">
     <div style="text-align: center; margin: 0.5rem 0;">
-        <h3 class="yonderName" style="margin: 0;">YONDER</h3>
         <h3 class="yonderName" style="margin: 0;">STATEMENT OF FINANCIAL PERFORMANCE</h3>
-        <h6 style="margin: 0;">For the date of </h6>
+        <h6 style="margin: 0;">
+            For the date of 
+            {{
+                \Carbon\Carbon::parse($from)->format('F d, Y')
+            }} to {{
+                \Carbon\Carbon::parse($to)->format('F d, Y')
+            }}
+        </h6>
     </div>
     <table class="products">
         <tr>
-            <th colspan="4" style="text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
-                PBEN List of Items
+            <th colspan="4" style="background-color:#0075a3ff;text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
+                PBEN Sales Report
             </th>
         </tr>
-        <tr>
+        <tr style="background-color: #003c53ff;">
+            <th style="width:20%;">Date</th>
             <th>Product Name</th>
-            <th>Quantity Sold</th>
-            <th>Voucher Applied</th>
-            <th>Unit Price</th>
+            <th style="width:15%; text-align:center;">Quantity</th>
+            <th style="width:20%; text-align:center;">Total Price</th>
         </tr>
-        @forelse($pbenProducts as $item)
-            <tr class="items">
-                <td>{{ $item->product_name }}</td>
-                <td>{{ $item->quantity }}</td>
-                <td>{{ $item->voucher_applied }}</td>
-                <td>{{ $item->unit_price }}</td>
-            </tr>
+@php
+    $currentDate = null;
+@endphp
+
+        <tbody>
+        @forelse($pbenProducts as $index => $item)
+    @php
+        $date = \Carbon\Carbon::parse($item->updated_at)->format('F j, Y');
+
+        $nextDate = isset($pbenProducts[$index + 1])
+            ? \Carbon\Carbon::parse($pbenProducts[$index + 1]->updated_at)->format('F j, Y')
+            : null;
+
+        $isLastOfDate = $date !== $nextDate; // <-- define it here
+    @endphp
+
+    <tr class="items {{ $isLastOfDate ? 'last-of-date' : '' }}">
+        @if($date !== $currentDate)
+            <td>{{ $date }}</td>
+            @php $currentDate = $date; @endphp
+        @else
+            <td></td>
+        @endif
+
+        <td>{{ $item->product_name }}</td>
+        <td style="text-align:center;">{{ $item->quantity }}</td>
+        <td>P {{ ($item->unit_price * $item->quantity) - $item->voucher_applied }}</td>
+    </tr>
         @empty
             <tr><td colspan="4">No PBEN Data Found</td></tr>
         @endforelse
+        </tbody>
+        @php
+            $totalQuantity = $pbenProducts->sum('quantity');
+        @endphp
+        <tfoot style="background-color: #003c53ff !important;">
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;">Total</td>
+                <td></td>
+                <td>Total Quantity: </td>
+                <td>{{ $totalQuantity }}</td>
+            </tr>   
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td>Total Amount: </td>
+                <td>P {{ number_format($pbenTotal, 2) }}</td>
+            </tr>   
+        </tfoot>
     </table>
 </div>
-<div class="total">PBEN Total: P {{ $pbenTotal }}</div>
 
 <div class="margin-top">
     <table class="products">
         <tr>
-            <th colspan="5" style="text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
-                PBEN Summary
+            <th colspan="4" style="background-color:#0075a3ff;text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
+                PBEN Summary of Sales
             </th>
         </tr>
-        <tr>
+        <tr style="background-color: #003c53ff;">
             <th>Product Name</th>
             <th>Quantity Sold</th>
-            <th>Voucher Applied</th>
             <th>Unit Price</th>
             <th>Total Sold</th>
         </tr>
@@ -77,40 +120,98 @@
             <tr class="items">
                 <td>{{ $item['product_name'] }}</td>
                 <td>{{ $item['quantity'] }}</td>
-                <td>{{ $item['voucher_applied'] }}</td>
                 <td>{{ $item['unit_price'] }}</td>
                 <td>{{ $item['total_sold'] }}</td>
             </tr>
         @empty
             <tr><td colspan="5">No PBEN Summary Data Found</td></tr>
         @endforelse
+                @php
+            $totalQuantity = $pbenProducts->sum('quantity');
+        @endphp
+        <tfoot style="background-color: #003c53ff !important;">
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;">Total</td>
+                <td></td>
+                <td style="text-align:center;">Total Quantity: </td>
+                <td>{{ $totalQuantity }}</td>
+            </tr>   
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td style="text-align:center;">Total Amount: </td>
+                <td>P {{ number_format($pbenTotal, 2) }}</td>
+            </tr>   
+        </tfoot>
     </table>
 </div>
+@endif
+
+@if (!empty($studentOrgProducts) && isset($studentOrgProducts))
+@if (!empty($pbenProducts) && isset($pbenProducts))
 <div class="page-break"></div>
+@endif
+
+
+
+
 {{-- Student Org Section --}}
 <div class="margin-top">
     <table class="products">
         <tr>
-            <th colspan="4" style="text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
-                Student Org List of Items
+            <th colspan="4" style="background-color:#0075a3ff;text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
+                Student Org Sales Report
             </th>
         </tr>
-        <tr>
+        <tr style="background-color: #003c53ff;">
+            <th style="width:20%;">Date</th>
             <th>Product Name</th>
-            <th>Quantity Sold</th>
-            <th>Voucher Applied</th>
-            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th style="width:20%; text-align:center;">Total Price</th>
         </tr>
+        <tbody>
         @forelse($studentOrgProducts as $item)
-            <tr class="items">
+        @php
+            $date = \Carbon\Carbon::parse($item->updated_at)->format('F j, Y');
+
+            $nextDate = isset($studentOrgProducts[$index + 1])
+                ? \Carbon\Carbon::parse($studentOrgProducts[$index + 1]->updated_at)->format('F j, Y')
+                : null;
+
+            $isLastOfDate = $date !== $nextDate;
+        @endphp
+            <tr class="items {{ $isLastOfDate ? 'last-of-date' : '' }}">
+                @if($date !== $currentDate)
+                    <td>{{ $date }}</td>
+                    @php $currentDate = $date; @endphp
+                @else
+                    <td></td>
+                @endif
                 <td>{{ $item->product_name }}</td>
                 <td>{{ $item->quantity }}</td>
-                <td>{{ $item->voucher_applied }}</td>
-                <td>{{ $item->unit_price }}</td>
+                <td>P {{ ($item->unit_price * $item->quantity) - $item->voucher_applied }}</td>
             </tr>
         @empty
             <tr><td colspan="4">No Student Org Data Found</td></tr>
         @endforelse
+        </tbody>
+        @php
+            $studentTotalQuantity = $studentOrgProducts->sum('quantity');
+        @endphp
+        <tfoot style="background-color: #003c53ff !important;">
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;">Total</td>
+                <td></td>
+                <td style="text-align:center;">Total Quantity: </td>
+                <td>{{ $studentTotalQuantity }}</td>
+            </tr>   
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td style="text-align:center;">Total Amount: </td>
+                <td>P {{ number_format($studentOrgTotal, 2) }}</td>
+            </tr>   
+        </tfoot>
     </table>
 </div>
 <div class="total">Student Org Total: P {{ $studentOrgTotal }}</div>
@@ -118,31 +219,47 @@
 <div class="margin-top">
     <table class="products">
         <tr>
-            <th colspan="5" style="text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
-                Student Org Summary
+            <th colspan="4" style="background-color:#0075a3ff;text-align: center; font-size: 1rem; padding: 0.5rem; border-bottom: 2px solid #0075a3ff;">
+                Student Org Summary of Sales
             </th>
-        </tr>
-        <tr>
+        <tr style="background-color: #003c53ff;">
             <th>Product Name</th>
-            <th>Quantity Sold</th>
-            <th>Voucher Applied</th>
+            <th>Quantity</th>
             <th>Unit Price</th>
             <th>Total Sold</th>
         </tr>
+        <tbody>
         @forelse($studentOrgSummary as $item)
             <tr class="items">
                 <td>{{ $item['product_name'] }}</td>
                 <td>{{ $item['quantity'] }}</td>
-                <td>{{ $item['voucher_applied'] }}</td>
                 <td>{{ $item['unit_price'] }}</td>
                 <td>{{ $item['total_sold'] }}</td>
             </tr>
         @empty
-            <tr><td colspan="5">No Student Org Summary Data Found</td></tr>
+            <tr><td colspan="4">No Student Org Summary Data Found</td></tr>
         @endforelse
+        </tbody>
+        @php
+            $studentTotalQuantity = $studentOrgProducts->sum('quantity');
+        @endphp
+        <tfoot style="background-color: #003c53ff !important;">
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;">Total</td>
+                <td></td>
+                <td style="text-align:center;">Total Quantity: </td>
+                <td>{{ $studentTotalQuantity }}</td>
+            </tr>
+            <tr style="color:white; font-weight:bold;">
+                <td style="text-align:center;"></td>
+                <td></td>
+                <td style="text-align:center;">Total Amount: </td>
+                <td>P {{ number_format($studentOrgTotal, 2) }}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
-<div class="total">Student Org Total: P {{ $studentOrgTotal }}</div>
+@endif
 
     <div class="footer margin-top">
         <div>&copy; Yonder</div>

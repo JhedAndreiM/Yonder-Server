@@ -47,7 +47,7 @@ class PageController extends Controller
             $topFilter = session('topFilter', 'featured'); 
         }
         $query = Product::query();
-
+        $query->where('user_id', '!=', Auth::id());
         // Exclude products from users who are banned or suspended
         $query->whereHas('user', function($q){
             $q->whereNotIn('role', ['banned', 'suspended']);

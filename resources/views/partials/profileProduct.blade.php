@@ -14,19 +14,20 @@
             <div class="text">
             <!-- For User Name -->
             @if(Auth::user()->role==="student")
-                <a href="/Yonder/Chat/{{$cartItems->seller_id}}" class="seller">{{$cartItems->seller_name}}</a>
+                <a href="/Yonder/Chat/{{$cartItems->seller_id}}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a>
             @elseif(Auth::user()->role==="organization")
-                <a href="/Yonder/Chat/{{$cartItems->buyer_id}}" class="seller buyer">{{$cartItems->buyer_name}}</a>
+                <a href="/Yonder/Chat/{{$cartItems->buyer_id}}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a>
             @endif
             <!-- End For User Name -->
 
             <!-- For the Status -->
             @if($cartItems->status == 'receive')
                 @if ($cartItems->seller_id == Auth::id())
-                    <p class="status">To Deliver</p>
+                    <p class="status">To Pick up</p>
                 @else
                     <p class="status">To Receive</p>
                 @endif
+                
             @elseif ($cartItems->status == 'pending')
                 <p class="status">Pending</p>
             @elseif ($cartItems->status == 'cancelled')
