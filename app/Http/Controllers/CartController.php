@@ -389,6 +389,7 @@ class CartController extends Controller
                 'buyers.id as buyer_id',
                 'users.qr_image as seller_qr_image',
                 'buyers.name as buyer_name',
+                'buyers.last_name as buyer_lastname',
                 'cancelled_cart_items.cancelled_by',
                 'cancelled_cart_items.cancel_reason',
                 'cancelled_cart_items.custom_reason',
