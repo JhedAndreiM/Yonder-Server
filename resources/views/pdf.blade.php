@@ -155,7 +155,7 @@
 
 
 
-{{-- Student Org Section --}}
+{{-- Student Org Section - FIXED --}}
 <div class="margin-top">
     <table class="products">
         <tr>
@@ -170,7 +170,10 @@
             <th style="width:20%; text-align:center;">Total Price</th>
         </tr>
         <tbody>
-        @forelse($studentOrgProducts as $item)
+        @php
+            $currentDate = null;
+        @endphp
+        @forelse($studentOrgProducts as $index => $item)
         @php
             $date = \Carbon\Carbon::parse($item->updated_at)->format('F j, Y');
 
