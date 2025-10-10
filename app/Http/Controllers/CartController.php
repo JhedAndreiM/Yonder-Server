@@ -936,7 +936,11 @@ public function confirmStudentSales(Request $request, $id)
             'status' => 'receive',
             'updated_at' => now()
         ]);
-        $order = DB::table('cart_items')->where('id', $id)->first();
+        $order = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        ->where('cart_items.id', $id)
+        ->select('cart_items.*', 'product.name as product_name')
+        ->first();
         if ($order) {
             $buyer = DB::table('users')->where('id', $order->user_id)->first();
             $notification = Notification::create([
