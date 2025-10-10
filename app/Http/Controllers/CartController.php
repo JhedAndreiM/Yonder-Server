@@ -305,6 +305,7 @@ class CartController extends Controller
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users', 'cart_items.seller_id', '=', 'users.id')
             ->leftJoin('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->leftJoin('cancelled_cart_items', 'cancelled_cart_items.original_cart_id', '=', 'cart_items.id')
             ->where('cart_items.user_id', $userId)
             ->select(
                 'cart_items.id as cart_id',
@@ -328,7 +329,11 @@ class CartController extends Controller
                 'users.name as seller_name',
                 'users.last_name as seller_lastname',
                 'users.qr_image as seller_qr_image',
-                'buyers.id as buyer_id'
+                'buyers.id as buyer_id',
+                'cancelled_cart_items.cancelled_by',
+                'cancelled_cart_items.cancel_reason',
+                'cancelled_cart_items.custom_reason',
+                'cancelled_cart_items.cancelled_at'
             );
         if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
@@ -354,10 +359,12 @@ class CartController extends Controller
     }
     public function getCardPartial($id, Request $request)
     {
+        Log::info('getCardPartial called', ['id' => $id, 'filter' => $request->query('filter')]);
         $items = DB::table('cart_items')
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users', 'cart_items.seller_id', '=', 'users.id')
             ->leftJoin('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
+            ->leftJoin('cancelled_cart_items', 'cancelled_cart_items.original_cart_id', '=', 'cart_items.id')
             ->where('cart_items.id', $id)
             ->select(
                 'cart_items.id as cart_id',
@@ -378,9 +385,14 @@ class CartController extends Controller
                 'product.description',
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
+                'users.last_name as seller_lastname',
                 'buyers.id as buyer_id',
                 'users.qr_image as seller_qr_image',
-                'buyers.name as buyer_name'
+                'buyers.name as buyer_name',
+                'cancelled_cart_items.cancelled_by',
+                'cancelled_cart_items.cancel_reason',
+                'cancelled_cart_items.custom_reason',
+                'cancelled_cart_items.cancelled_at'
             )
             ->first();
 
@@ -397,7 +409,6 @@ class CartController extends Controller
     }
 
     public function saveGcashReceipt(Request $request, $id){
-        dd($request->idCart);
         $request->validate([
             'gcash_receipt' => 'required|image|mimes:jpeg,png,jpg'
         ]);
@@ -514,6 +525,50 @@ public function cancel(Request $request, $id)
                 ]);
         }
 
+        // Save cancellation data to cancelled_cart_items table
+        $cancelledBy = $cartItem->user_id == auth()->id() ? 'buyer' : 'seller';
+        
+        try {
+            DB::table('cancelled_cart_items')->insert([
+                'original_cart_id' => $cartItem->id,
+                'product_id' => $cartItem->product_id,
+                'buyer_id' => $cartItem->user_id,
+                'seller_id' => $cartItem->seller_id,
+                'product_name' => $product->name, // Get from product table
+                'unit_price' => $cartItem->unit_price,
+                'quantity' => $cartItem->quantity,
+                'selected_variant' => $cartItem->selected_variant ?? null,
+                'voucher_applied' => $cartItem->voucher_applied ?? 0,
+                'payment_type' => $cartItem->payment_type ?? 'cashPayment',
+                'payment_confirmation' => $cartItem->paymentConfirmation ?? 'no',
+                'gcash_receipt' => $cartItem->gcash_receipt ?? null,
+                'seller_qr_image' => $cartItem->seller_qr_image ?? null,
+                'status' => 'cancelled',
+                'original_created_at' => $cartItem->created_at,
+                'original_updated_at' => $cartItem->updated_at,
+                'cancelled_by' => $cancelledBy,
+                'cancel_reason' => $request->input('cancel_reason', 'not_specified'),
+                'custom_reason' => $request->input('custom_reason'),
+                'cancelled_at' => now(),
+                'cancellation_notes' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            
+            \Log::info('Cancellation data saved successfully', [
+                'cart_id' => $cartItem->id,
+                'cancel_reason' => $request->input('cancel_reason'),
+                'custom_reason' => $request->input('custom_reason'),
+                'cancelled_by' => $cancelledBy
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to save cancellation data', [
+                'error' => $e->getMessage(),
+                'cart_id' => $cartItem->id
+            ]);
+            throw $e; // Re-throw to trigger rollback
+        }
+
         // Mark item as cancelled
         DB::table('cart_items')
             ->where('id', $id)
@@ -525,18 +580,47 @@ public function cancel(Request $request, $id)
         DB::commit();
 
         $filters = $request->input('filterValue');
-        if ($request->ajax()) {
-            return response()->json(['success' => true, 'id' => $id]);
+        
+        \Log::info('Cancel request details', [
+            'is_ajax' => $request->ajax(),
+            'wants_json' => $request->wantsJson(),
+            'content_type' => $request->header('Content-Type'),
+            'x_requested_with' => $request->header('X-Requested-With'),
+            'filters' => $filters
+        ]);
+        
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'id' => $id, 'message' => 'Item cancelled successfully.']);
         }
 
         return redirect()->route('student.profile', ['filters' => $filters])
             ->with('success', 'Item cancelled successfully.');
     } catch (\Exception $e) {
         DB::rollBack();
+        
+        \Log::error('Cancel order error', [
+            'error' => $e->getMessage(),
+            'cart_id' => $id,
+            'is_ajax' => $request->ajax()
+        ]);
+        
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while cancelling the order.'], 500);
+        }
+        
         return back()->with('error', 'An error occurred while cancelling the order.');
     }
 }
+public function getCancelledDetails($id)
+{
+    $cancelled = \App\Models\CancelledCartItem::where('original_cart_id', $id)->first();
 
+    if (!$cancelled) {
+        return response()->json(['error' => 'Not found'], 404);
+    }
+
+    return response()->json($cancelled);
+}
     public function cancelSales(Request $request, $id)
     {
         DB::table('cart_items')
@@ -564,6 +648,7 @@ public function cancel(Request $request, $id)
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
             ->join('users', 'cart_items.user_id', '=', 'users.id')
+            ->leftJoin('cancelled_cart_items', 'cancelled_cart_items.original_cart_id', '=', 'cart_items.id')
             ->where('cart_items.seller_id', '=', $userId)
             ->select(
                 'cart_items.id as cart_id',
@@ -585,7 +670,11 @@ public function cancel(Request $request, $id)
                 'cart_items.voucher_applied',
                 'users.name as seller_name',
                 'users.last_name as seller_lastname',
-                'buyers.id as buyer_id'
+                'buyers.id as buyer_id',
+                'cancelled_cart_items.cancelled_by',
+                'cancelled_cart_items.cancel_reason',
+                'cancelled_cart_items.custom_reason',
+                'cancelled_cart_items.cancelled_at'
             );
         if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
@@ -616,6 +705,14 @@ public function confirmStudentSales(Request $request, $id)
         $cartItem = DB::table('cart_items')->where('id', $id)->lockForUpdate()->first();
         if (!$cartItem) {
             DB::rollBack();
+            
+            if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Buy order not found.'
+                ], 404);
+            }
+            
             return back()->with('error', 'Buy order not found.');
         }
 
@@ -623,6 +720,14 @@ public function confirmStudentSales(Request $request, $id)
         $product = DB::table('product')->where('product_id', $cartItem->product_id)->lockForUpdate()->first();
         if (!$product) {
             DB::rollBack();
+            
+            if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found.'
+                ], 404);
+            }
+            
             return back()->with('error', 'Product not found.');
         }
 
@@ -643,12 +748,28 @@ public function confirmStudentSales(Request $request, $id)
                 !is_array($variantData['optionStocks'])
             ) {
                 DB::rollBack();
+                
+                if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid variant data.'
+                    ], 400);
+                }
+                
                 return back()->with('error', 'Invalid variant data.');
             }
 
             $optionIndex = array_search($selectedOption, $variantData['options']);
             if ($optionIndex === false) {
                 DB::rollBack();
+                
+                if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected variant not found.'
+                    ], 400);
+                }
+                
                 return back()->with('error', 'Selected variant not found.');
             }
 
@@ -665,6 +786,14 @@ public function confirmStudentSales(Request $request, $id)
             $available = $originalStock - $reservedQty;
             if ($available < $requestedQty) {
                 DB::rollBack();
+                
+                if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Not enough stock. Only $available left."
+                    ], 400);
+                }
+                
                 return back()->with('error', "Not enough stock. Only $available left.");
             }
 
@@ -710,6 +839,14 @@ public function confirmStudentSales(Request $request, $id)
             $available = $originalStock - $reservedQty;
             if ($available < $requestedQty) {
                 DB::rollBack();
+                
+                if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Not enough stock. Only $available left."
+                    ], 400);
+                }
+                
                 return back()->with('error', "Not enough stock. Only $available left.");
             }
 
@@ -731,8 +868,10 @@ public function confirmStudentSales(Request $request, $id)
             ]);
 
         DB::commit();
+        
+        // Send notifications
         $buyer = DB::table('users')->where('id', $cartItem->user_id)->first();
-        if($buyer){
+        if ($buyer) {
             $notification = Notification::create([
                 'user_id' => $buyer->id,
                 'title' => 'Order Accepted',
@@ -742,6 +881,7 @@ public function confirmStudentSales(Request $request, $id)
                 'updated_at' => now(),
             ]);
             event(new \App\Events\NewNotification($notification));
+            
             if (!empty($buyer->phone_number)) {
                 try {
                     $smsService = app(\App\Services\IprogSmsService::class);
@@ -752,11 +892,19 @@ public function confirmStudentSales(Request $request, $id)
                 }
             }
         }
+        
         $filters = $request->input('filterValue');
-        if ($request->ajax()) {
-            return response()->json(['success' => true, 'id' => $id]);
+        
+        // Handle AJAX request
+        if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'id' => $id,
+                'message' => 'Order confirmed successfully'
+            ]);
         }
 
+        // Handle regular request
         if (Auth::check() && Auth::user()->role === 'student') {
             return redirect()->route('student.sales', ['filters' => $filters])
                 ->with('success', 'Item Approved.');
@@ -767,6 +915,15 @@ public function confirmStudentSales(Request $request, $id)
 
     } catch (\Exception $e) {
         DB::rollBack();
+        Log::error('Error in confirmStudentSales', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+        
+        if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the order.'
+            ], 500);
+        }
+        
         return back()->with('error', 'An error occurred while processing the order.');
     }
 }
@@ -783,7 +940,7 @@ public function confirmStudentSales(Request $request, $id)
         if ($order) {
             $buyer = DB::table('users')->where('id', $order->user_id)->first();
             $notification = Notification::create([
-                'user_id' => $buyer->user_id,
+                'user_id' => $buyer->id,
                 'title' => 'Buy Order Confirmed',
                 'message' => 'Your buy order for "'.$order->product_name.'" has been confirmed and ready to be received.',
                 'is_read' => false,

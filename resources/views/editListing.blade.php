@@ -157,17 +157,26 @@
       <div class="section" id="TradeOrSell">
         <h5>Is this Item for Trade or for Sell?</h5>
         <div class="Trade-SellButtons">
+          @if($items->forSaleTrade==="sale")
             <button type="button" class="filter-btn button active" name="forSaleTrade"data-filter="sale"
               data-filter-type="forSaleTrade">Sale</button>
             <button type="button" class="filter-btn button" name="forSaleTrade"data-filter="trade"
               data-filter-type="forSaleTrade">Trade</button>
               <input type="hidden" name="tradeOrSell" id="tradeOrSell" value="sale">
+          @else
+            <button type="button" class="filter-btn button" name="forSaleTrade"data-filter="sale"
+              data-filter-type="forSaleTrade">Sale</button>
+            <button type="button" class="filter-btn button active" name="forSaleTrade"data-filter="trade"
+              data-filter-type="forSaleTrade">Trade</button>
+            <input type="hidden" name="tradeOrSell" id="tradeOrSell" value="trade">
+          @endif
           </div>
       </div>
 
       <div class="section" id="qualityOfProduct">
-        <h5>Quality of the Product</h5>
+        <h5>Product Condition</h5>
         <div class="Trade-SellButtons">
+          @if($items->product_condition==="new")
             <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
               data-filter-type="forSaleTrade">New</button>
             <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="like-new"
@@ -175,6 +184,31 @@
             <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="used"
               data-filter-type="forSaleTrade">Used</button>
               <input type="hidden" name="productQuality" id="productQuality" value="new">
+          @elseif($items->product_condition==="used")
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="new"
+              data-filter-type="forSaleTrade">New</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="like-new"
+              data-filter-type="forSaleTrade">Like-new</button>
+            <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="used"
+              data-filter-type="forSaleTrade">Used</button>
+              <input type="hidden" name="productQuality" id="productQuality" value="used">
+          @elseif($items->product_condition==="like-new")
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="new"
+              data-filter-type="forSaleTrade">New</button>
+            <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="like-new"
+              data-filter-type="forSaleTrade">Like-new</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="used"
+              data-filter-type="forSaleTrade">Used</button>
+              <input type="hidden" name="productQuality" id="productQuality" value="like-new">
+          @else
+            <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
+              data-filter-type="forSaleTrade">New</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="like-new"
+              data-filter-type="forSaleTrade">Like-new</button>
+            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="used"
+              data-filter-type="forSaleTrade">Used</button>
+              <input type="hidden" name="productQuality" id="productQuality" value="new">
+          @endif
           </div>
       </div>
       

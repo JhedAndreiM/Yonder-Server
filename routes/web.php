@@ -205,10 +205,10 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class .':stu
    //profile
    Route::post('/cart/{id}/cancel', [CartController::class, 'cancel'])->name('cart.cancel');
    Route::post('/cart/{id}/cancelSales', [CartController::class, 'cancelSales'])->name('cart.cancelSales');
-
+   Route::get('/cart/cancelled/{id}', [CartController::class, 'getCancelledDetails']);
    //confirm ni student seller
-   Route::post('/cart/{id}/Update Sales', [CartController::class, 'confirmStudentSales'])->name('cart.confirmSales');
-   Route::post('/cart/{id}/Update Status', [CartController::class, 'confirmGcashPayment'])->name('cart.confirmPayment');
+   Route::post('/cart/{id}/Update-Sales', [CartController::class, 'confirmStudentSales'])->name('cart.confirmSales');
+   Route::post('/cart/{id}/Update-Status', [CartController::class, 'confirmGcashPayment'])->name('cart.confirmPayment');
 
    // confirm ni buyer yung order
    Route::post('/cart/{id}/OrderReceivedDelivered', [CartController::class, 'orderReceivedDelivered'])->name('cart.orderReceivedDelivered');

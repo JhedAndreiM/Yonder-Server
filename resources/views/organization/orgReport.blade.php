@@ -190,7 +190,7 @@
 
   <div class="recent-sales">
     <div class="sales-header">
-      <h4>Recent Sales</h4>
+      <h4>Product Stocks</h4>
     </div>
 <table>
     <thead>

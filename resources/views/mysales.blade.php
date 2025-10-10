@@ -195,7 +195,7 @@
          <!-- End ng Receipt Modal -->
 
         <!-- Unique modal container -->
-<div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
+        <div id="uniqueConfirmModal" class="unique-modal-overlay" style="display:none;">
   <div class="unique-modal-content">
     <div id="uniqueModalHeader" class="unique-modal-header">
         <div class="imageWrapper" id="imageWrapper">
@@ -204,6 +204,27 @@
     </div>
     <h3 id="uniqueHeaderMessage"></h3>
     <p id="uniqueConfirmMessage"></p>
+    
+    <!-- Reason selection for cancel orders -->
+    <div id="cancelReasonSection" style="display:none;">
+        <div class="form-group mb-3">
+            <label for="cancelReason" class="form-label">Reason for Cancellation:</label>
+            <select id="cancelReason" name="cancel_reason" class="form-select" required>
+                <option value="">Select a reason...</option>
+                <option value="changed_mind">Changed my mind</option>
+                <option value="found_better_deal">Found a better deal elsewhere</option>
+                <option value="seller_unresponsive">Seller is unresponsive</option>
+                <option value="product_unavailable">Product is no longer available</option>
+                <option value="other">Other (please specify)</option>
+            </select>
+        </div>
+        
+        <div class="form-group mb-3" id="customReasonGroup" style="display:none;">
+            <label for="customReason" class="form-label">Please specify:</label>
+            <textarea id="customReason" name="custom_reason" class="form-control" rows="3" placeholder="Please provide details..."></textarea>
+        </div>
+    </div>
+    
     <div class="unique-modal-buttons">
       <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
       <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>

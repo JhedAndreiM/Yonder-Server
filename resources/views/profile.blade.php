@@ -14,6 +14,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Bootstrap JS -->
+    <script src="{{ asset('js/cancelReasonModal.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
         integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
@@ -204,6 +205,27 @@
     </div>
     <h3 id="uniqueHeaderMessage"></h3>
     <p id="uniqueConfirmMessage"></p>
+    
+    <!-- Reason selection for cancel orders -->
+    <div id="cancelReasonSection" style="display:none;">
+        <div class="form-group mb-3">
+            <label for="cancelReason" class="form-label">Reason for Cancellation:</label>
+            <select id="cancelReason" name="cancel_reason" class="form-select" required>
+                <option value="">Select a reason...</option>
+                <option value="changed_mind">Changed my mind</option>
+                <option value="found_better_deal">Found a better deal elsewhere</option>
+                <option value="seller_unresponsive">Seller is unresponsive</option>
+                <option value="product_unavailable">Product is no longer available</option>
+                <option value="other">Other (please specify)</option>
+            </select>
+        </div>
+        
+        <div class="form-group mb-3" id="customReasonGroup" style="display:none;">
+            <label for="customReason" class="form-label">Please specify:</label>
+            <textarea id="customReason" name="custom_reason" class="form-control" rows="3" placeholder="Please provide details..."></textarea>
+        </div>
+    </div>
+    
     <div class="unique-modal-buttons">
       <button id="uniqueConfirmNo" class="unique-modal-btn unique-modal-no">Cancel</button>
       <button id="uniqueConfirmYes" class="unique-modal-btn unique-modal-yes">Save</button>
@@ -211,7 +233,6 @@
 
   </div>
 </div>
-
 
 
     <script>
@@ -408,15 +429,13 @@ function screenshot() {
 document.addEventListener('DOMContentLoaded', function() {
     // Event delegation for dynamically loaded elements
     document.body.addEventListener('change', function(e) {
-      console.log('hello');
-      const realCartId = document.getElementById('realCartId').value;
-        console.log(realCartId);
-        if (e.target && e.target.id === 'receiptInput') {
+        if (e.target && e.target.id && e.target.id.startsWith('receiptInput_')) {
+            const cartId = e.target.id.split('_')[1];
             const file = e.target.files[0];
             if (file) {
-                console.log("File selected:", file);
-                const receiptModal = document.getElementById('gcashReceiptModal');
-                const receiptPreview = document.getElementById('receiptPreview');
+                console.log("File selected for cart:", cartId);
+                const receiptModal = document.getElementById('gcashReceiptModal_' + cartId);
+                const receiptPreview = document.getElementById('receiptPreview_' + cartId);
                 
                 if (receiptModal && receiptPreview) {
                     // Show the modal
@@ -434,20 +453,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Similarly for other events
     document.body.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'cancelReceipt') {
-            const receiptModal = document.getElementById('gcashReceiptModal');
-            const receiptInput = document.getElementById('receiptInput');
+        if (e.target && (e.target.classList.contains('cancelReceipt') || e.target.id.startsWith('cancelReceipt_'))) {
+            const cartId = e.target.getAttribute('data-cart-id') || e.target.id.split('_')[1];
+            const receiptModal = document.getElementById('gcashReceiptModal_' + cartId);
+            const receiptInput = document.getElementById('receiptInput_' + cartId);
             if (receiptModal && receiptInput) {
                 receiptModal.style.display = "none";
                 receiptInput.value = "";
             }
         }
         
-        if (e.target && e.target.id === 'submitReceipt') {
-            const form = document.querySelector('.uploadGcashReceipt');
-            const realCartId = document.getElementById('realCartId').value;
-            console.log(realCartId);
-            // if (form) form.submit();
+        if (e.target && (e.target.classList.contains('submitReceipt') || e.target.id.startsWith('submitReceipt_'))) {
+            const cartId = e.target.getAttribute('data-cart-id') || e.target.id.split('_')[1];
+            const form = document.querySelector(`form[action*="${cartId}"]`);
+            const realCartId = document.getElementById('realCartId_' + cartId);
+            console.log('Submitting for cart:', cartId);
+            if (form) form.submit();
         }
     });
 

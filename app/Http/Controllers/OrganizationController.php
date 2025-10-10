@@ -320,6 +320,7 @@ class OrganizationController extends Controller
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
             ->join('users', 'cart_items.user_id', '=', 'users.id')
+            ->leftJoin('cancelled_cart_items', 'cancelled_cart_items.original_cart_id', '=', 'cart_items.id')
             ->where('cart_items.seller_id', '=', $userId)
             ->select(
                 'cart_items.id as cart_id',
@@ -342,7 +343,11 @@ class OrganizationController extends Controller
                 'cart_items.voucher_applied',
                 'users.name as buyer_name',
                 'users.last_name as buyer_lastname',
-                'buyers.id as buyer_id'
+                'buyers.id as buyer_id',
+                'cancelled_cart_items.cancelled_by',
+                'cancelled_cart_items.cancel_reason',
+                'cancelled_cart_items.custom_reason',
+                'cancelled_cart_items.cancelled_at'
             );
         if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');

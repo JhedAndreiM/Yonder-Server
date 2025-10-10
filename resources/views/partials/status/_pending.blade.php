@@ -99,21 +99,22 @@
     </div>
 </div>
 @endif
+
 <form class="uploadGcashReceipt" action="{{route('gcash.receipt', $cartItems->cart_id)}}" method="POST" enctype="multipart/form-data">
     @csrf
-    <input id="realCartId" type="text" name="idCart" value="{{ $cartItems->cart_id }}">
-    <input id="receiptInput" type="file" class="gcash_receipt" name="gcash_receipt" accept="image/*" required>
-    <label class="lbl_gcash_receipt" for="receiptInput">Upload GCash Receipt {{$cartItems->cart_id}}</label>
+    <input id="realCartId_{{ $cartItems->cart_id }}" type="hidden" name="idCart" value="{{ $cartItems->cart_id }}">
+    <input id="receiptInput_{{ $cartItems->cart_id }}" type="file" class="gcash_receipt" name="gcash_receipt" accept="image/*" required hidden>
+    <label class="lbl_gcash_receipt" for="receiptInput_{{ $cartItems->cart_id }}">Upload GCash Receipt</label>
 </form>
 <!-- Modal -->
-<div class="gcashReceiptModal" id="gcashReceiptModal">
-    <div class="gcashReceipt-Content" id="gcashReceipt-Content">
-        <div class="gcashReceipt-container" id="gcashReceipt-container">
+<div class="gcashReceiptModal" id="gcashReceiptModal_{{ $cartItems->cart_id }}">
+    <div class="gcashReceipt-Content" id="gcashReceipt-Content_{{ $cartItems->cart_id }}">
+        <div class="gcashReceipt-container" id="gcashReceipt-container_{{ $cartItems->cart_id }}">
             <h3>Preview GCash Receipt</h3>
-            <img id="receiptPreview" alt="Receipt Preview">
+            <img id="receiptPreview_{{ $cartItems->cart_id }}" alt="Receipt Preview">
             <div class="modal-buttons">
-                <button type="button" id="cancelReceipt">Cancel</button>
-                <button type="button" id="submitReceipt">Submit</button>
+                <button type="button" id="cancelReceipt_{{ $cartItems->cart_id }}" class="cancelReceipt" data-cart-id="{{ $cartItems->cart_id }}">Cancel</button>
+                <button type="button" id="submitReceipt_{{ $cartItems->cart_id }}" class="submitReceipt" data-cart-id="{{ $cartItems->cart_id }}">Submit</button>
             </div>
         </div>
     </div>

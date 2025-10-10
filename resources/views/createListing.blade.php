@@ -172,7 +172,7 @@
       </div>
 
       <div class="section" id="qualityOfProduct">
-        <h5>Quality of the Product<span class="required" title="Required">*</span></h5>
+        <h5>Product Condition<span class="required" title="Required">*</span></h5>
         <div class="Trade-SellButtons">
             <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
               data-filter-type="forSaleTrade">New</button>

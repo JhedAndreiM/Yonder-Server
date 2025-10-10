@@ -35,12 +35,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("uniqueModalIcon").src = "/imgModal/cancelLogo.svg";
                 document.getElementById("uniqueModalHeader").style.backgroundColor = "#BE1A1A";
                 imageWrapper.style.boxShadow = "0 1px 0 rgba(190, 26, 26, 0.6)"; 
-                messageHead.textContent = "Confirm Cancel?";
+                messageHead.textContent = "Cancel Order";
                 messageHead.style.color ="#BE1A1A";
-                messageEl.textContent = "Are you sure you want to cancel this order? This action cannot be undone.";
+                messageEl.textContent = "Please select a reason for cancellation.";
                 ConfirmYes.style.backgroundColor ="#BE1A1A";
                 yesBtn.textContent = "Cancel Order";
                 noBtn.textContent = "Close";
+                
+                // Show reason selection
+                const cancelReasonSection = document.getElementById("cancelReasonSection");
+                cancelReasonSection.style.display = "block";
+                
+                // Get the form's hidden fields
+                const cartId = currentForm.querySelector('[name="cart_id"]')?.value;
+                const reasonField = document.getElementById(`cancel_reason_${cartId}`);
+                const customReasonField = document.getElementById(`custom_reason_${cartId}`);
+                
+                // Handle reason selection change
+                const reasonSelect = document.getElementById("cancelReason");
+                const customReasonGroup = document.getElementById("customReasonGroup");
+                const customReasonInput = document.getElementById("customReason");
+                
+                reasonSelect.addEventListener("change", function() {
+                    customReasonGroup.style.display = this.value === "other" ? "block" : "none";
+                    if (reasonField) {
+                        reasonField.value = this.value;
+                    }
+                });
+                
+                customReasonInput.addEventListener("input", function() {
+                    if (customReasonField) {
+                        customReasonField.value = this.value;
+                    }
+                });
             } else if (submitter.classList.contains("confirmCOD")) {
                 document.getElementById("uniqueModalIcon").src = "/imgModal/confirmationLogo.svg";
                 document.getElementById("uniqueModalHeader").style.backgroundColor = "#5196F0";
@@ -98,10 +125,45 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     yesBtn.addEventListener("click", function () {
-        modal.style.display = "none";
         if (!currentForm || !currentSubmitter) return;
 
+        if (currentSubmitter.classList.contains("cancelButton")) {
+            // Validate reason selection
+            const reasonSelect = document.getElementById("cancelReason");
+            const customReasonInput = document.getElementById("customReason");
+            
+            if (!reasonSelect.value) {
+                alert("Please select a reason for cancellation");
+                return;
+            }
+            
+            if (reasonSelect.value === "other" && !customReasonInput.value.trim()) {
+                alert("Please specify your reason for cancellation");
+                return;
+            }
+
+            // Update the hidden form fields with the selected values
+            const cartId = currentForm.closest('.card').dataset.id;
+            const reasonField = document.getElementById(`cancel_reason_${cartId}`);
+            const customReasonField = document.getElementById(`custom_reason_${cartId}`);
+            
+            if (reasonField) reasonField.value = reasonSelect.value;
+            if (customReasonField) customReasonField.value = reasonSelect.value === "other" ? customReasonInput.value.trim() : "";
+        }
+        
+        modal.style.display = "none";
         const formData = new FormData(currentForm);
+
+        // Reset reason selection form
+        const cancelReasonSection = document.getElementById("cancelReasonSection");
+        const reasonSelect = document.getElementById("cancelReason");
+        const customReasonGroup = document.getElementById("customReasonGroup");
+        const customReasonInput = document.getElementById("customReason");
+        
+        cancelReasonSection.style.display = "none";
+        reasonSelect.value = "";
+        customReasonGroup.style.display = "none";
+        customReasonInput.value = "";
 
         fetch(currentForm.action, {
             method: currentForm.method,
@@ -113,6 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then((response) => response.json())
             .then((data) => {
+                console.log('2');
                 console.log("Success:", data);
 
                 if (data.success) {
@@ -135,6 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         bar.classList.remove("show");
                         setTimeout(() => bar.remove(), 400);
                     }, 5000);
+                    console.log('3');
                     console.log(currentSubmitter.classList);
                     if (currentSubmitter.classList.contains("cancelButton")) {
                         currentForm.closest(".card")?.remove();
@@ -145,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     else if (currentSubmitter.classList.contains("confirmOrder")) {
                         const card = currentForm.closest(".card");
                         const filters = "pending";
-                        console.log(card.dataset.id);
+                        console.log('Card ID:', card.dataset.id);
                         fetch(`/cart/${card.dataset.id}/card?filter=${encodeURIComponent(filters)}`) 
                         .then(res => res.json())
                         .then(data => {
