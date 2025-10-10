@@ -268,6 +268,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     })
                     .catch(err => console.error("Error refreshing card:", err));
                     }
+                }else{
+                    const bar = document.createElement("div");
+                    bar.className = "error-bar";
+                    bar.innerHTML = `
+                        <span>${data.message || "Action Failed!"}</span>
+                        <img src="/imgModal/barCrossLogo.svg" alt="failed" class="success-icon" />
+                    `;
+
+                    document.body.appendChild(bar);
+
+                    // Show animation
+                    requestAnimationFrame(() => {
+                        bar.classList.add("show");
+                    });
+
+                    // Hide after 3 seconds
+                    setTimeout(() => {
+                        bar.classList.remove("show");
+                        setTimeout(() => bar.remove(), 400);
+                    }, 5000);
                 }
                 currentForm = null;
                 currentSubmitter = null;
