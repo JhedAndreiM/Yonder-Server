@@ -23,7 +23,7 @@
 <button
     class="viewImage viewReceiptBtn"
     data-image="{{ asset('gcash_receipts/' . $cartItems->gcash_receipt) }}">
-    View Image
+    View Receipt
 </button>
 <div class="gcashReceiptModalView" id="gcashReceiptModalView">
     <div class="gcashReceipt-ContentView" id="gcashReceipt-ContentView">
@@ -56,7 +56,7 @@
 <button
     class="viewImage viewReceiptBtn"
     data-image="{{ asset('gcash_receipts/' . $cartItems->gcash_receipt) }}">
-    View Image
+    View Receipt
 </button>
 <div class="gcashReceiptModalView">
     <div class="gcashReceipt-ContentView">

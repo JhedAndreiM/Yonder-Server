@@ -6,7 +6,6 @@ const tagInput = document.getElementById("tagInput");
 const tagsContainer = document.getElementById("tagsContainer");
 const supplierButtons = document.querySelectorAll(".supplier-btn");
 const organizationSelect = document.getElementById("organizationSelect");
-const collegeButtons = document.querySelectorAll(".college-btn");
 const predefinedTagButtons = document.querySelectorAll(".tagsButton .button");
 const hiddenInput = document.getElementById('supplier_type');
 const organizationField = document.getElementById("organization_id");
@@ -249,12 +248,28 @@ supplierButtons.forEach((button) => {
 
 const tradeOrSellBtn = document.querySelectorAll('.filter-btn');
 const tradeOrSellInput = document.getElementById('tradeOrSell');
+const priceLabel = document.getElementById('priceLabel');
 
 tradeOrSellBtn.forEach(button => {
   button.addEventListener("click", () => {
+    // Remove active class from all buttons
     tradeOrSellBtn.forEach(btn => btn.classList.remove('active'));
-
+    
+    // Add active class to clicked button
+    button.classList.add('active');
+    
+    // Set the hidden input value
     tradeOrSellInput.value = button.dataset.filter;
+    
+    // Update the price label based on the selected option
+    priceLabel.textContent = button.dataset.filter === 'trade' ? 'Trade Value' : 'Price';
+  });
+});
+
+// Add click event listener for the toggle effect
+document.querySelectorAll('.filter-btn').forEach(button => {
+  button.addEventListener("click", () => {
+    button.classList.add("active");
   });
 });
 
@@ -270,11 +285,6 @@ productQualityBtn.forEach(button => {
 })
 
 
-document.querySelectorAll('.filter-btn').forEach(button=>{
-  button.addEventListener("click", ()=>{
-    button.classList.toggle("active");
-  })
-});
 document.querySelectorAll('.filter-btn-quality').forEach(button=>{
   button.addEventListener("click", ()=>{
     button.classList.toggle("active");
@@ -294,31 +304,6 @@ predefinedTagButtons.forEach((button) => {
 });
 
 
-// Colleges
-document.addEventListener('DOMContentLoaded', function () {
-  const collegeBtns    = document.querySelectorAll('.college-btn');
-  const collegesHidden = document.getElementById('colleges_json');
-
-  function syncColleges() {
-    const ids = [];
-    collegeBtns.forEach(btn => {
-      if (btn.classList.contains('active')) {
-        const id = btn.dataset.code.toLowerCase();
-          ids.push(id);
-      }
-    });
-    collegesHidden.value = JSON.stringify(ids);
-  }
-
-  collegeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-      syncColleges();
-    });
-  });
-
-  syncColleges();
-});
 
 
 // for tabs

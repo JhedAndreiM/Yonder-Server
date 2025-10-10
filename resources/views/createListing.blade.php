@@ -103,7 +103,7 @@
 
       <div class="section" id="priceStocks">
         <div class="priceContainer">
-          <h5>Price<span class="required" title="Required">*</span></h5>
+          <h5><span id="priceLabel">Price</span><span class="required" title="Required">*</span></h5>
           <input name="price" class="boxes" type="number" placeholder="₱100" value="{{ old('price') }}"/>
           @error('price')
             <div class="form-error">{{ $message }}</div>
@@ -184,15 +184,6 @@
           </div>
       </div>
       @endif
-      <div class="section" id="collegeSection">
-        <h5>What college(s) is this item for?</h5>
-        <div class="college-buttons">
-              @foreach($colleges as $college)
-                  <button type="button" class="college-btn" data-code="{{ $college->code }}" data-id="{{ $college->id }}">{{ $college->code }}</button>
-              @endforeach
-              <input type="hidden" name="colleges_json" id="colleges_json" value="[]">
-          </div>
-      </div>
 
       <div class="section" id="tags">
         <h5>Tags</h5>

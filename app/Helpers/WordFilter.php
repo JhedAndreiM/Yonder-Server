@@ -19,16 +19,26 @@ class WordFilter
         // Log the original message (for debugging)
         Log::info('Message before filtering: ' . $message);
 
-        // Replace each bad word with asterisks
+        // Replace each bad word with first and last letter visible
         foreach ($badWords as $word) {
-            // Skip if the bad word is empty
-            if (empty($word)) continue;
+            // Skip if the bad word is empty or too short
+            if (empty($word) || strlen($word) <= 2) continue;
 
-            // Create asterisks of the same length as the bad word
-            $asterisks = str_repeat('*', strlen($word));
+            // Create the pattern to match the word case-insensitively
+            $pattern = '/\b' . preg_quote($word, '/') . '\b/i';
             
-            // Replace the bad word with asterisks (case insensitive)
-            $message = str_ireplace($word, $asterisks, $message);
+            // Replace matched words with censored version
+            $message = preg_replace_callback($pattern, function($match) {
+                $word = $match[0];
+                $len = strlen($word);
+                
+                // Keep original case of first and last letters
+                $first = $word[0];
+                $last = $word[$len - 1];
+                $middle = str_repeat('*', $len - 2);
+                
+                return $first . $middle . $last;
+            }, $message);
         }
 
         // Log the filtered message (for debugging)

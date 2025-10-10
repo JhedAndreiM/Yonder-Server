@@ -43,11 +43,6 @@ public function store(Request $request)
         $variantsData = json_decode($validated['variants_json'], true);
     }
 
-    // implode 'yung colleges based sa comma
-    $colleges = $validated['colleges_json'] ?? '[]';
-    $collegesArray = json_decode($colleges, true); 
-    $collegesString = is_array($collegesArray) ? implode(',', $collegesArray) : '';
-
    // adding of info :P
     $product = new Product();
     $product->supplier_type = $validated['supplier_type'];
@@ -56,10 +51,9 @@ public function store(Request $request)
     $product->variants = $variantsData;
     $product->stock = $validated['stock'];
     $product->price = $validated['price'];
-    $product->colleges = $collegesString;
     $product->forSaleTrade = $validated['tradeOrSell'] ?? 'sale';
     $product->product_condition = $validated['productQuality'] ?? 'new';
-    $product->approved = "not";
+    $product->approved = Auth::user()->role === 'organization' ? "yes" : "not";
     $product->organization_id = $validated['organization_id'] ?? null;
     $product->user_id = Auth::id(); 
     $product->save();
@@ -201,12 +195,7 @@ public function store(Request $request)
         ->where('product_tag.product_id', $items->product_id)
         ->select('tags.id', 'tags.name')
         ->get();
-        $preloadedColleges = [];
-
-        if (!empty($items->colleges)) {
-            $preloadedColleges = array_map('trim', explode(',', $items->colleges));
-        }
-        return view('editListing', compact('items', 'images', 'itemTags', 'preloadedColleges'));
+        return view('editListing', compact('items', 'images', 'itemTags'));
     }
 
     public function update(Request $request, $id){
@@ -243,11 +232,10 @@ public function store(Request $request)
         $product->variants = $variantsData ?? null;
         $product->stock = $validated['stock'];
         $product->price = $validated['price'];
-        $product->colleges = $collegesString;
         $product->forSaleTrade = $validated['tradeOrSell'];
         $product->product_condition = $validated['productQuality'];
         $product->organization_id = $validated['organization_id'] ?? null;
-        $product->approved = "not";
+        $product->approved = Auth::user()->role === 'organization' ? "yes" : "not";
         $product->updated_at = now();
         $product->save();
 

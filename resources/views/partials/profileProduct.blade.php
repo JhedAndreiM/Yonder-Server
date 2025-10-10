@@ -124,9 +124,11 @@
             <div class="text">
             <!-- For User Name -->
             @if(Auth::user()->role==="student")
-                <a href="/Yonder/Chat/{{$cartItems->seller_id}}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a>
+                <!-- <a href="/Yonder/Chat/{{$cartItems->seller_id}}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a> -->
+                <a href="{{ route('stalk.profile', $cartItems->seller_id) }}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a>
             @elseif(Auth::user()->role==="organization")
-                <a href="/Yonder/Chat/{{$cartItems->buyer_id}}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a>
+                <a href="{{ route('stalk.profile', $cartItems->buyer_id) }}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a>
+                <!-- <a href="/Yonder/Chat/{{$cartItems->buyer_id}}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a> -->
             @endif
             <!-- End For User Name -->
 
@@ -202,6 +204,13 @@
                         <input type="hidden" name="custom_reason" id="custom_reason_{{ $cartItems->cart_id }}">
                         <button type="submit" class="cancelButton">Cancel</button>
                     </form>
+                    @endif
+                    @if($cartItems->status !== 'cancelled')
+                    @if(Auth::user()->role === "student")
+                        <button onclick="window.location.href='/Yonder/Chat/{{$cartItems->seller_id}}'" class="cancelButton">Message</button>
+                    @elseif(Auth::user()->role === "organization")
+                        <button onclick="window.location.href='/Yonder/Chat/{{$cartItems->buyer_id}}'" class="cancelButton">Message</button>
+                    @endif
                     @endif
                     @if($cartItems->status == 'cancelled')
                         <!-- View Reason Button -->

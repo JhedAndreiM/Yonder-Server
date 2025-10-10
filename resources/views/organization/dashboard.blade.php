@@ -1,6 +1,6 @@
 @extends('Front_layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'PBEN Dashboard')
 @section('head')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @vite('resources/css/admin-org.css')

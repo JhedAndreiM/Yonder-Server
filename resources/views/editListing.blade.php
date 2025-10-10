@@ -98,7 +98,7 @@
 
       <div class="section" id="priceStocks">
         <div class="priceContainer">
-          <h5>Price</h5>
+          <h5 id="priceLabel">Price</h5>
           <input name="price" class="boxes" type="number" placeholder="₱100" value="{{ old('price', $items->price) }}"/>
           @error('price')
             <div class="form-error">{{ $message }}</div>
@@ -209,17 +209,6 @@
               data-filter-type="forSaleTrade">Used</button>
               <input type="hidden" name="productQuality" id="productQuality" value="new">
           @endif
-          </div>
-      </div>
-      
-      <div class="section" id="collegeSection">
-        <h5>What college(s) is this item for?</h5>
-        <div class="college-buttons">
-              @foreach($colleges as $college)
-                  <button type="button" class="college-btn" data-code="{{ $college->code }}" data-id="{{ $college->id }}">{{ $college->code }}</button>
-              @endforeach
-              <input type="hidden" name="colleges_json" id="colleges_json" value="[]">
-              <input type="hidden" name="preloadedColleges" id="preloadedColleges" value='@json($preloadedColleges)'>
           </div>
       </div>
 

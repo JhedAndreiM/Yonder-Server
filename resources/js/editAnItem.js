@@ -6,7 +6,6 @@ const tagInput = document.getElementById("tagInput");
 const tagsContainer = document.getElementById("tagsContainer");
 const supplierButtons = document.querySelectorAll(".supplier-btn");
 const organizationSelect = document.getElementById("organizationSelect");
-const collegeButtons = document.querySelectorAll(".college-btn");
 const predefinedTagButtons = document.querySelectorAll(".tagsButton .button");
 const hiddenInput = document.getElementById('supplier_type');
 const organizationField = document.getElementById("organization_id");
@@ -348,11 +347,15 @@ function loadPreloadedTags() {
 
 const tradeOrSellBtn = document.querySelectorAll('.filter-btn');
 const tradeOrSellInput = document.getElementById('tradeOrSell');
+const priceLabel = document.getElementById('priceLabel');
 
 tradeOrSellBtn.forEach(button => {
   button.addEventListener("click", () => {
     tradeOrSellBtn.forEach(btn => btn.classList.remove('active'));
-
+    button.classList.add('active');
+    
+    const isTrade = button.dataset.filter === 'trade';
+    priceLabel.textContent = isTrade ? 'Trade Value' : 'Price';
     tradeOrSellInput.value = button.dataset.filter;
   });
 });
@@ -369,22 +372,7 @@ productQualityBtn.forEach(button => {
 })
 
 
-document.querySelectorAll('.filter-btn').forEach(button=>{
-  button.addEventListener("click", ()=>{
-    button.classList.toggle("active");
-  })
-});
-document.querySelectorAll('.filter-btn-quality').forEach(button=>{
-  button.addEventListener("click", ()=>{
-    button.classList.toggle("active");
-  })
-});
-
-// collegeButtons.forEach((button) => {
-//   button.addEventListener("click", () => {
-//     button.classList.toggle("active")});
-//     console.log('logged!');
-// });
+// Removing duplicate event listeners as they are handled in the main trade/sell and quality button handlers
 
 predefinedTagButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -393,57 +381,7 @@ predefinedTagButtons.forEach((button) => {
 });
 
 
-// Colleges
-document.addEventListener('DOMContentLoaded', function () {
-  const collegeBtns    = document.querySelectorAll('.college-btn');
-  const collegesHidden = document.getElementById('colleges_json');
-  const preloadedCollegesEl = document.getElementById('preloadedColleges'); // Add this hidden input in your Blade
 
-  // Helper: normalize for comparison
-  function normalize(str) {
-    return (str || '').trim().toLowerCase();
-  }
-
-  // Pre-select colleges based on preloadedColleges (array of codes or names)
-  function preloadColleges() {
-    if (!preloadedCollegesEl || !preloadedCollegesEl.value) return;
-    let preloaded = [];
-    try {
-      preloaded = JSON.parse(preloadedCollegesEl.value);
-    } catch (e) {
-      return;
-    }
-    collegeBtns.forEach(btn => {
-      const code = normalize(btn.dataset.code);
-      if (preloaded.map(normalize).includes(code)) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-  }
-
-  function syncColleges() {
-    const ids = [];
-    collegeBtns.forEach(btn => {
-      if (btn.classList.contains('active')) {
-        const id = btn.dataset.code.toLowerCase();
-        ids.push(id);
-      }
-    });
-    collegesHidden.value = JSON.stringify(ids);
-  }
-
-  collegeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-      syncColleges();
-    });
-  });
-
-  preloadColleges(); // Preselect on load
-  syncColleges();    // Sync hidden input on load
-});
 
 
 // for tabs
