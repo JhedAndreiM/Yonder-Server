@@ -102,8 +102,7 @@
     </section>
     <section class="pageTwo">
         <div class="info"><h1 class="pageTwoHeader" data-aos="fade-right">Our Services</h1>
-            <p class="pageTwoText" data-aos="fade-right">At Yonder, we offer a seamless platform where students can buy and sell items such as books, gadgets, and more within their 
-            university. Our secure system ensures safe and verified transactions, connecting you with trusted buyers and sellers from your own campus. </p>
+            <p class="pageTwoText" data-aos="fade-right">Yonder offers a trusted campus-exclusive marketplace that enables students and university employees to buy, sell, and trade items within a secure and verified environment. The platform supports item listings, in-app messaging, and payment verification for GCash transactions, ensuring safe and transparent exchanges. With features such as SMS notifications, a reward system, and a comprehensive FAQ section, Yonder promotes convenient and trusted transactions across the university community. </p>
         </div>
             <div class="center">
             
