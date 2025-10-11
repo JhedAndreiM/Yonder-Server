@@ -25,7 +25,7 @@
       <div class="left">
         <div class="profile">
           <div class="top">
-            <div class="name">
+            <div class="name profileStalkClick">
               <img class="hover profileBtn" src="{{ asset('storage/users-avatar/' . Auth::user()->avatar) }}" alt="" />
               <h3>{{Auth::user()->name .' ' . Auth::user()->last_name}}</h3>
             </div>
@@ -34,21 +34,13 @@
               <p class="rating">{{ number_format($sellerRating->avg_rating, 1) }}</p>
             </div>
           </div>
-          <div class="myPurchases">
-            <img class="notCurrent" src="{{asset('img/MyPurchases.svg')}}" alt="" />
-            <h2 class="notCurrent">My Purchases</h2>
-          </div>
           <div class="myListings">
             <img class="notCurrent" src="{{asset('img/MyListings.svg')}}" alt="" />
             <h2 class="notCurrent">My Listings</h2>
           </div>
-          <div class="myVouchers">
-            <img class="notCurrent" src="{{asset('img/MyVouchers.svg')}}" alt="" />
-            <h2 class="notCurrent">My Vouchers</h2>
-          </div>
           <div class="mySales">
             <img class="cCurrent" src="{{asset('img/money-icon.svg')}}" alt="" />
-            <h2 class="current">Seller Dashboard</h2>
+            <h2 class="current">Product Orders</h2>
           </div>
         </div>
       </div>
@@ -502,7 +494,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
           window.location.href = "{{ route('student.profile') }}";
         });
-    });   
+    });  
+        const profileStalkClick = document.querySelectorAll('.profileStalkClick');
+    profileStalkClick.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('stalk.profile', Auth::id()) }}";
+        });
+    });  
 });
     document.querySelectorAll('#profileDropdown li').forEach(li => {
         li.addEventListener('click', () => {

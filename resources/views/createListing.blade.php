@@ -371,7 +371,7 @@
     document.getElementById('cancelBtn').addEventListener('click', function() {
       @if(auth()->check())
         @if(auth()->user()->role === 'student')
-          window.location.href = "{{ route('student.dashboard') }}";
+          window.location.href = "{{ route('listing.seller') }}";
         @elseif(auth()->user()->role === 'organization')
           window.location.href = "{{ route('organization.dashboard') }}";
         @elseif(auth()->user()->role === 'admin')

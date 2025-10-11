@@ -16,6 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @vite('resources/css/productDetails.css')
     @vite('resources/js/productDetails.js')
 @endsection
@@ -37,7 +38,8 @@
             @foreach ($images as $index => $img)
                 <img src="{{ asset('images/' . $img->image_path) }}" 
                      class="sliderImage {{ $index === 0 ? 'active' : '' }}"
-                     alt="Product Image">
+                     alt="Product Image"
+                     onclick="openImageModal({{ $index }})">
             @endforeach
         </div>
         @if ($images->count() > 1)
@@ -132,7 +134,20 @@
                         $pbenUser = \App\Models\User::where('email', 'pben@bpsu.edu.ph')->first();
                         $isPBEN = $pbenUser && $products->user_id === $pbenUser->id;
                     @endphp
-            <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
+                    @if($products->stock == 0)
+                      <p class="outOfStock">Out of Stock</p>
+                    @else
+                      <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
+                    @endif
+            <div class="wishlistDiv">
+                                <img
+                    src="{{ in_array($products->product_id, $wishlist) ? asset('img/wishlist-red.png') : asset('img/wishlist.png') }}"
+                    alt="Wishlist"
+                    class="wishlist-icon"
+                    data-product-id="{{ $products->product_id }}"
+                  />Add to Wishlist
+            </div>
+
           </div>
           <div class="detailsRight">
             <!-- @if($products->forSaleTrade==='trade')
@@ -158,12 +173,13 @@
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
-                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Message</a>
+                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Start Trading</a>
               @endif
             @else
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
+                @if($products->stock > 0)
                 <h3 class="qty">Quantity</h3>
                 <div class="qtyButtons">
                   <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
@@ -174,6 +190,7 @@
                   <button class="addToCart" id="addToCart">Add to cart</button>
                   <button class="buy" id="buyNow">Buy Now</button>
                 </div>
+                @endif
               @endif
             @endif
           </div>
@@ -388,13 +405,22 @@
         </form>
         </div>
     </div>
+
+    <!-- IMAGE MODAL -->
+    <div id="imageModal" class="image-modal">
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <button class="image-modal-prev" onclick="navigateImage(-1)" id="modalPrevBtn" style="display: none;">&#10094;</button>
+        <button class="image-modal-next" onclick="navigateImage(1)" id="modalNextBtn" style="display: none;">&#10095;</button>
+        <img class="image-modal-content" id="modalImage">
+    </div>
     <script>
         window.productData = {
             price: {{ $products->price }},
             stock: {{ $products->stock }},
             hasVariants: {{ $hasVariants ? 'true' : 'false' }},
             variants: @json($hasVariants ? $variants : null),
-            isPBEN: {{ $isPBEN ? 'true' : 'false' }}
+            isPBEN: {{ $isPBEN ? 'true' : 'false' }},
+            images: @json($images->map(function($img) { return asset('images/' . $img->image_path); })->toArray())
         };
             document.querySelectorAll('#profileDropdown li').forEach(li => {
         li.addEventListener('click', () => {
@@ -411,6 +437,111 @@
         function closeReportModal() {
             document.getElementById('myModalReport').style.display = 'none';
         }
+
+        // Image modal functions
+        let currentImageIndex = 0;
+        let modalImages = window.productData.images || [];
+
+        function openImageModal(index) {
+            currentImageIndex = index;
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            var prevBtn = document.getElementById("modalPrevBtn");
+            var nextBtn = document.getElementById("modalNextBtn");
+
+            if (modal && modalImg) {
+                modal.style.display = "block";
+                modalImg.src = modalImages[index];
+
+                // Show/hide navigation buttons based on image count
+                if (modalImages.length > 1) {
+                    if (prevBtn) prevBtn.style.display = "block";
+                    if (nextBtn) nextBtn.style.display = "block";
+                } else {
+                    if (prevBtn) prevBtn.style.display = "none";
+                    if (nextBtn) nextBtn.style.display = "none";
+                }
+            }
+        }
+
+        function navigateImage(direction) {
+            currentImageIndex += direction;
+
+            // Wrap around if at the beginning or end
+            if (currentImageIndex < 0) {
+                currentImageIndex = modalImages.length - 1;
+            } else if (currentImageIndex >= modalImages.length) {
+                currentImageIndex = 0;
+            }
+
+            var modalImg = document.getElementById("modalImage");
+            if (modalImg) {
+                modalImg.src = modalImages[currentImageIndex];
+            }
+        }
+
+        function closeImageModal() {
+            var modal = document.getElementById("imageModal");
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Close modal when clicking outside the image
+        var imageModal = document.getElementById("imageModal");
+        if (imageModal) {
+            imageModal.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeImageModal();
+                }
+            });
+        }
+
+        // Close modal with ESC key and navigate with arrow keys
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            } else if (event.key === 'ArrowLeft' && modalImages.length > 1) {
+                navigateImage(-1);
+            } else if (event.key === 'ArrowRight' && modalImages.length > 1) {
+                navigateImage(1);
+            }
+        });
+            document.addEventListener('click', function(event) {
+        // Check if the clicked element is a wishlist icon
+        if (event.target.classList.contains('wishlist-icon')) {
+            event.stopPropagation();
+            isHeartClicked = true;
+
+            const img = event.target;
+            const currentSrc = img.getAttribute('src');
+            const grayHeart = "{{ asset('img/wishlist.png') }}";
+            const redHeart = "{{ asset('img/wishlist-red.png') }}";
+
+            img.setAttribute(
+                'src',
+                currentSrc.includes('wishlist-red.png') ? grayHeart : redHeart
+            );
+
+            event.preventDefault();     
+            event.stopPropagation();
+            console.log("clicked");
+            var productId = $(img).data('product-id');
+            var heart = $(img);
+            
+            $.ajax({
+                url: "{{ route('wishlist.toggle') }}", 
+                method: 'POST',
+                data: {
+                    product_id: productId,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (response) {
+                    console.log("worked");
+                }
+            });
+        }
+    });
     </script>
     
     <script src="productDetails.js"></script>

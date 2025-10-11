@@ -11,6 +11,32 @@ body {
   overflow-y: hidden;
 }
 
+/* User Greeting Section */
+.greeting-section {
+  width: 100%;
+  padding: 20px 0 15px 0;
+  margin-bottom: 20px;
+}
+
+.greeting-container {
+  max-width: 1200px;
+  margin: 0;
+  padding-left: 0;
+}
+
+.greeting-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.user-name {
+  color: #771217;
+  font-weight: 700;
+}
+
 /* START OF NAVBAR */
 
 .navBarMiddle{

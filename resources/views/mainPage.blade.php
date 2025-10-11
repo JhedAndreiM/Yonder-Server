@@ -26,7 +26,6 @@
 @endsection
 @section('content')
     <div class="floating">
-      <a class="listing_link"href="{{ route('create.listing') }}"><img src="{{ asset('img/add(2).svg') }}" alt="" /></a>
       <a href="#" id="chatWidgetToggle"><img src="{{ asset('img/message.png') }}" alt="" /></a>
     </div>
 
@@ -80,6 +79,13 @@
         @endif
       </div>
       <div class="content">
+                    <!-- User Greeting Section -->
+      <div class="greeting-section">
+        <div class="greeting-container">
+            <h1 class="greeting-text">
+                Welcome, <span class="user-name">{{ Auth::user()->name }} {{ Auth::user()->last_name }}</span>
+            </h1>
+        </div>
         <div class="textContent">
           
 

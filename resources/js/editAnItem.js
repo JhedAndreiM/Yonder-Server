@@ -366,6 +366,7 @@ const productQualityInput = document.getElementById('productQuality');
 productQualityBtn.forEach(button => {
   button.addEventListener("click", () => {
     productQualityBtn.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
 
     productQualityInput.value = button.dataset.filter;
   })

@@ -134,18 +134,44 @@
 
             <!-- For the Status -->
             @if($cartItems->status == 'receive')
+                <!-- Seller For Receiving -->
                 @if ($cartItems->seller_id == Auth::id())
-                    <p class="status">To Pick up</p>
-                @else
-                    <p class="status">To Receive</p>
+                    <!-- Organization Seller -->
+                    @if(Auth::user() && Auth::user()->role == 'organization')
+                    <p class="status">Ready for Pick Up</p>
+                    @else <!-- For student seller -->
+                    <p class="status">Ready for Meet Up</p>
+                    @endif
+                    <!-- End -->
+                @else <!-- For student Buyer -->
+                    <p class="status">Ready for Pick Up</p>
                 @endif
                 
             @elseif ($cartItems->status == 'pending')
-                <p class="status">Pending</p>
+                @if($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "no")
+                    <p class="status">Awaiting for Approval</p>
+                @elseif($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "no")
+                    <p class="status">Pending Seller's Confirmation</p>
+                @elseif($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "yes" && $cartItems->gcash_receipt)
+                    <!-- Seller Side After Payment -->
+                    <p class="status">Verify Payment</p>
+                @elseif($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "yes" && $cartItems->gcash_receipt)
+                    <!-- Buyer Side After Payment -->
+                    <p class="status">Pending Payment Verification</p>
+                @elseif($cartItems->seller_id == Auth::id() && $cartItems->paymentConfirmation == "yes")
+                    <!-- Seller Side Before Payment -->
+                    <p class="status">Awaiting Payment</p>
+                @elseif($cartItems->seller_id != Auth::id() && $cartItems->paymentConfirmation == "yes")
+                    <!-- Buyer Side Before Payment -->
+                    <p class="status">Pending Payment</p>
+                @else
+                    <p class="status">Pending</p>
+                @endif
+                <!-- End -->
             @elseif ($cartItems->status == 'cancelled')
                 <p class="status">Cancelled</p>
             @elseif ($cartItems->status == 'completed')
-                <p class="status">Completed</p>
+                <p class="status">Transaction Successful</p>
             @endif
             <!-- End For the Status -->
             </div>

@@ -12,13 +12,13 @@
             <img src="{{ asset('img/default-product.png') }}" alt="No image available">
         @endif
 
-        @if($product->approved === 'yes')
+        <!-- @if($product->approved === 'yes')
             <span class="status-badge approved">Approved</span>
         @elseif($product->approved === 'not')
             <span class="status-badge pending">Pending</span>
         @elseif($product->approved === 'rejected')
             <span class="status-badge rejected">Rejected</span>
-        @endif
+        @endif -->
     </div>
 
     <div class="card-center">

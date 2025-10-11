@@ -123,7 +123,7 @@ class CartController extends Controller
                 return redirect()->back()->with('success', 'Item added to Cart!');
             }
             elseif($status === 'pending'){
-                return redirect()->back()->with('success', 'Product bought successfully!');
+                return redirect()->route('student.profile')->with('success', 'Product bought successfully!');
             }
         }
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -205,8 +205,7 @@ class CartController extends Controller
                 ]);
             }
         }
-
-        return redirect()->back()->with('success', 'Selected items checked out successfully!');
+        return redirect()->route('student.profile')->with('success', 'Selected items checked out successfully!');
     }
     public function showCart()
     {
@@ -334,7 +333,8 @@ class CartController extends Controller
                 'cancelled_cart_items.cancel_reason',
                 'cancelled_cart_items.custom_reason',
                 'cancelled_cart_items.cancelled_at'
-            );
+            )
+            ->orderBy('cart_items.updated_at', 'desc');
         if ($filters == "all" || $filters == null) {
             $query->where('cart_items.status', '!=', 'in_cart');
         } else {

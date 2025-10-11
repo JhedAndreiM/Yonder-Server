@@ -15,6 +15,7 @@ use App\Models\College;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Notification;
 use App\Events\NewNotification;
+use App\Models\Wishlist;
 use App\Models\User;
 
 class ProductController extends Controller
@@ -328,6 +329,8 @@ public function store(Request $request)
 
         return $review;
     });
+    $wishlist = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
+    $wishlistCount = Wishlist::where('product_id', $products->product_id)->count();
     $sellerId = $products->user_id;
     $sellerRating = DB::table('reviews')
         ->join('product', 'reviews.product_id', '=', 'product.product_id')
@@ -336,7 +339,7 @@ public function store(Request $request)
         ->first();
 
 
-    return view('productDetails', compact('products','availableVouchers', 'reviews','sellerRating', 'sellerId'));
+    return view('productDetails', compact('products','availableVouchers', 'reviews','sellerRating', 'sellerId', 'wishlist', 'wishlistCount'));
     }
 
     public function dashboardForUserSeller()

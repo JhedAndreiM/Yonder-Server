@@ -39,11 +39,32 @@
 @endsection
 @section('content')
 
-<div class="container">
+<div class="admin-layout">
+    <div class="admin-sidebar">
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#approval-product">Product Approval</a></li>
+                <li><a href="#upload-section">Featured Images</a></li>
+                <li><a href="#excel-upload">Excel Upload</a></li>
+                <li><a href="#productPolicy">Product Policy</a></li>
+                <li><a href="#frequentlyAsked">FAQ Management</a></li>
+                <li><a href="#collegeSection">College Management</a></li>
+                <li><a href="#studOrgsSection">Student Organizations</a></li>
+                <li><a href="#voucher-section">Voucher Management</a></li>
+                <li><a href="#user-management">User Management</a></li>
+                <li><a href="#tags-section">Tag Management</a></li>
+                <li><a href="#report-user">Reported Users</a></li>
+                <li><a href="#banned-users">Banned & Suspended Users</a></li>
+                <li><a href="#report-show">Reported Products</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container">
 
     <div class="upload-container">
+        <p>WELCOME ADMIN</p>
                 <!-- Product Approval -->
-        <section class="approval-product">
+        <section id="approval-product" class="approval-product">
             <h2>Unapproved Products</h2>
             <div class="search-results-count" style="margin-bottom:10px;">
                 <span id="unapprovedProductsCount"></span>
@@ -119,7 +140,7 @@
             </table>
         </section>
         <!-- Featured Image Upload -->
-        <section class="upload-section">
+        <section id="upload-section" class="upload-section">
             <h2>Featured Images</h2>
             @if (session('image_success'))
                 <div class="alert alert-success">{{ session('image_success') }}</div>
@@ -401,7 +422,7 @@
         </script>
 
         <!-- Excel Upload -->
-        <section class="upload-section">
+        <section id="excel-upload" class="upload-section">
             <h2>Import User Data (Excel)</h2>
             @if (session('excel_success'))
                 <div class="alert alert-success">{{ session('excel_success') }}</div>
@@ -420,7 +441,7 @@
         </section>
 
         <!-- Product Policy -->
-        <section class="productPolicy">
+        <section id="productPolicy" class="productPolicy">
             @if (session('product_policy_success'))
                 <div class="alert alert-success">{{ session('product_policy_success') }}</div>
             @endif
@@ -441,7 +462,7 @@
             </form>
         </section>
 
-        <section class="frequentlyAsked">
+        <section id="frequentlyAsked" class="frequentlyAsked">
             <h2>Frequenty Asked Questions</h2>
             <section class="addingOfCategory">
                 <h2>Add Category</h2>
@@ -619,7 +640,7 @@
 
 
         <!-- Adding of College -->
-        <section class="collegeSection">
+        <section id="collegeSection" class="collegeSection">
             <section class="addingOfCollege">
             <h2>Add College</h2>
             @if (session('college_success'))
@@ -704,7 +725,7 @@
         </section>
 
         <!-- Adding of Student Orgs -->
-        <section class="studOrgsSection">
+        <section id="studOrgsSection" class="studOrgsSection">
             <section class="addingOfStudOrg">
             <h2>Add Student Organization</h2>
             @if (session('studOrg_success'))
@@ -788,7 +809,7 @@
         </div>
         </section>
         <!-- Voucher Management -->
-        <section class="addingOfVoucher">
+        <section id="voucher-section" class="addingOfVoucher">
             @if (session('credit_success'))
                 <div class="alert alert-success">{{ session('credit_success') }}</div>
             @endif
@@ -842,7 +863,7 @@
         </section>
 
         <!-- User Role Management -->
-        <section class="user-role-management">
+        <section id="user-management" class="user-role-management">
             <h2>User Management</h2>
             @if (session('user_success'))
                 <div class="alert alert-success">{{ session('user_success') }}</div>
@@ -962,7 +983,7 @@
                 </div>
             @endforeach
         </section>
-<section class="tags-section">
+<section id="tags-section" class="tags-section">
     <h2>Tag Management</h2>
 
     @if (session('tag_success'))
@@ -1040,7 +1061,7 @@
     </div>
 </section>
         <!-- REPORTED USER -->
-        <section class="report-user">
+        <section id="report-user" class="report-user">
             <h2>Reported Users</h2>
             <!-- Search Input -->
             <div class="search-container">
@@ -1092,7 +1113,7 @@
                 </tbody>
             </table>
         </section>
-<section class="report-user-unban">
+<section id="banned-users" class="report-user-unban">
     <h2>Banned & Suspended Users</h2>
     
     <!-- Search Input -->
@@ -1151,7 +1172,7 @@
     </table>
 </section>
 <!-- Reports -->
-<section class="report-show">
+<section id="report-show" class="report-show">
     <h2>Reported Products</h2>
     <!-- Search Input -->
     <div class="search-container">
@@ -2431,9 +2452,64 @@ confirmAction("Are you sure you want to delete this category?", () => {
 
 
 <style>
+/* Admin Layout */
+.admin-layout {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+}
+
+.admin-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-width: 240px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    background: #f3f4f6;
+    color: #1d4ed8;
+}
+
+.sidebar-nav a.active {
+    background: #e0e7ff;
+    color: #1d4ed8;
+    font-weight: 500;
+}
+
+/* Container adjustments */
+.container {
+    flex: 1;
+    max-width: calc(100% - 272px); /* 240px sidebar + 32px gap */
+}
+
 @keyframes fadeInScale {
-  from { opacity:0; transform:scale(.9); }
-  to   { opacity:1; transform:scale(1); }
+    from { opacity:0; transform:scale(.9); }
+    to   { opacity:1; transform:scale(1); }
 }
 </style>
 <script>
@@ -2969,7 +3045,56 @@ function showSuccessAlert(message) {
         alert.remove();
     }, 5000);
 }
+// Sidebar Navigation
 document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scroll for sidebar links
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            console.log('Clicking link for:', targetId); // Debug log
+            
+            const targetSection = document.querySelector(targetId);
+            console.log('Found section:', targetSection); // Debug log
+            
+            if (targetSection) {
+                // Using window.scrollTo for better cross-browser support
+                const offset = targetSection.offsetTop - 20; // Adding 20px padding
+                window.scrollTo({
+                    top: offset,
+                    behavior: 'smooth'
+                });
+            } else {
+                console.error('Section not found:', targetId);
+            }
+        });
+    });
+
+    // Update active link on scroll
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+    function updateActiveLink() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (window.scrollY >= sectionTop - 100) {
+                current = '#' + section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveLink);
+    updateActiveLink(); // Initial call
+
     const rejectOption = document.getElementById('messageRejection');
     const rejectMessage = document.getElementById('rejectMessage');
 

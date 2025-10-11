@@ -203,12 +203,18 @@ document.addEventListener("DOMContentLoaded", function () {
     confirmNo.addEventListener("click", function () {
         modal.style.display = "none";
         currentForm = null;
+        window.currentRemoveForm = null; // Clear stored form
     });
 
     // Yes/Remove button
     confirmYes.addEventListener("click", function () {
-        if (currentForm) {
-            currentForm.submit(); // proceed with form submission
+        if (window.currentRemoveForm) {
+            // This was triggered by decrease button on quantity 1
+            window.currentRemoveForm.submit();
+            window.currentRemoveForm = null;
+        } else if (currentForm) {
+            // Normal form submission
+            currentForm.submit();
         }
     });
 });
@@ -228,8 +234,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     decreaseBtn?.addEventListener('click', () => {
-      if (parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
+      const currentQty = parseInt(input.value);
+      if (currentQty === 1) {
+        // Show remove modal instead of decreasing to 0
+        const removeForm = item.querySelector('.remove-item-form');
+        if (removeForm) {
+          // Trigger the existing modal logic
+          const modal = document.getElementById("uniqueConfirmModal");
+          const modalHeader = document.getElementById("uniqueModalHeader");
+          const confirmYes = document.getElementById("uniqueConfirmYes");
+          const modalIcon = document.getElementById("uniqueModalIcon");
+          const modalTitle = document.getElementById("uniqueHeaderMessage");
+          const modalMessage = document.getElementById("uniqueConfirmMessage");
+
+          // Store the form for later submission
+          window.currentRemoveForm = removeForm;
+
+          // Set remove visuals
+          if (modalIcon) modalIcon.src = "{{ asset('imgModal/cancelLogo.svg') }}";
+          if (modalTitle) modalTitle.textContent = "Remove Item?";
+          if (modalMessage) modalMessage.textContent = "Are you sure you want to remove this item from your cart?";
+          if (confirmYes) {
+            confirmYes.textContent = 'Remove';
+            confirmYes.style.backgroundColor = '';
+            confirmYes.style.color = '';
+            confirmYes.style.border = '';
+          }
+          // Reset theme back to default crimson
+          if (modalHeader) modalHeader.style.backgroundColor = '#ae0505';
+          if (typeof imageWrapper !== 'undefined' && imageWrapper) imageWrapper.style.boxShadow = '0 1px 0 rgba(165, 0, 0, 0.6)';
+          if (modalTitle) modalTitle.style.color = '#ae0505';
+          modal.style.display = "flex"; // show modal
+        }
+      } else if (currentQty > 1) {
+        input.value = currentQty - 1;
         debounceUpdateQuantity(id, input.value);
       }
     });

@@ -12,14 +12,29 @@ use Illuminate\Support\Facades\Log;
 
 class OrganizationController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $products = DB::table('product')
-        ->where('product.user_id', Auth::id())
-        ->leftJoin('product_images', 'product.product_id', '=', 'product_images.product_id')
-        ->select('product.*', 'product_images.image_path')
-        ->groupBy('product.product_id')
-        ->get();
+        $sort = $request->get('sort');
+        $query = DB::table('product')
+            ->where('product.user_id', Auth::id())
+            ->leftJoin('product_images', 'product.product_id', '=', 'product_images.product_id')
+            ->select('product.*', 'product_images.image_path')
+            ->groupBy('product.product_id');
+
+        // Apply sorting/filter logic
+        if (!empty($sort)) {
+            if ($sort == 'all') {
+                // no additional filter — just show all
+            } elseif ($sort == 'pben') {
+                $query->where('supplier_type', '=', 'pben');
+            } elseif ($sort == 'student-org') {
+                $query->where('supplier_type', '=', 'student-org');
+            }
+        }
+        $products = $query->get();
+        if ($request->ajax()) {
+            return view('partials.adminProducts', compact('products'))->render();
+        }
         return view('organization.dashboard', compact('products'));
     }
     public function update(Request $request)

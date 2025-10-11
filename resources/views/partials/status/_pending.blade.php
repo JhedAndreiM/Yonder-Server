@@ -100,12 +100,14 @@
 </div>
 @endif
 
+@if(!$cartItems->gcash_receipt)
 <form class="uploadGcashReceipt" action="{{route('gcash.receipt', $cartItems->cart_id)}}" method="POST" enctype="multipart/form-data">
     @csrf
     <input id="realCartId_{{ $cartItems->cart_id }}" type="hidden" name="idCart" value="{{ $cartItems->cart_id }}">
     <input id="receiptInput_{{ $cartItems->cart_id }}" type="file" class="gcash_receipt" name="gcash_receipt" accept="image/*" required hidden>
-    <label class="lbl_gcash_receipt" for="receiptInput_{{ $cartItems->cart_id }}">Upload GCash Receipt</label>
+    <label class="lbl_gcash_receipt" for="receiptInput_{{ $cartItems->cart_id }}">Upload Receipt</label>
 </form>
+@endif
 <!-- Modal -->
 <div class="gcashReceiptModal" id="gcashReceiptModal_{{ $cartItems->cart_id }}">
     <div class="gcashReceipt-Content" id="gcashReceipt-Content_{{ $cartItems->cart_id }}">

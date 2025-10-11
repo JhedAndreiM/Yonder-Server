@@ -50,7 +50,29 @@
                     </ul>
                 </div>
                 <div class="containerRight">
-                    <div class="card-container">
+                    <div class="filter-section">
+                        <div class="welcome-header">
+                            <div class="welcome-content">
+                                <div class="greeting-text">
+                                    <span class="greeting">Welcome back,</span>
+                                    <h2 class="user-name">{{ Auth::user()->name }}!</h2>
+                                </div>
+                            </div>
+                            <div class="filter-controls">
+                                <label for="sort-by" class="filter-label">
+                                    <i class="fa-solid fa-filter"></i>
+                                    Filter by:
+                                </label>
+                                <select name="sort-filter" id="sort-by">
+                                    <option value="all">All Products</option>
+                                    <option value="pben">PBEN Products</option>
+                                    <option value="student-org">Student Organization Products</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-container" id="card-container">
                         @include('partials.adminProducts', ['products' => $products])
                     </div>
                 </div>
