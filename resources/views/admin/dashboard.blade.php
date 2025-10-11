@@ -61,8 +61,28 @@
     </div>
     <div class="container">
 
+    <div class="welcome-admin">
+        <div class="welcome-content">
+            <h1>Welcome, Admin</h1>
+            <p>Manage your platform efficiently and keep everything running smoothly.</p>
+            <div class="admin-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ $products->count() }}</div>
+                    <div class="stat-label">Unapproved Products</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ $users->count() }}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ $reports->count() }}</div>
+                    <div class="stat-label">Reports Count</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="upload-container">
-        <p>WELCOME ADMIN</p>
                 <!-- Product Approval -->
         <section id="approval-product" class="approval-product">
             <h2>Unapproved Products</h2>
@@ -2455,20 +2475,19 @@ confirmAction("Are you sure you want to delete this category?", () => {
 /* Admin Layout */
 .admin-layout {
     display: flex;
-    gap: 2rem;
     position: relative;
 }
 
 .admin-sidebar {
-    position: sticky;
-    top: 0;
-    height: 100vh;
+    position: fixed;
+    top: 155px;
+    left: 3rem;
+    height: calc(100vh - 195px);
     min-width: 240px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 1rem;
-    overflow-y: auto;
 }
 
 .sidebar-nav ul {
@@ -2503,8 +2522,9 @@ confirmAction("Are you sure you want to delete this category?", () => {
 
 /* Container adjustments */
 .container {
+    margin-left: 308px;
     flex: 1;
-    max-width: calc(100% - 272px); /* 240px sidebar + 32px gap */
+    max-width: calc(100% - 308px);
 }
 
 @keyframes fadeInScale {

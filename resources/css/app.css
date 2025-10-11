@@ -543,43 +543,67 @@ footer {
     background: linear-gradient(90deg, rgba(154,0,0,1) 49%, rgba(52,0,0,1) 100%);
     color: white;
     font-family: "Raleway", sans-serif;
-    padding: 2rem 0;
+    padding: 2rem 0 0 0;
 }
 
 .footer-container {
     display: flex;
     justify-content: space-between;
-    align-items: stretch;
+    align-items: center;
     width: 90%;
     margin: 0 auto;
-    gap: 2rem;
-}
-
-/* Logos */
-.footer-logo {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.footer-logo img {
-    max-height: 80px;
-    width: auto;
+    padding-bottom: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    min-height: 200px;
 }
 
 /* Links Section */
 .footer-links {
-    flex: 2;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: flex-start;
-    gap: 2rem;
+    gap: 8rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.footer-column {
+    text-align: left;
 }
 
 .footer-column h3 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.footer-column-no-underline h3 {
+    border-bottom: none;
+}
+
+/* Footer Logo Section */
+.footer-logo-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.footer-logo-section img {
+    height: 100px;
+    width: auto;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.footer-logo-section img:hover {
+    opacity: 1;
 }
 
 .footer-column ul {
@@ -588,8 +612,8 @@ footer {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    font-size: 1.1rem;
+    gap: 0.8rem;
+    font-size: 1.2rem;
 }
 
 .footer-column a {
@@ -599,6 +623,21 @@ footer {
 }
 .footer-column a:hover {
     color: #ffcccc;
+}
+
+/* Copyright Section */
+.footer-copyright {
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+.footer-copyright p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
 }
 .slide-nav {
     display: none;

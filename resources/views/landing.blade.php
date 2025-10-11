@@ -242,36 +242,44 @@
     </section>
 <footer>
     <div class="footer-container">
-        <!-- Left Logo -->
-        <div class="footer-logo">
-            <img src="{{ asset('img/BPSU-logo.svg') }}" alt="BPSU Logo">
-        </div>
-
         <!-- Navigation Links -->
         <div class="footer-links">
             <div class="footer-column">
-                <h3>Yonder</h3>
+                <h3>Discover</h3>
                 <ul>
                     <li><a href="{{ route('about.us') }}">About Us</a></li>
+                    <li><a href="{{ route('about.us') }}#section-2">Mission and Vision</a></li>
                     <li><a href="https://storyset.com/people" target="_blank">People illustrations</a></li>
-                    <li><a href="#">Privacy & Policy</a></li>
                 </ul>
             </div>
 
             <div class="footer-column">
-                <h3>Get Help</h3>
+                <h3>Support</h3>
                 <ul>
-                    <li><a href="{{ route('FAQs') }}">FAQ</a></li>
+                    <li><a href="{{ route('FAQs') }}">FAQs</a></li>
+                    <li><a href="#">Help</a></li>
                     <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column footer-column-no-underline">
+                <h3>&nbsp;</h3>
+                <ul>
                     <li><a href="#">Send us an email</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
                 </ul>
             </div>
         </div>
-
-        <!-- Right Logo -->
-        <div class="footer-logo">
-            <img src="{{ asset('img/logo.svg') }}" alt="UniTrade Logo">
+        
+        <!-- Logo Section -->
+        <div class="footer-logo-section">
+            <img src="{{ asset('img/BPSU-logo.svg') }}" alt="Yonder Logo">
         </div>
+    </div>
+    
+    <!-- Copyright Section -->
+    <div class="footer-copyright">
+        <p>© 2025 Yonder. All rights reserved. Terms of Service ~ Privacy Policy</p>
     </div>
 </footer>
 

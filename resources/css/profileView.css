@@ -33,7 +33,7 @@ body::-webkit-scrollbar {
   margin-bottom: 0px;
 }
 .avatar {
-  width: 200px;
+  max-width: 200px;
   border-radius: 100%;
   border: 4px solid white;
 }
