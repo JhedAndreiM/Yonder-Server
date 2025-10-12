@@ -152,9 +152,21 @@ if (elements.modalVariantSelect) {
 // Update main page stock display
 function updateMainPageStock() {
     if (window.productData.hasVariants) {
-        elements.mainStockDisplay.textContent = `Stocks: ${currentStock}`;
+        if (currentStock === 0) {
+            elements.mainStockDisplay.textContent = 'Out of Stock';
+            elements.mainStockDisplay.className = 'outOfStock';
+        } else {
+            elements.mainStockDisplay.textContent = `Stocks: ${currentStock}`;
+            elements.mainStockDisplay.className = 'stocks';
+        }
     } else {
-        elements.mainStockDisplay.textContent = `Stocks: ${window.productData.stock}`;
+        if (window.productData.stock === 0) {
+            elements.mainStockDisplay.textContent = 'Out of Stock';
+            elements.mainStockDisplay.className = 'outOfStock';
+        } else {
+            elements.mainStockDisplay.textContent = `Stocks: ${window.productData.stock}`;
+            elements.mainStockDisplay.className = 'stocks';
+        }
     }
 }
 

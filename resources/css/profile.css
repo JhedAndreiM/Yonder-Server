@@ -280,7 +280,7 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(217, 83, 79, 0.12); /* Soft light red overlay for modals */
+  background-color: rgba(71, 71, 71, 0.6); /* Soft light red overlay for modals */
 }
 
 /* Center Bootstrap modals (including cancelReasonModal) */

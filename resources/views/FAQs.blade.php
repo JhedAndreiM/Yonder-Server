@@ -64,8 +64,7 @@
       <div class="rightPart">
         <h2>What is Yonder?</h2>
         <p>
-          Yonder is our university’s own online marketplace. You can buy, sell,
-          and trade items safely with other students and staff.
+          Yonder is our university’s very own online marketplace, kind of like our own campus version of an e-commerce site. Here, you can safely buy, sell, or trade items with other students, faculty, and staff. Whether you’re looking for affordable textbooks, pre-loved gadgets, or dorm essentials, Yonder connects you directly with people you can actually bump into on campus.
         </p>
       </div>
     </div>

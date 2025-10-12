@@ -69,6 +69,7 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':or
     Route::POST('/products/update-stock-settings', [OrganizationController::class, 'updateStockSettings'])->name('update.stock');
     Route::delete('/products/{id}', [OrganizationController::class, 'destroy'])->name('products.destroy');
     Route::POST('/organization/filter-chart-data', [OrganizationController::class, 'filterChartData'])->name('organization.filter.chart');
+    Route::get('/check-low-stock', [OrganizationController::class, 'checkLowStockEndpoint'])->name('check.low.stock');
 
 });
 

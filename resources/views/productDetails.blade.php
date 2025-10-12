@@ -133,11 +133,24 @@
                     @php
                         $pbenUser = \App\Models\User::where('email', 'pben@bpsu.edu.ph')->first();
                         $isPBEN = $pbenUser && $products->user_id === $pbenUser->id;
+                        
+                        // Define variants early so we can use them in the stock display
+                        $variants = $products->variants;
+                        $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
                     @endphp
-                    @if($products->stock == 0)
-                      <p class="outOfStock">Out of Stock</p>
+                    @if ($hasVariants)
+                        @php $firstVariantStock = $variants['optionStocks'][0] ?? 0; @endphp
+                        @if($firstVariantStock == 0)
+                            <p class="outOfStock" id="mainStockDisplay">Out of Stock</p>
+                        @else
+                            <p class="stocks" id="mainStockDisplay">Stocks: {{ $firstVariantStock }}</p>
+                        @endif
                     @else
-                      <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
+                        @if($products->stock == 0)
+                            <p class="outOfStock" id="mainStockDisplay">Out of Stock</p>
+                        @else
+                            <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
+                        @endif
                     @endif
             <div class="wishlistDiv">
                                 <img
@@ -179,14 +192,17 @@
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
-                @if($products->stock > 0)
-                <h3 class="qty">Quantity</h3>
-                <div class="qtyButtons">
+                @php 
+                  $hasStock = $hasVariants ? ($variants['optionStocks'][0] ?? 0) > 0 : $products->stock > 0;
+                @endphp
+                @if($hasStock)
+                <h3 class="qty" id="qtyLabel">Quantity</h3>
+                <div class="qtyButtons" id="qtyControls">
                   <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
-                  <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
+                  <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $hasVariants ? ($variants['optionStocks'][0] ?? 0) : $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
                   <img src="{{ asset('img/plus.svg') }}" alt="" id="qtyPlus"/>
                 </div>
-                <div class="buttonCartAndBuy">
+                <div class="buttonCartAndBuy" id="purchaseButtons">
                   <button class="addToCart" id="addToCart">Add to cart</button>
                   <button class="buy" id="buyNow">Buy Now</button>
                 </div>
@@ -195,10 +211,7 @@
             @endif
           </div>
         </div>
-        @php
-            $variants = $products->variants;
-            $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
-        @endphp
+
         
         @if ($hasVariants)
             <div class="variations">
@@ -213,9 +226,7 @@
                             </button>
                         @endforeach
                     </div>
-                    <div class="varationsStocks">
-                        <p>Stocks: <span id="variantStock">{{ $variants['optionStocks'][0] ?? 0 }}</span></p>
-                    </div>
+
                 </div>
             </div>
             
@@ -223,6 +234,61 @@
             <script>
                 window.productVariants = @json($variants);
                 window.hasVariants = true;
+                
+                // Handle variant selection and stock display
+                document.addEventListener('DOMContentLoaded', function() {
+                    const variantButtons = document.querySelectorAll('.variationsButton');
+                    const mainStockDisplay = document.getElementById('mainStockDisplay');
+                    const variantStockContainer = document.getElementById('variantStockContainer');
+                    
+                    variantButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            // Remove active class from all buttons
+                            variantButtons.forEach(btn => btn.classList.remove('active'));
+                            // Add active class to clicked button
+                            this.classList.add('active');
+                            
+                            // Get stock for selected variant
+                            const stock = parseInt(this.getAttribute('data-stock'));
+                            
+                            // Update main stock display (same location as non-variant products)
+                            if (stock === 0) {
+                                mainStockDisplay.innerHTML = 'Out of Stock';
+                                mainStockDisplay.className = 'outOfStock';
+                                
+                                // Hide quantity controls and purchase buttons when out of stock
+                                const qtyLabel = document.getElementById('qtyLabel');
+                                const qtyControls = document.getElementById('qtyControls');
+                                const purchaseButtons = document.getElementById('purchaseButtons');
+                                
+                                if (qtyLabel) qtyLabel.style.display = 'none';
+                                if (qtyControls) qtyControls.style.display = 'none';
+                                if (purchaseButtons) purchaseButtons.style.display = 'none';
+                            } else {
+                                mainStockDisplay.innerHTML = 'Stocks: ' + stock;
+                                mainStockDisplay.className = 'stocks';
+                                
+                                // Show quantity controls and purchase buttons when in stock
+                                const qtyLabel = document.getElementById('qtyLabel');
+                                const qtyControls = document.getElementById('qtyControls');
+                                const purchaseButtons = document.getElementById('purchaseButtons');
+                                
+                                if (qtyLabel) qtyLabel.style.display = 'block';
+                                if (qtyControls) qtyControls.style.display = 'flex';
+                                if (purchaseButtons) purchaseButtons.style.display = 'block';
+                                
+                                // Update quantity input max value
+                                const qtyInput = document.getElementById('qtyDisplay');
+                                if (qtyInput) {
+                                    qtyInput.max = stock;
+                                    if (parseInt(qtyInput.value) > stock) {
+                                        qtyInput.value = Math.min(parseInt(qtyInput.value), stock);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                });
             </script>
         @else
             <script>
@@ -306,8 +372,12 @@
                         <label>{{ $variants['name'] ?? 'Variation' }}: <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $variants['optionStocks'][0] ?? 0 }}</span></p></label>
                         <select id="modalVariantSelect" name="variant_selection">
                             @foreach ($variants['options'] as $index => $option)
-                                <option value="{{ $index }}" data-stock="{{ $variants['optionStocks'][$index] ?? 0 }}" {{ $index === 0 ? 'selected' : '' }}>
-                                    {{ $option }}
+                                @php $optionStock = $variants['optionStocks'][$index] ?? 0; @endphp
+                                <option value="{{ $index }}" 
+                                        data-stock="{{ $optionStock }}" 
+                                        {{ $index === 0 ? 'selected' : '' }}
+                                        {{ $optionStock == 0 ? 'disabled' : '' }}>
+                                    {{ $option }}{{ $optionStock == 0 ? ' (Out of Stock)' : '' }}
                                 </option>
                             @endforeach
                         </select>

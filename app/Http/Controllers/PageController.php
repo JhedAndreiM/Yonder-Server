@@ -47,33 +47,33 @@ class PageController extends Controller
             $topFilter = session('topFilter', 'featured'); 
         }
         $query = Product::query();
-        $query->where('user_id', '!=', Auth::id());
+        $query->where('product.user_id', '!=', Auth::id());
         // Exclude products from users who are banned or suspended
         $query->whereHas('user', function($q){
             $q->whereNotIn('role', ['banned', 'suspended']);
         });
 
         // Filter by role 'approved'
-        $query->where('approved', 'yes');
+        $query->where('product.approved', 'yes');
         if ($topFilter) {
             if($topFilter==="featured"){
-                $query->where('supplier_type', 'pben');
+                $query->where('product.supplier_type', 'pben');
             }
             if($topFilter==="student-org"){
-                $query->where('supplier_type', 'student-org');
+                $query->where('product.supplier_type', 'student-org');
             }
             if($topFilter==="marketplace"){
-                $query->where('supplier_type', 'marketplace');
+                $query->where('product.supplier_type', 'marketplace');
             }
         }
         else{
-            $query->where('supplier_type', 'verified');
+            $query->where('product.supplier_type', 'verified');
         }
 
         if($search !== ""){
             $query->where(function($q) use ($search) {
-        $q->where('name', 'like', '%' . $search . '%')
-          ->orWhere('description', 'like', '%' . $search . '%')
+        $q->where('product.name', 'like', '%' . $search . '%')
+          ->orWhere('product.description', 'like', '%' . $search . '%')
           ->orWhereHas('tags', function($tagQuery) use ($search) {
               $tagQuery->where('name', 'like', '%' . $search . '%');
           });
@@ -83,24 +83,24 @@ class PageController extends Controller
         //sort filter
         if($sort !== null){
             if($sort=="lowToHigh"){
-                $query->orderBy('price', 'asc');
+                $query->orderBy('product.price', 'asc');
             }
             if($sort=="highToLow"){
-                $query->orderBy('price', 'desc');
+                $query->orderBy('product.price', 'desc');
             }
             if($sort=="newFirst"){
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('product.created_at', 'desc');
             }
             if($sort=="oldFirst"){
-                $query->orderBy('created_at', 'asc');
+                $query->orderBy('product.created_at', 'asc');
             }
         }
         // price filter
         if ($minPrice !== null) {
-            $query->where('price', '>=', $minPrice);
+            $query->where('product.price', '>=', $minPrice);
         }
         if ($maxPrice !== 0.0) {
-            $query->where('price', '<=', $maxPrice);
+            $query->where('product.price', '<=', $maxPrice);
         }
         //supplier type
         
@@ -109,7 +109,7 @@ class PageController extends Controller
         if(!empty($selectedSupplierTypes)){
             $query->where(function ($q) use ($selectedSupplierTypes) {
                 foreach ($selectedSupplierTypes as $Types) {
-                    $q->orWhere('supplier_type', 'LIKE', "%$Types%");
+                    $q->orWhere('product.supplier_type', 'LIKE', "%$Types%");
                 }
             });
         }
@@ -120,7 +120,7 @@ class PageController extends Controller
         if(!empty($selectedConditions)){
             $query->where(function ($q) use ($selectedConditions) {
                 foreach ($selectedConditions as $condition) {
-                    $q->orWhere('product_condition', 'LIKE', "%$condition%");
+                    $q->orWhere('product.product_condition', 'LIKE', "%$condition%");
                 }
             });
         }
@@ -131,7 +131,7 @@ class PageController extends Controller
         if(!empty($selectedTransaction)){
             $query->where(function ($q) use ($selectedTransaction) {
                 foreach ($selectedTransaction as $transaction) {
-                    $q->orWhere('mode_of_transaction', 'LIKE', "%$transaction%");
+                    $q->orWhere('product.mode_of_transaction', 'LIKE', "%$transaction%");
                 }
             });
         }
@@ -182,7 +182,7 @@ class PageController extends Controller
         $selectedStudentOrgs = array_intersect($filters, $studentOrgFilters);
         if (!empty($selectedStudentOrgs)) {
             $query->where(function ($q) use ($selectedStudentOrgs) {
-                $q->whereIn('organization_id', $selectedStudentOrgs);
+                $q->whereIn('product.organization_id', $selectedStudentOrgs);
             });
         }
 
@@ -192,9 +192,21 @@ class PageController extends Controller
         if(!empty($selectedSaleTradeFilter)){
             $query->where(function ($q) use ($selectedSaleTradeFilter) {
                 foreach ($selectedSaleTradeFilter as $saleTrade) {
-                    $q->orWhere('forSaleTrade', 'LIKE', "%$saleTrade%");
+                    $q->orWhere('product.forSaleTrade', 'LIKE', "%$saleTrade%");
                 }
             });
+        }
+
+        // Default sorting by sales count (high-selling products first) when no specific sort is applied
+        if ($sort === null) {
+            $query->leftJoin('cart_items', function($join) {
+                $join->on('product.product_id', '=', 'cart_items.product_id')
+                     ->where('cart_items.status', '=', 'completed');
+            })
+            ->select('product.*', DB::raw('COUNT(cart_items.id) as sales_count'))
+            ->groupBy('product.product_id')
+            ->orderByDesc('sales_count')
+            ->orderByDesc('product.created_at'); // Secondary sort by newest if sales are equal
         }
 
         //dd($query);

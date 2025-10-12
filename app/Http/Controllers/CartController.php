@@ -894,6 +894,10 @@ public function confirmStudentSales(Request $request, $id)
             }
         }
         
+        // Check for low stock notifications after confirming order
+        $orgController = new \App\Http\Controllers\OrganizationController();
+        $orgController->checkLowStockNotifications();
+        
         $filters = $request->input('filterValue');
         
         // Handle AJAX request
@@ -1138,6 +1142,10 @@ private function recalculateCriticalLevel($cartItem): void
             $product->save();
         }
     }
+
+    // Check for low stock notifications after stock changes
+    $orgController = new \App\Http\Controllers\OrganizationController();
+    $orgController->checkLowStockNotifications();
 }
 
 private function calculateAutomaticCriticalLevel(Product $product): int

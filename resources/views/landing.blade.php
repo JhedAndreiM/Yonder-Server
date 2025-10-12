@@ -102,7 +102,7 @@
     </section>
     <section class="pageTwo">
         <div class="info"><h1 class="pageTwoHeader" data-aos="fade-right">Our Services</h1>
-            <p class="pageTwoText" data-aos="fade-right">Yonder offers a trusted campus-exclusive marketplace that enables students and university employees to buy, sell, and trade items within a secure and verified environment. The platform supports item listings, in-app messaging, and payment verification for GCash transactions, ensuring safe and transparent exchanges. With features such as SMS notifications, a reward system, and a comprehensive FAQ section, Yonder promotes convenient and trusted transactions across the university community.</p>
+            <p class="pageTwoText" data-aos="fade-right" style="max-width: 90%;">Yonder offers a trusted campus-exclusive marketplace that enables students and university employees to buy, sell, and trade items within a secure and verified environment. The platform supports item listings, in-app messaging, and payment verification for GCash transactions, ensuring safe and transparent exchanges. With features such as SMS notifications, a reward system, and a comprehensive FAQ section, Yonder promotes convenient and trusted transactions across the university community.</p>
         </div>
             <div class="center">
             
@@ -128,7 +128,7 @@
     <div data-aos="fade-up">
         <div class="card card{{ $loop->iteration }}">
             <div class="card{{ $cardWord }}-top">
-                <h1>{{ $faq->question }}</h1>
+                <h1 style="{{ in_array($index, [0, 3]) ? 'color: white; background-color: transparent;' : '' }}">{{ $faq->question }}</h1>
             </div>
 
             <div class="card{{ $cardWord }}-middle card-middle">

@@ -477,6 +477,9 @@ public function updateStockSettings(Request $request)
         $product->save();
     }
 
+    // Check for low stock notifications after updating settings
+    $this->checkLowStockNotifications();
+
     return redirect()->back()->with('success', 'Stock settings updated successfully.');
 }
 
@@ -520,6 +523,191 @@ private function calculateAutomaticCriticalLevel(Product|ProductVariant $item): 
 
     return (int) round(($leadTime * $averageDailyUsage) + $safetyStock);
 }
+
+    // Public endpoint to check low stock (can be called by cron/scheduler)
+    public function checkLowStockEndpoint()
+    {
+        $this->checkLowStockNotifications();
+        return response()->json(['message' => 'Low stock check completed']);
+    }
+
+        // Check and send low stock notifications
+    public function checkLowStockNotifications()
+    {
+        // Get PBEN user (organization with pben@bpsu.edu.ph email)
+        $pbenUser = \App\Models\User::where('email', 'pben@bpsu.edu.ph')
+            ->where('role', 'organization')
+            ->first();
+        if (!$pbenUser || !$pbenUser->phone_number) {
+            \Illuminate\Support\Facades\Log::warning('⚠️ LOW STOCK CHECK SKIPPED - No PBEN user or phone number', [
+                'pben_user_found' => $pbenUser ? 'Yes' : 'No',
+                'phone_number_exists' => $pbenUser && $pbenUser->phone_number ? 'Yes' : 'No',
+                'timestamp' => now()->toDateTimeString()
+            ]);
+            return;
+        }
+
+        \Illuminate\Support\Facades\Log::info('🔍 LOW STOCK CHECK STARTED', [
+            'recipient' => $pbenUser->phone_number,
+            'recipient_email' => $pbenUser->email,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        // Check if we've sent a low stock summary in the last 24 hours
+        $recentSummaryNotification = DB::table('sms_notifLogs')
+            ->where('to_id', $pbenUser->id)
+            ->where('message', 'like', '%LOW STOCK SUMMARY%')
+            ->where('created_at', '>', now()->subHours(24))
+            ->exists();
+
+        if ($recentSummaryNotification) {
+            \Illuminate\Support\Facades\Log::info('⏰ LOW STOCK CHECK SKIPPED - Recent notification sent', [
+                'recipient' => $pbenUser->phone_number,
+                'recipient_email' => $pbenUser->email,
+                'reason' => 'Summary already sent within last 24 hours',
+                'timestamp' => now()->toDateTimeString()
+            ]);
+            return; // Don't send another summary within 24 hours
+        }
+
+        // Get all products with variants and check critical levels
+        $lowStockItems = collect();
+
+        // Check products with variants
+        $productsWithVariants = Product::with('variantsData')
+            ->where('user_id', $pbenUser->id)
+            ->where('approved', 'yes')
+            ->whereHas('variantsData')
+            ->get();
+
+        foreach ($productsWithVariants as $product) {
+            foreach ($product->variantsData as $variant) {
+                if ((int) $variant->stock <= (int) $variant->critical_level) {
+                    $lowStockItems->push([
+                        'type' => 'variant',
+                        'product_name' => $product->name,
+                        'variant_info' => $variant->variant_name . ': ' . $variant->variant_option,
+                        'current_stock' => $variant->stock,
+                        'critical_level' => $variant->critical_level
+                    ]);
+                }
+            }
+        }
+
+        // Check products without variants
+        $productsWithoutVariants = Product::where('user_id', $pbenUser->id)
+            ->where('approved', 'yes')
+            ->whereDoesntHave('variantsData')
+            ->get();
+
+        foreach ($productsWithoutVariants as $product) {
+            if ((int) $product->stock <= (int) $product->critical_level) {
+                $lowStockItems->push([
+                    'type' => 'product',
+                    'product_name' => $product->name,
+                    'variant_info' => null,
+                    'current_stock' => $product->stock,
+                    'critical_level' => $product->critical_level
+                ]);
+            }
+        }
+
+        // Send ONE summarized SMS notification if there are low stock items
+        if ($lowStockItems->isNotEmpty()) {
+            \Illuminate\Support\Facades\Log::info('📦 LOW STOCK ITEMS FOUND', [
+                'total_items' => $lowStockItems->count(),
+                'items_list' => $lowStockItems->map(function($item) {
+                    return ($item['variant_info'] ? $item['product_name'] . ' — ' . $item['variant_info'] : $item['product_name']) . ' (Stock: ' . $item['current_stock'] . ')';
+                })->toArray(),
+                'timestamp' => now()->toDateTimeString()
+            ]);
+            $totalItems = $lowStockItems->count();
+            
+            if ($totalItems == 1) {
+                // Single item - send detailed message
+                $item = $lowStockItems->first();
+                $itemName = $item['variant_info'] 
+                    ? $item['product_name'] . ' — ' . $item['variant_info']
+                    : $item['product_name'];
+
+                $message = 'LOW STOCK ALERT: ' . $itemName . ' is running low (Stock: ' . $item['current_stock'] . ', Critical Level: ' . $item['critical_level'] . '). Please restock soon.';
+            } else {
+                // Multiple items - send summary
+                $message = 'LOW STOCK SUMMARY: ' . $totalItems . ' items are below critical level. ';
+                
+                // Add first few items as examples (limit to keep SMS short)
+                $exampleItems = $lowStockItems->take(3);
+                $examples = [];
+                
+                foreach ($exampleItems as $item) {
+                    $itemName = $item['variant_info'] 
+                        ? $item['product_name'] . ' — ' . $item['variant_info']
+                        : $item['product_name'];
+                    $examples[] = $itemName . ' (' . $item['current_stock'] . ')';
+                }
+                
+                $message .= 'Examples: ' . implode(', ', $examples);
+                
+                if ($totalItems > 3) {
+                    $message .= ' and ' . ($totalItems - 3) . ' more. Check your dashboard for full details.';
+                } else {
+                    $message .= '. Please restock soon.';
+                }
+            }
+
+            // Log before attempting to send
+            \Illuminate\Support\Facades\Log::info('=== LOW STOCK SMS ATTEMPT ===', [
+                'recipient' => $pbenUser->phone_number,
+                'recipient_email' => $pbenUser->email,
+                'total_low_stock_items' => $totalItems,
+                'message_preview' => substr($message, 0, 100) . '...',
+                'message_length' => strlen($message),
+                'timestamp' => now()->toDateTimeString()
+            ]);
+
+            try {
+                $smsService = app(\App\Services\IprogSmsService::class);
+                $response = $smsService->send($pbenUser->phone_number, $message);
+
+                // Log the SMS notification in database
+                DB::table('sms_notifLogs')->insert([
+                    'from_id' => 1, // System notification
+                    'to_id' => $pbenUser->id,
+                    'message' => $message,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                \Illuminate\Support\Facades\Log::info('✅ LOW STOCK SMS SUCCESS ✅', [
+                    'recipient' => $pbenUser->phone_number,
+                    'total_items' => $totalItems,
+                    'message_length' => strlen($message),
+                    'sms_service_response' => $response ?? 'No response data',
+                    'timestamp' => now()->toDateTimeString()
+                ]);
+
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('❌ LOW STOCK SMS FAILED ❌', [
+                    'recipient' => $pbenUser->phone_number,
+                    'recipient_email' => $pbenUser->email,
+                    'total_items' => $totalItems,
+                    'error_message' => $e->getMessage(),
+                    'error_code' => $e->getCode(),
+                    'error_file' => $e->getFile(),
+                    'error_line' => $e->getLine(),
+                    'full_message' => $message,
+                    'timestamp' => now()->toDateTimeString()
+                ]);
+            }
+        } else {
+            \Illuminate\Support\Facades\Log::info('✨ LOW STOCK CHECK COMPLETED - No items below critical level', [
+                'recipient' => $pbenUser->phone_number,
+                'recipient_email' => $pbenUser->email,
+                'products_checked' => 'All approved products',
+                'timestamp' => now()->toDateTimeString()
+            ]);
+        }
+    }
 
     // delete product
     public function destroy($id)
