@@ -173,7 +173,7 @@
 <!-- nav bar -->
  @elseif(auth()->user()->role === 'admin')
     <!-- nav bar -->
-    <div class="navBar">
+    <div class="navBar" style="position: sticky; top: 30px; z-index: 9999; background-color: rgba(255, 255, 255, 0.85);">
   <div class="navBarLeft" id="logoClick">
   <img src="{{ asset('img/YonderLogo.svg') }}" alt="" />
   </div>

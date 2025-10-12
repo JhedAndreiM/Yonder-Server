@@ -34,7 +34,10 @@
 
     <div class="container">
       <div class="filter">
-        <h2>Filter</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2>Filter</h2>
+          <button id="clearFilters" style="background: none; border: 1px solid #ccc; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">Clear All</button>
+        </div>
         <h3>Price Range</h3>
         <div class="filterBtn">
           <div class="peso-input">

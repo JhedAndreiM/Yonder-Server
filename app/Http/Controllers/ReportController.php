@@ -15,13 +15,30 @@ class ReportController extends Controller
     $validated = $request->validate([
         'user_id' => 'required|exists:users,id',
         'report_id' => 'required',
-        'message' => 'required|string|max:1000',
+        'reason' => 'required|string',
+        'message' => 'nullable|string|max:1000',
     ]);
+
+    // Map reason values to human-readable labels
+    $reasonLabels = [
+        'inappropriate_content' => 'Inappropriate content',
+        'misleading_info' => 'Misleading information',
+        'counterfeit' => 'Counterfeit product',
+        'spam' => 'Spam or duplicate listing',
+        'prohibited_item' => 'Prohibited item',
+    ];
+
+    // Simple message handling: use mapped label for predefined reasons, or custom message for "other"
+    if ($validated['reason'] === 'other') {
+        $message = $validated['message'] ?? 'Other reason specified';
+    } else {
+        $message = $reasonLabels[$validated['reason']] ?? $validated['reason'];
+    }
 
     DB::table('reports')->insert([
         'user_id' => $validated['user_id'],
         'report_id' => $validated['report_id'],
-        'message' => $validated['message'],
+        'message' => $message,
         'created_at' => now(),
         'updated_at' => now(),
     ]);

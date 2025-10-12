@@ -136,15 +136,43 @@ class PageController extends Controller
             });
         }
         
-         //colleges
+         //colleges - now filtering by tags instead of college column
          $collegeFilters = array_map('strtolower', DB::table('colleges')->pluck('code')->toArray());
          $selectedColleges = array_intersect($filters, $collegeFilters);
-         //dd($selectedColleges);
+         
          if (!empty($selectedColleges)) {
-            $query->where(function ($q) use ($selectedColleges) {
-                foreach ($selectedColleges as $college) {
-                    $q->orWhere('colleges', 'LIKE', "%$college%");
-                }
+            $query->whereHas('tags', function ($tagQuery) use ($selectedColleges) {
+                $tagQuery->where(function ($q) use ($selectedColleges) {
+                    foreach ($selectedColleges as $college) {
+                        // Get the full college name for more comprehensive matching
+                        $collegeRecord = DB::table('colleges')->where('code', $college)->first();
+                        $collegeName = $collegeRecord ? strtolower($collegeRecord->name) : '';
+                        
+                        // Match by college code
+                        $q->orWhere('name', 'LIKE', "%$college%");
+                        
+                        if ($collegeName) {
+                            // Bidirectional matching for college names
+                            // 1. Tag contains part of college name (e.g., tag "College of Engineering" matches "College of Engineering and Architecture")
+                            $q->orWhere('name', 'LIKE', "%$collegeName%");
+                            
+                            // 2. College name contains part of tag (e.g., college "College of Engineering and Architecture" matches tag "College of Engineering")
+                            // Use whereRaw with proper parameter binding
+                            $q->orWhereRaw('? LIKE CONCAT("%", LOWER(name), "%")', [$collegeName]);
+                            
+                            // 3. Split college name into words for more flexible matching
+                            $collegeWords = explode(' ', $collegeName);
+                            if (count($collegeWords) > 1) {
+                                foreach ($collegeWords as $word) {
+                                    $word = trim($word);
+                                    if (strlen($word) > 2) { // Skip small words like "of", "and"
+                                        $q->orWhere('name', 'LIKE', "%$word%");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
             });
         }
 

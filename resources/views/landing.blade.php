@@ -37,7 +37,7 @@
     </style>
 </head>
 <body>
-        <nav class="navbar navbar-expand-lg py-3">
+        <nav class="navbar fixed-top navbar-expand-lg py-3">
           <div class="container-fluid px-4">
             <!-- Left: Logo -->
             <a class="navbar-brand d-flex align-items-center" href="#">
@@ -102,7 +102,7 @@
     </section>
     <section class="pageTwo">
         <div class="info"><h1 class="pageTwoHeader" data-aos="fade-right">Our Services</h1>
-            <p class="pageTwoText" data-aos="fade-right">Yonder offers a trusted campus-exclusive marketplace that enables students and university employees to buy, sell, and trade items within a secure and verified environment. The platform supports item listings, in-app messaging, and payment verification for GCash transactions, ensuring safe and transparent exchanges. With features such as SMS notifications, a reward system, and a comprehensive FAQ section, Yonder promotes convenient and trusted transactions across the university community. </p>
+            <p class="pageTwoText" data-aos="fade-right">Yonder offers a trusted campus-exclusive marketplace that enables students and university employees to buy, sell, and trade items within a secure and verified environment. The platform supports item listings, in-app messaging, and payment verification for GCash transactions, ensuring safe and transparent exchanges. With features such as SMS notifications, a reward system, and a comprehensive FAQ section, Yonder promotes convenient and trusted transactions across the university community.</p>
         </div>
             <div class="center">
             

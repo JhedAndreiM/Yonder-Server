@@ -12,4 +12,12 @@ class Tag extends Model
     {
         return $this->belongsToMany(Product::class, 'product_tag', 'tag_id', 'product_id');
     }
+
+    /**
+     * Scope to search tags by name (case-insensitive)
+     */
+    public function scopeSearchByName($query, $searchTerm)
+    {
+        return $query->where('name', 'LIKE', '%' . strtolower($searchTerm) . '%');
+    }
 }

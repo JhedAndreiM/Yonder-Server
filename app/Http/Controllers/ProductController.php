@@ -15,6 +15,7 @@ use App\Models\College;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Notification;
 use App\Events\NewNotification;
+use App\Events\ProductRestocked;
 use App\Models\Wishlist;
 use App\Models\User;
 
@@ -124,8 +125,12 @@ public function store(Request $request)
         ]
     );
 
+    // Auto increment usage_count for admin or organization users
+    if (Auth::user()->role === 'admin' || Auth::user()->role === 'organization') {
+        $tag->increment('usage_count');
+    }
+
     $tagIds[] = $tag->id;
-    //$tag->increment('usage_count');
     }
 
     $product->tags()->syncWithoutDetaching($tagIds);
@@ -216,6 +221,10 @@ public function store(Request $request)
             'images.*'=> 'image|mimes:jpeg,png,webp',
         ]);
         $product = Product::findOrFail($id);
+        
+        // Store previous stock for comparison
+        $previousStock = $product->stock;
+        
         // Handle variants
         if (!empty($validated['variants_json'])) {
             $variantsData = json_decode($validated['variants_json'], true);
@@ -239,6 +248,12 @@ public function store(Request $request)
         $product->approved = Auth::user()->role === 'organization' ? "yes" : "not";
         $product->updated_at = now();
         $product->save();
+
+        // Fire ProductRestocked event if stock increased
+        $newStock = $validated['stock'];
+        if ($newStock > $previousStock) {
+            event(new ProductRestocked($product, $previousStock, $newStock));
+        }
 
         // IMAGE HANDLING
         if ($request->hasFile('images')) {
@@ -276,6 +291,11 @@ public function store(Request $request)
                         'is_admin' => Auth::user()->role === 'admin',
                     ]
                 );
+
+                // Auto increment usage_count for admin or organization users
+                if (Auth::user()->role === 'admin' || Auth::user()->role === 'organization') {
+                    $tag->increment('usage_count');
+                }
 
                 $tagIds[] = $tag->id;
             }

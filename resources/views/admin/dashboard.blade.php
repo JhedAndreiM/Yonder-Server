@@ -1215,25 +1215,25 @@
         </thead>
         <tbody>
             @foreach ($reports as $report)
-                <tr class="perRow" id="report-row-{{ $report->report_id }}">
+                <tr class="perRow" id="report-row-{{ $report->report_unique_id }}">
                     <td>{{ $report->report_id }}</td>
                     <td>{{ $report->product_name }}</td>
                     <td>{{ $report->reporter_name }} {{ $report->reporter_last_name }}</td>
                     <td>
-                        <a href="javascript:void(0);" onclick="openModal({{ $report->report_id }})" style="margin-right: 50px;">View</a>
+                        <a href="javascript:void(0);" onclick="openModal({{ $report->report_unique_id }})" style="margin-right: 50px;">View</a>
                         <span style="display:inline-block; margin-right: 5px;">
-                            <button class="btn-edit" onclick="allowReport({{ $report->report_id }})">Allow</button>
+                            <button class="btn-edit" onclick="allowReport({{ $report->report_unique_id }})">Allow</button>
                         </span>
                         <span style="display:inline-block;">
-                            <button class="btn reportProdDelete" onclick="deleteProduct({{ $report->product_id }}, {{ $report->report_id }})">Delete</button>
+                            <button class="btn reportProdDelete" onclick="deleteProduct({{ $report->product_id }}, {{ $report->report_unique_id }})">Delete</button>
                         </span>
                     </td>
                 </tr>
 
                 <!-- Modal -->
-                <div id="modal-{{ $report->report_id }}" class="modal">
+                <div id="modal-{{ $report->report_unique_id }}" class="modal">
                     <div class="modal-content">
-                        <span class="close" onclick="closeModal({{ $report->report_id }})">&times;</span>
+                        <span class="close" onclick="closeModal({{ $report->report_unique_id }})">&times;</span>
                         <h2>{{ $report->product_name }}</h2>
                         <p>{!! $report->description !!}</p>
                         <h3 style="margin-bottom: 0px;">Reason for Reporting</h3>

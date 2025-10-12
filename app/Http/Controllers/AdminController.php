@@ -44,9 +44,10 @@ class AdminController extends Controller
 
         $reports = DB::table('reports')
             ->join('product', 'reports.report_id', '=', 'product.product_id')
-            ->join('users', 'product.user_id', '=', 'users.id')
+            ->join('users', 'reports.user_id', '=', 'users.id')
             ->leftJoin('product_images', 'product.product_id', '=', 'product_images.product_id')
             ->select(
+                'reports.id as report_unique_id',
                 'reports.report_id as report_id',
                 'reports.message',
                 'product.product_id',
@@ -57,6 +58,7 @@ class AdminController extends Controller
                 DB::raw('GROUP_CONCAT(product_images.image_path) as images') // all images as one string
             )
             ->groupBy(
+                'reports.id',
                 'reports.report_id',
                 'reports.message',
                 'product.product_id',
@@ -65,6 +67,7 @@ class AdminController extends Controller
                 'users.name',
                 'users.last_name'
             )
+            ->orderBy('reports.created_at', 'desc')
             ->get();
         $productPolicies = DB::table('product_policies')->get();
         $voucherList = DB::table('voucherList')->get();
@@ -213,17 +216,17 @@ public function changeUserRole(Request $request)
 }
 public function allowReport($id)
 {
-    DB::table('reports')->where('report_id', $id)->delete();
+    DB::table('reports')->where('id', $id)->delete();
     return response()->json(['success' => true]);
 }
 
-public function deleteProduct($id)
+public function deleteProduct($productId, $reportId = null)
 {
     // Delete the product
-    DB::table('product')->where('product_id', $id)->delete();
+    DB::table('product')->where('product_id', $productId)->delete();
 
-    // Optionally delete related reports
-    DB::table('reports')->where('report_id', $id)->delete();
+    // Delete all related reports for this product
+    DB::table('reports')->where('report_id', $productId)->delete();
 
     return response()->json(['success' => true]);
 }

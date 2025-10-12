@@ -92,6 +92,45 @@ function updateFilters() {
     fetchFilteredProducts(activeFilters, activePrice.min, activePrice.max, selectedValue, searchInput, topFilter);
 }
 
+// Clear all filters function
+function clearAllFilters() {
+    // Reset active filters array
+    activeFilters = [];
+    
+    // Reset price filters
+    activePrice = { min: null, max: null };
+    
+    // Reset search input
+    searchInput = [];
+    
+    // Reset sort dropdown
+    selectedValue = [];
+    
+    // Clear all active filter buttons
+    document.querySelectorAll(".filter-btn.active").forEach(btn => {
+        btn.classList.remove("active");
+    });
+    
+    // Clear price inputs
+    const minInput = document.querySelector(".input-min");
+    const maxInput = document.querySelector(".input-max");
+    if (minInput) minInput.value = "";
+    if (maxInput) maxInput.value = "";
+    
+    // Clear search input
+    const searchInputEl = document.getElementById("searchInput");
+    if (searchInputEl) searchInputEl.value = "";
+    
+    // Reset sort dropdown
+    const sortDropdown = document.getElementById("sort-by");
+    if (sortDropdown) sortDropdown.value = "";
+    
+    // Fetch products with no filters
+    const topFilterBtn = document.querySelector(".mainFilterButtons.current");
+    const topFilter = topFilterBtn ? topFilterBtn.dataset.category : null;
+    fetchFilteredProducts([], null, null, null, null, topFilter);
+}
+
 function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchInput,topFilter) {
     let url='?page=${page}';
     if (filters && filters.length > 0) {
@@ -126,3 +165,11 @@ function fetchFilteredProducts(filters, minPrice, maxPrice,selectedValue,searchI
         console.error('Error fetching filtered products:', error);
     })
 }
+
+// Add event listener for clear filters button
+document.addEventListener('DOMContentLoaded', function() {
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', clearAllFilters);
+    }
+});

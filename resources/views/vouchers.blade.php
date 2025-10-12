@@ -55,7 +55,7 @@
         <div class="redeemModalContent">
           <h2 class="modalTitle">Redeem Vouchers</h2>
           <div class="creditBox">
-            <p>Your Credits: <span id="userCredits">{{$userCredit}}</span></p>
+            <p>Your Points: <span id="userCredits">{{$userCredit}}</span></p>
           </div>
 
             <div class="voucherList">
@@ -65,7 +65,7 @@
               <div class="voucherCard">
                 <div class="voucherInfo">
                   <h3>P {{$voucher->amount}} Amount</h3>
-                  <p class="voucherCost">Cost: {{$voucher->price}} Credits</p>
+                  <p class="voucherCost">Cost: {{$voucher->price}} Points</p>
                   <input type="hidden" name="voucherAmount" value="{{$voucher->amount}}">
                   <input type="hidden" name="voucherCost" value="{{$voucher->price}}">
                 </div>

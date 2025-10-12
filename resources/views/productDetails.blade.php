@@ -239,9 +239,6 @@
           @if($products->forSaleTrade)
           <p>Transaction Type: {{ ucfirst($products->forSaleTrade) }}</p>
           @endif
-          @if($products->colleges)
-          <p>Colleges: {{ strtoupper($products->colleges) }}</p>
-          @endif
         </div>
 
         <div class="description">
@@ -390,20 +387,54 @@
         </script>
         @endif
         <!-- MODAL FOR REPORTS -->
-    <div id="myModalReport" class="modalReport">
-        <div class="modal-contentReport">
-            <h3>Report This Product</h3>
-        <form action="{{ route('reports.store') }}" method="POST">
+    <div id="reportProductModal" class="report-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+      <div class="report-modal-content" style="background:#fff; border-radius:12px; width:90%; max-width:450px; box-shadow:0 8px 32px rgba(0,0,0,0.15); overflow:hidden; position:relative;">
+        <div id="reportModalHeader" class="report-modal-header" style="background-color:#d9534f; padding:40px 20px 20px 20px; text-align:center; position:relative;">
+          <div class="report-imageWrapper" style="width:60px; height:60px; background:#fff; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.15); position:absolute; left:50%; transform:translateX(-50%); bottom:-30px; z-index:1;">
+            <img id="reportModalIcon" src="{{ asset('imgModal/cancelLogo.svg') }}" alt="icon" style="width:30px; height:30px;" />
+          </div>
+        </div>
+
+        <div style="padding:40px 24px 24px 24px;">
+          <h3 id="reportHeaderMessage" style="margin:0 0 8px 0; font-size:20px; font-weight:600; color:#d9534f; text-align:center;">Report Product</h3>
+          <p id="reportConfirmMessage" style="margin:0 0 20px 0; color:#666; text-align:center; font-size:14px;">Tell us what happened. Your report helps keep Yonder safe.</p>
+
+          <!-- Report Form -->
+          <form id="reportProductForm" method="POST" action="{{ route('reports.store') }}">
             @csrf
             <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-            <input type="hidden" name="report_id" value="{{ $products->product_id }}" >
-            <textarea name="message" placeholder="Write your report message here..." rows="5" required></textarea>
-            <div class="report-buttons">
-                <button type="submit" class="submitReportBtn">Submit Report</button>
-                <button type="button" class="cancelReportBtn" onclick="closeReportModal()">Cancel</button>
+            <input type="hidden" name="report_id" value="{{ $products->product_id }}">
+
+            <div style="margin-bottom:16px;">
+              <label for="reason" style="display:block; font-weight:600; font-size:14px; margin-bottom:6px; color:#333;">Reason</label>
+              <select id="reason" name="reason" required
+                      style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; background:#fff; box-sizing:border-box;">
+                <option value="" disabled selected>Select a reason</option>
+                <option value="inappropriate_content">Inappropriate content</option>
+                <option value="misleading_info">Misleading information</option>
+                <option value="counterfeit">Counterfeit product</option>
+                <option value="spam">Spam or duplicate listing</option>
+                <option value="prohibited_item">Prohibited item</option>
+                <option value="other">Other</option>
+              </select>
             </div>
-        </form>
+
+            <div id="detailsDiv" style="margin-bottom:20px; display:none;">
+              <label for="details" style="display:block; font-weight:600; font-size:14px; margin-bottom:6px; color:#333;">Details</label>
+              <textarea id="details" name="message" rows="4"
+                        placeholder="Please specify your reason and provide details..."
+                        style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+            </div>
+
+            <div class="report-modal-buttons" style="display:flex; gap:12px; justify-content:flex-end;">
+              <button type="button" id="reportConfirmNo" class="report-modal-btn report-modal-cancel" 
+                      style="padding:12px 24px; border:1px solid #ddd; background:#fff; color:#666; border-radius:8px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s;">Cancel</button>
+              <button type="submit" id="reportConfirmYes" class="report-modal-btn report-modal-submit"
+                      style="padding:12px 24px; border:none; background:#d9534f; color:#fff; border-radius:8px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s;">Submit Report</button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <!-- IMAGE MODAL -->
@@ -428,15 +459,71 @@
         });
     });
     // for report modal 
-        var modal = document.getElementById("myModalReport");
-        var btn = document.getElementById("reportTriggerBtn");
-        var span = document.getElementsByClassName("cancelReportBtn")[0];
         function reportTriggerBtn() {
-            document.getElementById('myModalReport').style.display = 'flex';
+            const modal = document.getElementById('reportProductModal');
+            modal.style.display = 'flex';
         }
-        function closeReportModal() {
-            document.getElementById('myModalReport').style.display = 'none';
-        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('reportProductModal');
+            const cancelBtn = document.getElementById('reportConfirmNo');
+            const reasonSelect = document.getElementById('reason');
+            const detailsTextarea = document.getElementById('details');
+
+            // Add hover effects for buttons
+            const submitBtn = document.getElementById('reportConfirmYes');
+            
+            cancelBtn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f8f9fa';
+                this.style.borderColor = '#adb5bd';
+            });
+            
+            cancelBtn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '#fff';
+                this.style.borderColor = '#ddd';
+            });
+            
+            submitBtn.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#c9302c';
+            });
+            
+            submitBtn.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '#d9534f';
+            });
+
+            // Handle reason dropdown change
+            reasonSelect.addEventListener('change', function() {
+                const detailsDiv = document.getElementById('detailsDiv');
+                if (this.value === 'other') {
+                    detailsDiv.style.display = 'block';
+                    detailsTextarea.required = true;
+                } else {
+                    detailsDiv.style.display = 'none';
+                    detailsTextarea.required = false;
+                    detailsTextarea.value = '';
+                }
+            });
+
+            // Cancel button click
+            cancelBtn.addEventListener('click', function () {
+                modal.style.display = 'none';
+                // Reset form
+                document.getElementById('reportProductForm').reset();
+                document.getElementById('detailsDiv').style.display = 'none';
+                detailsTextarea.required = false;
+            });
+
+            // Close when clicking outside
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    // Reset form
+                    document.getElementById('reportProductForm').reset();
+                    document.getElementById('detailsDiv').style.display = 'none';
+                    detailsTextarea.required = false;
+                }
+            });
+        });
 
         // Image modal functions
         let currentImageIndex = 0;
