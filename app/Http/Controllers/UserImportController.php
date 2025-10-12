@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as PhpSpreadsheetDate;
 use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 
@@ -38,53 +39,82 @@ class UserImportController extends Controller
             // Convert headers to lowercase for flexible matching
             $headers = array_map(fn($h) => strtolower(trim($h)), $headers);
 
+            $successCount = 0;
+            $duplicateCount = 0;
+            $errorCount = 0;
+            $duplicateEmails = [];
+
             foreach ($rows as $row) {
-                // Map row values by header name
-                $data = array_combine($headers, $row);
+                try {
+                    // Map row values by header name
+                    $data = array_combine($headers, $row);
 
-                $birthdayCell = $data['birthday'] ?? null;
-                $passwordPlain = 'BPSU12345678';
-
-                if (!empty($birthdayCell)) {
-                    if (is_numeric($birthdayCell)) {
-                        try {
-                            $dt = PhpSpreadsheetDate::excelToDateTimeObject($birthdayCell);
-                            $passwordPlain = $dt->format('d-m-Y');
-                        } catch (\Exception $e) {}
-                    } else {
-                        try {
-                            $dt = Carbon::parse($birthdayCell);
-                            $passwordPlain = $dt->format('d-m-Y');
-                        } catch (\Exception $e) {}
+                    // Skip rows with empty email
+                    if (empty($data['email'])) {
+                        $errorCount++;
+                        continue;
                     }
-                }
 
-                User::create([
-                    'name' => $data['name'] ?? null,
-                    'middle_name' => $data['middle_name'] ?? null,
-                    'last_name' => $data['last_name'] ?? null,
-                    'gender' => $data['gender'] ?? null,
-                    'email' => $data['email'] ?? null,
-                    'phone_number' => $data['phone_number'] ?? null,
-                    'password' => Hash::make($passwordPlain),
-                    'role' => 'student',
-                    'active_status' => 0,
-                    'messenger_color' => '#2180f3',
-                    'dark_mode' => 0,
-                    'password_changed' => false,
-                ]);
+                    // Check if email already exists
+                    if (User::where('email', $data['email'])->exists()) {
+                        $duplicateCount++;
+                        $duplicateEmails[] = $data['email'];
+                        continue;
+                    }
+
+                    $birthdayCell = $data['birthday'] ?? null;
+                    $passwordPlain = 'BPSU12345678';
+
+                    if (!empty($birthdayCell)) {
+                        if (is_numeric($birthdayCell)) {
+                            try {
+                                $dt = PhpSpreadsheetDate::excelToDateTimeObject($birthdayCell);
+                                $passwordPlain = $dt->format('d-m-Y');
+                            } catch (\Exception $e) {}
+                        } else {
+                            try {
+                                $dt = Carbon::parse($birthdayCell);
+                                $passwordPlain = $dt->format('d-m-Y');
+                            } catch (\Exception $e) {}
+                        }
+                    }
+
+                    User::create([
+                        'name' => $data['name'] ?? null,
+                        'middle_name' => $data['middle_name'] ?? null,
+                        'last_name' => $data['last_name'] ?? null,
+                        'gender' => $data['gender'] ?? null,
+                        'email' => $data['email'] ?? null,
+                        'phone_number' => $data['phone_number'] ?? null,
+                        'password' => Hash::make($passwordPlain),
+                        'role' => 'student',
+                        'active_status' => 0,
+                        'messenger_color' => '#2180f3',
+                        'dark_mode' => 0,
+                        'password_changed' => false,
+                    ]);
+
+                    $successCount++;
+
+                } catch (\Exception $e) {
+                    $errorCount++;
+                    continue;
+                }
             }
 
-            return back()->with('excel_success', 'Users imported successfully!');
+            // Build success message with details
+            $message = "Import completed: {$successCount} users imported successfully";
+            if ($duplicateCount > 0) {
+                $message .= ", {$duplicateCount} duplicates skipped";
+            }
+            if ($errorCount > 0) {
+                $message .= ", {$errorCount} errors";
+            }
+
+            return back()->with('excel_success', $message);
 
         } catch (\Exception $e) {
-            $message = $e->getMessage();
-
-            if (str_contains($message, 'Duplicate entry') && str_contains($message, 'users_email_unique')) {
-                return back()->with('excel_error', 'Import Error: One or more email addresses already exist in the system.');
-            }
-
-            return back()->with('excel_error', 'Import failed');
+            return back()->with('excel_error', 'Import failed: ' . $e->getMessage());
         }
     }
 
