@@ -1,6 +1,12 @@
 @if($wishlistItems->isEmpty())
     <div class="no-items-wrapper">
         <p>No items found</p>
+                <p style="color: #999; margin-bottom: 2rem;">Add some items to your wishlist to get started!</p>
+        <a href="{{ route('student.dashboard') }}" style="display: inline-block; background-color: #5196F0; color: white; padding: 0.75rem 2rem; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s;" 
+           onmouseover="this.style.backgroundColor='#4285e8'" 
+           onmouseout="this.style.backgroundColor='#5196F0'">
+          Continue Shopping
+        </a>
     </div>
 @else
 @foreach ($wishlistItems as $wishlistItem)

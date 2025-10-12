@@ -77,6 +77,12 @@ h1 {
   gap: 28px 24px;
   padding-inline: clamp(8px,3vw,24px);
 }
+.no-items-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .card{
   position: relative;
   display: flex;

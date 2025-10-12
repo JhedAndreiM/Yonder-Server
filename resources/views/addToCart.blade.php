@@ -17,15 +17,15 @@
     @if($cartItems && $cartItems->count() > 0)
       @include('partials.productCart', ['cartItems' => $cartItems])
     @else
-      <div class="empty-cart-container" style="text-align: center; padding: 3rem 1rem; color: #666;">
-        <div style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;">🛒</div>
-        <h2 style="color: #888; margin-bottom: 0.5rem; font-weight: 500;">Your cart is empty</h2>
+      <div class="empty-cart-container" style="text-align: center; padding: 3rem 1rem; color: #000000ff;">
+        <h2 style="font-size:1rem;margin-bottom: 0.5rem; font-weight: 400;">Your cart is empty</h2>
         <p style="color: #999; margin-bottom: 2rem;">Add some items to your cart to get started!</p>
         <a href="{{ route('student.dashboard') }}" style="display: inline-block; background-color: #5196F0; color: white; padding: 0.75rem 2rem; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s;" 
            onmouseover="this.style.backgroundColor='#4285e8'" 
            onmouseout="this.style.backgroundColor='#5196F0'">
           Continue Shopping
         </a>
+
       </div>
     @endif
   </div>

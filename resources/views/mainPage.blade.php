@@ -54,7 +54,7 @@
         <h3>For</h3>
         <button class="filter-btn" data-filter="sale" data-filter-type="condition">Sale</button>
         <button class="filter-btn" data-filter="trade" data-filter-type="condition">Trade</button>
-        <h3>Product Quality</h3>
+        <h3>Product Condition</h3>
         <button class="filter-btn" data-filter="new" data-filter-type="condition">New</button>
         <button class="filter-btn" data-filter="like-new" data-filter-type="condition">Like-new</button>
         <button class="filter-btn" data-filter="used" data-filter-type="condition">Used</button>

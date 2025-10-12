@@ -238,6 +238,12 @@
     $prohibitedPolicy = $productPolicies->firstWhere('type', 'prohibited');
   @endphp
      <div id="tab-other" class="mainContainer tab-content">
+      <div class="productPolicy">
+        <h2>Posting Product Policy</h2>
+        <p>Yonder upholds the standards of integrity, legality, and community responsibility within the university marketplace. To maintain a secure and compliant environment, all users are required to adhere to the following Posting Product Policy. These guidelines define the types of items that may or may not be listed on the platform and outline the responsibilities of sellers when creating product postings.</p>
+        <p>By listing an item on Yonder, users acknowledge that they have read, understood, and agreed to comply with these posting regulations. Failure to observe these policies may result in the removal of listings, suspension of privileges, or permanent account termination, depending on the severity of the violation.</p>
+      </div>
+      
       <div class="policyContainer">
         <div class="policyContainer-left">
           <!-- bali pag nisasave sa DB nagiging ol siya so nicoconvert natin to ul ulit -->
@@ -246,6 +252,17 @@
         <div class="policyContainer-right">
           {!! str_replace(['<ol>', '</ol>'], ['<ul>', '</ul>'], $prohibitedPolicy->content) !!}
         </div>
+      </div>
+      
+      <div class="guidelines">
+        <h3>Additional Guidelines</h3>
+        <ul>
+          <li>All listings must include clear and accurate product descriptions and images.</li>
+          <li>Sellers must ensure all items are in lawful possession before posting.</li>
+          <li>Misrepresentation, false claims, or deceptive pricing may result in listing removal and account suspension.</li>
+          <li>PBEN reserves the right to review and remove any listing that violates university policy or the platform's guidelines.</li>
+          <li>Repeat violations may lead to account restriction.</li>
+        </ul>
       </div>
     </div>
   @if($errors->any())

@@ -1063,7 +1063,11 @@ public function orderReceivedDelivered(Request $request, $id)
             ]);
         $filters = $request->input('filterValue');
 
-        $confirm = DB::table('cart_items')->where('id', $id)->first();
+        $confirm = DB::table('cart_items')
+        ->join('product', 'cart_items.product_id', '=', 'product.product_id')
+        ->where('cart_items.id', $id)
+        ->select('cart_items.*', 'product.name as product_name')
+        ->first();
 
         if ($confirm->buyer_response === 'yes' && $confirm->seller_response === 'yes') {
             DB::table('cart_items')

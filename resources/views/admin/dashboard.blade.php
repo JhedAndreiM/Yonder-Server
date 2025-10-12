@@ -3193,5 +3193,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<!-- Hello Future Self -Jhed -->
+<!-- I was here -Jun -->
+<!-- Nag aayos parin ako ng child diagram -Kristel -->
+<!-- Sumakses ba(question mark) -Iris -->
+<!-- Umayos kali 'yung child diagram? -Kristel -->
+<!-- papasa? -->
 @endsection
 
