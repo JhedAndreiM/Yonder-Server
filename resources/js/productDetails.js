@@ -1,7 +1,7 @@
 // Global variables
 let currentSelectedVariant = 0;
 let currentStock = window.productData.hasVariants ? 
-    window.productData.variants.optionStocks[0] : 
+    (window.productData.initialStock || parseInt(window.productData.variants.optionStocks[0]) || 0) : 
     window.productData.stock;
 
 // DOM Elements
@@ -62,12 +62,14 @@ function initializeVariants() {
     if (window.productData.hasVariants) {
         // Set first variant as selected
         currentSelectedVariant = 0;
-        currentStock = window.productData.variants.optionStocks[0];
+        currentStock = window.productData.initialStock || parseInt(window.productData.variants.optionStocks[0]) || 0;
         
-        // Add click listeners to variant buttons
+        // Add click listeners to variant buttons - but don't interfere with visibility controls
         document.querySelectorAll('.variationsButton').forEach((button, index) => {
-            button.addEventListener('click', () => selectVariant(index));
-            
+            button.addEventListener('click', () => {
+                console.log('External JS selectVariant called for index:', index);
+                selectVariant(index);
+            });
         });
         
         // Update main page quantity max
@@ -77,6 +79,9 @@ function initializeVariants() {
         if (elements.modalQuantityInput) {
             elements.modalQuantityInput.setAttribute('max', currentStock);
         }
+        
+        // DON'T initialize quantity controls visibility here - let the inline JS handle it
+        console.log('External JS initializeVariants - NOT managing visibility controls');
     } else {
         currentStock = window.productData.stock;
     }
@@ -85,7 +90,7 @@ function initializeVariants() {
 // Select variant function
 function selectVariant(index) {
     currentSelectedVariant = index;
-    currentStock = window.productData.variants.optionStocks[index];
+    currentStock = parseInt(window.productData.variants.optionStocks[index]) || 0;
     
     // Update variant buttons - ADD/REMOVE ACTIVE CLASS
     document.querySelectorAll('.variationsButton').forEach((btn, i) => {
@@ -103,10 +108,18 @@ function selectVariant(index) {
     
     // Update quantity limits
     if (elements.qtyDisplay) {
-            elements.qtyDisplay.setAttribute('max', currentStock);
+        elements.qtyDisplay.setAttribute('max', currentStock);
+        if (parseInt(elements.qtyDisplay.value) > currentStock) {
+            elements.qtyDisplay.value = Math.min(currentStock, 1);
         }
-    if (parseInt(elements.qtyDisplay.value) > currentStock) {
-        elements.qtyDisplay.value = Math.min(currentStock, 1);
+    }
+    
+    // DON'T handle visibility here - let the inline JS updateStockDisplay function handle it
+    console.log('External JS selectVariant - calling inline updateStockDisplay');
+    
+    // Call the inline JavaScript function if it exists
+    if (typeof window.inlineUpdateStockDisplay === 'function') {
+        window.inlineUpdateStockDisplay(currentStock);
     }
     
     updateMainPageStock();
@@ -116,7 +129,7 @@ function selectVariant(index) {
 if (elements.modalVariantSelect) {
     elements.modalVariantSelect.addEventListener("change", () => {
         const selectedIndex = parseInt(elements.modalVariantSelect.value);
-        const selectedStock = window.productData.variants.optionStocks[selectedIndex];
+        const selectedStock = parseInt(window.productData.variants.optionStocks[selectedIndex]) || 0;
         
         // Update main page variant buttons active class
         document.querySelectorAll('.variationsButton').forEach((btn, i) => {
@@ -254,7 +267,7 @@ function initializeEventListeners() {
     if (elements.modalVariantSelect) {
         elements.modalVariantSelect.addEventListener("change", () => {
             const selectedIndex = parseInt(elements.modalVariantSelect.value);
-            const selectedStock = window.productData.variants.optionStocks[selectedIndex];
+            const selectedStock = parseInt(window.productData.variants.optionStocks[selectedIndex]) || 0;
             
             elements.modalStockDisplay.textContent = selectedStock;
             elements.modalQuantityInput.setAttribute('max', selectedStock);
@@ -323,7 +336,7 @@ reviewLinks.forEach(link => {
 function getModalMaxStock() {
     if (window.productData.hasVariants && elements.modalVariantSelect) {
         const selectedIndex = parseInt(elements.modalVariantSelect.value);
-        return window.productData.variants.optionStocks[selectedIndex];
+        return parseInt(window.productData.variants.optionStocks[selectedIndex]) || 0;
     }
     return currentStock;
 }

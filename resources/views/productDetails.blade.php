@@ -139,14 +139,17 @@
                         $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
                     @endphp
                     @if ($hasVariants)
-                        @php $firstVariantStock = $variants['optionStocks'][0] ?? 0; @endphp
-                        @if($firstVariantStock == 0)
+                        @php 
+                            $firstVariantStockRaw = $variants['optionStocks'][0] ?? '0';
+                            $firstVariantStock = is_numeric($firstVariantStockRaw) ? (int)$firstVariantStockRaw : 0;
+                        @endphp
+                        @if($firstVariantStock <= 0)
                             <p class="outOfStock" id="mainStockDisplay">Out of Stock</p>
                         @else
                             <p class="stocks" id="mainStockDisplay">Stocks: {{ $firstVariantStock }}</p>
                         @endif
                     @else
-                        @if($products->stock == 0)
+                        @if($products->stock <= 0)
                             <p class="outOfStock" id="mainStockDisplay">Out of Stock</p>
                         @else
                             <p class="stocks" id="mainStockDisplay">Stocks: {{ $products->stock }}</p>
@@ -193,13 +196,26 @@
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
                 @php 
-                  $hasStock = $hasVariants ? ($variants['optionStocks'][0] ?? 0) > 0 : $products->stock > 0;
+                  if ($hasVariants) {
+                      // Check if ANY variant has stock, not just the first one
+                      $hasStock = false;
+                      foreach ($variants['optionStocks'] as $stock) {
+                          if (is_numeric($stock) && (int)$stock > 0) {
+                              $hasStock = true;
+                              break;
+                          }
+                      }
+                      $firstStockRaw = $variants['optionStocks'][0] ?? '0';
+                      $firstStock = is_numeric($firstStockRaw) ? (int)$firstStockRaw : 0;
+                  } else {
+                      $hasStock = $products->stock > 0;
+                  }
                 @endphp
                 @if($hasStock)
                 <h3 class="qty" id="qtyLabel">Quantity</h3>
                 <div class="qtyButtons" id="qtyControls">
                   <img src="{{ asset('img/minus.svg') }}" alt="" id="qtyMinus"/>
-                  <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $hasVariants ? ($variants['optionStocks'][0] ?? 0) : $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
+                  <input type="number" id="qtyDisplay" class="numberQty" value="1" min="1"  max="{{ $hasVariants ? $firstStock : $products->stock }}" inputmode="numeric" style="height:30px;width: 60px; text-align: center;">
                   <img src="{{ asset('img/plus.svg') }}" alt="" id="qtyPlus"/>
                 </div>
                 <div class="buttonCartAndBuy" id="purchaseButtons">
@@ -221,7 +237,7 @@
                         @foreach ($variants['options'] as $index => $option)
                             <button class="variationsButton {{ $index === 0 ? 'active' : '' }}" 
                                     data-index="{{ $index }}"
-                                    data-stock="{{ $variants['optionStocks'][$index] ?? 0 }}">
+                                    data-stock="{{ (int)($variants['optionStocks'][$index] ?? 0) }}">
                                 {{ $option }}
                             </button>
                         @endforeach
@@ -241,44 +257,56 @@
                     const mainStockDisplay = document.getElementById('mainStockDisplay');
                     const variantStockContainer = document.getElementById('variantStockContainer');
                     
-                    variantButtons.forEach(button => {
-                        button.addEventListener('click', function() {
-                            // Remove active class from all buttons
-                            variantButtons.forEach(btn => btn.classList.remove('active'));
-                            // Add active class to clicked button
-                            this.classList.add('active');
-                            
-                            // Get stock for selected variant
-                            const stock = parseInt(this.getAttribute('data-stock'));
-                            
-                            // Update main stock display (same location as non-variant products)
-                            if (stock === 0) {
+                    // Function to update stock display and controls
+                    function updateStockDisplay(stock) {
+                        console.log('Inline updateStockDisplay called with stock:', stock);
+                        const qtyLabel = document.getElementById('qtyLabel');
+                        const qtyControls = document.getElementById('qtyControls');
+                        const purchaseButtons = document.getElementById('purchaseButtons');
+                        const qtyInput = document.getElementById('qtyDisplay');
+                        
+                        console.log('Elements found:', {
+                            qtyLabel: !!qtyLabel,
+                            qtyControls: !!qtyControls,
+                            purchaseButtons: !!purchaseButtons,
+                            qtyInput: !!qtyInput
+                        });
+                        
+                        // Update stock display for all users
+                        if (stock <= 0) {
+                            if (mainStockDisplay) {
                                 mainStockDisplay.innerHTML = 'Out of Stock';
                                 mainStockDisplay.className = 'outOfStock';
-                                
-                                // Hide quantity controls and purchase buttons when out of stock
-                                const qtyLabel = document.getElementById('qtyLabel');
-                                const qtyControls = document.getElementById('qtyControls');
-                                const purchaseButtons = document.getElementById('purchaseButtons');
-                                
-                                if (qtyLabel) qtyLabel.style.display = 'none';
-                                if (qtyControls) qtyControls.style.display = 'none';
-                                if (purchaseButtons) purchaseButtons.style.display = 'none';
-                            } else {
+                            }
+                        } else {
+                            if (mainStockDisplay) {
                                 mainStockDisplay.innerHTML = 'Stocks: ' + stock;
                                 mainStockDisplay.className = 'stocks';
-                                
+                            }
+                        }
+                        
+                        // Only manage quantity controls and purchase buttons if they exist (not owner)
+                        const isOwner = {{ $products->user_id === Auth::id() ? 'true' : 'false' }};
+                        const isTradeOnly = {{ $products->forSaleTrade === 'trade' ? 'true' : 'false' }};
+                        
+                        console.log('User status:', { isOwner, isTradeOnly });
+                        
+                        if (!isOwner && !isTradeOnly && qtyLabel && qtyControls && purchaseButtons) {
+                            console.log('Managing visibility for stock:', stock);
+                            if (stock <= 0) {
+                                // Hide quantity controls and purchase buttons when out of stock
+                                console.log('Hiding controls - out of stock');
+                                qtyLabel.style.display = 'none';
+                                qtyControls.style.display = 'none';
+                                purchaseButtons.style.display = 'none';
+                            } else {
                                 // Show quantity controls and purchase buttons when in stock
-                                const qtyLabel = document.getElementById('qtyLabel');
-                                const qtyControls = document.getElementById('qtyControls');
-                                const purchaseButtons = document.getElementById('purchaseButtons');
-                                
-                                if (qtyLabel) qtyLabel.style.display = 'block';
-                                if (qtyControls) qtyControls.style.display = 'flex';
-                                if (purchaseButtons) purchaseButtons.style.display = 'block';
+                                console.log('Showing controls - in stock');
+                                qtyLabel.style.display = 'block';
+                                qtyControls.style.display = 'flex';
+                                purchaseButtons.style.display = 'block';
                                 
                                 // Update quantity input max value
-                                const qtyInput = document.getElementById('qtyDisplay');
                                 if (qtyInput) {
                                     qtyInput.max = stock;
                                     if (parseInt(qtyInput.value) > stock) {
@@ -286,6 +314,48 @@
                                     }
                                 }
                             }
+                        } else {
+                            console.log('Not managing visibility:', { 
+                                reasonOwner: isOwner, 
+                                reasonTradeOnly: isTradeOnly, 
+                                elementsExist: !!(qtyLabel && qtyControls && purchaseButtons) 
+                            });
+                        }
+                    }
+                    
+                    // Expose function globally for external JS to call
+                    window.inlineUpdateStockDisplay = updateStockDisplay;
+                    
+                    // Initialize with first variant stock on page load
+                    if (variantButtons.length > 0) {
+                        const firstButton = variantButtons[0];
+                        const initialStock = parseInt(firstButton.getAttribute('data-stock')) || 0;
+                        console.log('Blade template JavaScript running');
+                        console.log('Initial stock from button:', initialStock);
+                        console.log('Initial stock from PHP:', window.productData.initialStock);
+                        console.log('Controls exist?', {
+                            qtyLabel: !!document.getElementById('qtyLabel'),
+                            qtyControls: !!document.getElementById('qtyControls'), 
+                            purchaseButtons: !!document.getElementById('purchaseButtons')
+                        });
+                        updateStockDisplay(initialStock);
+                    }
+                    
+                    variantButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            console.log('Inline JS variant button clicked');
+                            
+                            // Remove active class from all buttons
+                            variantButtons.forEach(btn => btn.classList.remove('active'));
+                            // Add active class to clicked button
+                            this.classList.add('active');
+                            
+                            // Get stock for selected variant
+                            const stock = parseInt(this.getAttribute('data-stock')) || 0;
+                            console.log('Variant selected with stock:', stock);
+                            
+                            // Update stock display and controls
+                            updateStockDisplay(stock);
                         });
                     });
                 });
@@ -369,10 +439,10 @@
                 <div class="content-wrapper">
                 @if ($hasVariants)
                     <div class="modal-variant-div">
-                        <label>{{ $variants['name'] ?? 'Variation' }}: <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $variants['optionStocks'][0] ?? 0 }}</span></p></label>
+                        <label>{{ $variants['name'] ?? 'Variation' }}: <p class="modal-stock-info">Available: <span id="modalStockDisplay">{{ $firstStock }}</span></p></label>
                         <select id="modalVariantSelect" name="variant_selection">
                             @foreach ($variants['options'] as $index => $option)
-                                @php $optionStock = $variants['optionStocks'][$index] ?? 0; @endphp
+                                @php $optionStock = (int)($variants['optionStocks'][$index] ?? 0); @endphp
                                 <option value="{{ $index }}" 
                                         data-stock="{{ $optionStock }}" 
                                         {{ $index === 0 ? 'selected' : '' }}
@@ -388,7 +458,7 @@
                     <label>Quantity: <p class="modal-stock-info">@if(!$hasVariants) Available: <span id="modalStockDisplay">{{ $products->stock }}</span>@endif</p></label>
                     <div class="modal-qty-controls">
                         <button type="button" id="modalQtyMinus">-</button>
-                        <input type="number" id="modalQuantityInput" value="1" min="1" max="{{ $hasVariants ? ($variants['optionStocks'][0] ?? 0) : $products->stock }}">
+                        <input type="number" id="modalQuantityInput" value="1" min="1" max="{{ $hasVariants ? $firstStock : $products->stock }}">
                         <button type="button" id="modalQtyPlus">+</button>
                     </div>
                 </div>
@@ -521,8 +591,31 @@
             hasVariants: {{ $hasVariants ? 'true' : 'false' }},
             variants: @json($hasVariants ? $variants : null),
             isPBEN: {{ $isPBEN ? 'true' : 'false' }},
-            images: @json($images->map(function($img) { return asset('images/' . $img->image_path); })->toArray())
+            images: @json($images->map(function($img) { return asset('images/' . $img->image_path); })->toArray()),
+            @if($hasVariants)
+            initialStock: {{ $firstVariantStock }},
+            @else
+            initialStock: {{ $products->stock }},
+            @endif
         };
+
+        // Force update stock display immediately on page load for variants
+        @if($hasVariants)
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainStockDisplay = document.getElementById('mainStockDisplay');
+            const initialStock = {{ $firstVariantStock }};
+            
+            if (mainStockDisplay && window.productData.hasVariants) {
+                if (initialStock <= 0) {
+                    mainStockDisplay.innerHTML = 'Out of Stock';
+                    mainStockDisplay.className = 'outOfStock';
+                } else {
+                    mainStockDisplay.innerHTML = 'Stocks: ' + initialStock;
+                    mainStockDisplay.className = 'stocks';
+                }
+            }
+        });
+        @endif
             document.querySelectorAll('#profileDropdown li').forEach(li => {
         li.addEventListener('click', () => {
             window.location.href = li.dataset.url;
