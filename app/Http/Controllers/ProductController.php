@@ -156,7 +156,7 @@ public function store(Request $request)
      $user = Auth::user();
         // route to para if studnet or organization nag gawa 
         if ($user->role === 'student') {
-            return redirect()->route('student.dashboard')->with('success', 'Product listed successfully!');
+            return redirect()->route('student.dashboard')->with('success', 'Product listing under review.');
         } 
         elseif ($user->role === 'organization') {
         return redirect()->route('organization.dashboard')->with('success', 'Product listed successfully!');

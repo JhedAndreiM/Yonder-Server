@@ -429,8 +429,8 @@
           <label for="reportType" style="font-weight: 600; margin-bottom: 0.25rem; display: block;">Report to Generate</label>
           <select id="reportType" name="reportType" required style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;">
             <option value="all" selected>All Sections</option>
-            <option value="pben">PBEN Section Only</option>
-            <option value="student_org">Student Org Section Only</option>
+            <option value="pben">PBEN Section</option>
+            <option value="student_org">Student Organization Section</option>
           </select>
         </div>
         <div class="date-inputs">
