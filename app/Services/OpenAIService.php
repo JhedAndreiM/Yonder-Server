@@ -30,37 +30,70 @@ class OpenAIService
     {
         // Fetch all FAQs with id and question
         $faqs = FaqQuestion::all(['id', 'question', 'answer']);
+        
+        // First, try a direct database search for exact/partial matches
+        $directMatch = $faqs->first(function($faq) use ($question) {
+            return str_contains(strtolower($faq->question), strtolower($question)) || 
+                   str_contains(strtolower($faq->answer), strtolower($question));
+        });
+        
+        if ($directMatch) {
+            \Log::info("Direct match found for query '{$question}': {$directMatch->question}");
+            return [
+                'answer' => "**{$directMatch->question}**\n\n{$directMatch->answer}",
+                'faq_id' => $directMatch->id,
+            ];
+        }
+        
         $faqListText = "Here are the existing FAQs:\n";
         foreach ($faqs as $faq) {
             $faqListText .= "FAQ ID: {$faq->id}\n";
             $faqListText .= "Question: {$faq->question}\n";
             $faqListText .= "Answer: {$faq->answer}\n\n";
         }
+        
+        // Debug: Log the search query and FAQ list for troubleshooting
+        \Log::info("FAQ Search Query: " . $question);
+        \Log::info("No direct match found, sending to OpenAI. FAQ count: " . $faqs->count());
         $systemPrompt = "You are a Yonder FAQ assistant for the university marketplace. Your job is to respond **only using the FAQs in the database**. 
-            - Use the provided FAQ list below as your source. 
-            - If a user question matches one or more FAQs, respond with each matched FAQ **question and answer**, clearly separated. Include the FAQ ID in the format: [FAQ_ID: <id>]. 
-            - If multiple FAQs match, list **all matches** in order of relevance. 
-            - If something in the user's question is **loosely related** to any FAQ, add it at the bottom under 'Related FAQs' with its answer. Do not add unrelated advice. 
-            - Never provide answers not in the FAQs unless explicitly instructed.
+
+            MATCHING RULES:
+            - Search through BOTH questions AND answers for ANY partial word matches
+            - If the user searches for 'should', match FAQs containing 'should', 'shouldn't', 'shouldnt', etc.
+            - If the user searches for 'buy', match FAQs containing 'buy', 'buying', 'purchase', etc.
+            - Be VERY LIBERAL in matching - even if just part of a word matches, include it
+            - Look for the search term ANYWHERE in the question or answer text
+            
+            RESPONSE FORMAT:
+            - Return the MOST RELEVANT FAQ that contains any part of the search term
+            - Include the FAQ ID in the format: [FAQ_ID: <id>]
+            - BOLD the FAQ question
+            - If absolutely no FAQ contains any part of the search term, say 'No relevant FAQs found'
+            
+            IMPORTANT: Be generous with matches. If searching for 'should' and there's a FAQ with 'shouldn't show', that's a match!
 
             FAQ List:
             " . $faqListText . "
 
-            Examples of the format you must follow:
+            Examples of matching:
 
-            User Question: 'how to buy and who can join?'
+            User searches: 'should'
+            FAQ exists: 'shouldn't show' 
+            Result: MATCH! Return that FAQ because 'should' is contained in 'shouldn't'
 
-            Response:
-            How do I buy something?
-            Find the item you want, click 'Buy' or 'Add to Cart,' choose your payment method, and confirm your purchase. Once confirmed, arrange with the seller for payment and pickup or delivery. [FAQ_ID: 12]
+            User searches: 'buy'  
+            FAQ exists: 'How do I buy something?'
+            Result: MATCH! Return that FAQ
 
-            Who can join?
-            Yonder is exclusively for our university community, so only those with a verified university email can use it. Students, faculty, and staff can access it. No outsiders allowed. [FAQ_ID: 7]
+            User searches: 'sell'
+            FAQ exists: 'What can I sell?'  
+            Result: MATCH! Return that FAQ
 
-            If any related FAQs exist, add them under 'Related FAQs' at the end(ONLY SAY THE RELATED QUESTION, NOT THE ANSWER, if no related FAQs show nothing not even the 'Related FAQs'.
-            BOLD the QUESTION
-            IF NO RELEVANT FAQs, SAY 'No relevant FAQs found'!importantdont output this text if atleast one relevant FAQ is found).'
-            IF the question matches a question in the FAQs, SAY the Question in bold and the answer
+            Format example:
+            **FAQ Question Here**
+            FAQ answer here [FAQ_ID: X]
+
+            CRITICAL: If the search term appears ANYWHERE in a question or answer (even as part of another word), it's a match!
             ";
         try {
         $response = $this->client->chat()->create([
@@ -69,13 +102,18 @@ class OpenAIService
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $question],
             ],
-            'max_tokens' => 200,
+            'max_tokens' => 300,
         ]);
         $content = $response->choices[0]->message->content ?? 'Sorry, I could not find an answer.';
+        
+        // Debug: Log OpenAI response
+        \Log::info("OpenAI Response for query '{$question}':", ['response' => $content]);
+        
         } catch (\Exception $e) {
             // Handle errors gracefully
             $content = 'Sorry, the FAQ assistant is temporarily unavailable.';
             $faqId = null;
+            \Log::error("OpenAI Error for query '{$question}':", ['error' => $e->getMessage()]);
         }
         // Try to extract FAQ_ID from GPT response
         // Extract FAQ_ID from GPT response
