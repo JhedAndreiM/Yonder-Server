@@ -24,6 +24,7 @@ use App\Http\Controllers\FaqCategoryController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TradeController;
 use App\Events\NewNotification;
 use App\Models\Notification;
 
@@ -49,6 +50,19 @@ Route::middleware(['auth', 'force.password.change', RoleMiddleware::class . ':st
     Route::post('/products/updateSeller', [CartController::class, 'updateSeller'])->name('products.updateSeller');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::post('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
+
+    // Trade Routes
+    Route::get('/trade/create/{recipientId}', [TradeController::class, 'create'])->name('trade.create');
+    Route::post('/trade/store', [TradeController::class, 'store'])->name('trade.store');
+    Route::get('/trade/my-items', [TradeController::class, 'getMyItems'])->name('trade.myItems');
+    Route::get('/trade/recipient-items/{recipientId}', [TradeController::class, 'getRecipientItems'])->name('trade.recipientItems');
+    Route::get('/trade/offers', [TradeController::class, 'index'])->name('trade.offers');
+    Route::post('/trade/cancel/{offerId}', [TradeController::class, 'cancel'])->name('trade.cancel');
+    Route::post('/trade/accept/{offerId}', [TradeController::class, 'accept'])->name('trade.accept');
+    Route::post('/trade/decline/{offerId}', [TradeController::class, 'decline'])->name('trade.decline');
+    Route::post('/trade/confirm/{offerId}', [TradeController::class, 'confirmReceipt'])->name('trade.confirm');
+    Route::get('/trade/counter/{offerId}', [TradeController::class, 'counterCreate'])->name('trade.counter.create');
+    Route::post('/trade/counter/{offerId}', [TradeController::class, 'counterStore'])->name('trade.counter.store');
 
 });
 

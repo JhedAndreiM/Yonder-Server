@@ -44,6 +44,10 @@
             <img class="notCurrent" src="{{asset('img/MyVouchers.svg')}}" alt="" />
             <h2 class="notCurrent">My Vouchers</h2>
           </div>
+          <div class="myTradeOffers">
+            <img class="notCurrent" src="{{asset('img/MyVouchers.svg')}}" alt="" />
+            <h2 class="notCurrent">Trade Offers</h2>
+          </div>
         </div>
       </div>
       <div class="right">
@@ -521,6 +525,12 @@ document.addEventListener('DOMContentLoaded', function() {
     myVouchers.forEach(button =>{
         button.addEventListener('click', function() {
             window.location.href = "{{ route('show.vouchers') }}";
+        });
+    });    
+    const myTradeOffers = document.querySelectorAll('.myTradeOffers');
+    myTradeOffers.forEach(button =>{
+        button.addEventListener('click', function() {
+            window.location.href = "{{ route('trade.offers') }}";
         });
     });    
     const mySales = document.querySelectorAll('.mySales');

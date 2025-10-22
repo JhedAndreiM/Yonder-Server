@@ -137,11 +137,19 @@
                         // Define variants early so we can use them in the stock display
                         $variants = $products->variants;
                         $hasVariants = !empty($variants) && isset($variants['options']) && count($variants['options']) > 0;
+                        
+                        // Define first stock variable for use throughout the template
+                        if ($hasVariants) {
+                            $firstVariantStockRaw = $variants['optionStocks'][0] ?? '0';
+                            $firstVariantStock = is_numeric($firstVariantStockRaw) ? (int)$firstVariantStockRaw : 0;
+                            $firstStock = $firstVariantStock; // Alias for modal usage
+                        } else {
+                            $firstStock = $products->stock;
+                        }
                     @endphp
                     @if ($hasVariants)
                         @php 
-                            $firstVariantStockRaw = $variants['optionStocks'][0] ?? '0';
-                            $firstVariantStock = is_numeric($firstVariantStockRaw) ? (int)$firstVariantStockRaw : 0;
+                            // Variables already defined above
                         @endphp
                         @if($firstVariantStock <= 0)
                             <p class="outOfStock" id="mainStockDisplay">Out of Stock</p>
@@ -189,7 +197,7 @@
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
-                <a href="{{ url('/Yonder/Chat/'.$seller->id) }}" class="addToCartBtn">Start Trading</a>
+                <a href="{{ route('trade.create', ['recipientId' => $seller->id, 'productId' => $products->product_id]) }}" class="addToCartBtn">Start Trading</a>
               @endif
             @else
               @if($products->user_id=== Auth::id())

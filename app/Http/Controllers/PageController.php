@@ -16,6 +16,11 @@ class PageController extends Controller
    
     public function showMainPage(Request $request)
     {
+        // Check if coming from successful trade offer
+        if ($request->query('trade_success')) {
+            session()->flash('success', 'Trade offer sent successfully!');
+        }
+
         $page=$request->get('page', 1);
         $filters = $request->get('filters', []);
         $topFilter = $request->query('topFilter');
