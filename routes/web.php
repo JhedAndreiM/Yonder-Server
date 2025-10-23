@@ -93,6 +93,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function ()
     Route::post('/admin/approve/{id}', [AdminController::class, 'approveProduct'])->name('admin.approve');
     Route::post('/admin/reject/{id}', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/admin/disable/', [AdminController::class, 'updateDisabledButton'])->name('admin.disableButtons');
+    Route::post('/admin/sms-settings', [AdminController::class, 'updateSmsSettings'])->name('admin.smsSettings');
     Route::post('/admin/product-policy/', [AdminController::class, 'productPolicy'])->name('admin.productPolicy');
     Route::post('/admin/voucher/', [AdminController::class, 'addVoucherList'])->name('admin.voucher');
     Route::delete('/admin/voucher/{id}', [AdminController::class, 'deleteVoucher'])->name('admin.voucher.delete');

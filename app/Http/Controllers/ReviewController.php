@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\WordFilter;
 
 class ReviewController extends Controller
 {
@@ -17,6 +18,10 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
         ]);
+        
+        // Filter profanity from comment
+        $filteredComment = WordFilter::filter($request->comment);
+        
         $purchases = DB::table('cart_items')
             ->where('user_id', Auth::id())
             ->where('product_id', $request->item_id)
@@ -33,7 +38,7 @@ class ReviewController extends Controller
         'product_id' => $request->item_id,
         'user_id' => Auth::id(),
         'rating' => $request->rating,
-        'comment' => $request->comment,
+        'comment' => $filteredComment,
         'created_at' => now(),
         'updated_at' => now(),
         ]);

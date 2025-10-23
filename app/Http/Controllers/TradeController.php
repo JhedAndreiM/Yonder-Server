@@ -623,6 +623,9 @@ class TradeController extends Controller
             $offer->responded_at = now();
             $offer->save();
             
+            // Auto-cancel other pending offers that include out-of-stock products
+            $this->cancelOffersWithOutOfStockProducts($offer);
+            
             DB::commit();
             
             return response()->json([
@@ -636,6 +639,100 @@ class TradeController extends Controller
                 'success' => false,
                 'message' => 'Failed to accept offer: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Auto-cancel pending trade offers that include products with 0 stock
+     * This is called after accepting a trade to clean up impossible-to-fulfill offers
+     */
+    private function cancelOffersWithOutOfStockProducts($acceptedOffer)
+    {
+        // Get all product IDs from the accepted offer
+        $affectedProductIds = collect();
+        
+        foreach ($acceptedOffer->senderItems as $item) {
+            $affectedProductIds->push($item->product_id);
+        }
+        
+        foreach ($acceptedOffer->recipientItems as $item) {
+            $affectedProductIds->push($item->product_id);
+        }
+        
+        // Get all pending offers that include these products
+        $pendingOffers = TradeOffer::where('status', 'pending')
+            ->where('id', '!=', $acceptedOffer->id)
+            ->whereHas('items', function($query) use ($affectedProductIds) {
+                $query->whereIn('product_id', $affectedProductIds->toArray());
+            })
+            ->with(['items.product'])
+            ->get();
+        
+        foreach ($pendingOffers as $pendingOffer) {
+            $hasOutOfStock = false;
+            $outOfStockProducts = [];
+            
+            // Check all items in the pending offer
+            foreach ($pendingOffer->items as $item) {
+                $product = $item->product;
+                
+                if ($item->variant_name) {
+                    // Check variant stock
+                    $variants = $product->variants;
+                    if (is_string($variants)) {
+                        $variants = json_decode($variants, true);
+                    }
+                    
+                    if (is_array($variants)) {
+                        $variantStock = 0;
+                        
+                        // Check for new format
+                        if (isset($variants['options']) && isset($variants['optionStocks'])) {
+                            $optionIndex = array_search($item->variant_name, $variants['options']);
+                            if ($optionIndex !== false && isset($variants['optionStocks'][$optionIndex])) {
+                                $variantStock = (int)$variants['optionStocks'][$optionIndex];
+                            }
+                        } else {
+                            // Old format
+                            foreach ($variants as $variant) {
+                                if (is_array($variant) && isset($variant['name']) && $variant['name'] === $item->variant_name) {
+                                    $variantStock = isset($variant['stock']) ? (int)$variant['stock'] : 0;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Check if stock is insufficient
+                        if ($variantStock < $item->quantity) {
+                            $hasOutOfStock = true;
+                            $outOfStockProducts[] = "{$product->name} ({$item->variant_name})";
+                        }
+                    }
+                } else {
+                    // Check main stock
+                    if ($product->stock < $item->quantity) {
+                        $hasOutOfStock = true;
+                        $outOfStockProducts[] = $product->name;
+                    }
+                }
+            }
+            
+            // If any item is out of stock, cancel the offer
+            if ($hasOutOfStock) {
+                $reason = "Automatically cancelled: Insufficient stock for " . implode(', ', $outOfStockProducts) . ". Another trade was accepted first.";
+                
+                // Cancel based on who the offer belongs to
+                if ($pendingOffer->sender_id === Auth::id()) {
+                    $pendingOffer->status = 'cancelled';
+                    $pendingOffer->cancellation_reason = $reason;
+                } else {
+                    $pendingOffer->status = 'declined';
+                    $pendingOffer->decline_reason = $reason;
+                }
+                
+                $pendingOffer->responded_at = now();
+                $pendingOffer->save();
+            }
         }
     }
 

@@ -50,7 +50,7 @@ class CropImageController extends Controller
             $otp = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
             session(['otp' => $otp]);
             $smsService = app(\App\Services\IprogSmsService::class);
-            $response = $smsService->send($request->phone_number, 'Your verification code is ' . $otp);
+            $response = $smsService->send($request->phone_number, 'Your verification code is ' . $otp, [], true);
             $user->last_otp_sent_at = now();
             $user->save();
             return back()->with('otp_required', true)->with('otp_code', $otp);

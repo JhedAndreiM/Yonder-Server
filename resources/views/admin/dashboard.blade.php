@@ -56,6 +56,7 @@
                 <li><a href="#report-user">Reported Users</a></li>
                 <li><a href="#banned-users">Banned & Suspended Users</a></li>
                 <li><a href="#report-show">Reported Products</a></li>
+                <li><a href="#sms-settings-section">SMS Settings</a></li>
             </ul>
         </nav>
     </div>
@@ -1332,6 +1333,22 @@
         </form>
     </section>
 
+    <!-- SMS Settings -->
+    <section class="sms-settings-section" id="sms-settings-section">
+        <h2>SMS Notification Settings</h2>
+        <form method="POST" action="{{ route('admin.smsSettings') }}">
+            @csrf
+            <label>
+                <input type="checkbox" name="sms_enabled" {{ \App\Models\SmsSettings::getValue('sms_enabled') ? 'checked' : '' }}>
+                Enable SMS Notifications
+            </label>
+            <p style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">
+                Note: OTP verification SMS will always be sent regardless of this setting.
+            </p>
+            <button type="submit">Save SMS Settings</button>
+        </form>
+    </section>
+
 </div>
 <!-- Image Viewer Modal -->
 <div id="imageViewerModal" 
@@ -2530,6 +2547,58 @@ confirmAction("Are you sure you want to delete this category?", () => {
 @keyframes fadeInScale {
     from { opacity:0; transform:scale(.9); }
     to   { opacity:1; transform:scale(1); }
+}
+
+/* SMS Settings Section */
+.sms-settings-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sms-settings-section h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #374151;
+}
+
+.sms-settings-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sms-settings-section label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.sms-settings-section input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.sms-settings-section button {
+    align-self: flex-start;
+    padding: 0.75rem 1.5rem;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sms-settings-section button:hover {
+    background: #4338ca;
 }
 </style>
 <script>

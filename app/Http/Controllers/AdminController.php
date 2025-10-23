@@ -735,4 +735,11 @@ public function deleteStudOrg($id)
             'message' => 'Featured image unlinked from product successfully'
         ]);
     }
+    
+    public function updateSmsSettings(Request $request)
+    {
+        \App\Models\SmsSettings::setValue('sms_enabled', $request->has('sms_enabled'));
+        
+        return redirect()->back()->with('success', 'SMS settings updated successfully!');
+    }
 }

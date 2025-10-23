@@ -15,8 +15,22 @@ class IprogSmsService
         $this->certPath = public_path('certs/cacert.pem'); // <-- you want cert here
     }
 
-    public function send(string $phoneNumber, string $message, array $placeholders = []): array
+    public function send(string $phoneNumber, string $message, array $placeholders = [], bool $isOtp = false): array
     {
+        // OTP messages always bypass the SMS enabled check
+        if (!$isOtp) {
+            $smsEnabled = \App\Models\SmsSettings::getValue('sms_enabled');
+            
+            if (!$smsEnabled) {
+                // SMS is disabled by admin, skip sending but return success
+                return [
+                    'status' => 'skipped',
+                    'status_code' => 200,
+                    'response' => 'SMS sending is disabled by administrator',
+                ];
+            }
+        }
+        
         if (!empty($placeholders)) {
             $message = vsprintf($message, $placeholders);
         }
