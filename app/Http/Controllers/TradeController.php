@@ -78,18 +78,28 @@ class TradeController extends Controller
         // Get current user's tradeable items (products they own)
         $myItems = Product::where('user_id', Auth::id())
             ->where('approved', 'yes')
+            ->where('forSaleTrade', 'trade')
             ->with(['images' => function($query) {
                 $query->orderBy('id', 'asc')->limit(1);
             }])
-            ->get();
+            ->get()
+            ->filter(function($product) {
+                // Filter out products with 0 stock
+                $variants = $product->variants;
+                if (!empty($variants) && isset($variants['options']) && count($variants['options']) > 0) {
+                    // For variant products, check if ANY variant has stock
+                    $totalStock = array_sum(array_map('intval', $variants['optionStocks']));
+                    return $totalStock > 0;
+                } else {
+                    // For non-variant products, check main stock
+                    return $product->stock > 0;
+                }
+            });
 
         // Get recipient's OTHER tradeable items (excluding the target product)
         $recipientItemsQuery = Product::where('user_id', $recipient->id)
             ->where('approved', 'yes')
-            ->where(function($query) {
-                $query->where('forSaleTrade', 'trade')
-                      ->orWhere('forSaleTrade', 'both');
-            });
+            ->where('forSaleTrade', 'trade');
         
         // Exclude the target product from the list (we'll add it separately)
         if ($targetProductId) {
@@ -99,7 +109,19 @@ class TradeController extends Controller
         $recipientItems = $recipientItemsQuery->with(['images' => function($query) {
                 $query->orderBy('id', 'asc')->limit(1);
             }])
-            ->get();
+            ->get()
+            ->filter(function($product) {
+                // Filter out products with 0 stock
+                $variants = $product->variants;
+                if (!empty($variants) && isset($variants['options']) && count($variants['options']) > 0) {
+                    // For variant products, check if ANY variant has stock
+                    $totalStock = array_sum(array_map('intval', $variants['optionStocks']));
+                    return $totalStock > 0;
+                } else {
+                    // For non-variant products, check main stock
+                    return $product->stock > 0;
+                }
+            });
 
         return view('trade.create', compact('recipient', 'myItems', 'recipientItems', 'targetProduct'));
     }
@@ -111,6 +133,7 @@ class TradeController extends Controller
     {
         $items = Product::where('user_id', Auth::id())
             ->where('approved', 'yes')
+            ->where('forSaleTrade', 'trade')
             ->with(['images' => function($query) {
                 $query->orderBy('id', 'asc')->limit(1);
             }])
@@ -135,10 +158,7 @@ class TradeController extends Controller
     {
         $items = Product::where('user_id', $recipientId)
             ->where('approved', 'yes')
-            ->where(function($query) {
-                $query->where('forSaleTrade', 'trade')
-                      ->orWhere('forSaleTrade', 'both');
-            })
+            ->where('forSaleTrade', 'trade')
             ->with(['images' => function($query) {
                 $query->orderBy('id', 'asc')->limit(1);
             }])
@@ -691,22 +711,44 @@ class TradeController extends Controller
             // Get current user's tradeable items (products they own)
             $myItems = Product::where('user_id', Auth::id())
                 ->where('approved', 'yes')
+                ->where('forSaleTrade', 'trade')
                 ->with(['images' => function($query) {
                     $query->orderBy('id', 'asc')->limit(1);
                 }])
-                ->get();
+                ->get()
+                ->filter(function($product) {
+                    // Filter out products with 0 stock
+                    $variants = $product->variants;
+                    if (!empty($variants) && isset($variants['options']) && count($variants['options']) > 0) {
+                        // For variant products, check if ANY variant has stock
+                        $totalStock = array_sum(array_map('intval', $variants['optionStocks']));
+                        return $totalStock > 0;
+                    } else {
+                        // For non-variant products, check main stock
+                        return $product->stock > 0;
+                    }
+                });
 
             // Get recipient's tradeable items
             $recipientItems = Product::where('user_id', $recipient->id)
                 ->where('approved', 'yes')
-                ->where(function($query) {
-                    $query->where('forSaleTrade', 'trade')
-                          ->orWhere('forSaleTrade', 'both');
-                })
+                ->where('forSaleTrade', 'trade')
                 ->with(['images' => function($query) {
                     $query->orderBy('id', 'asc')->limit(1);
                 }])
-                ->get();
+                ->get()
+                ->filter(function($product) {
+                    // Filter out products with 0 stock
+                    $variants = $product->variants;
+                    if (!empty($variants) && isset($variants['options']) && count($variants['options']) > 0) {
+                        // For variant products, check if ANY variant has stock
+                        $totalStock = array_sum(array_map('intval', $variants['optionStocks']));
+                        return $totalStock > 0;
+                    } else {
+                        // For non-variant products, check main stock
+                        return $product->stock > 0;
+                    }
+                });
 
             // Counter offers don't have a target product
             $targetProduct = null;

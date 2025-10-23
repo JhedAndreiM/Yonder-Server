@@ -41,6 +41,7 @@ body {
 .myPurchases,
 .myListings,
 .myVouchers,
+.myTradeOffers,
 .mySales {
   display: flex;
   gap: 30px;

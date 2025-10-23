@@ -197,7 +197,24 @@
               @if($products->user_id=== Auth::id())
                 <a href="{{ route('listing.seller') }}"id="goToSellerListing"><button class="addToCartBtn" id="goToSellerListing">Edit Listing</button></a>
               @else
-                <a href="{{ route('trade.create', ['recipientId' => $seller->id, 'productId' => $products->product_id]) }}" class="addToCartBtn">Start Trading</a>
+                @php 
+                  // Check if product has stock for trade
+                  if ($hasVariants) {
+                      // Check if ANY variant has stock
+                      $hasTradeStock = false;
+                      foreach ($variants['optionStocks'] as $stock) {
+                          if (is_numeric($stock) && (int)$stock > 0) {
+                              $hasTradeStock = true;
+                              break;
+                          }
+                      }
+                  } else {
+                      $hasTradeStock = $products->stock > 0;
+                  }
+                @endphp
+                @if($hasTradeStock)
+                  <a href="{{ route('trade.create', ['recipientId' => $seller->id, 'productId' => $products->product_id]) }}" class="addToCartBtn">Start Trading</a>
+                @endif
               @endif
             @else
               @if($products->user_id=== Auth::id())

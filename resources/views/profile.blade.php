@@ -45,7 +45,7 @@
             <h2 class="notCurrent">My Vouchers</h2>
           </div>
           <div class="myTradeOffers">
-            <img class="notCurrent" src="{{asset('img/MyVouchers.svg')}}" alt="" />
+            <img class="notCurrent" src="{{asset('img/tradeLogo.svg')}}" alt="" />
             <h2 class="notCurrent">Trade Offers</h2>
           </div>
         </div>
