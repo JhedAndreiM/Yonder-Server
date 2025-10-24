@@ -55,8 +55,8 @@
           <button id="btnAll" class="btn-filter navCurrent" data-tab="all">All</button>
           <button id="btnPending" class="btn-filter" data-tab="pending">Pending</button>
           <button id="btnReceive" class="btn-filter" data-tab="receive">To recieve</button>
-          <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
            <button id="btnCompleted" class="btn-filter" data-tab="completed">Completed</button>
+           <button id="btnCancelled" class="btn-filter" data-tab="cancelled">Cancelled</button>
         </div>
         <div class="items" id="itemsContainer">
           @include('partials.profileProduct', ['cartItems' => $items])

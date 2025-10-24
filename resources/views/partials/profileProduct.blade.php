@@ -123,12 +123,12 @@
           <div class="card" data-id="{{$cartItems->cart_id}}">
             <div class="text">
             <!-- For User Name -->
-            @if(Auth::user()->role==="student")
-                <!-- <a href="/Yonder/Chat/{{$cartItems->seller_id}}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a> -->
-                <a href="{{ route('stalk.profile', $cartItems->seller_id) }}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a>
-            @elseif(Auth::user()->role==="organization")
+            @if(isset($viewType) && $viewType === 'sales')
+                <!-- Seller viewing their sales - show buyer info -->
                 <a href="{{ route('stalk.profile', $cartItems->buyer_id) }}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a>
-                <!-- <a href="/Yonder/Chat/{{$cartItems->buyer_id}}" class="seller buyer">{{$cartItems->buyer_name}} {{$cartItems->buyer_lastname}}</a> -->
+            @else
+                <!-- Buyer viewing their purchases - show seller info -->
+                <a href="{{ route('stalk.profile', $cartItems->seller_id) }}" class="seller">{{$cartItems->seller_name}} {{$cartItems->seller_lastname}}</a>
             @endif
             <!-- End For User Name -->
 
@@ -228,14 +228,16 @@
                         <input id="filterValue" name="filterValue" type="hidden" value="{{$filters}}">
                         <input type="hidden" name="cancel_reason" id="cancel_reason_{{ $cartItems->cart_id }}">
                         <input type="hidden" name="custom_reason" id="custom_reason_{{ $cartItems->cart_id }}">
-                        <button type="submit" class="cancelButton">Cancel</button>
+                        <button type="submit" class="cancelButton">Cancel Order</button>
                     </form>
                     @endif
                     @if($cartItems->status !== 'cancelled')
-                    @if(Auth::user()->role === "student")
-                        <button onclick="window.location.href='/Yonder/Chat/{{$cartItems->seller_id}}'" class="cancelButton">Message</button>
-                    @elseif(Auth::user()->role === "organization")
+                    @if(isset($viewType) && $viewType === 'sales')
+                        <!-- Seller viewing sales - message buyer -->
                         <button onclick="window.location.href='/Yonder/Chat/{{$cartItems->buyer_id}}'" class="cancelButton">Message</button>
+                    @else
+                        <!-- Buyer viewing purchases - message seller -->
+                        <button onclick="window.location.href='/Yonder/Chat/{{$cartItems->seller_id}}'" class="cancelButton">Message</button>
                     @endif
                     @endif
                     @if($cartItems->status == 'cancelled')

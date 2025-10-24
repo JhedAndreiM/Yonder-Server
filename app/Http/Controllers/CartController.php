@@ -350,12 +350,15 @@ class CartController extends Controller
             ->where('product.user_id', $sellerId)
             ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
             ->first();
+        
+        $viewType = 'purchases'; // Indicate this is buyer view
+        
         // bali need to if ajax yung tatawag kasi if hindi mo to nilagay, ididsplay niya buong page imbis na cards(nakuha sa query)
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating'))->render();
+            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating', 'viewType'))->render();
         }
 
-        return view('profile', compact('items', 'filters', 'sellerRating'));
+        return view('profile', compact('items', 'filters', 'sellerRating', 'viewType'));
     }
     public function getCardPartial($id, Request $request)
     {
@@ -648,7 +651,6 @@ public function getCancelledDetails($id)
         $query = DB::table('cart_items')
             ->join('product', 'cart_items.product_id', '=', 'product.product_id')
             ->join('users as buyers', 'cart_items.user_id', '=', 'buyers.id')
-            ->join('users', 'cart_items.user_id', '=', 'users.id')
             ->leftJoin('cancelled_cart_items', 'cancelled_cart_items.original_cart_id', '=', 'cart_items.id')
             ->where('cart_items.seller_id', '=', $userId)
             ->select(
@@ -669,8 +671,8 @@ public function getCancelledDetails($id)
                 'product.image_path',
                 'product.description',
                 'cart_items.voucher_applied',
-                'users.name as seller_name',
-                'users.last_name as seller_lastname',
+                'buyers.name as buyer_name',
+                'buyers.last_name as buyer_lastname',
                 'buyers.id as buyer_id',
                 'cancelled_cart_items.cancelled_by',
                 'cancelled_cart_items.cancel_reason',
@@ -692,10 +694,13 @@ public function getCancelledDetails($id)
             ->where('product.user_id', $sellerId)
             ->selectRaw('AVG(reviews.rating) as avg_rating, COUNT(reviews.rating) as total_reviews')
             ->first();
+        
+        $viewType = 'sales'; // Indicate this is seller view
+        
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating'))->render();
+            return view('partials.profileProduct', compact('items', 'filters', 'sellerRating', 'viewType'))->render();
         }
-        return view('mysales', compact('items', 'filters', 'sellerRating'));
+        return view('mysales', compact('items', 'filters', 'sellerRating', 'viewType'));
     }
 
 public function confirmStudentSales(Request $request, $id)

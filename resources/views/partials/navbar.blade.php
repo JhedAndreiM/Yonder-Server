@@ -26,22 +26,113 @@
           @if ($notifications->isEmpty())
             <p style="padding-left:10px;">No notifications</p>
           @else
-            @foreach ($notifications as $notification)
-              <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
-                <div class="notification-content">
-                  <h1>
-                    @if($notification['title'] === "Product Approved")
-                      <span style="color:Green;">{{ $notification['title'] }}</span>
-                    @elseif($notification['title'] === "Product Rejected")
-                      <span style="color:red;">{{ $notification['title'] }}</span>
-                    @else
-                      {{ $notification['title'] }}
-                    @endif
-                  </h1>
-                  <div class="Message">{{ $notification['message'] }}</div>
+            @php
+              $groupedNotifs = [];
+              $consecutiveGroup = [];
+              $currentTitle = null;
+
+              foreach ($notifications as $index => $notif) {
+                  $groupableTitle = in_array($notif['title'], ["Trade Offer", "Trade Complete", "Order Accepted", "Order Delivered", "Buy Order Confirmed"]);
+                  
+                  // If this is a groupable notification and it's unread
+                  if ($groupableTitle && !$notif['is_read']) {
+                      // If we have a previous notification and it matches the current one
+                      if ($currentTitle === $notif['title'] && !empty($consecutiveGroup)) {
+                          $consecutiveGroup[] = $notif;
+                      } else {
+                          // If we had a previous group, add it to results
+                          if (!empty($consecutiveGroup)) {
+                              if (count($consecutiveGroup) > 1) {
+                                  $groupedNotifs[] = [
+                                      'type' => 'group',
+                                      'title' => $currentTitle,
+                                      'count' => count($consecutiveGroup),
+                                      'time_ago' => $consecutiveGroup[0]['time_ago']
+                                  ];
+                              } else {
+                                  // If only one notification, add it as single
+                                  $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                              }
+                          }
+                          // Start new group
+                          $consecutiveGroup = [$notif];
+                          $currentTitle = $notif['title'];
+                      }
+                  } else {
+                      // If we had a previous group, add it to results
+                      if (!empty($consecutiveGroup)) {
+                          if (count($consecutiveGroup) > 1) {
+                              $groupedNotifs[] = [
+                                  'type' => 'group',
+                                  'title' => $currentTitle,
+                                  'count' => count($consecutiveGroup),
+                                  'time_ago' => $consecutiveGroup[0]['time_ago']
+                              ];
+                          } else {
+                              // If only one notification, add it as single
+                              $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                          }
+                          $consecutiveGroup = [];
+                      }
+                      // Add current notification as single
+                      $groupedNotifs[] = array_merge($notif, ['type' => 'single']);
+                      $currentTitle = null;
+                  }
+              }
+              
+              // Handle any remaining group
+              if (!empty($consecutiveGroup)) {
+                  if (count($consecutiveGroup) > 1) {
+                      $groupedNotifs[] = [
+                          'type' => 'group',
+                          'title' => $currentTitle,
+                          'count' => count($consecutiveGroup),
+                          'time_ago' => $consecutiveGroup[0]['time_ago']
+                      ];
+                  } else {
+                      $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                  }
+              }
+            @endphp
+
+            @foreach ($groupedNotifs as $index => $notification)
+              @if($notification['type'] === 'group')
+                <div class="notification unread">
+                  <div class="notification-content">
+                    <h1>{{ $notification['title'] }}</h1>
+                    <div class="Message">
+                      @if($notification['title'] === 'Trade Offer')
+                        You have {{ $notification['count'] }} new trade offers.
+                      @elseif($notification['title'] === 'Trade Complete')
+                        {{ $notification['count'] }} trades have been completed.
+                      @elseif($notification['title'] === 'Order Accepted')
+                        {{ $notification['count'] }} orders have been accepted.
+                      @elseif($notification['title'] === 'Order Delivered')
+                        {{ $notification['count'] }} orders have been delivered.
+                      @elseif($notification['title'] === 'Buy Order Confirmed')
+                        {{ $notification['count'] }} buy orders have been confirmed.
+                      @endif
+                    </div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
                 </div>
-                <div class="notification-time">{{ $notification['time_ago'] }}</div>
-              </div>
+              @else
+                <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
+                  <div class="notification-content">
+                    <h1>
+                      @if($notification['title'] === "Product Approved")
+                        <span style="color:Green;">{{ $notification['title'] }}</span>
+                      @elseif($notification['title'] === "Product Rejected")
+                        <span style="color:red;">{{ $notification['title'] }}</span>
+                      @else
+                        {{ $notification['title'] }}
+                      @endif
+                    </h1>
+                    <div class="Message">{{ $notification['message'] }}</div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
+                </div>
+              @endif
 
               @if($loop->iteration == 10)
                 <div class="see-more-btn" id="see-more-btn" data-offset="10">See More</div>
@@ -125,22 +216,115 @@
           @if ($notifications->isEmpty())
             <p style="padding-left:10px;">No notifications</p>
           @else
-            @foreach ($notifications as $notification)
-              <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
-                <div class="notification-content">
-                  <h1>
-                    @if($notification['title'] === "Product Approved")
-                      <span style="color:Green;">{{ $notification['title'] }}</span>
-                    @elseif($notification['title'] === "Product Rejected")
-                      <span style="color:red;">{{ $notification['title'] }}</span>
-                    @else
-                      {{ $notification['title'] }}
-                    @endif
-                  </h1>
-                  <div class="Message">{{ $notification['message'] }}</div>
+            @php
+              $groupedNotifs = [];
+              $consecutiveGroup = [];
+              $currentTitle = null;
+
+              foreach ($notifications as $index => $notif) {
+                  $groupableTitle = in_array($notif['title'], ["Trade Offer", "Trade Complete", "Order Accepted", "Order Delivered", "Low Stock Alert", "Buy Order Confirmed"]);
+                  
+                  // If this is a groupable notification and it's unread
+                  if ($groupableTitle && !$notif['is_read']) {
+                      // If we have a previous notification and it matches the current one
+                      if ($currentTitle === $notif['title'] && !empty($consecutiveGroup)) {
+                          $consecutiveGroup[] = $notif;
+                      } else {
+                          // If we had a previous group, add it to results
+                          if (!empty($consecutiveGroup)) {
+                              if (count($consecutiveGroup) > 1) {
+                                  $groupedNotifs[] = [
+                                      'type' => 'group',
+                                      'title' => $currentTitle,
+                                      'count' => count($consecutiveGroup),
+                                      'time_ago' => $consecutiveGroup[0]['time_ago']
+                                  ];
+                              } else {
+                                  // If only one notification, add it as single
+                                  $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                              }
+                          }
+                          // Start new group
+                          $consecutiveGroup = [$notif];
+                          $currentTitle = $notif['title'];
+                      }
+                  } else {
+                      // If we had a previous group, add it to results
+                      if (!empty($consecutiveGroup)) {
+                          if (count($consecutiveGroup) > 1) {
+                              $groupedNotifs[] = [
+                                  'type' => 'group',
+                                  'title' => $currentTitle,
+                                  'count' => count($consecutiveGroup),
+                                  'time_ago' => $consecutiveGroup[0]['time_ago']
+                              ];
+                          } else {
+                              // If only one notification, add it as single
+                              $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                          }
+                          $consecutiveGroup = [];
+                      }
+                      // Add current notification as single
+                      $groupedNotifs[] = array_merge($notif, ['type' => 'single']);
+                      $currentTitle = null;
+                  }
+              }
+              
+              // Handle any remaining group
+              if (!empty($consecutiveGroup)) {
+                  if (count($consecutiveGroup) > 1) {
+                      $groupedNotifs[] = [
+                          'type' => 'group',
+                          'title' => $currentTitle,
+                          'count' => count($consecutiveGroup),
+                          'time_ago' => $consecutiveGroup[0]['time_ago']
+                      ];
+                  } else {
+                      $groupedNotifs[] = array_merge($consecutiveGroup[0], ['type' => 'single']);
+                  }
+              }
+            @endphp
+
+            @foreach ($groupedNotifs as $index => $notification)
+              @if($notification['type'] === 'group')
+                <div class="notification unread">
+                  <div class="notification-content">
+                    <h1>{{ $notification['title'] }}</h1>
+                    <div class="Message">
+                      @if($notification['title'] === 'Trade Offer')
+                        You have {{ $notification['count'] }} new trade offers.
+                      @elseif($notification['title'] === 'Trade Complete')
+                        {{ $notification['count'] }} trades have been completed.
+                      @elseif($notification['title'] === 'Order Accepted')
+                        {{ $notification['count'] }} orders have been accepted.
+                      @elseif($notification['title'] === 'Order Delivered')
+                        {{ $notification['count'] }} orders have been delivered.
+                      @elseif($notification['title'] === 'Low Stock Alert')
+                        {{ $notification['count'] }} products are running low on stock.
+                      @elseif($notification['title'] === 'Buy Order Confirmed')
+                        {{ $notification['count'] }} buy orders have been confirmed.
+                      @endif
+                    </div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
                 </div>
-                <div class="notification-time">{{ $notification['time_ago'] }}</div>
-              </div>
+              @else
+                <div class="notification {{ $notification['is_read'] ? '' : 'unread' }}">
+                  <div class="notification-content">
+                    <h1>
+                      @if($notification['title'] === "Product Approved")
+                        <span style="color:Green;">{{ $notification['title'] }}</span>
+                      @elseif($notification['title'] === "Product Rejected")
+                        <span style="color:red;">{{ $notification['title'] }}</span>
+                      @else
+                        {{ $notification['title'] }}
+                      @endif
+                    </h1>
+                    <div class="Message">{{ $notification['message'] }}</div>
+                  </div>
+                  <div class="notification-time">{{ $notification['time_ago'] }}</div>
+                </div>
+              @endif
 
               @if($loop->iteration == 10)
                 <div class="see-more-btn" id="see-more-btn" data-offset="10">See More</div>

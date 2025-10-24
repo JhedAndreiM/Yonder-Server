@@ -163,24 +163,24 @@
       <div class="section" id="TradeOrSell">
         <h5>Is this Item for Trade or for Sell?<span class="required" title="Required">*</span></h5>
         <div class="Trade-SellButtons">
-            <button type="button" class="filter-btn button active" name="forSaleTrade"data-filter="sale"
+            <button type="button" class="filter-btn button {{ old('tradeOrSell', 'sale') === 'sale' ? 'active' : '' }}" name="forSaleTrade"data-filter="sale"
               data-filter-type="forSaleTrade">Sale</button>
-            <button type="button" class="filter-btn button" name="forSaleTrade"data-filter="trade"
+            <button type="button" class="filter-btn button {{ old('tradeOrSell') === 'trade' ? 'active' : '' }}" name="forSaleTrade"data-filter="trade"
               data-filter-type="forSaleTrade">Trade</button>
-              <input type="hidden" name="tradeOrSell" id="tradeOrSell" value="sale">
+              <input type="hidden" name="tradeOrSell" id="tradeOrSell" value="{{ old('tradeOrSell', 'sale') }}">
           </div>
       </div>
 
       <div class="section" id="qualityOfProduct">
         <h5>Product Condition<span class="required" title="Required">*</span></h5>
         <div class="Trade-SellButtons">
-            <button type="button" class="filter-btn-quality button active" name="forSaleTrade"data-filter="new"
+            <button type="button" class="filter-btn-quality button {{ old('productQuality', 'new') === 'new' ? 'active' : '' }}" name="forSaleTrade"data-filter="new"
               data-filter-type="forSaleTrade">New</button>
-            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="like-new"
+            <button type="button" class="filter-btn-quality button {{ old('productQuality') === 'like-new' ? 'active' : '' }}" name="forSaleTrade"data-filter="like-new"
               data-filter-type="forSaleTrade">Like-new</button>
-            <button type="button" class="filter-btn-quality button" name="forSaleTrade"data-filter="used"
+            <button type="button" class="filter-btn-quality button {{ old('productQuality') === 'used' ? 'active' : '' }}" name="forSaleTrade"data-filter="used"
               data-filter-type="forSaleTrade">Used</button>
-              <input type="hidden" name="productQuality" id="productQuality" value="new">
+              <input type="hidden" name="productQuality" id="productQuality" value="{{ old('productQuality', 'new') }}">
           </div>
       </div>
       @endif

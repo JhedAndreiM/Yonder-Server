@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\TradeOffer;
 use App\Models\TradeOfferItem;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -284,6 +285,18 @@ class TradeController extends Controller
             }
 
             DB::commit();
+
+            // Send notification to recipient
+            $sender = Auth::user();
+            $notification = Notification::create([
+                'user_id' => $validated['recipient_id'],
+                'title' => 'Trade Offer',
+                'message' => 'You received a trade offer from ' . $sender->name . '.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new \App\Events\NewNotification($notification));
 
             return response()->json([
                 'success' => true,
@@ -628,6 +641,18 @@ class TradeController extends Controller
             
             DB::commit();
             
+            // Send notification to sender (the person who created the offer)
+            $recipient = Auth::user();
+            $notification = Notification::create([
+                'user_id' => $offer->sender_id,
+                'title' => 'Trade Offer',
+                'message' => $recipient->name . ' accepted your trade offer.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new \App\Events\NewNotification($notification));
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Trade offer accepted! Both parties need to confirm receipt to complete the trade.'
@@ -965,6 +990,18 @@ class TradeController extends Controller
 
             DB::commit();
 
+            // Send notification to recipient of counter offer (original sender)
+            $counterSender = Auth::user();
+            $notification = Notification::create([
+                'user_id' => $validated['recipient_id'],
+                'title' => 'Trade Offer',
+                'message' => $counterSender->name . ' sent you a counter offer.',
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            event(new \App\Events\NewNotification($notification));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Counter offer sent successfully!',
@@ -1027,6 +1064,32 @@ class TradeController extends Controller
                 $offer->status = 'completed';
                 $offer->completed_at = now();
                 $message = 'Trade completed successfully! Both parties have confirmed receipt.';
+                
+                // Send completion notification to both parties
+                $sender = User::find($offer->sender_id);
+                $recipient = User::find($offer->recipient_id);
+                
+                // Notify sender
+                $senderNotification = Notification::create([
+                    'user_id' => $offer->sender_id,
+                    'title' => 'Trade Complete',
+                    'message' => 'Your trade with ' . $recipient->name . ' has been completed successfully.',
+                    'is_read' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                event(new \App\Events\NewNotification($senderNotification));
+                
+                // Notify recipient
+                $recipientNotification = Notification::create([
+                    'user_id' => $offer->recipient_id,
+                    'title' => 'Trade Complete',
+                    'message' => 'Your trade with ' . $sender->name . ' has been completed successfully.',
+                    'is_read' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                event(new \App\Events\NewNotification($recipientNotification));
             } else {
                 $message = 'Receipt confirmed. Waiting for the other party to confirm.';
             }

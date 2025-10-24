@@ -374,10 +374,13 @@ class OrganizationController extends Controller
         foreach ($items as $item) {
         $item->formatted_updated_at = Carbon::parse($item->updated_at)->format('F d, Y');
         }
+        
+        $viewType = 'sales'; // Organization viewing their sales/orders
+        
         if ($request->ajax()) {
-            return view('partials.profileProduct', compact('items', 'filters'))->render();
+            return view('partials.profileProduct', compact('items', 'filters', 'viewType'))->render();
         }
-        return view('organization/orderPage', compact('items', 'filters'));
+        return view('organization/orderPage', compact('items', 'filters', 'viewType'));
     }
 
 public function reviews(Request $request)
